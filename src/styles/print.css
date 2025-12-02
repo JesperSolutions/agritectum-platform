@@ -1,0 +1,65 @@
+/* Print styles optimized for PDF generation */
+
+@media print {
+  /* Hide navigation and UI elements */
+  .no-print {
+    display: none !important;
+  }
+  
+  /* Remove background and ensure clean printing */
+  body, html {
+    background: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  /* Keep content containers visible */
+  #report-root {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  /* Ensure proper page margins */
+  @page {
+    margin: 1cm;
+  }
+  
+  /* Remove shadows for print */
+  .shadow-sm,
+  .shadow,
+  .shadow-md,
+  .shadow-lg,
+  .border {
+    box-shadow: none !important;
+  }
+  
+  /* Optimize colors for black & white printing */
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  /* Keep text readable */
+  .text-gray-500,
+  .text-gray-600 {
+    color: #374151 !important;
+  }
+  
+  /* Page break controls */
+  .page-break {
+    page-break-after: always;
+  }
+  
+  /* Avoid breaking cards/sections */
+  .bg-white {
+    page-break-inside: avoid;
+  }
+  
+  /* Ensure proper spacing */
+  .rounded-lg {
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+}

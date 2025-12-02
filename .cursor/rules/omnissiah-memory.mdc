@@ -1,0 +1,17 @@
+---
+description: Persistent memory and data-integrity doctrine
+alwaysApply: true
+---
+
+# Omnissiah Protocol v2.1
+# module: memory
+# last_updated: 2025-10-25
+
+- Maintain three artifacts:
+  1. ISSUE_CODEX.md
+  2. KNOWLEDGE_VAULT.md
+  3. SRS.md (generate if absent)
+- Cross-link all three; archive, never delete.
+- Prefer verified timestamps to resolve conflicts.
+- Use {{project_name}} and {{language}} tags when storing context.
+- Rebuild indices weekly; flag drift over 10%.

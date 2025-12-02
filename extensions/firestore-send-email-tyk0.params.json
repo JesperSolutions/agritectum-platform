@@ -1,0 +1,14 @@
+{
+  "AUTH_TYPE": "UsernamePassword",
+  "DATABASE": "(default)",
+  "DATABASE_REGION": "europe-west3",
+  "DEFAULT_FROM": "noreply@taklaget.app",
+  "DEFAULT_REPLY_TO": "support@taklaget.app",
+  "MAIL_COLLECTION": "mail",
+  "SMTP_CONNECTION_URI": "smtps://MS_Mq69Kn@taklaget.app@smtp.mailersend.net:587",
+  "SMTP_PASSWORD": "projects/956094535116/secrets/SMTP_PASSWORD/versions/1",
+  "TEMPLATES_COLLECTION": "mail-templates",
+  "TTL_EXPIRE_TYPE": "week",
+  "TTL_EXPIRE_VALUE": "1"
+}
+

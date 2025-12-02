@@ -1,0 +1,77 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Helper function to check if user has access to a report
+    function hasReportAccess(reportId) {
+      // First check if report is public (allows unauthenticated access)
+      let report = firestore.get(/databases/(default)/documents/reports/$(reportId));
+      let isPublic = report.data != null && (report.data.isPublic == true || report.data.isShared == true);
+      
+      // Allow public reports without authentication
+      return isPublic || (
+        // For private reports, require authentication
+        request.auth != null && (
+          // Superadmin can access all reports
+          request.auth.token.permissionLevel >= 2 ||
+          // Allow temp report IDs (during creation)
+          reportId.matches('temp_.*') ||
+          // Check report exists and user has access
+          (report.data != null &&
+           (report.data.branchId == request.auth.token.branchId ||
+            request.auth.token.branchId == 'main'))
+        )
+      );
+    }
+    
+    // Helper function to check if user can write to a report
+    function canWriteReport(reportId) {
+      // Allow temp report IDs for authenticated users during creation (no Firestore lookup needed)
+      // For existing reports, verify access via Firestore
+      let report = firestore.get(/databases/(default)/documents/reports/$(reportId));
+      return (reportId.matches('temp_.*') && request.auth != null && request.auth.token.permissionLevel >= 0) ||
+        (request.auth != null && report.data != null && (
+          // Superadmin can write to all reports
+          request.auth.token.permissionLevel >= 2 ||
+          // Branch admin can write to reports in their branch
+          (request.auth.token.permissionLevel >= 1 && 
+           (report.data.branchId == request.auth.token.branchId || request.auth.token.branchId == 'main')) ||
+          // Inspector can write to their own reports
+          (request.auth.token.permissionLevel >= 0 && 
+           report.data.createdBy == request.auth.uid &&
+           (report.data.branchId == request.auth.token.branchId || request.auth.token.branchId == 'main'))
+        ));
+    }
+    
+    // Reports folder - PDFs and images
+    match /reports/{reportId}/{allPaths=**} {
+      // Allow read if user has access to the report (verified via Firestore)
+      allow read: if hasReportAccess(reportId);
+      
+      // Allow write only if user can write to the report (verified via Firestore)
+      allow write: if canWriteReport(reportId);
+    }
+    
+    // Branch assets (logos, etc.)
+    match /branches/{branchId}/{allPaths=**} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && (
+        request.auth.token.permissionLevel >= 2 ||
+        (request.auth.token.permissionLevel >= 1 && request.auth.token.branchId == branchId)
+      );
+    }
+    
+    // Roof images captured during report creation
+    match /roof-images/{reportId}/{allPaths=**} {
+      // Allow read if user has access to the report (verified via Firestore)
+      allow read: if hasReportAccess(reportId);
+      
+      // Allow write if user can write to the report (verified via Firestore)
+      allow write: if canWriteReport(reportId);
+    }
+    
+    // Deny all other access
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

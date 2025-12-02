@@ -1,0 +1,28 @@
+{
+  "profile.accountInformation": "Kontoinformation",
+  "profile.email": "E-post",
+  "profile.displayName": "Namn",
+  "profile.role": "Roll",
+  "profile.branch": "Företag/Filial",
+  "profile.lastLogin": "Senaste inloggning",
+  "profile.notSet": "Ej angivet",
+  "profile.notAssigned": "Ej tilldelad",
+  "profile.never": "Aldrig",
+  "profile.changePassword": "Ändra lösenord",
+  "profile.currentPassword": "Nuvarande lösenord",
+  "profile.newPassword": "Nytt lösenord",
+  "profile.confirmNewPassword": "Bekräfta nytt lösenord",
+  "profile.passwordRequirementsTitle": "Lösenordskrav:",
+  "profile.passwordRequirement1": "Minst 8 tecken",
+  "profile.passwordRequirement2": "Minst en siffra och en stor bokstav",
+  "profile.passwordRequirement3": "Nytt lösenord får inte vara samma som det gamla",
+  "profile.savePassword": "Spara lösenord",
+  "profile.passwordTooShort": "Lösenordet måste vara minst 8 tecken",
+  "profile.passwordsDoNotMatch": "Lösenorden matchar inte",
+  "profile.passwordRequirements": "Lösenordet måste innehålla minst en siffra och en stor bokstav",
+  "profile.passwordChangeSuccess": "Lösenordet har ändrats framgångsrikt",
+  "profile.currentPasswordIncorrect": "Nuvarande lösenord är felaktigt",
+  "profile.passwordTooWeak": "Lösenordet är för svagt",
+  "profile.passwordChangeError": "Ett fel uppstod vid ändring av lösenord"
+}
+

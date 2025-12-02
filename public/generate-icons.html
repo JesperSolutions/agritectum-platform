@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate PWA Icons</title>
+</head>
+<body>
+    <h1>PWA Icon Generator</h1>
+    <p>Right-click and save the images below as PNG files:</p>
+    
+    <div style="margin: 20px;">
+        <h3>192x192 Icon</h3>
+        <canvas id="canvas192" width="192" height="192" style="border: 1px solid #ccc;"></canvas>
+        <br>
+        <a id="download192" download="icon-192x192.png">Download 192x192 PNG</a>
+    </div>
+    
+    <div style="margin: 20px;">
+        <h3>512x512 Icon</h3>
+        <canvas id="canvas512" width="512" height="512" style="border: 1px solid #ccc;"></canvas>
+        <br>
+        <a id="download512" download="icon-512x512.png">Download 512x512 PNG</a>
+    </div>
+
+    <script>
+        function drawIcon(canvas, size) {
+            const ctx = canvas.getContext('2d');
+            const scale = size / 512;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, size, size);
+            
+            // Background
+            ctx.fillStyle = '#2563eb';
+            ctx.fillRect(0, 0, size, size);
+            
+            // Roof shape
+            ctx.fillStyle = 'white';
+            ctx.beginPath();
+            ctx.moveTo(size * 0.25, size * 0.375);
+            ctx.lineTo(size * 0.5, size * 0.25);
+            ctx.lineTo(size * 0.75, size * 0.375);
+            ctx.lineTo(size * 0.75, size * 0.625);
+            ctx.lineTo(size * 0.25, size * 0.625);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Roof lines
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = size * 0.015;
+            ctx.beginPath();
+            ctx.moveTo(size * 0.25, size * 0.375);
+            ctx.lineTo(size * 0.5, size * 0.5);
+            ctx.lineTo(size * 0.75, size * 0.375);
+            ctx.stroke();
+            
+            // Center line
+            ctx.beginPath();
+            ctx.moveTo(size * 0.5, size * 0.5);
+            ctx.lineTo(size * 0.5, size * 0.75);
+            ctx.stroke();
+            
+            // Center dot
+            ctx.fillStyle = '#2563eb';
+            ctx.beginPath();
+            ctx.arc(size * 0.5, size * 0.5, size * 0.031, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Letter T
+            ctx.fillStyle = 'white';
+            ctx.font = `bold ${size * 0.094}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.fillText('T', size * 0.5, size * 0.82);
+        }
+        
+        function setupDownload(canvas, linkId) {
+            const link = document.getElementById(linkId);
+            link.href = canvas.toDataURL('image/png');
+        }
+        
+        // Generate icons
+        const canvas192 = document.getElementById('canvas192');
+        const canvas512 = document.getElementById('canvas512');
+        
+        drawIcon(canvas192, 192);
+        drawIcon(canvas512, 512);
+        
+        setupDownload(canvas192, 'download192');
+        setupDownload(canvas512, 'download512');
+    </script>
+</body>
+</html>

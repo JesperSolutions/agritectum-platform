@@ -1,0 +1,454 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function getPermissionLevel() {
+      // Try to get permission level from custom claims first
+      // If not available, assume basic authenticated user (permission level 0)
+      return request.auth.token.permissionLevel != null ? request.auth.token.permissionLevel : 0;
+    }
+    
+    function getUserBranchId() {
+      // Return branchId if present, otherwise empty string to prevent null comparison errors
+      return request.auth.token.branchId != null ? request.auth.token.branchId : "";
+    }
+    
+    function hasBranchAccess(branchId) {
+      // Helper to check if user has access to a branch (handles null/empty branchId)
+      let userBranchId = getUserBranchId();
+      return userBranchId == branchId || userBranchId == "main" || isSuperadmin();
+    }
+    
+    function isSuperadmin() {
+      return isAuthenticated() && getPermissionLevel() >= 2;
+    }
+    
+    function isBranchAdmin() {
+      return isAuthenticated() && getPermissionLevel() >= 1;
+    }
+    
+    function isInspector() {
+      return isAuthenticated() && getPermissionLevel() >= 0;
+    }
+    
+    function isCustomer() {
+      return isAuthenticated() && getPermissionLevel() == -1;
+    }
+    
+    function getCustomerId() {
+      return request.auth.token.customerId != null ? request.auth.token.customerId : "";
+    }
+    
+    // Helper function to check if user is authenticated (fallback for users without custom claims)
+    function isAuthenticatedUser() {
+      return isAuthenticated();
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      allow read: if isAuthenticated() && (
+        request.auth.uid == userId ||
+        isSuperadmin() ||
+        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+      );
+      
+      // Allow branch admins and superadmins to create users in their branch
+      allow create: if isAuthenticated() && (
+        isSuperadmin() ||
+        (isBranchAdmin() && (request.resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+      );
+      
+      // Allow branch admins and superadmins to update users in their branch
+      allow update: if isAuthenticated() && (
+        isSuperadmin() ||
+        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
+        // Allow authenticated users to update their own document
+        (isAuthenticatedUser() && request.auth.uid == userId)
+      );
+      
+      // Allow authenticated users to delete users
+      allow delete: if isAuthenticated();
+    }
+    
+    // Branches collection
+    match /branches/{branchId} {
+      allow read: if isAuthenticated() && (
+        isSuperadmin() ||
+        (isBranchAdmin() && (getUserBranchId() == branchId || getUserBranchId() == "main")) ||
+        (isInspector() && (getUserBranchId() == branchId || getUserBranchId() == "main"))
+      );
+      allow write: if isSuperadmin();
+      
+      // Employees subcollection
+      match /employees/{employeeId} {
+        allow read: if isAuthenticated() && (
+          isSuperadmin() ||
+          (isBranchAdmin() && (getUserBranchId() == branchId || getUserBranchId() == "main")) ||
+          (isInspector() && (getUserBranchId() == branchId || getUserBranchId() == "main"))
+        );
+        allow create: if isAuthenticated() && (
+          isSuperadmin() ||
+          (isBranchAdmin() && (getUserBranchId() == branchId || getUserBranchId() == "main"))
+        );
+        allow update: if isAuthenticated() && (
+          isSuperadmin() ||
+          (isBranchAdmin() && (getUserBranchId() == branchId || getUserBranchId() == "main"))
+        );
+        allow delete: if isAuthenticated();
+      }
+    }
+    
+    // Reports collection
+    match /reports/{reportId} {
+      // Allow public read access for customer reports (when isPublic is true)
+      allow read: if resource.data.isPublic == true;
+      
+      // Allow customers to read their own reports
+      allow read: if isCustomer() && (
+        resource.data.customerId == getCustomerId() ||
+        resource.data.customerEmail == request.auth.token.email
+      );
+      
+      // Allow authenticated read access for internal users
+      allow read: if isAuthenticated() && (
+        isSuperadmin() ||
+        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
+        (isInspector() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+      );
+      
+      // Create requires branch match and creator match; allow main branch users across branches
+      allow create: if isAuthenticated() &&
+        request.resource.data.createdBy == request.auth.uid &&
+        (
+          request.resource.data.branchId == getUserBranchId() ||
+          getUserBranchId() == "main"
+        ) &&
+        // Basic required fields to prevent malformed docs
+        request.resource.data.keys().hasAll(["customerName", "customerAddress", "inspectionDate", "branchId", "createdBy"]);
+      allow update: if isAuthenticated() && (
+        isSuperadmin() ||
+        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
+        (isInspector() && resource.data.createdBy == request.auth.uid && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+      );
+      allow delete: if isAuthenticated() && (
+        isSuperadmin() ||
+        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+      );
+    }
+    
+    // Customers collection
+    match /customers/{customerId} {
+      // Allow customers to read their own customer record
+      allow read: if isCustomer() && (
+        resource.data.uid == request.auth.uid ||
+        resource.data.userId == request.auth.uid ||
+        customerId == getCustomerId()
+      );
+      
+      allow read: if isAuthenticated() && (
+        isSuperadmin() ||
+        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
+        (isInspector() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+      );
+      
+      // Allow customers to update limited fields in their own record
+      allow update: if isCustomer() && (
+        resource.data.uid == request.auth.uid ||
+        resource.data.userId == request.auth.uid ||
+        customerId == getCustomerId()
+      ) && (
+        // Only allow updating specific fields
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['phone', 'address', 'updatedAt'])
+      );
+      // Create requires branch match and creator match; allow main branch users across branches
+      allow create: if isAuthenticated() &&
+        request.resource.data.createdBy == request.auth.uid &&
+        (
+          request.resource.data.branchId == getUserBranchId() ||
+          getUserBranchId() == "main"
+        ) &&
+        // Basic required fields - using actual field names from Customer interface (name, address)
+        request.resource.data.keys().hasAll(["name", "branchId", "createdBy"]);
+      allow update: if isAuthenticated() && (
+        isSuperadmin() ||
+        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
+        (isInspector() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+      );
+      // Allow authenticated users to delete customers
+      allow delete: if isAuthenticated();
+    }
+    
+    // Appointments collection
+    match /appointments/{appointmentId} {
+      // Superadmin can read all appointments
+      // Branch admins can read appointments in their branch
+      // Inspectors can read only their assigned appointments
+      allow read: if isAuthenticated() && (
+        isSuperadmin() ||
+        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
+        (isInspector() && resource.data.assignedInspectorId == request.auth.uid)
+      );
+      
+      // Superadmin and branch admins can create appointments
+      allow create: if isAuthenticated() && (
+        isSuperadmin() ||
+        (isBranchAdmin() && (request.resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+      ) && request.resource.data.createdBy == request.auth.uid;
+      
+      // Superadmin and branch admins can update appointments in their branch
+      // Inspectors can update their own appointment status and notes
+      allow update: if isAuthenticated() && (
+        isSuperadmin() ||
+        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
+        (isInspector() && resource.data.assignedInspectorId == request.auth.uid)
+      );
+      
+      // Only superadmin and branch admins can delete appointments
+      allow delete: if isAuthenticated() && (
+        isSuperadmin() ||
+        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+      );
+    }
+    
+    // Email logs collection
+    match /emailLogs/{emailLogId} {
+      allow read: if isAuthenticated() && (
+        isSuperadmin() ||
+        (isBranchAdmin() && resource.data.sentBy == request.auth.uid) ||
+        (isInspector() && resource.data.sentBy == request.auth.uid)
+      );
+      allow create: if isAuthenticated() && 
+        request.resource.data.sentBy == request.auth.uid;
+      allow update: if isAuthenticated() && (
+        isSuperadmin() ||
+        resource.data.sentBy == request.auth.uid
+      );
+      allow delete: if isSuperadmin();
+    }
+
+    // reportAccessLogs collection - ADMIN ONLY
+    match /reportAccessLogs/{logId} {
+      allow read: if isAuthenticated() && (
+        isSuperadmin() ||
+        isBranchAdmin()
+      );
+      allow create: if true; // Allow public access logging
+      allow update, delete: if false; // No updates or deletes allowed
+    }
+    
+    // Mail collection (Trigger Email extension) - ALLOW AUTHENTICATED USERS TO CREATE
+    match /mail/{mailId} {
+      // Allow authenticated users to create email documents for Trigger Email extension
+      allow create: if isAuthenticated() && (
+        isSuperadmin() ||
+        isBranchAdmin() ||
+        isInspector()
+      );
+      // Restrict read/update/delete for security
+      allow read, update, delete: if false;
+    }
+    
+    // Mail status collection - EXTENSION ONLY
+    match /mail-status/{statusId} {
+      // Only Trigger Email extension can write
+      allow read, write: if false;
+    }
+    
+    // Email templates collection (Trigger Email extension)
+    match /mail-templates/{templateId} {
+      allow read: if isAuthenticated() && (
+        isSuperadmin() ||
+        isBranchAdmin() ||
+        isInspector()
+      );
+      allow create: if isSuperadmin();
+      allow update: if isSuperadmin();
+      allow delete: if isSuperadmin();
+    }
+    
+    // Mail suppressions collection - ADMIN ONLY
+    match /mail-suppressions/{suppressionId} {
+      allow read: if isAuthenticated() && (
+        isSuperadmin() ||
+        isBranchAdmin()
+      );
+      allow write: if false; // Only Cloud Functions can write
+    }
+    
+    // Suppression logs collection - ADMIN ONLY
+    match /suppression-logs/{logId} {
+      allow read: if isAuthenticated() && (
+        isSuperadmin() ||
+        isBranchAdmin()
+      );
+      allow write: if false; // Only Cloud Functions can write
+    }
+    
+    // Mail events collection - ADMIN ONLY
+    match /mail-events/{eventId} {
+      allow read: if isAuthenticated() && (
+        isSuperadmin() ||
+        isBranchAdmin()
+      );
+      allow write: if false; // Only Cloud Functions can write
+    }
+    
+    // Email logs collection - ADMIN ONLY
+    match /email-logs/{logId} {
+      allow read: if isAuthenticated() && (
+        isSuperadmin() ||
+        isBranchAdmin()
+      );
+      allow write: if false; // Only Cloud Functions can write
+    }
+    
+    // Notifications collection
+    match /notifications/{notificationId} {
+      // Users can only read their own notifications
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      
+      // Users can create notifications for themselves
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      
+      // Users can update their own notifications (mark as read, etc.)
+      allow update: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      
+      // Users can delete their own notifications
+      allow delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+    
+    // Email preferences collection
+    match /emailPreferences/{email} {
+      // Users can read and write their own email preferences
+      allow read, write: if isAuthenticated() && request.auth.token.email == email;
+    }
+
+    // Employees collection
+    match /employees/{employeeId} {
+      allow read: if isAuthenticated() && (
+        isSuperadmin() ||
+        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
+        (isInspector() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+      );
+      allow create: if isAuthenticated() && (
+        isSuperadmin() ||
+        (isBranchAdmin() && (request.resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+      );
+      allow update: if isAuthenticated() && (
+        isSuperadmin() ||
+        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+      );
+      allow delete: if isAuthenticated();
+    }
+    
+    // Offers collection
+    match /offers/{offerId} {
+      // Public read access for customer acceptance (when offer is pending/awaiting_response)
+      allow read: if resource.data.status in ['pending', 'awaiting_response'] && 
+        resource.data.publicLink != null;
+      
+      // Allow customers to read their own offers
+      allow read: if isCustomer() && (
+        resource.data.customerId == getCustomerId() ||
+        resource.data.customerEmail == request.auth.token.email
+      );
+      
+      // Authenticated read access for internal users
+      allow read: if isAuthenticated() && (
+        isSuperadmin() ||
+        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
+        (isInspector() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
+        (isInspector() && resource.data.createdBy == request.auth.uid)
+      );
+      
+      // Create offers - authenticated users in their branch
+      allow create: if isAuthenticated() && (
+        isSuperadmin() ||
+        (isBranchAdmin() && (request.resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
+        (isInspector() && (request.resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+      ) && request.resource.data.createdBy == request.auth.uid;
+      
+      // Customers can update their own offers to respond (accept/reject)
+      allow update: if isCustomer() && (
+        resource.data.customerId == getCustomerId() ||
+        resource.data.customerEmail == request.auth.token.email
+      ) && (
+        // Only allow updating response fields
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['customerResponse', 'customerResponseReason', 'customerResponseAt', 'status', 'respondedAt', 'statusHistory', 'updatedAt'])
+      ) && (
+        // Only allow responding to pending offers
+        resource.data.status in ['pending', 'awaiting_response']
+      );
+      
+      // Update offers - branch admins and superadmins
+      allow update: if isAuthenticated() && (
+        isSuperadmin() ||
+        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
+        (isInspector() && resource.data.createdBy == request.auth.uid && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+      );
+      
+      // Delete offers - branch admins and superadmins only
+      allow delete: if isAuthenticated() && (
+        isSuperadmin() ||
+        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+      );
+    }
+    
+    // Service Agreements collection
+    match /serviceAgreements/{agreementId} {
+      // Allow public read access if agreement is public (no authentication required)
+      allow get: if resource.data.isPublic == true;
+      
+      // Allow customers to read their own service agreements
+      allow read: if isCustomer() && resource.data.customerId == getCustomerId();
+      
+      // Allow authenticated read access for admins
+      // For single document reads, check branchId match
+      allow get: if isAuthenticated() && (
+        isSuperadmin() ||
+        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+      );
+      
+      // Allow list queries for branch admins and superadmins
+      // Note: Client-side filtering by branchId is required for branch admins
+      allow list: if isAuthenticated() && (
+        isSuperadmin() ||
+        isBranchAdmin()
+      );
+      
+      allow create: if isAuthenticated() && 
+        request.resource.data.createdBy == request.auth.uid &&
+        (request.resource.data.branchId == getUserBranchId() || getUserBranchId() == "main");
+      
+      // Allow public update only for acceptance fields, and only if agreement is public and not already accepted
+      allow update: if (
+        // Public acceptance update
+        (resource.data.isPublic == true && 
+         !resource.data.acceptedAt &&
+         request.resource.data.isPublic == true &&
+         request.resource.data.acceptedAt != null &&
+         request.resource.data.acceptedBy != null &&
+         request.resource.data.acceptedByEmail != null &&
+         // Ensure only acceptance fields are being updated
+         request.resource.data.customerId == resource.data.customerId &&
+         request.resource.data.branchId == resource.data.branchId &&
+         request.resource.data.createdBy == resource.data.createdBy)
+      ) || (
+        // Authenticated admin updates
+        isAuthenticated() && (
+          isSuperadmin() ||
+          (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+        )
+      );
+      
+      allow delete: if isAuthenticated() && (
+        isSuperadmin() ||
+        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+      );
+    }
+  }
+}

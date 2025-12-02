@@ -1,0 +1,28 @@
+{
+  "profile.accountInformation": "Kontoinformation",
+  "profile.email": "E-mail",
+  "profile.displayName": "Navn",
+  "profile.role": "Rolle",
+  "profile.branch": "Virksomhed/Filial",
+  "profile.lastLogin": "Seneste login",
+  "profile.notSet": "Ikke angivet",
+  "profile.notAssigned": "Ikke tildelt",
+  "profile.never": "Aldrig",
+  "profile.changePassword": "Skift adgangskode",
+  "profile.currentPassword": "Nuværende adgangskode",
+  "profile.newPassword": "Ny adgangskode",
+  "profile.confirmNewPassword": "Bekræft ny adgangskode",
+  "profile.passwordRequirementsTitle": "Adgangskodekrav:",
+  "profile.passwordRequirement1": "Mindst 8 tegn",
+  "profile.passwordRequirement2": "Mindst et tal og et stort bogstav",
+  "profile.passwordRequirement3": "Ny adgangskode må ikke være den samme som den gamle",
+  "profile.savePassword": "Gem adgangskode",
+  "profile.passwordTooShort": "Adgangskoden skal være mindst 8 tegn",
+  "profile.passwordsDoNotMatch": "Adgangskoderne matcher ikke",
+  "profile.passwordRequirements": "Adgangskoden skal indeholde mindst et tal og et stort bogstav",
+  "profile.passwordChangeSuccess": "Adgangskoden er blevet ændret med succes",
+  "profile.currentPasswordIncorrect": "Nuværende adgangskode er forkert",
+  "profile.passwordTooWeak": "Adgangskoden er for svag",
+  "profile.passwordChangeError": "Der opstod en fejl ved ændring af adgangskode"
+}
+

@@ -1,0 +1,55 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.env
+
+# Cursor screenshots
+.cursor/screenshots/
+
+# Security: Service Account Keys and Credentials
+*-adminsdk-*.json
+*-firebase-adminsdk-*.json
+serviceAccountKey.json
+service-account*.json
+*.pem
+*.p12
+sales-user-credentials.json
+
+# Security: Environment Files with Secrets
+*.env.local
+*.env.production
+.env.test
+.env.test.local
+extensions/*.env
+!extensions/*.env.example
+!.env.test.example
+
+# Firebase Emulators
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+database-debug.log
+emulator-data/
+apphosting.emulator.yaml

@@ -1,0 +1,44 @@
+{{> _header subject="Your Roof Inspection Report is Ready" headerSubtitle="Inspection completed successfully"}}
+
+<p>Dear {{customerName}},</p>
+
+<p>Your roof inspection has been completed and the detailed report is now available for your review.</p>
+
+<div class="info-box">
+    <h3 style="color: #333; margin-top: 0; margin-bottom: 15px;">📋 Inspection Details</h3>
+    <ul style="color: #666; margin: 0; padding-left: 20px;">
+        <li><strong>Inspection Date:</strong> {{inspectionDate}}</li>
+        <li><strong>Inspector:</strong> {{inspectorName}}</li>
+        <li><strong>Report ID:</strong> {{reportId}}</li>
+        <li><strong>Property Address:</strong> {{customerAddress}}</li>
+    </ul>
+</div>
+
+<div class="success-box">
+    <h3 style="color: #155724; margin-top: 0; margin-bottom: 15px;">🔍 Key Findings</h3>
+    <p style="color: #155724; margin: 0;">{{summary}}</p>
+</div>
+
+{{#if recommendations}}
+<div class="info-box">
+    <h3 style="color: #333; margin-top: 0; margin-bottom: 15px;">📋 Next Steps</h3>
+    <p style="color: #666; margin: 0;">{{recommendations}}</p>
+</div>
+{{/if}}
+
+<div style="text-align: center; margin: 30px 0;">
+    <a href="{{reportLink}}" class="button">View Complete Report</a>
+</div>
+
+<p>If you have any questions or would like to discuss the findings, please don't hesitate to contact us.</p>
+
+{{> _footer 
+    brandName="Taklaget Professional Roofing"
+    branchName=branchName
+    branchPhone=branchPhone
+    branchEmail=branchEmail
+    branchAddress=branchAddress
+    legalEntity="Taklaget AB"
+    legalAddress="Professional Roofing Services, Sweden"
+    emailReason="You're receiving this because you requested a roof inspection report."
+}}

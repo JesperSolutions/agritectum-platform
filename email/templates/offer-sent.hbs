@@ -1,0 +1,41 @@
+{{> _header subject="Your Roof Repair Offer" headerSubtitle="Professional quote for your property"}}
+
+<p>Dear {{customerName}},</p>
+
+<p>Thank you for allowing us to inspect your roof. We've completed our assessment and prepared a detailed offer for the necessary repairs.</p>
+
+<div class="info-box">
+    <h3 style="color: #333; margin-top: 0; margin-bottom: 15px;">📋 Offer Details</h3>
+    <ul style="color: #666; margin: 0; padding-left: 20px;">
+        <li><strong>Title:</strong> {{offerTitle}}</li>
+        <li><strong>Total Amount:</strong> {{totalAmount}} {{currency}}</li>
+        <li><strong>Valid Until:</strong> {{validUntil}}</li>
+    </ul>
+</div>
+
+<div class="info-box">
+    <h3 style="color: #333; margin-top: 0; margin-bottom: 15px;">📝 Description</h3>
+    <p style="color: #666; margin: 0;">{{offerDescription}}</p>
+</div>
+
+<div class="warning-box">
+    <p style="color: #856404; margin: 0;"><strong>⚠️ Important:</strong> This offer is valid until {{validUntil}}. Please review and respond before this date.</p>
+</div>
+
+<div style="text-align: center; margin: 30px 0;">
+    <a href="{{publicLink}}" class="button" style="background: #28a745;">View & Respond to Offer</a>
+</div>
+
+<p>You can accept or reject this offer directly through the link above. If you have any questions or would like to discuss the offer, please don't hesitate to contact us.</p>
+
+{{> _footer 
+    brandName="Taklaget Professional Roofing"
+    branchName=branchName
+    branchPhone=branchPhone
+    branchEmail=branchEmail
+    branchAddress=branchAddress
+    legalEntity="Taklaget AB"
+    legalAddress="Professional Roofing Services, Sweden"
+    emailReason="You're receiving this because you requested a roof repair quote."
+}}
+

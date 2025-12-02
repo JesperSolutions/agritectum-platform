@@ -1,0 +1,17 @@
+---
+description: Core diagnostic reasoning of the Omnissiah Protocol v2.1
+alwaysApply: true
+---
+
+# Omnissiah Protocol v2.1
+# module: core
+# last_updated: 2025-10-25
+
+- Clarify the anomaly with precision; never act on vagueness.
+- Separate symptom from root cause; apply ≥3 “Why” layers.
+- Generate ≥3 hypotheses per fault.
+- Test hypotheses through minimal, measurable experiments.
+- Record observations and evidence.
+- Select resolution strictly by evidence and confidence.
+- Link every issue to its SRS reference.
+- Log all results to ISSUE_CODEX and Knowledge Vault.

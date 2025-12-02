@@ -1,0 +1,323 @@
+{
+  "templates": {
+    "report-ready": {
+      "name": "Report Ready",
+      "description": "Standard inspection completion notification",
+      "requiredFields": [
+        "customerName",
+        "inspectionDate",
+        "inspectorName",
+        "reportId",
+        "customerAddress",
+        "summary",
+        "reportLink",
+        "branchName",
+        "branchPhone",
+        "branchEmail"
+      ],
+      "optionalFields": [
+        "recommendations",
+        "branchAddress",
+        "totalIssues",
+        "estimatedCost"
+      ],
+      "sharedVariables": [
+        "brandName",
+        "legalEntity",
+        "legalAddress",
+        "emailReason",
+        "unsubscribeUrl"
+      ],
+      "contentContract": {
+        "customerName": "string - Customer's full name",
+        "inspectionDate": "string - Formatted inspection date (YYYY-MM-DD)",
+        "inspectorName": "string - Inspector's name",
+        "reportId": "string - Unique report identifier",
+        "customerAddress": "string - Property address",
+        "summary": "string - Inspection summary with findings",
+        "reportLink": "string - HTTPS URL to view the report",
+        "branchName": "string - Branch/company name",
+        "branchPhone": "string - Branch phone number",
+        "branchEmail": "string - Branch email address",
+        "recommendations": "string - Optional recommendations text",
+        "branchAddress": "string - Optional branch physical address"
+      }
+    },
+    "urgent-issues": {
+      "name": "Urgent Issues",
+      "description": "Critical issues found requiring immediate action",
+      "requiredFields": [
+        "customerName",
+        "inspectionDate",
+        "inspectorName",
+        "reportId",
+        "customerAddress",
+        "criticalIssues",
+        "reportLink",
+        "branchName",
+        "branchPhone",
+        "branchEmail"
+      ],
+      "optionalFields": [
+        "branchAddress"
+      ],
+      "sharedVariables": [
+        "brandName",
+        "legalEntity",
+        "legalAddress",
+        "emailReason",
+        "unsubscribeUrl"
+      ],
+      "contentContract": {
+        "customerName": "string - Customer's full name",
+        "inspectionDate": "string - Formatted inspection date (YYYY-MM-DD)",
+        "inspectorName": "string - Inspector's name",
+        "reportId": "string - Unique report identifier",
+        "customerAddress": "string - Property address",
+        "criticalIssues": "string - Newline-separated list of critical issues",
+        "reportLink": "string - HTTPS URL to view the report",
+        "branchName": "string - Branch/company name",
+        "branchPhone": "string - Branch phone number",
+        "branchEmail": "string - Branch email address",
+        "branchAddress": "string - Optional branch physical address"
+      }
+    },
+    "password-reset": {
+      "name": "Password Reset",
+      "description": "Secure password reset notification",
+      "requiredFields": [
+        "userName",
+        "userEmail",
+        "resetLink",
+        "requestTime",
+        "ipAddress",
+        "expirationTime",
+        "branchName",
+        "branchPhone",
+        "branchEmail"
+      ],
+      "optionalFields": [
+        "branchAddress"
+      ],
+      "sharedVariables": [
+        "brandName",
+        "legalEntity",
+        "legalAddress",
+        "emailReason",
+        "unsubscribeUrl"
+      ],
+      "contentContract": {
+        "userName": "string - User's display name",
+        "userEmail": "string - User's email address",
+        "resetLink": "string - HTTPS URL for password reset (time-limited)",
+        "requestTime": "string - Formatted timestamp of request",
+        "ipAddress": "string - IP address of request origin",
+        "expirationTime": "string - Time until link expires (e.g., '24 hours')",
+        "branchName": "string - Branch/company name",
+        "branchPhone": "string - Branch phone number",
+        "branchEmail": "string - Branch email address",
+        "branchAddress": "string - Optional branch physical address"
+      }
+    },
+    "offer-sent": {
+      "name": "Offer Sent",
+      "description": "Initial offer email sent to customer",
+      "requiredFields": [
+        "customerName",
+        "offerTitle",
+        "offerDescription",
+        "totalAmount",
+        "currency",
+        "validUntil",
+        "publicLink",
+        "branchName",
+        "branchPhone",
+        "branchEmail"
+      ],
+      "optionalFields": [
+        "branchAddress"
+      ],
+      "sharedVariables": [
+        "brandName",
+        "legalEntity",
+        "legalAddress",
+        "emailReason",
+        "unsubscribeUrl"
+      ],
+      "contentContract": {
+        "customerName": "string - Customer's full name",
+        "offerTitle": "string - Title of the offer",
+        "offerDescription": "string - Detailed description of the offer",
+        "totalAmount": "number - Total offer amount",
+        "currency": "string - Currency code (e.g., 'DKK', 'SEK')",
+        "validUntil": "string - Offer expiration date (YYYY-MM-DD)",
+        "publicLink": "string - HTTPS URL for customer to view/respond to offer",
+        "branchName": "string - Branch/company name",
+        "branchPhone": "string - Branch phone number",
+        "branchEmail": "string - Branch email address",
+        "branchAddress": "string - Optional branch physical address"
+      }
+    },
+    "offer-accepted": {
+      "name": "Offer Accepted",
+      "description": "Notification to inspector when customer accepts offer",
+      "requiredFields": [
+        "customerName",
+        "offerTitle",
+        "totalAmount",
+        "currency",
+        "acceptedAt",
+        "offerLink",
+        "branchName",
+        "branchPhone",
+        "branchEmail"
+      ],
+      "optionalFields": [
+        "branchAddress"
+      ],
+      "sharedVariables": [
+        "brandName",
+        "legalEntity",
+        "legalAddress",
+        "emailReason",
+        "unsubscribeUrl"
+      ],
+      "contentContract": {
+        "customerName": "string - Customer's full name",
+        "offerTitle": "string - Title of the offer",
+        "totalAmount": "number - Total offer amount",
+        "currency": "string - Currency code (e.g., 'DKK', 'SEK')",
+        "acceptedAt": "string - Timestamp when offer was accepted",
+        "offerLink": "string - HTTPS URL to view offer details",
+        "branchName": "string - Branch/company name",
+        "branchPhone": "string - Branch phone number",
+        "branchEmail": "string - Branch email address",
+        "branchAddress": "string - Optional branch physical address"
+      }
+    },
+    "offer-rejected": {
+      "name": "Offer Rejected",
+      "description": "Notification to inspector when customer rejects offer",
+      "requiredFields": [
+        "customerName",
+        "offerTitle",
+        "rejectionReason",
+        "rejectedAt",
+        "offerLink",
+        "branchName",
+        "branchPhone",
+        "branchEmail"
+      ],
+      "optionalFields": [
+        "branchAddress"
+      ],
+      "sharedVariables": [
+        "brandName",
+        "legalEntity",
+        "legalAddress",
+        "emailReason",
+        "unsubscribeUrl"
+      ],
+      "contentContract": {
+        "customerName": "string - Customer's full name",
+        "offerTitle": "string - Title of the offer",
+        "rejectionReason": "string - Reason provided by customer for rejection",
+        "rejectedAt": "string - Timestamp when offer was rejected",
+        "offerLink": "string - HTTPS URL to view offer details",
+        "branchName": "string - Branch/company name",
+        "branchPhone": "string - Branch phone number",
+        "branchEmail": "string - Branch email address",
+        "branchAddress": "string - Optional branch physical address"
+      }
+    },
+    "offer-reminder": {
+      "name": "Offer Reminder",
+      "description": "Reminder email to customer about pending offer",
+      "requiredFields": [
+        "customerName",
+        "offerTitle",
+        "totalAmount",
+        "currency",
+        "validUntil",
+        "daysSinceSent",
+        "publicLink",
+        "branchName",
+        "branchPhone",
+        "branchEmail"
+      ],
+      "optionalFields": [
+        "branchAddress"
+      ],
+      "sharedVariables": [
+        "brandName",
+        "legalEntity",
+        "legalAddress",
+        "emailReason",
+        "unsubscribeUrl"
+      ],
+      "contentContract": {
+        "customerName": "string - Customer's full name",
+        "offerTitle": "string - Title of the offer",
+        "totalAmount": "number - Total offer amount",
+        "currency": "string - Currency code (e.g., 'DKK', 'SEK')",
+        "validUntil": "string - Offer expiration date (YYYY-MM-DD)",
+        "daysSinceSent": "number - Number of days since offer was sent",
+        "publicLink": "string - HTTPS URL for customer to view/respond to offer",
+        "branchName": "string - Branch/company name",
+        "branchPhone": "string - Branch phone number",
+        "branchEmail": "string - Branch email address",
+        "branchAddress": "string - Optional branch physical address"
+      }
+    },
+    "offer-escalation": {
+      "name": "Offer Escalation",
+      "description": "Escalation notification to branch admin for pending offers",
+      "requiredFields": [
+        "adminName",
+        "customerName",
+        "offerTitle",
+        "daysSinceSent",
+        "offerLink",
+        "branchName",
+        "branchPhone",
+        "branchEmail"
+      ],
+      "optionalFields": [
+        "branchAddress"
+      ],
+      "sharedVariables": [
+        "brandName",
+        "legalEntity",
+        "legalAddress",
+        "emailReason",
+        "unsubscribeUrl"
+      ],
+      "contentContract": {
+        "adminName": "string - Branch admin's name",
+        "customerName": "string - Customer's full name",
+        "offerTitle": "string - Title of the offer",
+        "daysSinceSent": "number - Number of days since offer was sent",
+        "offerLink": "string - HTTPS URL to view offer details",
+        "branchName": "string - Branch/company name",
+        "branchPhone": "string - Branch phone number",
+        "branchEmail": "string - Branch email address",
+        "branchAddress": "string - Optional branch physical address"
+      }
+    }
+  },
+  "sharedVariables": {
+    "brandName": "{{BRAND_NAME}}",
+    "legalEntity": "{{LEGAL_ENTITY}}",
+    "legalAddress": "{{LEGAL_ADDRESS}}",
+    "emailReason": "{{EMAIL_REASON}}",
+    "unsubscribeUrl": "{{UNSUBSCRIBE_URL}}"
+  },
+  "defaults": {
+    "fromEmail": "{{FROM_EMAIL}}",
+    "replyToEmail": "{{REPLY_TO_EMAIL}}",
+    "companyName": "{{COMPANY_NAME}}",
+    "website": "{{WEBSITE_URL}}",
+    "supportEmail": "{{SUPPORT_EMAIL}}",
+    "supportPhone": "{{SUPPORT_PHONE}}"
+  }
+}

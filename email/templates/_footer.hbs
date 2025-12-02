@@ -1,0 +1,27 @@
+            <div class="contact-info">
+                <h3>Best regards,</h3>
+                <p><strong>{{branchName}} Team</strong></p>
+                <p><strong>Taklaget Professional Roofing Services</strong></p>
+                
+                <div style="margin-top: 20px; font-size: 14px;">
+                    <p><strong>Contact Information:</strong></p>
+                    <p>📞 Phone: {{branchPhone}}</p>
+                    <p>📧 Email: {{branchEmail}}</p>
+                    {{#if branchAddress}}<p>📍 Address: {{branchAddress}}</p>{{/if}}
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p><strong>{{brandName}}</strong> - Professional Roofing Services</p>
+            <p>This email was sent from {{brandName}}. If you have any questions, please contact us directly.</p>
+            <p><strong>Legal Entity:</strong> {{legalEntity}}</p>
+            <p><strong>Address:</strong> {{legalAddress}}</p>
+            <p><strong>Reason:</strong> {{emailReason}}</p>
+            {{#if unsubscribeUrl}}
+            <p><a href="{{unsubscribeUrl}}" style="color: #666;">Unsubscribe from these emails</a></p>
+            {{/if}}
+        </div>
+    </div>
+</body>
+</html>

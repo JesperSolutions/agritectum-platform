@@ -1,0 +1,40 @@
+{{> _header subject="Offer Escalation Required" headerSubtitle="Action needed for pending offer"}}
+
+<p>Dear {{adminName}},</p>
+
+<p>This is an automated escalation notification. An offer has been pending for {{daysSinceSent}} days and requires your attention.</p>
+
+<div class="warning-box">
+    <h3 style="color: #856404; margin-top: 0; margin-bottom: 15px;">⚠️ Escalation Required</h3>
+    <ul style="color: #856404; margin: 0; padding-left: 20px;">
+        <li><strong>Customer:</strong> {{customerName}}</li>
+        <li><strong>Offer Title:</strong> {{offerTitle}}</li>
+        <li><strong>Days Pending:</strong> {{daysSinceSent}} days</li>
+        <li><strong>Status:</strong> Awaiting customer response</li>
+    </ul>
+</div>
+
+<p>Please review this offer and take appropriate action:</p>
+<ul>
+    <li>Contact the customer to follow up</li>
+    <li>Extend the offer validity if needed</li>
+    <li>Close the offer if no longer relevant</li>
+</ul>
+
+<div style="text-align: center; margin: 30px 0;">
+    <a href="{{offerLink}}" class="button" style="background: #ffc107; color: #000;">Review Offer</a>
+</div>
+
+<p>Thank you for your attention to this matter.</p>
+
+{{> _footer 
+    brandName="Taklaget Professional Roofing"
+    branchName=branchName
+    branchPhone=branchPhone
+    branchEmail=branchEmail
+    branchAddress=branchAddress
+    legalEntity="Taklaget AB"
+    legalAddress="Professional Roofing Services, Sweden"
+    emailReason="You're receiving this because an offer requires escalation."
+}}
+

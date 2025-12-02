@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create PWA Icons</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        canvas { border: 1px solid #ccc; margin: 10px; }
+        .icon-container { display: inline-block; margin: 20px; text-align: center; }
+        a { display: block; margin-top: 10px; padding: 10px; background: #2563eb; color: white; text-decoration: none; border-radius: 5px; }
+        a:hover { background: #1d4ed8; }
+    </style>
+</head>
+<body>
+    <h1>TagLacket PWA Icons</h1>
+    <p>Right-click and save the images below as PNG files in the public folder:</p>
+    
+    <div class="icon-container">
+        <h3>192x192 Icon</h3>
+        <canvas id="canvas192" width="192" height="192"></canvas>
+        <a id="download192" download="icon-192x192.png">Download 192x192 PNG</a>
+    </div>
+    
+    <div class="icon-container">
+        <h3>512x512 Icon</h3>
+        <canvas id="canvas512" width="512" height="512"></canvas>
+        <a id="download512" download="icon-512x512.png">Download 512x512 PNG</a>
+    </div>
+
+    <script>
+        function drawIcon(canvas, size) {
+            const ctx = canvas.getContext('2d');
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, size, size);
+            
+            // Background with rounded corners
+            ctx.fillStyle = '#2563eb';
+            ctx.beginPath();
+            ctx.roundRect(0, 0, size, size, size * 0.125);
+            ctx.fill();
+            
+            // Roof shape
+            ctx.fillStyle = 'white';
+            ctx.beginPath();
+            ctx.moveTo(size * 0.25, size * 0.375);
+            ctx.lineTo(size * 0.5, size * 0.25);
+            ctx.lineTo(size * 0.75, size * 0.375);
+            ctx.lineTo(size * 0.75, size * 0.625);
+            ctx.lineTo(size * 0.25, size * 0.625);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Roof lines
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = Math.max(2, size * 0.015);
+            ctx.beginPath();
+            ctx.moveTo(size * 0.25, size * 0.375);
+            ctx.lineTo(size * 0.5, size * 0.5);
+            ctx.lineTo(size * 0.75, size * 0.375);
+            ctx.stroke();
+            
+            // Center line
+            ctx.beginPath();
+            ctx.moveTo(size * 0.5, size * 0.5);
+            ctx.lineTo(size * 0.5, size * 0.75);
+            ctx.stroke();
+            
+            // Center dot
+            ctx.fillStyle = '#2563eb';
+            ctx.beginPath();
+            ctx.arc(size * 0.5, size * 0.5, Math.max(3, size * 0.031), 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Letter T
+            ctx.fillStyle = 'white';
+            ctx.font = `bold ${size * 0.094}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.fillText('T', size * 0.5, size * 0.82);
+        }
+        
+        function setupDownload(canvas, linkId) {
+            const link = document.getElementById(linkId);
+            link.href = canvas.toDataURL('image/png');
+        }
+        
+        // Generate icons
+        const canvas192 = document.getElementById('canvas192');
+        const canvas512 = document.getElementById('canvas512');
+        
+        drawIcon(canvas192, 192);
+        drawIcon(canvas512, 512);
+        
+        setupDownload(canvas192, 'download192');
+        setupDownload(canvas512, 'download512');
+    </script>
+</body>
+</html>

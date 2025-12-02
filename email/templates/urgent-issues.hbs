@@ -1,0 +1,56 @@
+{{> _header subject="URGENT: Critical Issues Found in Your Roof Inspection" headerSubtitle="Immediate action required"}}
+
+<p>Dear {{customerName}},</p>
+
+<div class="danger-box">
+    <h3 style="color: #721c24; margin-top: 0; margin-bottom: 15px;">🚨 URGENT ACTION REQUIRED</h3>
+    <p style="color: #721c24; margin: 0; font-weight: bold;">
+        The inspection revealed critical issues that could lead to significant damage if not addressed promptly. 
+        We strongly recommend immediate action.
+    </p>
+</div>
+
+<div class="warning-box">
+    <h3 style="color: #856404; margin-top: 0; margin-bottom: 15px;">⚠️ Critical Issues</h3>
+    <div style="color: #856404; white-space: pre-line;">{{criticalIssues}}</div>
+</div>
+
+<div class="info-box">
+    <h3 style="color: #333; margin-top: 0; margin-bottom: 15px;">📋 Inspection Details</h3>
+    <ul style="color: #666; margin: 0; padding-left: 20px;">
+        <li><strong>Inspection Date:</strong> {{inspectionDate}}</li>
+        <li><strong>Inspector:</strong> {{inspectorName}}</li>
+        <li><strong>Report ID:</strong> {{reportId}}</li>
+        <li><strong>Property Address:</strong> {{customerAddress}}</li>
+    </ul>
+</div>
+
+<div style="text-align: center; margin: 30px 0;">
+    <a href="{{reportLink}}" class="button" style="background: #dc3545;">Review Report Immediately</a>
+</div>
+
+<div class="info-box">
+    <h3 style="color: #333; margin-top: 0; margin-bottom: 15px;">⚡ Immediate Next Steps</h3>
+    <ol style="color: #666; margin: 0; padding-left: 20px;">
+        <li>Review the detailed report immediately</li>
+        <li>Contact us immediately to schedule urgent repairs</li>
+        <li>Consider temporary protective measures if advised</li>
+    </ol>
+</div>
+
+<div class="danger-box" style="text-align: center;">
+    <h3 style="color: #721c24; margin-top: 0; margin-bottom: 10px;">🚨 24/7 Emergency Contact</h3>
+    <p style="color: #721c24; font-size: 18px; font-weight: bold; margin: 0;">{{branchPhone}}</p>
+    <p style="color: #721c24; margin: 10px 0 0 0;">Available for emergency situations</p>
+</div>
+
+{{> _footer 
+    brandName="Taklaget Professional Roofing"
+    branchName=branchName
+    branchPhone=branchPhone
+    branchEmail=branchEmail
+    branchAddress=branchAddress
+    legalEntity="Taklaget AB"
+    legalAddress="Professional Roofing Services, Sweden"
+    emailReason="You're receiving this urgent notice because critical issues were found in your roof inspection."
+}}
