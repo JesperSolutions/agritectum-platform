@@ -202,7 +202,7 @@ export const EmailTestPanel: React.FC<EmailTestPanelProps> = ({ userRole, permis
             <li>Confirms SMTP configuration is working</li>
           </ul>
           <p className='mt-2 text-xs text-gray-500'>
-            <strong>Note:</strong> The test email will be sent from {import.meta.env.VITE_FROM_EMAIL || 'noreply@example.com'} using the
+            <strong>Note:</strong> The test email will be sent from noreply@taklaget.app using the
             Trigger Email extension.
           </p>
         </div>

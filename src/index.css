@@ -2,90 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Mobile optimizations for touch targets */
-@layer utilities {
-  /* Ensure minimum tap target size for mobile (44x44px recommended by Apple/Google) */
-  .touch-target {
-    min-height: 44px;
-    min-width: 44px;
-  }
-  
-  /* Safe area insets for mobile devices with notches */
-  .safe-area-inset-bottom {
-    padding-bottom: env(safe-area-inset-bottom);
-  }
-  
-  .safe-area-inset-top {
-    padding-top: env(safe-area-inset-top);
-  }
-}
-
-/* Print Styles */
-@media print {
-  /* Hide navigation and non-essential elements */
-  nav,
-  header:not(.print-header),
-  button:not(.print-button),
-  .no-print,
-  .sidebar,
-  .mobile-action-bar {
-    display: none !important;
-  }
-
-  /* Optimize page layout */
-  body {
-    background: white;
-    color: black;
-  }
-
-  /* Ensure content fits on page */
-  .print-container {
-    max-width: 100%;
-    margin: 0;
-    padding: 20px;
-  }
-
-  /* Page breaks */
-  .page-break {
-    page-break-after: always;
-  }
-
-  .no-page-break {
-    page-break-inside: avoid;
-  }
-
-  /* Optimize colors for printing */
-  .bg-gray-50,
-  .bg-slate-50,
-  .bg-blue-50 {
-    background: white !important;
-  }
-
-  /* Ensure text is readable */
-  * {
-    color: black !important;
-    background: white !important;
-  }
-
-  /* Links */
-  a {
-    color: black !important;
-    text-decoration: underline;
-  }
-
-  /* Tables */
-  table {
-    border-collapse: collapse;
-    width: 100%;
-  }
-
-  table th,
-  table td {
-    border: 1px solid #000;
-    padding: 8px;
-  }
-}
-
 /* Screen reader only class for accessibility */
 @layer utilities {
   .sr-only {
@@ -118,7 +34,7 @@
 
 @layer base {
   :root {
-    /* Agritectum Brand Colors */
+    /* Taklaget Brand Colors */
     --background: 0 0% 100%;
     --foreground: 220 13% 18%;
     --card: 0 0% 100%;
@@ -187,7 +103,7 @@
 }
 
 @layer utilities {
-  /* Agritectum Professional Typography */
+  /* Taklaget Professional Typography */
   .font-brand {
     font-family: var(--font-sans);
     font-weight: 600;

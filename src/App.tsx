@@ -13,12 +13,9 @@ import OfflineIndicator from './components/common/OfflineIndicator';
 import InstallPrompt from './components/common/InstallPrompt';
 import { ToastContainer } from './components/common/ToastContainer';
 import { useFavicon } from './hooks/useFavicon';
-import { useDocumentTitle } from './hooks/useDocumentTitle';
-import { BRAND_CONFIG } from './config/brand';
 
 function App() {
   useFavicon();
-  useDocumentTitle('', { suffix: BRAND_CONFIG.BRAND_NAME });
   useEffect(() => {
     // PWA Installation prompt
     const handleBeforeInstallPrompt = (e: Event) => {

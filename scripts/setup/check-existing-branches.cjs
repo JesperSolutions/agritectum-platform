@@ -11,12 +11,12 @@ const { getFirestore, collection, getDocs } = require('firebase/firestore');
 
 // Firebase config (using public config - safe for client-side)
 const firebaseConfig = {
-  apiKey: "AIzaSyB7t5LITs2cydGizXE5cJAlIY7Q3p9wR1k",
-  authDomain: "agritectum-platform.firebaseapp.com",
-  projectId: "agritectum-platform",
-  storageBucket: "agritectum-platform.firebasestorage.app",
-  messagingSenderId: "831129873464",
-  appId: "1:831129873464:web:eda440c687b5e883c84acd"
+  apiKey: "AIzaSyCQrK7K8QrK7K8QrK7K8QrK7K8QrK7K8Q",
+  authDomain: "taklaget-service-app.firebaseapp.com",
+  projectId: "taklaget-service-app",
+  storageBucket: "taklaget-service-app.appspot.com",
+  messagingSenderId: "123456789012",
+  appId: "1:123456789012:web:abcdefghijklmnop"
 };
 
 async function checkExistingBranches() {

@@ -60,6 +60,13 @@
   "analytics.loadingSteps.branchAnalysis": "Filialanalys",
   "analytics.loadingSteps.finalizingData": "Slutför data",
   "analytics.loadingSteps.processing": "Bearbetar {step}...",
-  "analytics.loadingSteps.pleaseWait": "Vänligen vänta medan vi förbereder din analys"
+  "analytics.loadingSteps.pleaseWait": "Vänligen vänta medan vi förbereder din analys",
+  "analytics.serviceAgreements": "Serviceavtal",
+  "analytics.totalServiceAgreements": "Totalt antal serviceavtal",
+  "analytics.activeServiceAgreements": "Aktiva serviceavtal",
+  "analytics.serviceAgreementRevenue": "Serviceavtalsintäkter",
+  "analytics.serviceAgreementsByType": "Serviceavtal efter typ",
+  "analytics.serviceAgreementsByStatus": "Serviceavtal efter status",
+  "analytics.agreements": "avtal"
 }
 

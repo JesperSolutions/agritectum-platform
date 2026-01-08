@@ -6,7 +6,7 @@
  */
 
 const admin = require('firebase-admin');
-const serviceAccount = require('../agritectum-platform-firebase-adminsdk-fbsvc-0fd3c304a5.json');
+const serviceAccount = require('../taklaget-service-app-firebase-adminsdk-fbsvc-0fd3c304a5.json');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),

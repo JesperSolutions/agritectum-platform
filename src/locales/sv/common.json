@@ -1,5 +1,5 @@
 {
-  "app.title": "TagLaget - Takinspektioner",
+  "app.title": "Agritectum Platform - Takinspektioner",
   "app.subtitle": "Professionella takinspektioner och offerter",
 
   "common.buttons.save": "Spara",
@@ -20,6 +20,9 @@
   "common.buttons.filter": "Filtrera",
   "common.buttons.sort": "Sortera",
   "common.filters": "Filter",
+  "common.filters.all": "Alla",
+  "common.filters.upcoming": "Kommande",
+  "common.filters.past": "Tidigare",
   "common.buttons.export": "Exportera",
   "common.buttons.import": "Importera",
   "common.buttons.download": "Ladda ner",
@@ -142,10 +145,11 @@
   "common.somethingWentWrong": "Något gick fel",
   "common.somethingUnexpectedHappened": "Ett oväntat fel uppstod. Försök att uppdatera sidan.",
   "common.goToDashboard": "Gå till översikt",
-  "common.goToHomepage": "Gå till startsidan",
-  "common.tryAgain": "Försök igen",
-  "common.contactSupport": "Kontakta support",
-  "common.buildingPerformance": "Byggprestanda",
+  "common.offline": "Offline",
+  "common.signedInAs": "Inloggad som",
+  "common.roles.customer": "Kund",
+  "common.roles.inspector": "Inspektör",
+  "common.roles.superadmin": "Superadministratör",
 
   "common.install.title": "Installera Agritectum-app",
   "common.install.description": "Installera för offline-åtkomst och snabbare prestanda",

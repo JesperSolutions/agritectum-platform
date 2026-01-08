@@ -73,7 +73,7 @@ const sendSecurityAlert = async (event: SecurityEvent): Promise<void> => {
     const alert: Omit<SecurityAlert, 'id'> = {
       eventId: event.id || '',
       alertType: 'email',
-      recipients: [import.meta.env.VITE_SECURITY_EMAIL || import.meta.env.VITE_SUPPORT_EMAIL || 'security@example.com'], // Security team email
+      recipients: ['security@agritectum.com'], // Security team email
       sent: false,
     };
 

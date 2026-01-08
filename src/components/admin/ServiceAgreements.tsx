@@ -412,7 +412,7 @@ const ServiceAgreements: React.FC = () => {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder={t('serviceAgreement.searchPlaceholder')}
-                  className='pl-10 pr-10 w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
+                  className='pl-10 pr-10 w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm'
                 />
                 {searchTerm && (
                   <button
@@ -436,7 +436,7 @@ const ServiceAgreements: React.FC = () => {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value as any)}
-                className='px-4 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500'
+                className='px-4 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm'
               >
                 <option value='all'>{t('serviceAgreement.statusFilters.all')}</option>
                 <option value='active'>{t('serviceAgreement.status.active')}</option>
@@ -448,7 +448,7 @@ const ServiceAgreements: React.FC = () => {
               <select
                 value={typeFilter}
                 onChange={(e) => setTypeFilter(e.target.value as any)}
-                className='px-4 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500'
+                className='px-4 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm'
               >
                 <option value='all'>{t('serviceAgreement.statusFilters.all')}</option>
                 <option value='maintenance'>{t('serviceAgreement.type.maintenance')}</option>
@@ -457,17 +457,17 @@ const ServiceAgreements: React.FC = () => {
                 <option value='other'>{t('serviceAgreement.type.other')}</option>
               </select>
 
-              <div className='flex border border-gray-300 rounded-md overflow-hidden'>
+              <div className='flex border border-slate-300 rounded-lg overflow-hidden'>
                 <button
                   onClick={() => setViewMode('list')}
-                  className={`px-4 py-2 text-sm ${viewMode === 'list' ? 'bg-slate-700 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+                  className={`px-4 py-2 text-sm ${viewMode === 'list' ? 'bg-slate-700 text-white' : 'bg-white text-slate-700 hover:bg-slate-50'}`}
                   title={t('serviceAgreement.viewList') || 'Listvy'}
                 >
                   <List className='h-5 w-5' />
                 </button>
                 <button
                   onClick={() => setViewMode('map')}
-                  className={`px-4 py-2 text-sm ${viewMode === 'map' ? 'bg-slate-700 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
+                  className={`px-4 py-2 text-sm ${viewMode === 'map' ? 'bg-slate-700 text-white' : 'bg-white text-slate-700 hover:bg-slate-50'}`}
                   title={t('serviceAgreement.viewMap') || 'Kartvy'}
                 >
                   <Map className='h-5 w-5' />
@@ -497,7 +497,7 @@ const ServiceAgreements: React.FC = () => {
           ) : (
             <div className='overflow-x-auto'>
               <table className='min-w-full divide-y divide-gray-200'>
-                <thead className='bg-gray-50'>
+                <thead className='bg-slate-50'>
                   <tr>
                     <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
                       {t('serviceAgreement.table.customer')}
@@ -514,7 +514,7 @@ const ServiceAgreements: React.FC = () => {
                     <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
                       {t('serviceAgreement.table.status')}
                     </th>
-                    <th className='px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider sticky right-0 bg-gray-50 z-10'>
+                    <th className='px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider sticky right-0 bg-slate-50 z-10'>
                       {t('serviceAgreement.table.actions')}
                     </th>
                   </tr>
@@ -523,7 +523,7 @@ const ServiceAgreements: React.FC = () => {
                   {filteredAgreements.map((agreement) => {
                     const dueBadge = getDueDateBadge(agreement.nextServiceDate);
                     return (
-                      <tr key={agreement.id} className='hover:bg-gray-50'>
+                      <tr key={agreement.id} className='hover:bg-slate-50'>
                         <td className='px-6 py-4 whitespace-nowrap'>
                           <div className='text-sm font-medium text-gray-900'>{agreement.customerName}</div>
                           <div className='text-sm text-gray-500'>{agreement.customerAddress}</div>

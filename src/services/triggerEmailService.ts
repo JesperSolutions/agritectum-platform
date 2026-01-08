@@ -13,7 +13,6 @@ import {
 } from 'firebase/firestore';
 import { Report, Branch, Issue, RecommendedAction } from '../types';
 import { createEmailNotification } from './notificationService';
-import { brandConfig } from '../config/brand';
 
 // Initialize Firestore collections
 const MAIL_COLLECTION = 'mail';
@@ -86,8 +85,8 @@ export const defaultTemplates: Omit<EmailTemplate, 'id' | 'createdAt' | 'updated
           <div style="background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); padding: 40px 30px; text-align: center; border-radius: 8px 8px 0 0;">
             <div style="background: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 12px; display: inline-block; margin-bottom: 20px;">
               <div style="font-size: 32px; color: white; font-weight: bold; margin-bottom: 8px;">🏠</div>
-              <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.5px;">{{brandName}}</h1>
-              <p style="color: rgba(255, 255, 255, 0.9); margin: 8px 0 0 0; font-size: 16px; font-weight: 300;">Building Performance Platform</p>
+              <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.5px;">Agritectum</h1>
+              <p style="color: rgba(255, 255, 255, 0.9); margin: 8px 0 0 0; font-size: 16px; font-weight: 300;">Professional Roofing Services</p>
             </div>
             <h2 style="color: white; margin: 0; font-size: 24px; font-weight: 500;">Your Inspection Report is Ready</h2>
           </div>
@@ -174,17 +173,17 @@ export const defaultTemplates: Omit<EmailTemplate, 'id' | 'createdAt' | 'updated
             <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid #e5e7eb;">
               <p style="color: #1f2937; font-weight: 600; margin-bottom: 8px;">Best regards,</p>
               <p style="color: #1f2937; margin-bottom: 4px; font-weight: 500;">{{branchName}} Team</p>
-              <p style="color: #6b7280; font-size: 14px;">{{brandName}}</p>
+              <p style="color: #6b7280; font-size: 14px;">Agritectum Professional Roofing Services</p>
             </div>
           </div>
           
           <!-- Footer -->
           <div style="background: #f8fafc; padding: 24px 30px; border-radius: 0 0 8px 8px; text-align: center; border-top: 1px solid #e5e7eb;">
             <p style="color: #6b7280; font-size: 13px; margin: 0 0 8px 0;">
-              This email was sent from {{brandName}}
+              This email was sent from Agritectum Professional Roofing Services
             </p>
             <p style="color: #9ca3af; font-size: 12px; margin: 0;">
-              © 2025 {{legalEntity}}. All rights reserved. | Building Performance Platform
+              © 2025 Agritectum AB. All rights reserved. | Professional Roofing Services
             </p>
           </div>
         </div>
@@ -213,7 +212,7 @@ If you have any questions or would like to discuss the findings, please don't he
 
 Best regards,
 {{branchName}} Team
-{{brandName}}
+Agritectum Professional Roofing Services
 
 Contact Information:
 Phone: {{branchPhone}}
@@ -328,14 +327,14 @@ Address: {{branchAddress}}`,
             <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid #e5e7eb;">
               <p style="color: #1f2937; font-weight: 600; margin-bottom: 8px;">Best regards,</p>
               <p style="color: #1f2937; margin-bottom: 4px; font-weight: 500;">{{branchName}} Team</p>
-              <p style="color: #6b7280; font-size: 14px;">{{brandName}}</p>
+              <p style="color: #6b7280; font-size: 14px;">Agritectum Professional Roofing Services</p>
             </div>
           </div>
           
           <!-- Footer -->
           <div style="background: #fef2f2; padding: 24px 30px; border-radius: 0 0 8px 8px; text-align: center; border-top: 1px solid #fca5a5;">
             <p style="color: #991b1b; font-size: 14px; margin: 0 0 8px 0; font-weight: 600;">
-              ⚠️ URGENT NOTICE - This is an urgent notification from {{brandName}}
+              ⚠️ URGENT NOTICE - This is an urgent notification from Agritectum Professional Roofing Services
             </p>
             <p style="color: #dc2626; font-size: 13px; margin: 0; font-weight: 600;">
               Please respond immediately to prevent further damage
@@ -381,7 +380,7 @@ We are available 24/7 for emergency situations. Please call us immediately at {{
 
 Best regards,
 {{branchName}} Team
-{{brandName}}
+Agritectum Professional Roofing Services
 
 Emergency Contact: {{branchPhone}}
 Email: {{branchEmail}}`,
@@ -393,7 +392,7 @@ Email: {{branchEmail}}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
         <div style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;">
-          <h1 style="color: white; margin: 0; font-size: 24px;">{{brandName}}</h1>
+          <h1 style="color: white; margin: 0; font-size: 24px;">Agritectum Professional Roofing</h1>
           <p style="color: white; margin: 10px 0 0 0; opacity: 0.9;">Follow-up on your inspection</p>
         </div>
         
@@ -438,7 +437,7 @@ Email: {{branchEmail}}`,
           <div style="border-top: 1px solid #e0e0e0; padding-top: 20px; margin-top: 30px;">
             <p style="color: #333; font-weight: bold; margin-bottom: 10px;">Best regards,</p>
             <p style="color: #333; margin-bottom: 5px;">{{branchName}} Team</p>
-            <p style="color: #333; margin-bottom: 5px;">{{brandName}}</p>
+            <p style="color: #333; margin-bottom: 5px;">Agritectum Professional Roofing Services</p>
             
             <div style="margin-top: 20px; font-size: 14px; color: #666;">
               <p><strong>Contact Information:</strong></p>
@@ -450,7 +449,7 @@ Email: {{branchEmail}}`,
         
         <div style="background: #f8f9fa; padding: 20px; border-radius: 0 0 10px 10px; text-align: center; border: 1px solid #e0e0e0; border-top: none;">
           <p style="color: #666; font-size: 12px; margin: 0;">
-            This email was sent from {{brandName}}. 
+            This email was sent from Agritectum Professional Roofing Services. 
             We're committed to helping you maintain your roof in excellent condition.
           </p>
         </div>
@@ -479,7 +478,7 @@ Please don't hesitate to contact us if you have any questions or would like to s
 
 Best regards,
 {{branchName}} Team
-{{brandName}}
+Agritectum Professional Roofing Services
 
 Contact Information:
 Phone: {{branchPhone}}
@@ -591,9 +590,9 @@ export const generateEmailTemplateData = (
     inspectionDate: new Date(report.inspectionDate).toLocaleDateString('sv-SE'),
     inspectorName: report.createdByName || 'Our Inspector',
     reportId: report.id,
-    branchName: branchInfo?.name || brandConfig.companyName,
-    branchPhone: branchInfo?.phone || brandConfig.supportPhone,
-    branchEmail: branchInfo?.email || brandConfig.supportEmail,
+    branchName: branchInfo?.name || 'Agritectum',
+    branchPhone: branchInfo?.phone || '+46 470 123 456',
+    branchEmail: branchInfo?.email || 'support@agritectum.com',
     branchAddress: branchInfo?.address || 'Professional Roofing Services',
     reportLink: reportLink,
     summary: generateSummary(report),
@@ -653,8 +652,8 @@ export const sendEmail = async (
     // Create email document for Trigger Email extension
     const mailDoc: any = {
       to: emailRequest.to,
-      from: emailRequest.from || brandConfig.fromEmail,
-      replyTo: emailRequest.replyTo || brandConfig.replyToEmail,
+      from: emailRequest.from || 'noreply@agritectum.com',
+      replyTo: emailRequest.replyTo || 'support@agritectum.com',
       template: {
         name: emailRequest.template.name,
         data: emailRequest.template.data,
@@ -716,8 +715,8 @@ export const sendReportEmail = async (
     // Create email request
     const emailRequest: EmailRequest = {
       to: customerEmail,
-      from: brandConfig.fromEmail,
-      replyTo: brandConfig.replyToEmail,
+      from: 'noreply@taklaget.app',
+      replyTo: 'support@taklaget.app',
       template: {
         name: templateId,
         data: templateData,
@@ -833,17 +832,17 @@ export const sendTestEmail = async (
     // Create sample branch info
     const sampleBranch: Branch = {
       id: 'test-branch',
-      name: 'Agritectum Test Branch',
+      name: 'Taklaget Test Branch',
       address: 'Test Street 1, Stockholm',
       phone: '+46 8 123 4567',
-      email: brandConfig.supportEmail,
+      email: 'support@taklaget.app',
       createdAt: new Date().toISOString(),
       country: 'Sweden',
       isActive: true,
     };
 
     // Generate report link (public view for customers)
-    const reportLink = `https://agritectum-platform.web.app/report/public/${sampleReport.id}`;
+    const reportLink = `https://taklaget-service-app.web.app/report/public/${sampleReport.id}`;
 
     // Send the test email
     const result = await sendReportEmail(

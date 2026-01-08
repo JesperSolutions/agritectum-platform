@@ -60,6 +60,13 @@
   "analytics.loadingSteps.branchAnalysis": "Filialanalyse",
   "analytics.loadingSteps.finalizingData": "Finalisiert Daten",
   "analytics.loadingSteps.processing": "Verarbeitet {step}...",
-  "analytics.loadingSteps.pleaseWait": "Bitte warten Sie, während wir Ihre Analyse vorbereiten"
+  "analytics.loadingSteps.pleaseWait": "Bitte warten Sie, während wir Ihre Analyse vorbereiten",
+  "analytics.serviceAgreements": "Serviceverträge",
+  "analytics.totalServiceAgreements": "Gesamtanzahl Serviceverträge",
+  "analytics.activeServiceAgreements": "Aktive Serviceverträge",
+  "analytics.serviceAgreementRevenue": "Servicevertragseinnahmen",
+  "analytics.serviceAgreementsByType": "Serviceverträge nach Typ",
+  "analytics.serviceAgreementsByStatus": "Serviceverträge nach Status",
+  "analytics.agreements": "Verträge"
 }
 

@@ -4,12 +4,9 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import { Report } from '../../types';
 import { useIntl } from '../../hooks/useIntl';
-import { BRAND_CONFIG } from '../../config/brand';
 import LoadingSpinner from '../common/LoadingSpinner';
 import EnhancedErrorDisplay from '../EnhancedErrorDisplay';
-import AgritectumLogo from '../AgritectumLogo';
 import CostSummaryCard from '../ReportView/CostSummaryCard';
-import { formatCurrencyAmount, getCurrencyPreference, Currency } from '../../utils/currencyUtils';
 import {
   User,
   MapPin,
@@ -31,12 +28,11 @@ import {
 
 const PublicReportView: React.FC = () => {
   const { reportId } = useParams<{ reportId: string }>();
-  const { t, locale } = useIntl();
+  const { t } = useIntl();
   const [report, setReport] = useState<Report | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [branchInfo, setBranchInfo] = useState<{ name: string; logoUrl?: string } | null>(null);
-  const [selectedCurrency] = useState<Currency>(getCurrencyPreference());
 
   const handleExportPDF = () => {
     window.print();
@@ -129,9 +125,13 @@ const PublicReportView: React.FC = () => {
     }
   };
 
-  const formatCurrency = (amount: number, currency?: string) => {
-    const currencyCode = (currency as Currency) || selectedCurrency;
-    return formatCurrencyAmount(amount, currencyCode, locale);
+  const formatCurrency = (amount: number) => {
+    // Format number with US/English style (comma as thousand separator, period as decimal)
+    const formatted = amount.toLocaleString('en-US', { 
+      minimumFractionDigits: 2, 
+      maximumFractionDigits: 2 
+    });
+    return `${formatted} SEK`;
   };
 
   const getSeverityColor = (severity: string) => {
@@ -185,12 +185,16 @@ const PublicReportView: React.FC = () => {
               <div className='flex items-center gap-3'>
                 <div className='flex-shrink-0'>
                   <div className='bg-white rounded-xl p-2 border border-slate-200 shadow-sm'>
-                    <AgritectumLogo size="lg" showText={false} />
+                    <img
+                      src='/agritectum-logomark.png'
+                      alt='Agritectum Platform logo'
+                      className='h-12 w-auto object-contain'
+                    />
                   </div>
                 </div>
                 <div>
-                  <div className='text-xl font-bold text-slate-900'>{BRAND_CONFIG.BRAND_NAME.toUpperCase()}</div>
-                  <div className='text-sm text-slate-500'>Building Performance Platform</div>
+                  <div className='text-xl font-bold text-slate-900'>AGRITECTUM</div>
+                  <div className='text-sm text-slate-500'>{branchInfo?.name || 'Platform'}</div>
                 </div>
               </div>
               <div className='flex items-center gap-3'>
@@ -539,7 +543,7 @@ const PublicReportView: React.FC = () => {
                   <div className='w-10 h-10 bg-white rounded-lg flex items-center justify-center border border-slate-200'>
                     <Mail className='w-4 h-4 text-slate-600' />
                   </div>
-                  <span className='text-sm font-medium text-slate-900'>{import.meta.env.VITE_SUPPORT_EMAIL || 'support@example.com'}</span>
+                  <span className='text-sm font-medium text-slate-900'>support@agritectum.com</span>
                 </div>
               </div>
             </div>
@@ -547,7 +551,7 @@ const PublicReportView: React.FC = () => {
 
           {/* Footer */}
           <div className='mt-8 text-center text-sm text-slate-500'>
-            <p>© 2025 {BRAND_CONFIG.LEGAL_ENTITY}. {t('reports.public.allRightsReserved')}</p>
+            <p>© 2025 Agritectum Platform. {t('reports.public.allRightsReserved')}</p>
             <p className='mt-1'>{t('reports.public.professionalServices')}</p>
           </div>
         </div>

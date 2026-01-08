@@ -108,26 +108,40 @@ const DateInput: React.FC<DateInputProps> = ({
   };
 
   const handleCalendarClick = () => {
-    setShowDatePicker(true);
-    // Focus the hidden date picker
-    setTimeout(() => {
-      if (datePickerRef.current) {
-        // Try to use showPicker() if available (modern browsers)
-        if (typeof datePickerRef.current.showPicker === 'function') {
-          try {
-            datePickerRef.current.showPicker();
-          } catch (err) {
-            // Fallback: focus and click if showPicker fails
-            datePickerRef.current.focus();
-            datePickerRef.current.click();
-          }
-        } else {
-          // Fallback for browsers that don't support showPicker()
+    if (datePickerRef.current) {
+      // Try to use showPicker() if available (modern browsers)
+      if (typeof datePickerRef.current.showPicker === 'function') {
+        try {
+          datePickerRef.current.showPicker();
+        } catch (err) {
+          // Fallback: focus and click if showPicker fails
           datePickerRef.current.focus();
           datePickerRef.current.click();
         }
+      } else {
+        // Fallback for browsers that don't support showPicker()
+        // Make input temporarily visible and clickable
+        datePickerRef.current.style.position = 'fixed';
+        datePickerRef.current.style.top = '50%';
+        datePickerRef.current.style.left = '50%';
+        datePickerRef.current.style.transform = 'translate(-50%, -50%)';
+        datePickerRef.current.style.opacity = '0.01';
+        datePickerRef.current.style.width = '1px';
+        datePickerRef.current.style.height = '1px';
+        datePickerRef.current.focus();
+        datePickerRef.current.click();
+        // Reset after a short delay
+        setTimeout(() => {
+          if (datePickerRef.current) {
+            datePickerRef.current.style.position = 'absolute';
+            datePickerRef.current.style.top = '';
+            datePickerRef.current.style.left = '';
+            datePickerRef.current.style.transform = '';
+            datePickerRef.current.style.opacity = '0';
+          }
+        }, 100);
       }
-    }, 100);
+    }
   };
 
   const handleDatePickerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -173,9 +187,10 @@ const DateInput: React.FC<DateInputProps> = ({
         type='date'
         value={value}
         onChange={handleDatePickerChange}
-        className='absolute opacity-0 pointer-events-none w-0 h-0'
-        style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px' }}
+        className='absolute opacity-0 pointer-events-none'
+        style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', zIndex: -1 }}
         aria-hidden='true'
+        tabIndex={-1}
       />
       
       {!isValid && displayValue && (

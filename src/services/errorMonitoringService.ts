@@ -86,7 +86,7 @@ const sendCriticalErrorAlert = async (error: ErrorLog): Promise<void> => {
     const alert: Omit<ErrorAlert, 'id'> = {
       errorId: error.id || '',
       alertType: 'email',
-      recipients: [import.meta.env.VITE_SUPPORT_EMAIL || 'support@example.com'], // Admin email
+      recipients: ['support@taklaget.app'], // Admin email
       sent: false,
     };
 

@@ -2,12 +2,12 @@
 
 ## ⚠️ CRITICAL: Development Environment Policy
 
-**All coding and development work should be done using Firebase emulators for local testing.**
+**All coding and development work MUST be done in the testing environment.**
 
-- **Development Environment**: Local development with Firebase emulators
-- **Production Environment**: `main` branch + `agritectum-platform` Firebase project
+- **Test Environment**: `develop` branch + `taklaget-service-app-test` Firebase project
+- **Production Environment**: `main` branch + `taklaget-service-app` Firebase project
 
-**Deploy to production only when explicitly requested by the user.**
+**Only move code to production (`main` branch + production Firebase project) when explicitly requested by the user.**
 
 ## Branch Strategy
 
@@ -16,12 +16,12 @@
 - **`main`**: Production-ready code
   - Always stable and deployable
   - Only updated via merge from `develop` after explicit approval
-  - Deploys to production Firebase project (`agritectum-platform`)
+  - Deploys to production Firebase project (`taklaget-service-app`)
 
 - **`develop`**: Development branch
   - Active development happens here
   - All feature work and testing
-  - Uses Firebase emulators for local testing
+  - Deploys to test Firebase project (`taklaget-service-app-test`)
 
 ### Feature Branches
 
@@ -104,14 +104,14 @@ git push origin main
 ### Test Environment
 
 - Branch: `develop`
-- Firebase Project: `agritectum-platform-test`
+- Firebase Project: `taklaget-service-app-test`
 - Config: `.env.test`
 - Deploy: `npm run deploy:test`
 
 ### Production Environment
 
 - Branch: `main`
-- Firebase Project: `agritectum-platform`
+- Firebase Project: `taklaget-service-app`
 - Config: Production environment variables
 - Deploy: `npm run deploy:prod`
 

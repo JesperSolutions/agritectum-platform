@@ -1,12 +1,11 @@
 # Scripts Directory
 
-This directory contains utility scripts for the platform.
+This directory contains utility scripts for the Taklaget application.
 
 ## Structure
 
 - **Root scripts/** - Production and maintenance scripts
-- **scripts/setup/** - One-time setup scripts
-- **scripts/operations/** - Operational utility scripts
+- **scripts/setup/** - One-time setup and test scripts
 
 ## Production Scripts
 
@@ -16,37 +15,20 @@ Analyzes Firebase usage and provides cost estimates.
 ### `production-monitor.cjs`
 Monitors production environment health and performance.
 
-### `check-reports.cjs`
-Query and inspect reports from Firestore (supports emulator and production).
+### `reset-inspector-passwords.cjs`
+Resets passwords for inspector accounts in development.
 
-### `inspect-firestore.cjs`
-Inspect Firestore database structure and data.
+### `reset-inspector-passwords.ps1`
+PowerShell version of the password reset script.
 
-### `list-report-creators.cjs`
-List users who have created reports.
-
-### `delete-reports-by-user.cjs`
-Delete reports created by a specific user.
-
-### `debug-customer-deletion.cjs`
-Debug customer deletion operations.
-
-### `verify-branch-admins.cjs`
-Verify branch admin permissions and claims.
-
-### `verify-production-claims.cjs`
-Verify user claims in production environment.
-
-### `find-missing-translations.cjs`
-Find missing translation keys across locales.
-
-### `generate-translation-inventory.cjs`
-Generate inventory of all translation keys.
+### `reset-production-inspector-passwords.cjs`
+Resets passwords for inspector accounts in production (use with caution).
 
 ## Setup Scripts
 
 Setup scripts are located in `scripts/setup/` and are typically used for:
 - Initial database setup
+- Adding test data
 - Database cleanup
 - User management
 - Branch configuration

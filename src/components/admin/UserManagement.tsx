@@ -581,7 +581,7 @@ const UserManagement: React.FC = () => {
               id='branchFilter'
               value={selectedBranch}
               onChange={e => setSelectedBranch(e.target.value)}
-              className='border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500'
+              className='border-slate-300 rounded-lg shadow-sm focus:ring-2 focus:ring-slate-500 focus:border-slate-500'
             >
               <option value=''>{t('admin.userManagement.allBranches')}</option>
               {branches.map(branch => (
@@ -1037,7 +1037,7 @@ const UserManagement: React.FC = () => {
                     setPasswordToShow(null);
                     setUserForPassword(null);
                   }}
-                  className='px-4 py-2 bg-slate-600 text-white rounded-lg hover:bg-slate-700 transition-colors'
+                  className='px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium shadow-sm'
                 >
                   {t('common.buttons.close')}
                 </button>

@@ -26,14 +26,17 @@ import ConfirmationDialog from '../common/ConfirmationDialog';
 import EmptyState from '../common/EmptyState';
 import { logger } from '../../utils/logger';
 import { getCustomers, createCustomer, updateCustomer, deleteCustomer } from '../../services/customerService';
+import { formatCurrencyAmount } from '../../utils/currency';
+import type { SupportedLocale } from '../../utils/geolocation';
 
 interface CustomerManagementProps {}
 
 const CustomerManagement: React.FC<CustomerManagementProps> = () => {
   const navigate = useNavigate();
   const { currentUser, refreshToken, firebaseUser } = useAuth();
-  const { t } = useIntl();
+  const { t, locale } = useIntl();
   const { showSuccess, showError } = useToast();
+  const currentLocale = locale as SupportedLocale;
   
   // Determine if user is in read-only mode (inspectors)
   const isReadOnly = currentUser?.role === 'inspector';
@@ -228,7 +231,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
   const applyQuickFilter = (preset: 'hasReports' | 'noReports' | 'highValue') => {
     setFilterStatus(preset === 'hasReports' ? 'hasReports' : preset === 'noReports' ? 'noReports' : 'all');
     if (preset === 'highValue') {
-      setFilterMinRevenue(50000); // 50k SEK threshold
+      setFilterMinRevenue(50000); // 50k threshold (currency varies by locale)
     } else {
       setFilterMinRevenue(undefined);
     }
@@ -406,32 +409,35 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
     URL.revokeObjectURL(url);
   };
 
-  // Format date (robust against invalid/Firestore Timestamp)
+  // Format date (robust against invalid/Firestore Timestamp) using locale-specific format
   const formatDate = (value: any) => {
     try {
       const d = (value && typeof value.toDate === 'function') ? value.toDate() : new Date(value);
       if (!value || isNaN(d.getTime())) return '-';
-      return d.toLocaleDateString('sv-SE');
+      // Use locale-specific date format (dd/mm/yyyy for Danish, yyyy-mm-dd for Swedish)
+      const localeCode = currentLocale === 'da-DK' ? 'da-DK' : currentLocale === 'sv-SE' ? 'sv-SE' : 'en-US';
+      return d.toLocaleDateString(localeCode, { 
+        year: 'numeric', 
+        month: '2-digit', 
+        day: '2-digit' 
+      });
     } catch {
       return '-';
     }
   };
 
-  // Format currency
+  // Format currency using locale-based utility
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('sv-SE', {
-      style: 'currency',
-      currency: 'SEK',
-    }).format(amount);
+    return formatCurrencyAmount(amount, currentLocale);
   };
 
   if (!currentUser || (currentUser.role !== 'superadmin' && currentUser.role !== 'branchAdmin')) {
     return (
-      <div className='min-h-screen bg-gray-50 flex items-center justify-center'>
+      <div className='min-h-screen bg-slate-50 flex items-center justify-center'>
         <div className='text-center'>
           <div className='text-red-600 text-6xl mb-4'>🚫</div>
-          <h2 className='text-2xl font-bold text-gray-900 mb-2'>Access Denied</h2>
-          <p className='text-gray-600'>You need admin permissions to manage customers.</p>
+          <h2 className='text-2xl font-bold text-slate-900 mb-2'>{t('errors.access.denied')}</h2>
+          <p className='text-slate-600'>{t('errors.access.deniedMessage')}</p>
         </div>
       </div>
     );
@@ -478,29 +484,29 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
           <div className='space-y-4'>
             {/* Search Bar - Enhanced */}
             <div>
-              <label className='block text-sm font-medium text-gray-700 mb-2'>
+              <label className='block text-sm font-medium text-slate-700 mb-2'>
                 {t('customer.searchLabel')}
               </label>
               <div className='relative'>
-                <Search className='h-5 w-5 absolute left-3 top-3 text-gray-400' />
+                <Search className='h-5 w-5 absolute left-3 top-3 text-slate-400' />
                 <input
                   type='text'
                   value={searchTerm}
                   onChange={e => setSearchTerm(e.target.value)}
                   placeholder={t('customer.searchPlaceholderEnhanced')}
-                  className='pl-10 pr-10 w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
+                  className='pl-10 pr-10 w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm'
                 />
                 {searchTerm && (
                   <button
                     onClick={() => setSearchTerm('')}
-                    className='absolute right-3 top-3 text-gray-400 hover:text-gray-600'
+                    className='absolute right-3 top-3 text-slate-400 hover:text-slate-600'
                     title={t('customer.clearSearch')}
                   >
                     <XCircle className='h-4 w-4' />
                   </button>
                 )}
               </div>
-              <p className='mt-1 text-sm text-gray-500'>
+              <p className='mt-1 text-sm text-slate-500'>
                 {filteredAndSortedCustomers.length === 1 
                   ? t('customer.searchResults.singular', { count: 1 })
                   : t('customer.searchResults.plural', { count: filteredAndSortedCustomers.length })}
@@ -512,30 +518,30 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
             <div className='flex flex-wrap gap-2'>
               <button
                 onClick={() => applyQuickFilter('hasReports')}
-                className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
+                className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
                   filterStatus === 'hasReports' && filterMinRevenue === undefined
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'bg-slate-700 text-white'
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                 }`}
               >
                 {t('customer.filters.hasReports')}
               </button>
               <button
                 onClick={() => applyQuickFilter('noReports')}
-                className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
+                className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
                   filterStatus === 'noReports' && filterMinRevenue === undefined
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'bg-slate-700 text-white'
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                 }`}
               >
                 {t('customer.filters.noReports')}
               </button>
               <button
                 onClick={() => applyQuickFilter('highValue')}
-                className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
+                className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
                   filterMinRevenue === 50000
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'bg-slate-700 text-white'
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                 }`}
               >
                 {t('customer.filters.highValue')}
@@ -551,7 +557,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
             </div>
 
             {/* Advanced Filters Toggle */}
-            <div className='flex items-center justify-between pt-2 border-t border-gray-200'>
+            <div className='flex items-center justify-between pt-2 border-t border-slate-200'>
               <button
                 onClick={() => setShowFilters(!showFilters)}
                 className='text-sm text-blue-600 hover:text-blue-800 font-medium'
@@ -567,16 +573,16 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
 
             {/* Advanced Filters Panel */}
             {showFilters && (
-              <div className='grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-gray-200'>
+              <div className='grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-slate-200'>
                 {/* Status Filter */}
                 <div>
-                  <label className='block text-sm font-medium text-gray-700 mb-2'>
+                  <label className='block text-sm font-medium text-slate-700 mb-2'>
                     {t('customer.filters.statusFilter')}
                   </label>
                   <select
                     value={filterStatus}
                     onChange={e => setFilterStatus(e.target.value as 'all' | 'hasReports' | 'noReports')}
-                    className='w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
+                    className='w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm'
                   >
                     <option value='all'>{t('customer.filters.allCustomers')}</option>
                     <option value='hasReports'>{t('customer.filters.hasReports')}</option>
@@ -586,7 +592,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
 
                 {/* Revenue Filter */}
                 <div>
-                  <label className='block text-sm font-medium text-gray-700 mb-2'>
+                  <label className='block text-sm font-medium text-slate-700 mb-2'>
                     {t('customer.filters.minRevenue')}
                   </label>
                   <input
@@ -595,19 +601,19 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                     onChange={e => setFilterMinRevenue(e.target.value ? Number(e.target.value) : undefined)}
                     placeholder={t('customer.filters.enterAmount')}
                     min='0'
-                    className='w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
+                    className='w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm'
                   />
                 </div>
 
                 {/* Parent Company Filter */}
                 <div>
-                  <label className='block text-sm font-medium text-gray-700 mb-2'>
+                  <label className='block text-sm font-medium text-slate-700 mb-2'>
                     Huvudföretag
                   </label>
                   <select
                     value={filterParentCompany || ''}
                     onChange={e => setFilterParentCompany(e.target.value || null)}
-                    className='w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
+                    className='w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm'
                   >
                     <option value=''>Alla företag</option>
                     <option value='none'>Endast huvudföretag</option>
@@ -632,10 +638,10 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
             )}
 
             {/* Sort Controls */}
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-gray-200'>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-slate-200'>
               {/* Sort By */}
               <div>
-                <label className='block text-sm font-medium text-gray-700 mb-2'>
+                <label className='block text-sm font-medium text-slate-700 mb-2'>
                   {t('customer.sortBy')} {sortOrder === 'asc' ? '↑' : '↓'}
                 </label>
                 <select
@@ -652,7 +658,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
 
               {/* Sort Order */}
               <div>
-                <label className='block text-sm font-medium text-gray-700 mb-2'>{t('customer.sortOrder')}</label>
+                <label className='block text-sm font-medium text-slate-700 mb-2'>{t('customer.sortOrder')}</label>
                 <select
                   value={sortOrder}
                   onChange={e => setSortOrder(e.target.value as 'asc' | 'desc')}
@@ -670,7 +676,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
         {loading && (
           <div className='flex items-center justify-center py-12'>
             <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600'></div>
-            <span className='ml-3 text-gray-600'>Loading customers...</span>
+            <span className='ml-3 text-slate-600'>Loading customers...</span>
           </div>
         )}
 
@@ -707,18 +713,18 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
             {viewMode === 'hierarchy' ? (
               // Hierarchy View
               <div className='p-6'>
-                <h2 className='text-lg font-medium text-gray-900 mb-4'>Företagshierarki</h2>
+                <h2 className='text-lg font-medium text-slate-900 mb-4'>Företagshierarki</h2>
                 <div className='space-y-4'>
                   {customers
                     .filter(c => c.customerType === 'company' && !c.parentCompanyId)
                     .map(parentCompany => {
                       const subCompanies = customers.filter(c => c.parentCompanyId === parentCompany.id);
                       return (
-                        <div key={parentCompany.id} className='border border-gray-200 rounded-lg p-4'>
+                        <div key={parentCompany.id} className='border border-slate-200 rounded-lg p-4'>
                           <div className='flex items-center justify-between mb-3'>
                             <div className='flex items-center gap-2'>
                               <Building className='h-5 w-5 text-green-600' />
-                              <h3 className='text-base font-semibold text-gray-900'>{parentCompany.name}</h3>
+                              <h3 className='text-base font-semibold text-slate-900'>{parentCompany.name}</h3>
                               <span className='px-2 py-0.5 text-xs bg-green-100 text-green-800 rounded-full'>
                                 Huvudföretag
                               </span>
@@ -728,7 +734,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                                     setFilterParentCompany(parentCompany.id);
                                     setViewMode('list');
                                   }}
-                                  className='text-sm text-gray-500 hover:text-blue-600 underline'
+                                  className='text-sm text-slate-500 hover:text-blue-600 underline'
                                 >
                                   ({subCompanies.length} dotterbolag)
                                 </button>
@@ -747,7 +753,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                                 <div key={subCompany.id} className='flex items-center justify-between py-2'>
                                   <div className='flex items-center gap-2'>
                                     <Building className='h-4 w-4 text-purple-600' />
-                                    <span className='text-sm font-medium text-gray-900'>{subCompany.name}</span>
+                                    <span className='text-sm font-medium text-slate-900'>{subCompany.name}</span>
                                     <span className='px-2 py-0.5 text-xs bg-purple-100 text-purple-800 rounded-full'>
                                       Dotterbolag
                                     </span>
@@ -766,7 +772,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                       );
                     })}
                   {customers.filter(c => c.customerType === 'company' && !c.parentCompanyId).length === 0 && (
-                    <p className='text-sm text-gray-500 text-center py-4'>
+                    <p className='text-sm text-slate-500 text-center py-4'>
                       Inga huvudföretag hittades. Skapa ett företag för att börja bygga hierarkin.
                     </p>
                   )}
@@ -792,32 +798,32 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
               <div className='overflow-x-auto -mx-4 sm:mx-0'>
                 <div className='inline-block min-w-full align-middle'>
                   <table className='min-w-full divide-y divide-gray-200'>
-                    <thead className='bg-gray-50'>
+                    <thead className='bg-slate-50'>
                       <tr>
-                        <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+                        <th className='px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider'>
                           {t('customer.name')}
                         </th>
-                        <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+                        <th className='px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider'>
                           {t('customer.table.contact') || t('common.labels.phone')}
                         </th>
-                        <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+                        <th className='px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider'>
                           {t('customer.table.stats') || 'Statistik'}
                         </th>
                         <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[100px]'>
                           {t('customer.created')}
                         </th>
-                        <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky right-0 bg-gray-50 z-10'>
+                        <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky right-0 bg-slate-50 z-10'>
                           {t('customer.actions')}
                         </th>
                       </tr>
                     </thead>
                     <tbody className='bg-white divide-y divide-gray-200'>
                       {filteredAndSortedCustomers.map(customer => (
-                        <tr key={customer.id} className='hover:bg-gray-50'>
+                        <tr key={customer.id} className='hover:bg-slate-50'>
                           <td className='px-6 py-4 whitespace-nowrap'>
                             <div>
                               <div className='flex items-center gap-2'>
-                                <span className='text-sm font-medium text-gray-900'>{customer.name}</span>
+                                <span className='text-sm font-medium text-slate-900'>{customer.name}</span>
                                 {customer.customerType === 'company' && (
                                   <span className="px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded-full">
                                     Företag
@@ -825,10 +831,10 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                                 )}
                               </div>
                               {customer.company && (
-                                <div className='text-sm text-gray-500'>{customer.company}</div>
+                                <div className='text-sm text-slate-500'>{customer.company}</div>
                               )}
                               {customer.customerType === 'company' && customer.buildingAddress && (
-                                <div className='text-sm text-gray-500 mt-1'>
+                                <div className='text-sm text-slate-500 mt-1'>
                                   <MapPin className='h-3 w-3 inline mr-1' />
                                   {customer.buildingAddress}
                                 </div>
@@ -866,20 +872,20 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                           <td className='px-6 py-4 whitespace-nowrap'>
                             <div className='space-y-1'>
                               {customer.email && (
-                                <div className='flex items-center text-sm text-gray-600'>
-                                  <Mail className='h-4 w-4 mr-2 text-gray-400' />
+                                <div className='flex items-center text-sm text-slate-600'>
+                                  <Mail className='h-4 w-4 mr-2 text-slate-400' />
                                   {customer.email}
                                 </div>
                               )}
                               {customer.phone && (
-                                <div className='flex items-center text-sm text-gray-600'>
-                                  <Phone className='h-4 w-4 mr-2 text-gray-400' />
+                                <div className='flex items-center text-sm text-slate-600'>
+                                  <Phone className='h-4 w-4 mr-2 text-slate-400' />
                                   {customer.phone}
                                 </div>
                               )}
                               {customer.address && (
-                                <div className='flex items-center text-sm text-gray-600'>
-                                  <MapPin className='h-4 w-4 mr-2 text-gray-400' />
+                                <div className='flex items-center text-sm text-slate-600'>
+                                  <MapPin className='h-4 w-4 mr-2 text-slate-400' />
                                   {customer.address}
                                 </div>
                               )}
@@ -887,17 +893,17 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                           </td>
                           <td className='px-6 py-4 whitespace-nowrap'>
                             <div className='space-y-1'>
-                              <div className='flex items-center text-sm text-gray-600'>
-                                <FileText className='h-4 w-4 mr-2 text-gray-400' />
+                              <div className='flex items-center text-sm text-slate-600'>
+                                <FileText className='h-4 w-4 mr-2 text-slate-400' />
                                 {customer.totalReports || 0} {t('customer.stats.reports')}
                               </div>
                               <div className='flex items-center text-sm font-medium text-green-600'>
-                                <DollarSign className='h-4 w-4 mr-1 text-gray-400' />
+                                <DollarSign className='h-4 w-4 mr-1 text-slate-400' />
                                 {formatCurrency(customer.totalRevenue || 0)}
                               </div>
                             </div>
                           </td>
-                          <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-600 min-w-[100px]'>
+                          <td className='px-6 py-4 whitespace-nowrap text-sm text-slate-600 min-w-[100px]'>
                             <span className='block'>{formatDate(customer.createdAt)}</span>
                           </td>
                           <td className='px-6 py-4 whitespace-nowrap text-sm font-medium sticky right-0 bg-white z-10'>
@@ -954,15 +960,15 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
 
         {/* Customer Detail Modal */}
         {selectedCustomer && (
-          <div className='fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50'>
+          <div className='fixed inset-0 bg-slate-600 bg-opacity-50 overflow-y-auto h-full w-full z-50'>
             <div className='relative top-20 mx-auto p-5 border w-11/12 max-w-4xl shadow-lg rounded-md bg-white'>
               <div className='flex justify-between items-center mb-4'>
-                <h3 className='text-lg font-medium text-gray-900'>
+                <h3 className='text-lg font-medium text-slate-900'>
                   Customer Details - {selectedCustomer.name}
                 </h3>
                 <button
                   onClick={() => setSelectedCustomer(null)}
-                  className='text-gray-400 hover:text-gray-600'
+                  className='text-slate-400 hover:text-slate-600'
                 >
                   <XCircle className='h-6 w-6' />
                 </button>
@@ -970,7 +976,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
 
               <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                 <div>
-                  <h4 className='font-medium text-gray-900 mb-2'>Contact Information</h4>
+                  <h4 className='font-medium text-slate-900 mb-2'>Contact Information</h4>
                   <div className='space-y-2 text-sm'>
                     <p>
                       <span className='font-medium'>Name:</span> {selectedCustomer.name}
@@ -993,7 +999,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                 </div>
 
                 <div>
-                  <h4 className='font-medium text-gray-900 mb-2'>{t('customer.businessInfo.title')}</h4>
+                  <h4 className='font-medium text-slate-900 mb-2'>{t('customer.businessInfo.title')}</h4>
                   <div className='space-y-2 text-sm'>
                     <p>
                       <span className='font-medium'>{t('customer.businessInfo.totalReports')}:</span>{' '}
@@ -1019,8 +1025,8 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
 
               {selectedCustomer.notes && (
                 <div className='mt-6'>
-                  <h4 className='font-medium text-gray-900 mb-2'>Notes</h4>
-                  <p className='text-sm text-gray-600 bg-gray-50 p-3 rounded-md'>
+                  <h4 className='font-medium text-slate-900 mb-2'>Notes</h4>
+                  <p className='text-sm text-slate-600 bg-slate-50 p-3 rounded-lg'>
                     {selectedCustomer.notes}
                   </p>
                 </div>
@@ -1033,7 +1039,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                       navigate(`/report/new?customerId=${selectedCustomer.id}&customerName=${encodeURIComponent(selectedCustomer.name)}&customerAddress=${encodeURIComponent(selectedCustomer.address || '')}`);
                       setSelectedCustomer(null);
                     }}
-                    className='px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center'
+                    className='px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium shadow-sm flex items-center'
                   >
                     <FilePlus className='h-4 w-4 mr-2' />
                     Create Report
@@ -1043,7 +1049,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                   <>
                     <button
                       onClick={() => exportCustomerData(selectedCustomer)}
-                      className='px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700'
+                      className='px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium shadow-sm'
                     >
                       Export Data (GDPR)
                     </button>
@@ -1058,7 +1064,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                 )}
                 <button
                   onClick={() => setSelectedCustomer(null)}
-                  className='px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400'
+                  className='px-4 py-2 border border-slate-200 rounded-lg shadow-sm text-sm font-medium text-slate-700 bg-white hover:bg-slate-50'
                 >
                   Close
                 </button>
@@ -1069,10 +1075,10 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
 
         {/* Create/Edit Modal */}
         {(showCreateModal || showEditModal) && (
-          <div className='fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50'>
+          <div className='fixed inset-0 bg-slate-600 bg-opacity-50 overflow-y-auto h-full w-full z-50'>
             <div className='relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white'>
               <div className='flex justify-between items-center mb-4'>
-                <h3 className='text-lg font-medium text-gray-900'>
+                <h3 className='text-lg font-medium text-slate-900'>
                   {showCreateModal ? 'Create Customer' : 'Edit Customer'}
                 </h3>
                 <button
@@ -1081,7 +1087,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                     setShowEditModal(false);
                     setEditingCustomer(null);
                   }}
-                  className='text-gray-400 hover:text-gray-600'
+                  className='text-slate-400 hover:text-slate-600'
                 >
                   <XCircle className='h-6 w-6' />
                 </button>
@@ -1102,7 +1108,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                     className={`w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 ${
                       formErrors.name
                         ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
-                        : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
+                        : 'border-slate-300 focus:ring-slate-500 focus:border-slate-500'
                     }`}
                     required
                   />
@@ -1125,7 +1131,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                     className={`w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 ${
                       formErrors.email
                         ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
-                        : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
+                        : 'border-slate-300 focus:ring-slate-500 focus:border-slate-500'
                     }`}
                   />
                   {formErrors.email && (
@@ -1147,7 +1153,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                     className={`w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 ${
                       formErrors.phone
                         ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
-                        : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
+                        : 'border-slate-300 focus:ring-slate-500 focus:border-slate-500'
                     }`}
                   />
                   {formErrors.phone && (
@@ -1161,7 +1167,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                     type='text'
                     value={formData.address}
                     onChange={e => setFormData(prev => ({ ...prev, address: e.target.value }))}
-                    className='w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
+                    className='w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm'
                   />
                 </div>
 
@@ -1174,7 +1180,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                       customerType: e.target.value as 'individual' | 'company',
                       parentCompanyId: e.target.value === 'individual' ? undefined : prev.parentCompanyId
                     }))}
-                    className='w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
+                    className='w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm'
                   >
                     <option value='individual'>Privatperson</option>
                     <option value='company'>Företag</option>
@@ -1192,7 +1198,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                         ...prev, 
                         parentCompanyId: e.target.value || undefined 
                       }))}
-                      className='w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
+                      className='w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm'
                     >
                       <option value=''>Ingen (huvudföretag)</option>
                       {customers
@@ -1203,7 +1209,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                           </option>
                         ))}
                     </select>
-                    <p className='mt-1 text-xs text-gray-500'>
+                    <p className='mt-1 text-xs text-slate-500'>
                       Välj ett huvudföretag om detta är en dotterbolag
                     </p>
                   </div>
@@ -1216,7 +1222,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                       type='text'
                       value={formData.buildingAddress}
                       onChange={e => setFormData(prev => ({ ...prev, buildingAddress: e.target.value }))}
-                      className='w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
+                      className='w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm'
                       placeholder='Om den skiljer sig från huvudadressen'
                     />
                   </div>
@@ -1228,7 +1234,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                     type='text'
                     value={formData.company}
                     onChange={e => setFormData(prev => ({ ...prev, company: e.target.value }))}
-                    className='w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
+                    className='w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm'
                   />
                 </div>
 
@@ -1238,7 +1244,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                     value={formData.notes}
                     onChange={e => setFormData(prev => ({ ...prev, notes: e.target.value }))}
                     rows={3}
-                    className='w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
+                    className='w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm'
                   />
                 </div>
               </div>
@@ -1250,14 +1256,14 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                     setShowEditModal(false);
                     setEditingCustomer(null);
                   }}
-                  className='px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400'
+                  className='px-4 py-2 border border-slate-200 rounded-lg shadow-sm text-sm font-medium text-slate-700 bg-white hover:bg-slate-50'
                 >
                   {t('common.buttons.cancel')}
                 </button>
                 <button
                   onClick={handleSaveCustomer}
                   disabled={isSubmitting}
-                  className='px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center'
+                  className='px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center'
                 >
                   {isSubmitting ? (
                     <>

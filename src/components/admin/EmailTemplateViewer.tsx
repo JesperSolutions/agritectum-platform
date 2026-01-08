@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useIntl } from '../../hooks/useIntl';
-import { BRAND_CONFIG } from '../../config/brand';
 import { Mail, Eye, Code, Smartphone, Monitor, X, RefreshCw } from 'lucide-react';
 
 interface EmailTemplate {
@@ -27,8 +26,8 @@ const EmailTemplateViewer: React.FC = () => {
     <div style="background: linear-gradient(135deg, ${urgent ? '#dc2626 0%, #ef4444 100%' : '#1e3a8a 0%, #3b82f6 100%'}); padding: 40px 30px; text-align: center; border-radius: 8px 8px 0 0;">
       <div style="background: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 12px; display: inline-block; margin-bottom: 20px;">
         <div style="font-size: 32px; color: white; font-weight: bold; margin-bottom: 8px;">${urgent ? '🚨' : '🏠'}</div>
-        <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.5px;">${BRAND_CONFIG.BRAND_NAME}</h1>
-        <p style="color: rgba(255, 255, 255, 0.9); margin: 8px 0 0 0; font-size: 16px; font-weight: 300;">Building Performance Platform</p>
+        <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.5px;">Taklaget Professional Roofing</h1>
+        <p style="color: rgba(255, 255, 255, 0.9); margin: 8px 0 0 0; font-size: 16px; font-weight: 300;">Professional Roofing Services</p>
       </div>
       <h2 style="color: white; margin: 0; font-size: 24px; font-weight: 500;">${title}</h2>
       ${subtitle ? `<p style="color: rgba(255, 255, 255, 0.9); margin: 8px 0 0 0; font-size: 16px;">${subtitle}</p>` : ''}
@@ -38,10 +37,10 @@ const EmailTemplateViewer: React.FC = () => {
   const getSharedFooter = () => `
     <div style="background: #f8fafc; padding: 24px 30px; border-radius: 0 0 8px 8px; text-align: center; border-top: 1px solid #e5e7eb;">
       <p style="color: #6b7280; font-size: 13px; margin: 0 0 8px 0;">
-        This email was sent from ${BRAND_CONFIG.BRAND_NAME}
+        This email was sent from Taklaget Professional Roofing Services
       </p>
       <p style="color: #9ca3af; font-size: 12px; margin: 0;">
-        © 2025 ${BRAND_CONFIG.LEGAL_ENTITY}. All rights reserved. | Building Performance Platform
+        © 2025 Taklaget AB. All rights reserved. | Professional Roofing Services
       </p>
       <p style="color: #9ca3af; font-size: 12px; margin: 8px 0 0 0;">
         <a href="{{unsubscribeLink}}" style="color: #2563eb; text-decoration: none;">Unsubscribe</a> | 
@@ -149,7 +148,7 @@ const EmailTemplateViewer: React.FC = () => {
       <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid #e5e7eb;">
         <p style="color: #1f2937; font-weight: 600; margin-bottom: 8px;">Best regards,</p>
         <p style="color: #1f2937; margin-bottom: 4px; font-weight: 500;">{{branchName}} Team</p>
-        <p style="color: #6b7280; font-size: 14px;">${BRAND_CONFIG.BRAND_NAME}</p>
+        <p style="color: #6b7280; font-size: 14px;">Taklaget Professional Roofing Services</p>
       </div>
     </div>
     
@@ -179,7 +178,7 @@ If you have any questions or would like to discuss the findings, please don't he
 
 Best regards,
 {{branchName}} Team
-${BRAND_CONFIG.BRAND_NAME}
+Taklaget Professional Roofing Services
 
 Contact Information:
 Phone: {{branchPhone}}
@@ -274,7 +273,7 @@ Address: {{branchAddress}}`,
       <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid #e5e7eb;">
         <p style="color: #1f2937; font-weight: 600; margin-bottom: 8px;">Best regards,</p>
         <p style="color: #1f2937; margin-bottom: 4px; font-weight: 500;">{{branchName}} Team</p>
-        <p style="color: #6b7280; font-size: 14px;">${BRAND_CONFIG.BRAND_NAME}</p>
+        <p style="color: #6b7280; font-size: 14px;">Taklaget Professional Roofing Services</p>
       </div>
     </div>
     
@@ -310,7 +309,7 @@ We are available 24/7 for emergency situations. Please call us immediately at {{
 
 Best regards,
 {{branchName}} Team
-${BRAND_CONFIG.BRAND_NAME}
+Taklaget Professional Roofing Services
 
 Emergency Contact: {{branchPhone}}
 Email: {{branchEmail}}`,
@@ -336,7 +335,7 @@ Email: {{branchEmail}}`,
       <p style="font-size: 18px; color: #1f2937; margin-bottom: 24px; font-weight: 500;">Dear {{customerName}},</p>
       
       <p style="color: #4b5563; line-height: 1.7; margin-bottom: 32px; font-size: 16px;">
-        Thank you for choosing ${BRAND_CONFIG.BRAND_NAME} for your building inspection. Based on our thorough inspection of your property at {{customerAddress}}, 
+        Thank you for choosing Taklaget for your roof inspection. Based on our thorough inspection of your property at {{customerAddress}}, 
         we are pleased to present a comprehensive repair proposal.
       </p>
       
@@ -402,9 +401,9 @@ Email: {{branchEmail}}`,
         </a>
       </div>
       
-      <!-- Why Choose Us -->
+      <!-- Why Choose Taklaget -->
       <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); padding: 24px; border-radius: 12px; margin-bottom: 32px; border-left: 4px solid #3b82f6;">
-        <h3 style="color: #1e40af; margin-top: 0; margin-bottom: 16px; font-size: 18px; font-weight: 600;">✅ Why Choose ${BRAND_CONFIG.BRAND_NAME}?</h3>
+        <h3 style="color: #1e40af; margin-top: 0; margin-bottom: 16px; font-size: 18px; font-weight: 600;">✅ Why Choose Taklaget?</h3>
         <ul style="color: #1e40af; margin: 0; padding-left: 20px; font-size: 15px; line-height: 1.6;">
           <li>Professional certified roofers</li>
           <li>High-quality materials and workmanship</li>
@@ -438,7 +437,7 @@ Email: {{branchEmail}}`,
       <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid #e5e7eb;">
         <p style="color: #1f2937; font-weight: 600; margin-bottom: 8px;">Best regards,</p>
         <p style="color: #1f2937; margin-bottom: 4px; font-weight: 500;">{{branchName}} Team</p>
-        <p style="color: #6b7280; font-size: 14px;">${BRAND_CONFIG.BRAND_NAME}</p>
+        <p style="color: #6b7280; font-size: 14px;">Taklaget Professional Roofing Services</p>
         
         <div style="margin-top: 20px; font-size: 14px; color: #6b7280;">
           <p><strong>Professional License:</strong> #{{licenseNumber}}</p>
@@ -453,7 +452,7 @@ Email: {{branchEmail}}`,
 </html>`,
       textContent: `Kära {{customerName}},
 
-Tack för att du valde ${BRAND_CONFIG.BRAND_NAME} för din bygginspektion. Baserat på vår grundliga inspektion av din fastighet på {{customerAddress}}, har vi glädjen att presentera ett omfattande reparationsförslag.
+Tack för att du valde Taklaget för din takinspektioner. Baserat på vår grundliga inspektion av din fastighet på {{customerAddress}}, har vi glädjen att presentera ett omfattande reparationsförslag.
 
 🏠 INSPEKTIONSSAMMANFATTNING
 - Inspektionsdatum: {{inspectionDate}}
@@ -468,8 +467,8 @@ Tack för att du valde ${BRAND_CONFIG.BRAND_NAME} för din bygginspektion. Baser
 🔧 ARBETE SOM INGÅR
 {{workDescription}}
 
-✅ VARFÖR VÄLJA ${BRAND_CONFIG.BRAND_NAME.toUpperCase()}?
-- Professionella certifierade bygginspektörer
+✅ VARFÖR VÄLJA TAKLAGET?
+- Professionella certifierade takläggare
 - Högkvalitativa material och utförande
 - Fullständig garanti på allt utfört arbete
 - Konkurrenskraftiga priser utan dolda kostnader
@@ -484,7 +483,7 @@ Denna offert gäller till {{offerValidUntil}}. Efter detta datum kan priser och 
 
 Med vänliga hälsningar,
 {{branchName}} Team
-${BRAND_CONFIG.BRAND_NAME}
+Taklaget Professional Roofing Services
 
 Professionell licens: #{{licenseNumber}}
 Försäkring: Fullständigt täckt för ditt skydd`,
@@ -492,7 +491,7 @@ Försäkring: Fullständigt täckt för ditt skydd`,
     },
     {
       name: 'password-reset',
-      subject: 'Reset Your Password - ${BRAND_CONFIG.BRAND_NAME}',
+      subject: 'Reset Your Password - Taklaget Professional Roofing',
       htmlContent: `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -510,7 +509,7 @@ Försäkring: Fullständigt täckt för ditt skydd`,
       <p style="font-size: 18px; color: #1f2937; margin-bottom: 24px; font-weight: 500;">Dear {{customerName}},</p>
       
       <p style="color: #4b5563; line-height: 1.7; margin-bottom: 32px; font-size: 16px;">
-        You have requested to reset your password for your ${BRAND_CONFIG.BRAND_NAME} account. 
+        You have requested to reset your password for your Taklaget Professional Roofing account. 
         Click the button below to create a new secure password.
       </p>
       
@@ -585,8 +584,8 @@ Försäkring: Fullständigt täckt för ditt skydd`,
       <!-- Signature -->
       <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid #e5e7eb;">
         <p style="color: #1f2937; font-weight: 600; margin-bottom: 8px;">Best regards,</p>
-        <p style="color: #1f2937; margin-bottom: 4px; font-weight: 500;">${BRAND_CONFIG.BRAND_NAME} Security Team</p>
-        <p style="color: #6b7280; font-size: 14px;">${BRAND_CONFIG.BRAND_NAME}</p>
+        <p style="color: #1f2937; margin-bottom: 4px; font-weight: 500;">Taklaget Security Team</p>
+        <p style="color: #6b7280; font-size: 14px;">Taklaget Professional Roofing Services</p>
       </div>
     </div>
     
@@ -594,17 +593,17 @@ Försäkring: Fullständigt täckt för ditt skydd`,
   </div>
 </body>
 </html>`,
-      textContent: `${BRAND_CONFIG.BRAND_NAME} - Återställ lösenord
+      textContent: `Taklaget - Återställ lösenord
 
 Hej {{customerName}},
 
-Du har begärt att återställa ditt lösenord för ${BRAND_CONFIG.BRAND_NAME}. Använd länken nedan för att skapa ett nytt lösenord:
+Du har begärt att återställa ditt lösenord för Taklaget. Använd länken nedan för att skapa ett nytt lösenord:
 
 {{resetLink}}
 
 Om du inte begärde denna återställning, kan du ignorera detta e-postmeddelande.
 
-${BRAND_CONFIG.LEGAL_ENTITY}
+Taklaget AB
 {{companyAddress}}
 {{companyPhone}}
 
@@ -636,32 +635,32 @@ Avsluta prenumeration: {{unsubscribeLink}}`,
       issuesCount: '3',
       estimatedCost: '25,000',
       
-      // Links (using placeholder URLs)
-      reportLink: 'https://example.com/report/abc123',
-      contactLink: 'https://example.com/contact',
-      unsubscribeLink: 'https://example.com/unsubscribe?email=anna@example.com',
-      resetLink: 'https://example.com/reset-password?token=abc123',
+      // Links
+      reportLink: 'https://taklaget.app/report/abc123',
+      contactLink: 'https://taklaget.app/contact',
+      unsubscribeLink: 'https://taklaget.app/unsubscribe?email=anna@example.com',
+      resetLink: 'https://taklaget.app/reset-password?token=abc123',
       
-      // Current Company Information (using placeholders)
-      companyAddress: 'Your Company Address',
-      companyPhone: '+1 234 567 8900',
-      companyName: 'Your Company Name',
-      brandName: 'Your Company Name',
-      legalEntity: 'Your Company Legal Entity',
-      legalAddress: 'Your Company Address',
-      website: 'https://example.com',
+      // Current Company Information (from template-config.json)
+      companyAddress: 'Professional Roofing Services, Sweden',
+      companyPhone: '+46 470 123 456',
+      companyName: 'Taklaget Professional Roofing',
+      brandName: 'Taklaget Professional Roofing',
+      legalEntity: 'Taklaget AB',
+      legalAddress: 'Professional Roofing Services, Sweden',
+      website: 'https://taklaget.app',
       
-      // Branch Information (using placeholders)
-      branchPhone: '+1 234 567 8900',
-      branchEmail: 'support@example.com',
-      branchName: 'Your Branch Name',
-      branchAddress: 'Your Branch Address',
+      // Branch Information
+      branchPhone: '+46 470 123 456',
+      branchEmail: 'support@taklaget.app',
+      branchName: 'Taklaget Professional Roofing',
+      branchAddress: 'Professional Roofing Services, Sweden',
       
-      // Email Configuration (using placeholders)
-      fromEmail: 'noreply@example.com',
-      replyToEmail: 'support@example.com',
-      supportEmail: 'support@example.com',
-      supportPhone: '+1 234 567 8900',
+      // Email Configuration
+      fromEmail: 'noreply@taklaget.app',
+      replyToEmail: 'support@taklaget.app',
+      supportEmail: 'support@taklaget.app',
+      supportPhone: '+46 470 123 456',
       
       // Report Content
       summary: 'The inspection identified 3 issues, including 1 critical concern requiring immediate attention. Overall roof condition is fair with some areas needing repair.',
@@ -719,10 +718,10 @@ Avsluta prenumeration: {{unsubscribeLink}}`,
   // Only show for superadmin
   if (!currentUser || currentUser.role !== 'superadmin') {
     return (
-      <div className='min-h-screen bg-gray-50 flex items-center justify-center'>
+      <div className='min-h-screen bg-slate-50 flex items-center justify-center'>
         <div className='text-center'>
           <div className='text-red-600 text-6xl mb-4'>🚫</div>
-          <h2 className='text-2xl font-bold text-gray-900 mb-2'>Access Denied</h2>
+          <h2 className='text-2xl font-bold text-slate-900 mb-2'>{t('errors.access.denied')}</h2>
           <p className='text-gray-600'>Only superadmins can access email template viewer.</p>
         </div>
       </div>

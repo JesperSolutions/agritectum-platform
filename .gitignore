@@ -29,12 +29,10 @@ dist-ssr
 
 # Security: Service Account Keys and Credentials
 *-adminsdk-*.json
-*-firebase-adminsdk-*.json
 serviceAccountKey.json
 service-account*.json
 *.pem
 *.p12
-sales-user-credentials.json
 
 # Security: Environment Files with Secrets
 *.env.local

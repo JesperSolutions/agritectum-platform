@@ -1,5 +1,5 @@
 {
-  "app.title": "TagLaget - Dachinspektionen",
+  "app.title": "Agritectum Platform - Dachinspektionen",
   "app.subtitle": "Professionelle Dachinspektionen und Angebote",
 
   "common.buttons.save": "Speichern",
@@ -141,12 +141,8 @@
   "common.somethingWentWrong": "Etwas ist schief gelaufen",
   "common.somethingUnexpectedHappened": "Ein unerwarteter Fehler ist aufgetreten. Bitte aktualisieren Sie die Seite.",
   "common.goToDashboard": "Zum Dashboard gehen",
-  "common.goToHomepage": "Zur Startseite",
-  "common.tryAgain": "Erneut versuchen",
-  "common.contactSupport": "Support kontaktieren",
-  "common.buildingPerformance": "Gebäudeleistung",
 
-  "common.install.title": "Taglaget-App installieren",
+  "common.install.title": "Agritectum-App installieren",
   "common.install.description": "Installieren für Offline-Zugriff und bessere Leistung",
   "common.install.button": "Jetzt installieren",
 

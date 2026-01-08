@@ -22,7 +22,6 @@ import { mailerWebhook, addSuppression, removeSuppression, getSuppressions } fro
 // User management functions
 import { setUserClaims, setUserClaimsHttp } from './setUserClaims';
 import { createUserWithAuth } from './createUserWithAuth';
-import { createCustomerWithAuth } from './createCustomerWithAuth';
 import { resetUserPassword, viewUserPassword } from './userPasswordManagement';
 
 // Offer follow-up functions
@@ -36,6 +35,10 @@ import { backfillReportTimestamps } from './backfillReportTimestamps';
 
 // PDF generation functions
 import { generateReportPDF } from './simplePdfService';
+
+// Customer and building functions
+import { onCustomerUserCreate } from './onCustomerUserCreate';
+import { onBuildingCreate } from './onBuildingCreate';
 
 
 
@@ -54,7 +57,6 @@ export { mailerWebhook, addSuppression, removeSuppression, getSuppressions };
 // Export user management functions
 export { setUserClaims, setUserClaimsHttp };
 export { createUserWithAuth };
-export { createCustomerWithAuth };
 export { resetUserPassword, viewUserPassword };
 
 // Export offer follow-up functions
@@ -70,6 +72,10 @@ export { backfillReportTimestamps };
 
 // Export PDF generation functions
 export { generateReportPDF };
+
+// Export customer and building functions
+export { onCustomerUserCreate };
+export { onBuildingCreate };
 
 
 

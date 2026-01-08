@@ -9,7 +9,7 @@ import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 const getFirebaseConfig = () => {
   const mode = import.meta.env.MODE; // 'development', 'test', or 'production'
   
-  // Production config (default for production builds)
+  // Production config (default for production builds) - Agritectum Platform
   const prodConfig = {
     apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyB7t5LITs2cydGizXE5cJAlIY7Q3p9wR1k',
     authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'agritectum-platform.firebaseapp.com',
@@ -18,6 +18,20 @@ const getFirebaseConfig = () => {
     messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '831129873464',
     appId: import.meta.env.VITE_FIREBASE_APP_ID || '1:831129873464:web:eda440c687b5e883c84acd',
   };
+  
+  // Test environment config (uses test Firebase project)
+  if (mode === 'test' || import.meta.env.VITE_USE_TEST_PROJECT === 'true') {
+    // Test project defaults (from .env.test or hardcoded test project values)
+    const testConfig = {
+      apiKey: import.meta.env.VITE_FIREBASE_API_KEY_TEST || 'AIzaSyDONTxBtz3LRvDgoGJAEhTG_iK61GX30-0',
+      authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN_TEST || 'agritectum-platform-test.firebaseapp.com',
+      projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID_TEST || 'agritectum-platform-test',
+      storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET_TEST || 'agritectum-platform-test.firebasestorage.app',
+      messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID_TEST || '649108739976',
+      appId: import.meta.env.VITE_FIREBASE_APP_ID_TEST || '1:649108739976:web:a5a1fd3b2f56fa364d4c3d',
+    };
+    return testConfig;
+  }
   
   // Development/Production uses production config (or emulators in dev)
   return prodConfig;
@@ -48,6 +62,13 @@ if (mode === 'production') {
     );
     console.error(
       'Please set these in your production environment or .env file'
+    );
+  }
+} else if (mode === 'test') {
+  // In test mode, warn if test-specific vars are missing
+  if (!import.meta.env.VITE_FIREBASE_PROJECT_ID_TEST) {
+    console.warn(
+      '⚠️ Test environment: Using default test project ID. Set VITE_FIREBASE_PROJECT_ID_TEST for custom test project.'
     );
   }
 } else if (import.meta.env.DEV) {

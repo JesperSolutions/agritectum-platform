@@ -26,7 +26,7 @@ try {
 
 // Parse command line arguments
 const args = process.argv.slice(2);
-let projectId = 'agritectum-platform';
+let projectId = 'taklaget-service-app-test';
 let targetBranchId = null;
 
 const projectIndex = args.indexOf('--project');

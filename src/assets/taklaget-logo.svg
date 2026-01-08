@@ -1,0 +1,24 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Circular background -->
+  <circle cx="60" cy="60" r="60" fill="#1e3a8a"/>
+  
+  <!-- Orange vertical bars on the left -->
+  <rect x="25" y="35" width="8" height="15" fill="#f97316"/>
+  <rect x="35" y="30" width="8" height="20" fill="#f97316"/>
+  <rect x="45" y="25" width="8" height="25" fill="#f97316"/>
+  
+  <!-- Central orange vertical bar -->
+  <rect x="55" y="20" width="8" height="30" fill="#f97316"/>
+  
+  <!-- Diagonal stripes from top right -->
+  <path d="M63 20 L80 35 L77 38 L60 23 Z" fill="#fbbf24"/>
+  <path d="M77 38 L94 53 L91 56 L74 41 Z" fill="#1e3a8a"/>
+  <path d="M91 56 L108 71 L105 74 L88 59 Z" fill="#fbbf24"/>
+  <path d="M105 74 L115 84 L112 87 L102 77 Z" fill="#1e3a8a"/>
+  
+  <!-- Horizontal bar at bottom right -->
+  <rect x="55" y="75" width="25" height="8" fill="#f97316"/>
+  
+  <!-- Dark blue corner section -->
+  <path d="M80 75 L85 75 L85 80 L80 80 Z" fill="#1e3a8a"/>
+</svg>

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useIntl } from '../../hooks/useIntl';
-import { BRAND_CONFIG } from '../../config/brand';
 import { X, Download } from 'lucide-react';
 
 interface BeforeInstallPromptEvent extends Event {
@@ -10,7 +9,7 @@ interface BeforeInstallPromptEvent extends Event {
 
 /**
  * InstallPrompt component shows a custom install prompt for PWA
- * Allows users to install the Agritectum app on their device
+ * Allows users to install the Taklaget app on their device
  */
 const InstallPrompt: React.FC = () => {
   const { t } = useIntl();
@@ -86,7 +85,7 @@ const InstallPrompt: React.FC = () => {
         <div className="flex items-center gap-2">
           <Download className="w-5 h-5 text-blue-600" />
           <h3 id="install-prompt-title" className="font-semibold text-gray-900 text-sm">
-            {t('common.install.title') || `Install ${BRAND_CONFIG.BRAND_NAME} App`}
+            {t('common.install.title') || 'Install Taklaget App'}
           </h3>
         </div>
         <button

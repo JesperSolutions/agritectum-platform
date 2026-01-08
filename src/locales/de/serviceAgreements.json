@@ -215,7 +215,8 @@
   "serviceAgreement.form.addons.annualInspection": "Jährliche Überprüfung (EN 365)",
   "serviceAgreement.form.addons.safetyEquipmentControl": "Kontrolle von Linern, Drähten, Gurten und Karabinern",
   "serviceAgreement.form.addons.solar.title": "SOLARZELLEN:",
-  "serviceAgreement.form.addons.solarCleaning": "Reinigung von Solarzellen (1–2 mal jährlich)",
+  "serviceAgreement.form.addons.solarCleaning": "Reinigung von Solarzellen",
+  "serviceAgreement.form.addons.en365Tooltip": "EN 365 ist eine europäische Norm für persönliche Schutzausrüstung gegen Absturz aus der Höhe. Die Inspektion stellt sicher, dass die Ausrüstung die Sicherheitsanforderungen erfüllt.",
   "serviceAgreement.form.addons.steel.title": "STAHLDACH:",
   "serviceAgreement.form.addons.mossRemoval": "Reinigung von Flechten und Moos",
   "serviceAgreement.form.addons.chemicalTreatment": "Chemische Dachbehandlung",
@@ -231,10 +232,12 @@
   "serviceAgreement.form.serviceReport.damageDescription": "Beschreibung eventueller Schäden",
   "serviceAgreement.form.serviceReport.recommendations": "Empfehlungen für Reparatur und Wartung",
   "serviceAgreement.form.serviceReport.annualReport": "Jährlicher Zustandsbericht",
+  "serviceAgreement.form.serviceReport.digitalPlatform": "Zugang zur digitalen Plattform",
+  "serviceAgreement.form.serviceReport.esgReport": "ESG-Bericht (Umwelt, Soziales, Governance)",
   "serviceAgreement.form.agreementPeriod.title": "5. VERTRAGSPERIODE",
   "serviceAgreement.form.agreementPeriod.note": "Der Vertrag läuft 12 Monate und verlängert sich automatisch, sofern er nicht gekündigt wird.",
   "serviceAgreement.form.pricing.title": "6. PREIS & RECHNUNGSSTELLUNG",
-  "serviceAgreement.form.pricing.perRoof": "Preis Start pro Jahr pro Dach:",
+  "serviceAgreement.form.pricing.perRoof": "Startpreis pro Dach:",
   "serviceAgreement.form.pricing.perSquareMeter": "Preis pro Jahr pro m²:",
   "serviceAgreement.form.pricing.billingFrequency": "Rechnungsstellungsfrequenz:",
   "serviceAgreement.form.pricing.annual": "Jährliche Zahlung",
@@ -243,6 +246,12 @@
   "serviceAgreement.form.signatures.supplier": "Lieferant:",
   "serviceAgreement.form.signatures.supplierPlaceholder": "Name",
   "serviceAgreement.form.signatures.customer": "Kunde:",
-  "serviceAgreement.form.signatures.customerPlaceholder": "Name"
+  "serviceAgreement.form.signatures.customerPlaceholder": "Name",
+  "serviceAgreement.form.signatures.uploadImage": "Bild hochladen",
+  "serviceAgreement.detail.send": "Senden",
+  "serviceAgreement.detail.sending": "Wird gesendet...",
+  "serviceAgreement.detail.sent": "Servicevertrag erfolgreich an Kunden gesendet",
+  "serviceAgreement.detail.sendError": "Servicevertrag konnte nicht gesendet werden",
+  "serviceAgreement.detail.noEmail": "Kunden-E-Mail ist erforderlich, um den Vertrag zu senden"
 }
 

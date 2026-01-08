@@ -1,0 +1,67 @@
+import React, { Suspense } from 'react';
+import { RouteObject } from 'react-router-dom';
+import ErrorBoundary from '../../components/common/ErrorBoundary';
+import { RouteErrorBoundary } from '../error-boundaries/RouteErrorBoundary';
+import {
+  LazyPublicOfferView,
+  LazyOfferThankYou,
+  LazyPublicServiceAgreementView,
+  LoadingFallback,
+} from '../../components/LazyComponents';
+import PublicReportView from '../../components/reports/PublicReportView';
+import UnsubscribePage from '../../components/UnsubscribePage';
+
+/**
+ * Public routes - accessible without authentication
+ */
+export const publicRoutes: RouteObject[] = [
+  {
+    path: '/report/public/:reportId',
+    element: (
+      <ErrorBoundary>
+        <Suspense fallback={<LoadingFallback />}>
+          <PublicReportView />
+        </Suspense>
+      </ErrorBoundary>
+    ),
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
+    path: '/unsubscribe',
+    element: <UnsubscribePage />,
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
+    path: '/offer/public/:offerId',
+    element: (
+      <ErrorBoundary>
+        <Suspense fallback={<LoadingFallback />}>
+          <LazyPublicOfferView />
+        </Suspense>
+      </ErrorBoundary>
+    ),
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
+    path: '/service-agreement/public/:token',
+    element: (
+      <ErrorBoundary>
+        <Suspense fallback={<LoadingFallback />}>
+          <LazyPublicServiceAgreementView />
+        </Suspense>
+      </ErrorBoundary>
+    ),
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
+    path: '/offer/thank-you',
+    element: (
+      <ErrorBoundary>
+        <Suspense fallback={<LoadingFallback />}>
+          <LazyOfferThankYou />
+        </Suspense>
+      </ErrorBoundary>
+    ),
+    errorElement: <RouteErrorBoundary />,
+  },
+];

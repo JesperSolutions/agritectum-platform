@@ -1,11 +1,13 @@
 import { useEffect } from 'react';
-// Use a default favicon - logo can be added to public folder
-// For now, use a data URI or default icon
-const defaultFavicon = '/favicon.ico';
+// Import existing logo from repo root
+// Vite will bundle and return a URL
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import logoUrl from '../../main logo.png';
 
 export function useFavicon(customUrl?: string) {
   useEffect(() => {
-    const href = customUrl || defaultFavicon;
+    const href = customUrl || (logoUrl as string);
     let link = document.querySelector<HTMLLinkElement>("link[rel='icon']");
     if (!link) {
       link = document.createElement('link');

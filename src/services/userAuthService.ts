@@ -10,6 +10,16 @@ interface CreateUserWithAuthRequest {
   invitedBy?: string;
 }
 
+interface CreateCustomerUserRequest {
+  email: string;
+  password: string;
+  displayName: string;
+  phone?: string;
+  address?: string;
+  companyName?: string;
+  companyId?: string;
+}
+
 interface CreateUserWithAuthResponse {
   success: boolean;
   userId?: string;
@@ -48,6 +58,69 @@ export const createUserWithAuth = async (userData: CreateUserWithAuthRequest): P
 
   } catch (error) {
     console.error('❌ Error creating user with Firebase Auth:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    };
+  }
+};
+
+// Create customer user account
+export const createCustomerUser = async (customerData: CreateCustomerUserRequest): Promise<{ success: boolean; userId?: string; error?: string }> => {
+  try {
+    console.log('🔍 Creating customer user:', customerData.email);
+
+    // Get the current Firebase project ID
+    const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID || 'agritectum-platform';
+    
+    // Construct the Cloud Function URL
+    // Note: This will need to be updated with the actual Cloud Function URL
+    const functionUrl = `https://us-central1-${projectId}.cloudfunctions.net/createCustomerUser`;
+
+    const response = await fetch(functionUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(customerData),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || 'Failed to create customer user');
+    }
+
+    console.log('✅ Customer user created:', result);
+    return result;
+
+  } catch (error) {
+    console.error('❌ Error creating customer user:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    };
+  }
+};
+
+// Update customer profile
+export const updateCustomerProfile = async (
+  userId: string,
+  updates: { phone?: string; address?: string; companyName?: string; companyId?: string }
+): Promise<{ success: boolean; error?: string }> => {
+  try {
+    const { doc, updateDoc } = await import('firebase/firestore');
+    const { db } = await import('../config/firebase');
+
+    const userRef = doc(db, 'users', userId);
+    await updateDoc(userRef, {
+      customerProfile: updates,
+      ...(updates.companyId && { companyId: updates.companyId }),
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('❌ Error updating customer profile:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error'

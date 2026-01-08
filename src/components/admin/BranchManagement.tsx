@@ -59,8 +59,8 @@ const BranchManagement: React.FC = () => {
     return (
       <div className='min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center'>
         <div className='bg-white p-8 rounded-xl shadow-sm border border-slate-200 text-center'>
-          <h1 className='text-2xl font-bold text-slate-900 mb-4'>Access Denied</h1>
-          <p className='text-slate-600 mb-6'>You don't have permission to manage branches.</p>
+          <h1 className='text-2xl font-bold text-slate-900 mb-4'>{t('errors.access.denied')}</h1>
+          <p className='text-slate-600 mb-6'>{t('errors.access.manageBranches')}</p>
           <button
             onClick={() => (window.location.href = '/dashboard')}
             className='px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors shadow-sm'
@@ -467,7 +467,7 @@ const BranchManagement: React.FC = () => {
           {branches.length === 0 ? (
             <div className='p-6 text-center'>
               <Building className='w-12 h-12 text-slate-400 mx-auto' />
-              <h3 className='mt-2 text-sm font-semibold text-slate-900'>No branches yet</h3>
+              <h3 className='mt-2 text-sm font-semibold text-slate-900'>{t('errors.branch.none')}</h3>
               <p className='mt-1 text-sm text-slate-500'>
                 Get started by creating your first branch.
               </p>
@@ -540,7 +540,7 @@ const BranchManagement: React.FC = () => {
           {!selectedBranch ? (
             <div className='p-6 text-center'>
               <Users className='w-12 h-12 text-slate-400 mx-auto' />
-              <h3 className='mt-2 text-sm font-semibold text-slate-900'>No branch selected</h3>
+              <h3 className='mt-2 text-sm font-semibold text-slate-900'>{t('errors.branch.notSelected')}</h3>
               <p className='mt-1 text-sm text-slate-500'>Select a branch to view its employees.</p>
             </div>
           ) : (

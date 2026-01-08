@@ -109,5 +109,11 @@
   "schedule.validation.fillThisField": "Fyll i detta fält",
   "schedule.todaysAppointments": "Dagens inspektioner",
   "schedule.appointment.start": "Starta",
-  "schedule.errorMessage": "Ett fel uppstod"
+  "schedule.errorMessage": "Ett fel uppstod",
+  
+  "schedule.visits.subtitle": "Visa schemalagda takläggarbesök för dina byggnader",
+  "schedule.visits.noVisits": "Inga schemalagda besök hittades",
+  "schedule.visits.dateTime": "Datum & Tid",
+  "schedule.visits.location": "Plats",
+  "schedule.visits.inspector": "Inspektör"
 }

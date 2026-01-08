@@ -306,18 +306,18 @@
     }
   },
   "sharedVariables": {
-    "brandName": "{{BRAND_NAME}}",
-    "legalEntity": "{{LEGAL_ENTITY}}",
-    "legalAddress": "{{LEGAL_ADDRESS}}",
-    "emailReason": "{{EMAIL_REASON}}",
-    "unsubscribeUrl": "{{UNSUBSCRIBE_URL}}"
+    "brandName": "Taklaget Professional Roofing",
+    "legalEntity": "Taklaget AB",
+    "legalAddress": "Professional Roofing Services, Sweden",
+    "emailReason": "You're receiving this because you have an account with our service.",
+    "unsubscribeUrl": "https://taklaget.app/unsubscribe"
   },
   "defaults": {
-    "fromEmail": "{{FROM_EMAIL}}",
-    "replyToEmail": "{{REPLY_TO_EMAIL}}",
-    "companyName": "{{COMPANY_NAME}}",
-    "website": "{{WEBSITE_URL}}",
-    "supportEmail": "{{SUPPORT_EMAIL}}",
-    "supportPhone": "{{SUPPORT_PHONE}}"
+    "fromEmail": "noreply@taklaget.app",
+    "replyToEmail": "support@taklaget.app",
+    "companyName": "Taklaget Professional Roofing",
+    "website": "https://taklaget.app",
+    "supportEmail": "support@taklaget.app",
+    "supportPhone": "+46 470 123 456"
   }
 }

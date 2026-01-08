@@ -12,7 +12,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useReports } from '../../contexts/ReportContextSimple';
 import { useIntl } from '../../hooks/useIntl';
-import { formatCurrencyAmount, getCurrencyPreference, Currency } from '../../utils/currencyUtils';
 import {
   Building,
   Users,
@@ -28,6 +27,8 @@ import {
   Calendar,
   MapPin,
   User,
+  FileCheck,
+  TrendingUp,
 } from 'lucide-react';
 import LoadingSpinner from '../common/LoadingSpinner';
 
@@ -67,29 +68,26 @@ interface Task {
 const SmartDashboard: React.FC = () => {
   const { currentUser } = useAuth();
   const { state, fetchReports } = useReports();
-  const { t, locale } = useIntl();
+  const { t } = useIntl();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [branchStats, setBranchStats] = useState<BranchStats[]>([]);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [selectedCurrency] = useState<Currency>(getCurrencyPreference());
   const [inspectorStats, setInspectorStats] = useState({
     scheduledThisWeek: 0,
     averageTime: 0,
     totalReports: 0
   });
+  // Branch Admin specific state
+  const [serviceAgreements, setServiceAgreements] = useState<any[]>([]);
+  const [scheduledVisits, setScheduledVisits] = useState<any[]>([]);
 
   useEffect(() => {
     if (currentUser) {
-      // Redirect customers to customer dashboard
-      if (currentUser.role === 'customer') {
-        navigate('/customer/dashboard', { replace: true });
-        return;
-      }
       loadDashboardData();
     }
-  }, [currentUser, navigate]);
+  }, [currentUser]);
 
   const loadDashboardData = async () => {
     try {
@@ -152,11 +150,24 @@ const SmartDashboard: React.FC = () => {
 
   const loadBranchAdminData = async () => {
     const { getUsers } = await import('../../services/userService');
+    const { getServiceAgreements } = await import('../../services/serviceAgreementService');
+    const { getScheduledVisits } = await import('../../services/scheduledVisitService');
+    
     await fetchReports();
     
     const reports = state.reports || [];
     const branchReports = reports.filter(report => report.branchId === currentUser?.branchId);
     const users = await getUsers(currentUser?.branchId);
+
+    // Load service agreements for this branch
+    const agreements = await getServiceAgreements(currentUser?.branchId);
+    setServiceAgreements(agreements);
+
+    // Load scheduled visits for this branch
+    if (currentUser) {
+      const visits = await getScheduledVisits(currentUser);
+      setScheduledVisits(visits);
+    }
 
     const teamMembersData: TeamMember[] = users.map(user => {
       const userReports = branchReports.filter(report => report.createdBy === user.uid);
@@ -256,7 +267,7 @@ const SmartDashboard: React.FC = () => {
 
       return [
         { label: t('dashboard.totalReports'), value: totalReports, subtitle: t('dashboard.totalReportsDesc'), icon: FileText, iconColor: 'text-blue-600' },
-        { label: t('dashboard.totalRevenue'), value: formatCurrencyAmount(totalRevenue, selectedCurrency, locale), subtitle: t('dashboard.offerValueDesc'), icon: DollarSign, iconColor: 'text-green-600' },
+        { label: t('dashboard.totalRevenue'), value: `${totalRevenue.toLocaleString('sv-SE')} SEK`, subtitle: t('dashboard.offerValueDesc'), icon: DollarSign, iconColor: 'text-green-600' },
         { label: t('dashboard.completionRate'), value: `${completionRate}%`, subtitle: t('dashboard.completedReportsDesc'), icon: BarChart3, iconColor: 'text-purple-600' },
         { label: t('dashboard.activeUsers'), value: activeUsers, subtitle: t('dashboard.acrossAllBranches'), icon: Users, iconColor: 'text-orange-600' },
       ];
@@ -270,11 +281,46 @@ const SmartDashboard: React.FC = () => {
       const completionRate = totalReports > 0 ? Math.round((completedReports / totalReports) * 100) : 0;
       const teamProductivity = teamMembers.reduce((sum, m) => sum + m.completedThisWeek, 0);
 
+      // Service Agreement metrics
+      const activeServiceAgreements = serviceAgreements.filter(sa => sa.status === 'active');
+      const serviceAgreementRevenue = activeServiceAgreements.reduce((sum, sa) => {
+        // Calculate monthly revenue from service agreements
+        // Use pricingStructure (perRoof or perSquareMeter) or fallback to price field
+        let annualRevenue = 0;
+        if (sa.pricingStructure?.perRoof) {
+          annualRevenue = sa.pricingStructure.perRoof;
+        } else if (sa.pricingStructure?.perSquareMeter && sa.buildingId) {
+          // Would need building size, but for now use perSquareMeter * estimated 100m²
+          annualRevenue = sa.pricingStructure.perSquareMeter * 100;
+        } else if (sa.price) {
+          // If billingFrequency is annual, price is already annual
+          // If semi-annual, multiply by 2
+          annualRevenue = sa.billingFrequency === 'semi-annual' ? sa.price * 2 : sa.price;
+        }
+        return sum + (annualRevenue / 12); // Monthly revenue
+      }, 0);
+
+      // Scheduled Visits metrics
+      const now = new Date();
+      const nextWeek = new Date(now);
+      nextWeek.setDate(nextWeek.getDate() + 7);
+      const upcomingVisits = scheduledVisits.filter(v => {
+        const visitDate = new Date(v.scheduledDate);
+        return visitDate >= now && visitDate <= nextWeek && v.status === 'scheduled';
+      }).length;
+      const completedVisitsThisWeek = scheduledVisits.filter(v => {
+        if (!v.completedAt) return false;
+        const completedDate = new Date(v.completedAt);
+        const weekAgo = new Date(now);
+        weekAgo.setDate(weekAgo.getDate() - 7);
+        return v.status === 'completed' && completedDate >= weekAgo;
+      }).length;
+
       return [
         { label: t('dashboard.totalReports'), value: totalReports, subtitle: '+15% ' + t('dashboard.vsLastWeek'), icon: FileText, iconColor: 'text-blue-600' },
-        { label: t('dashboard.completionRate'), value: `${completionRate}%`, subtitle: t('dashboard.aboveTarget'), icon: CheckCircle, iconColor: 'text-green-600' },
-        { label: t('dashboard.pendingReports'), value: pendingReports, subtitle: t('dashboard.requiresAttention'), icon: AlertTriangle, iconColor: 'text-orange-600' },
-        { label: t('dashboard.teamProductivity'), value: teamProductivity, subtitle: t('dashboard.thisWeek'), icon: Activity, iconColor: 'text-purple-600' },
+        { label: 'Active Service Agreements', value: activeServiceAgreements.length, subtitle: `${serviceAgreementRevenue.toLocaleString('sv-SE')} SEK/month`, icon: FileCheck, iconColor: 'text-green-600' },
+        { label: 'Upcoming Visits', value: upcomingVisits, subtitle: `${completedVisitsThisWeek} completed this week`, icon: Calendar, iconColor: 'text-purple-600' },
+        { label: t('dashboard.completionRate'), value: `${completionRate}%`, subtitle: t('dashboard.aboveTarget'), icon: CheckCircle, iconColor: 'text-orange-600' },
       ];
     }
 
@@ -400,7 +446,7 @@ const SmartDashboard: React.FC = () => {
       </div>
 
       {/* Universal KPI Cards */}
-      <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6'>
+      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
         {kpis.map((kpi, index) => (
           <div
             key={index}
@@ -508,7 +554,7 @@ const SmartDashboard: React.FC = () => {
                     <div>
                       <p className='text-xs text-slate-500 uppercase tracking-wide font-medium mb-1'>{t('dashboard.revenue')}</p>
                       <p className='text-xl font-bold text-slate-900 truncate'>
-                        {formatCurrencyAmount(branch.totalRevenue, selectedCurrency, locale)}
+                        {branch.totalRevenue.toLocaleString('sv-SE')} <span className='text-sm'>SEK</span>
                       </p>
                     </div>
                   </div>
@@ -574,6 +620,233 @@ const SmartDashboard: React.FC = () => {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Service Agreements Widget for Branch Admin */}
+      {currentUser?.role === 'branchAdmin' && serviceAgreements.length > 0 && (
+        <div className='bg-white rounded-xl shadow-sm border border-slate-200'>
+          <div className='p-6 border-b border-slate-200 flex items-center justify-between'>
+            <h2 className='text-2xl font-semibold text-slate-900 flex items-center gap-2'>
+              <FileCheck className='w-6 h-6 text-slate-600' />
+              Service Agreements
+            </h2>
+            <button
+              onClick={() => navigate('/admin/service-agreements')}
+              className='px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium shadow-sm'
+            >
+              View All →
+            </button>
+          </div>
+          <div className='p-6'>
+            {(() => {
+              const activeAgreements = serviceAgreements.filter(sa => sa.status === 'active');
+              const expiringSoon = serviceAgreements.filter(sa => {
+                if (sa.status !== 'active' || !sa.endDate) return false;
+                const endDate = new Date(sa.endDate);
+                const thirtyDaysFromNow = new Date();
+                thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
+                return endDate <= thirtyDaysFromNow && endDate >= new Date();
+              });
+              
+              const monthlyRevenue = activeAgreements.reduce((sum, sa) => {
+                // Calculate monthly revenue from service agreements
+                let annualRevenue = 0;
+                if (sa.pricingStructure?.perRoof) {
+                  annualRevenue = sa.pricingStructure.perRoof;
+                } else if (sa.pricingStructure?.perSquareMeter) {
+                  // Estimate 100m² if building size not available
+                  annualRevenue = sa.pricingStructure.perSquareMeter * 100;
+                } else if (sa.price) {
+                  annualRevenue = sa.billingFrequency === 'semi-annual' ? sa.price * 2 : sa.price;
+                }
+                return sum + (annualRevenue / 12);
+              }, 0);
+
+              return (
+                <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
+                  <div className='bg-slate-50 border border-slate-200 rounded-xl p-6'>
+                    <p className='text-xs text-slate-500 uppercase tracking-wide font-medium mb-2'>{t('dashboard.serviceAgreements.activeAgreements')}</p>
+                    <p className='text-3xl font-bold text-slate-900'>{activeAgreements.length}</p>
+                    <p className='text-sm text-slate-600 mt-2'>{t('dashboard.serviceAgreements.ofTotal', { total: serviceAgreements.length })}</p>
+                  </div>
+                  <div className='bg-slate-50 border border-slate-200 rounded-xl p-6'>
+                    <p className='text-xs text-slate-500 uppercase tracking-wide font-medium mb-2'>{t('dashboard.serviceAgreements.monthlyRevenue')}</p>
+                    <p className='text-3xl font-bold text-slate-900'>{monthlyRevenue.toLocaleString('sv-SE')}</p>
+                    <p className='text-sm text-slate-600 mt-2'>{t('dashboard.serviceAgreements.sekPerMonthRecurring')}</p>
+                  </div>
+                  <div className='bg-slate-50 border border-slate-200 rounded-xl p-6'>
+                    <p className='text-xs text-slate-500 uppercase tracking-wide font-medium mb-2'>{t('dashboard.serviceAgreements.expiringSoon')}</p>
+                    <p className='text-3xl font-bold text-slate-900'>{expiringSoon.length}</p>
+                    <p className='text-sm text-slate-600 mt-2'>{t('dashboard.serviceAgreements.next30Days')}</p>
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+        </div>
+      )}
+
+      {/* Scheduled Visits Widget for Branch Admin */}
+      {currentUser?.role === 'branchAdmin' && scheduledVisits.length > 0 && (
+        <div className='bg-white rounded-xl shadow-sm border border-slate-200'>
+          <div className='p-6 border-b border-slate-200 flex items-center justify-between'>
+            <h2 className='text-2xl font-semibold text-slate-900 flex items-center gap-2'>
+              <Calendar className='w-6 h-6 text-slate-600' />
+              {t('dashboard.scheduledVisits.title')}
+            </h2>
+            <button
+              onClick={() => navigate('/schedule')}
+              className='px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium shadow-sm'
+            >
+              {t('dashboard.scheduledVisits.viewCalendar')} →
+            </button>
+          </div>
+          <div className='p-6'>
+            {(() => {
+              const now = new Date();
+              const nextWeek = new Date(now);
+              nextWeek.setDate(nextWeek.getDate() + 7);
+              const nextMonth = new Date(now);
+              nextMonth.setDate(nextMonth.getDate() + 30);
+              
+              const upcoming = scheduledVisits.filter(v => {
+                const visitDate = new Date(v.scheduledDate);
+                return visitDate >= now && visitDate <= nextWeek && v.status === 'scheduled';
+              });
+              
+              const completedThisWeek = scheduledVisits.filter(v => {
+                if (!v.completedAt) return false;
+                const completedDate = new Date(v.completedAt);
+                const weekAgo = new Date(now);
+                weekAgo.setDate(weekAgo.getDate() - 7);
+                return v.status === 'completed' && completedDate >= weekAgo;
+              });
+              
+              const overdue = scheduledVisits.filter(v => {
+                const visitDate = new Date(v.scheduledDate);
+                return visitDate < now && v.status === 'scheduled';
+              });
+
+              const completionRate = scheduledVisits.length > 0
+                ? Math.round((completedThisWeek.length / scheduledVisits.filter(v => {
+                    const visitDate = new Date(v.scheduledDate);
+                    const weekAgo = new Date(now);
+                    weekAgo.setDate(weekAgo.getDate() - 7);
+                    return visitDate >= weekAgo;
+                  }).length) * 100)
+                : 0;
+
+              return (
+                <div className='grid grid-cols-1 md:grid-cols-4 gap-6'>
+                  <div className='bg-slate-50 border border-slate-200 rounded-xl p-6'>
+                    <p className='text-xs text-slate-500 uppercase tracking-wide font-medium mb-2'>{t('dashboard.scheduledVisits.upcoming7Days')}</p>
+                    <p className='text-3xl font-bold text-slate-900'>{upcoming.length}</p>
+                    <p className='text-sm text-slate-600 mt-2'>{t('dashboard.scheduledVisits.scheduledVisits')}</p>
+                  </div>
+                  <div className='bg-slate-50 border border-slate-200 rounded-xl p-6'>
+                    <p className='text-xs text-slate-500 uppercase tracking-wide font-medium mb-2'>{t('common.status.completed')}</p>
+                    <p className='text-3xl font-bold text-green-600'>{completedThisWeek.length}</p>
+                    <p className='text-sm text-slate-600 mt-2'>{t('dashboard.thisWeek')}</p>
+                  </div>
+                  <div className='bg-slate-50 border border-slate-200 rounded-xl p-6'>
+                    <p className='text-xs text-slate-500 uppercase tracking-wide font-medium mb-2'>{t('dashboard.scheduledVisits.overdue')}</p>
+                    <p className='text-3xl font-bold text-red-600'>{overdue.length}</p>
+                    <p className='text-sm text-slate-600 mt-2'>{t('dashboard.requiresAttention')}</p>
+                  </div>
+                  <div className='bg-slate-50 border border-slate-200 rounded-xl p-6'>
+                    <p className='text-xs text-slate-500 uppercase tracking-wide font-medium mb-2'>{t('dashboard.completionRate')}</p>
+                    <p className='text-3xl font-bold text-slate-900'>{completionRate}%</p>
+                    <p className='text-sm text-slate-600 mt-2'>{t('dashboard.thisWeek')}</p>
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+        </div>
+      )}
+
+      {/* Financial Breakdown Widget for Branch Admin */}
+      {currentUser?.role === 'branchAdmin' && (
+        <div className='bg-white rounded-xl shadow-sm border border-slate-200'>
+          <div className='p-6 border-b border-slate-200 flex items-center justify-between'>
+            <h2 className='text-2xl font-semibold text-slate-900 flex items-center gap-2'>
+              <TrendingUp className='w-6 h-6 text-slate-600' />
+              {t('dashboard.financialOverview.title')}
+            </h2>
+            <button
+              onClick={() => navigate('/admin/analytics')}
+              className='px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium shadow-sm'
+            >
+              {t('dashboard.financialOverview.viewAnalytics')} →
+            </button>
+          </div>
+          <div className='p-6'>
+            {(() => {
+              const reports = state.reports || [];
+              const branchReports = reports.filter(r => r.branchId === currentUser?.branchId);
+              
+              // One-time report revenue
+              const oneTimeRevenue = branchReports.reduce((sum, r) => sum + (r.offerValue || r.estimatedCost || 0), 0);
+              
+              // Service Agreement revenue (monthly)
+              const activeAgreements = serviceAgreements.filter(sa => sa.status === 'active');
+              const serviceAgreementMonthlyRevenue = activeAgreements.reduce((sum, sa) => {
+                let annualRevenue = 0;
+                if (sa.pricingStructure?.perRoof) {
+                  annualRevenue = sa.pricingStructure.perRoof;
+                } else if (sa.pricingStructure?.perSquareMeter) {
+                  annualRevenue = sa.pricingStructure.perSquareMeter * 100; // Estimate
+                } else if (sa.price) {
+                  annualRevenue = sa.billingFrequency === 'semi-annual' ? sa.price * 2 : sa.price;
+                }
+                return sum + (annualRevenue / 12);
+              }, 0);
+              
+              // Annual service agreement revenue
+              const serviceAgreementAnnualRevenue = activeAgreements.reduce((sum, sa) => {
+                let annualRevenue = 0;
+                if (sa.pricingStructure?.perRoof) {
+                  annualRevenue = sa.pricingStructure.perRoof;
+                } else if (sa.pricingStructure?.perSquareMeter) {
+                  annualRevenue = sa.pricingStructure.perSquareMeter * 100; // Estimate
+                } else if (sa.price) {
+                  annualRevenue = sa.billingFrequency === 'semi-annual' ? sa.price * 2 : sa.price;
+                }
+                return sum + annualRevenue;
+              }, 0);
+              
+              const totalRevenue = oneTimeRevenue + serviceAgreementAnnualRevenue;
+              const recurringPercentage = totalRevenue > 0 
+                ? Math.round((serviceAgreementAnnualRevenue / totalRevenue) * 100)
+                : 0;
+
+              return (
+                <div className='grid grid-cols-1 md:grid-cols-4 gap-6'>
+                  <div className='bg-slate-50 border border-slate-200 rounded-xl p-6'>
+                    <p className='text-xs text-slate-500 uppercase tracking-wide font-medium mb-2'>{t('dashboard.financialOverview.oneTimeRevenue')}</p>
+                    <p className='text-2xl font-bold text-slate-900'>{oneTimeRevenue.toLocaleString('sv-SE')}</p>
+                    <p className='text-sm text-slate-600 mt-2'>{t('dashboard.financialOverview.sekReportsOffers')}</p>
+                  </div>
+                  <div className='bg-slate-50 border border-slate-200 rounded-xl p-6'>
+                    <p className='text-xs text-slate-500 uppercase tracking-wide font-medium mb-2'>{t('dashboard.financialOverview.recurringRevenue')}</p>
+                    <p className='text-2xl font-bold text-green-600'>{serviceAgreementAnnualRevenue.toLocaleString('sv-SE')}</p>
+                    <p className='text-sm text-slate-600 mt-2'>{t('dashboard.financialOverview.sekPerYear', { monthly: serviceAgreementMonthlyRevenue.toLocaleString('sv-SE') })}</p>
+                  </div>
+                  <div className='bg-slate-50 border border-slate-200 rounded-xl p-6'>
+                    <p className='text-xs text-slate-500 uppercase tracking-wide font-medium mb-2'>{t('dashboard.totalRevenue')}</p>
+                    <p className='text-2xl font-bold text-slate-900'>{totalRevenue.toLocaleString('sv-SE')}</p>
+                    <p className='text-sm text-slate-600 mt-2'>{t('dashboard.financialOverview.sekAllSources')}</p>
+                  </div>
+                  <div className='bg-slate-50 border border-slate-200 rounded-xl p-6'>
+                    <p className='text-xs text-slate-500 uppercase tracking-wide font-medium mb-2'>{t('dashboard.financialOverview.recurringPercent')}</p>
+                    <p className='text-2xl font-bold text-purple-600'>{recurringPercentage}%</p>
+                    <p className='text-sm text-slate-600 mt-2'>{t('dashboard.financialOverview.ofTotalRevenue')}</p>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         </div>
       )}

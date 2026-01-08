@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useIntl } from '../../hooks/useIntl';
 import { Mail, Lock, AlertCircle } from 'lucide-react';
 import LoadingSpinner from '../common/LoadingSpinner';
 import AgritectumLogo from '../AgritectumLogo';
-import { BRAND_CONFIG } from '../../config/brand';
 
 const LoginForm: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -13,9 +12,20 @@ const LoginForm: React.FC = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { signIn } = useAuth();
+  const { signIn, currentUser } = useAuth();
   const navigate = useNavigate();
   const { t } = useIntl();
+
+  // Redirect after successful login based on user role
+  useEffect(() => {
+    if (currentUser && !loading) {
+      if (currentUser.role === 'customer' || currentUser.userType === 'customer') {
+        navigate('/portal/dashboard', { replace: true });
+      } else {
+        navigate('/dashboard', { replace: true });
+      }
+    }
+  }, [currentUser, loading, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,7 +40,7 @@ const LoginForm: React.FC = () => {
 
     try {
       await signIn(email, password);
-      navigate('/dashboard');
+      // Navigation will be handled by useEffect when currentUser updates
     } catch (error: any) {
       // Login error handled by error display
 
@@ -60,19 +70,11 @@ const LoginForm: React.FC = () => {
           <div className='flex justify-center mb-8'>
             <AgritectumLogo size="xl" className="justify-center" />
           </div>
-          <h2 className='mt-4 text-3xl font-bold text-gray-900 tracking-tight'>Welcome to {BRAND_CONFIG.BRAND_NAME}</h2>
-          <p className='mt-3 text-base text-gray-600 font-light'>Sign in to access your building performance dashboard</p>
-          <div className='mt-4'>
-            <a 
-              href='/register' 
-              className='text-sm text-blue-600 hover:text-blue-700 font-medium'
-            >
-              Don't have an account? Register here
-            </a>
-          </div>
+          <h2 className='mt-4 text-4xl font-light text-gray-900 tracking-tight'>{t('login.subtitle')}</h2>
+          <p className='mt-3 text-base text-gray-600 font-light'>{t('login.title')}</p>
         </div>
 
-        <form className='mt-8 space-y-6 bg-white p-8 rounded-xl shadow-xl border border-gray-100' onSubmit={handleSubmit}>
+        <form className='mt-8 space-y-6 bg-white p-8 rounded-material shadow-material-4' onSubmit={handleSubmit}>
           {error && (
             <div className='rounded-material bg-red-50 p-4 border-l-4 border-red-500'>
               <div className='flex items-center'>
@@ -130,14 +132,23 @@ const LoginForm: React.FC = () => {
             </div>
           </div>
 
-          <div className='pt-4'>
+          <div className='pt-4 space-y-3'>
             <button
               type='submit'
               disabled={loading}
-              className='group relative w-full flex justify-center py-3 px-6 text-base font-medium rounded-material text-white bg-slate-700 hover:bg-slate-800 shadow-material-2 hover:shadow-material-4 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-material uppercase tracking-wide'
+              className='group relative w-full flex justify-center py-3 px-6 text-base font-medium rounded-material text-white bg-blue-600 hover:bg-blue-700 shadow-material-2 hover:shadow-material-4 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-material uppercase tracking-wide'
             >
               {loading ? <LoadingSpinner size='sm' /> : t('login.signin')}
             </button>
+
+            <div className='text-center'>
+              <Link
+                to='/forgot-password'
+                className='text-sm text-blue-600 hover:text-blue-700 font-medium'
+              >
+                {t('login.forgotPassword')}
+              </Link>
+            </div>
           </div>
         </form>
 

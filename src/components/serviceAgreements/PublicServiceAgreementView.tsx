@@ -6,8 +6,6 @@ import { CheckCircle, XCircle, Calendar, FileCheck, AlertCircle, User, MapPin, M
 import LoadingSpinner from '../common/LoadingSpinner';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import { useIntl } from '../../hooks/useIntl';
-import { BRAND_CONFIG } from '../../config/brand';
-import { formatCurrencyAmount, Currency } from '../../utils/currencyUtils';
 
 const PublicServiceAgreementView: React.FC = () => {
   const { token } = useParams<{ token: string }>();
@@ -146,9 +144,22 @@ const PublicServiceAgreementView: React.FC = () => {
     }
   };
 
+  // Get currency based on locale
+  const getCurrencyForLocale = (): string => {
+    if (locale.startsWith('da')) return 'DKK';
+    if (locale.startsWith('de')) return 'EUR';
+    return 'SEK'; // Default to SEK for Swedish
+  };
+
   const formatCurrency = (amount: number, currency?: string) => {
-    const currencyCode = (currency as Currency) || 'SEK';
-    return formatCurrencyAmount(amount, currencyCode, locale);
+    const defaultCurrency = currency || getCurrencyForLocale();
+    // Use the locale from useIntl hook to get proper formatting (1.123,50 format)
+    return new Intl.NumberFormat(locale, {
+      style: 'currency',
+      currency: defaultCurrency,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(amount);
   };
 
   const getStatusColor = (status: string) => {
@@ -206,7 +217,7 @@ const PublicServiceAgreementView: React.FC = () => {
         <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
           <div className="bg-gradient-to-r from-slate-700 to-slate-900 px-8 py-6">
             <h1 className="text-3xl font-bold text-white mb-2">
-              {t('serviceAgreement.public.headerTitle') || `${BRAND_CONFIG.BRAND_NAME} Service Agreement`}
+              {t('serviceAgreement.public.headerTitle') || 'Agritectum Service Agreement'}
             </h1>
             <p className="text-slate-200">{agreement.title}</p>
           </div>

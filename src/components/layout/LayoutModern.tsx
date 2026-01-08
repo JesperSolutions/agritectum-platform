@@ -115,8 +115,8 @@ const LayoutModern: React.FC = () => {
             <Building className='h-6 w-6 text-primary-foreground' />
           </div>
           <div>
-            <h1 className='text-lg font-semibold'>{BRAND_CONFIG.BRAND_NAME}</h1>
-            <p className='text-xs text-muted-foreground'>Building Performance</p>
+            <h1 className='text-lg font-semibold'>Taklaget</h1>
+            <p className='text-xs text-muted-foreground'>Roof Inspection</p>
           </div>
         </div>
         {isMobile && (
@@ -238,7 +238,7 @@ const LayoutModern: React.FC = () => {
           <div className='p-1 bg-primary rounded'>
             <Building className='h-5 w-5 text-primary-foreground' />
           </div>
-          <span className='font-semibold'>{BRAND_CONFIG.BRAND_NAME}</span>
+          <span className='font-semibold'>Taklaget</span>
         </div>
 
         <div className='flex items-center space-x-2'>

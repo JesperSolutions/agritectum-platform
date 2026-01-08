@@ -1,5 +1,5 @@
 {
-  "app.title": "TagLaget - Taginspektioner",
+  "app.title": "Agritectum Platform - Taginspektioner",
   "app.subtitle": "Professionelle taginspektioner og tilbud",
 
   "common.buttons.save": "Gem",
@@ -141,12 +141,8 @@
   "common.somethingWentWrong": "Noget gik galt",
   "common.somethingUnexpectedHappened": "Der opstod en uventet fejl. Prøv at opdatere siden.",
   "common.goToDashboard": "Gå til dashboard",
-  "common.goToHomepage": "Gå til startsiden",
-  "common.tryAgain": "Prøv igen",
-  "common.contactSupport": "Kontakt support",
-  "common.buildingPerformance": "Bygningsydelse",
 
-  "common.install.title": "Installer Taglaget-app",
+  "common.install.title": "Installer Agritectum-app",
   "common.install.description": "Installer for offline-adgang og hurtigere ydeevne",
   "common.install.button": "Installer nu",
 

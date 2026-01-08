@@ -1,12 +1,20 @@
 import { Report, Branch } from '../types';
 import { EmailTemplate, defaultTemplates, replaceTemplateVariables } from './triggerEmailService';
-import { brandConfig } from '../config/brand';
 
-// Email configuration - uses environment variables for white-label deployment
+// Domain configuration - easy to switch when taklaget.app is ready
 export const EMAIL_CONFIG = {
-  domain: import.meta.env.VITE_WEBSITE_URL?.replace(/^https?:\/\//, '').replace(/\/$/, '') || 'example.com',
-  noreply: import.meta.env.VITE_FROM_EMAIL || 'noreply@example.com',
-  support: import.meta.env.VITE_SUPPORT_EMAIL || 'support@example.com',
+  // Current domain (until new one is ready)
+  current: {
+    domain: 'taklaget.se',
+    noreply: 'noreply@taklaget.app',
+    support: 'support@taklaget.app',
+  },
+  // New domain (when ready to switch)
+  new: {
+    domain: 'taklaget.app',
+    noreply: 'noreply@taklaget.app',
+    support: 'support@taklaget.app',
+  },
 };
 
 // Get current email configuration (will switch when domain is ready)
@@ -23,7 +31,7 @@ export const offerTemplates: EmailTemplate[] = [
     subject: 'Takinspektionsoffert - {{customerName}} ({{offerValue}} SEK)',
     body: `Kära {{customerName}},
 
-Tack för att du valde {{brandName}} för din bygginspektion. Baserat på vår grundliga inspektion av din fastighet på {{customerAddress}}, har vi glädjen att presentera ett omfattande reparationsförslag.
+Tack för att du valde Taklaget för din takinspektioner. Baserat på vår grundliga inspektion av din fastighet på {{customerAddress}}, har vi glädjen att presentera ett omfattande reparationsförslag.
 
 🏠 INSPEKTIONSSAMMANFATTNING
 - Inspektionsdatum: {{inspectionDate}}
@@ -38,7 +46,7 @@ Tack för att du valde {{brandName}} för din bygginspektion. Baserat på vår g
 🔧 ARBETE SOM INGÅR
 {{workDescription}}
 
-✅ VARFÖR VÄLJA {{brandName}}?
+✅ VARFÖR VÄLJA TAKLAGET?
 - Professionella certifierade takläggare
 - Högkvalitativa material och utförande
 - Fullständig garanti på allt utfört arbete
@@ -54,7 +62,7 @@ Denna offert gäller till {{offerValidUntil}}. Efter detta datum kan priser och 
 
 Med vänliga hälsningar,
 {{branchName}} Team
-{{brandName}}
+Taklaget Professional Roofing Services
 
 Professionell licens: #{{licenseNumber}}
 Försäkring: Fullständigt täckt för ditt skydd`,
@@ -83,7 +91,7 @@ Efter {{offerValidUntil}} kan vi behöva revidera priset baserat på aktuella ma
 
 Med vänliga hälsningar,
 {{branchName}} Team
-{{brandName}}`,
+Taklaget Professional Roofing Services`,
     isDefault: false,
   },
   {
@@ -105,7 +113,7 @@ Vi ser fram emot att höra från dig.
 
 Med vänliga hälsningar,
 {{branchName}} Team
-{{brandName}}`,
+Taklaget Professional Roofing Services`,
     isDefault: false,
   },
 ];
@@ -130,7 +138,7 @@ export const generateOfferEmailContent = (
     inspectionDate: new Date(report.inspectionDate).toLocaleDateString('sv-SE'),
     inspectorName: report.createdByName || 'Vår inspektör',
     reportId: report.id,
-    branchName: branchInfo?.name || brandConfig.brandName,
+    branchName: branchInfo?.name || 'Taklaget',
     branchPhone: branchInfo?.phone || '+46 470 123 456',
     branchEmail: branchInfo?.email || emailConfig.support,
     branchAddress: branchInfo?.address || 'Professional Roofing Services',

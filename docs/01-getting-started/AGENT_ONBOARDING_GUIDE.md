@@ -1,4 +1,4 @@
-# Agent Onboarding Guide - Agritectum Platform
+# Agent Onboarding Guide - Taklaget Service App
 
 **Date:** 2025-01-31  
 **Purpose:** Complete guide for AI agents working on this project  
@@ -22,7 +22,7 @@
 
 ### What This Project Is
 
-**Agritectum Platform** is a professional roof inspection management system. It's a full-stack web application with:
+**Taklaget Service App** is a professional roof inspection management system built for Nordic companies. It's a full-stack web application with:
 
 - **Frontend:** React 18 + TypeScript + Vite + Tailwind CSS
 - **Backend:** Firebase (Firestore, Storage, Functions, Auth, Hosting)
@@ -248,7 +248,7 @@ export const createReport = async (
 
 2. **Firebase project created:**
    - Go to https://console.firebase.google.com
-   - Create project: `agritectum-platform`
+   - Create project: `taklaget-service-app`
 
 3. **Firebase login:**
    ```bash
@@ -257,7 +257,7 @@ export const createReport = async (
 
 4. **Link project:**
    ```bash
-   firebase use agritectum-platform
+   firebase use taklaget-service-app
    ```
 
 ### Deployment Process
@@ -381,12 +381,12 @@ npm run deploy:rules  # Deploys rules + storage rules
 
 ```env
 VITE_FIREBASE_API_KEY=...
-VITE_FIREBASE_AUTH_DOMAIN=agritectum-platform.firebaseapp.com
-VITE_FIREBASE_PROJECT_ID=agritectum-platform
-VITE_FIREBASE_STORAGE_BUCKET=agritectum-platform.firebasestorage.app
+VITE_FIREBASE_AUTH_DOMAIN=taklaget-service-app.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=taklaget-service-app
+VITE_FIREBASE_STORAGE_BUCKET=taklaget-service-app.appspot.com
 VITE_FIREBASE_MESSAGING_SENDER_ID=...
 VITE_FIREBASE_APP_ID=...
-VITE_FROM_EMAIL=noreply@agritectum-platform.firebaseapp.com
+VITE_FROM_EMAIL=noreply@taklaget.app
 ```
 
 **For Functions:** Use `.env` or Firebase Functions config
@@ -434,7 +434,7 @@ firebase hosting:clone SOURCE_SITE_ID:SOURCE_CHANNEL_ID TARGET_SITE_ID:channel-i
 
 ### Firebase Project Setup
 
-**Project ID:** `agritectum-platform` (from `.firebaserc`)
+**Project ID:** `taklaget-service-app` (from `.firebaserc`)
 
 **Services Enabled:**
 - ✅ Authentication (Email/Password only)
@@ -950,13 +950,13 @@ firebase functions:log         # View function logs
 
 ### Firebase Console
 
-- **Project:** https://console.firebase.google.com/project/agritectum-platform
-- **Hosting:** https://console.firebase.google.com/project/agritectum-platform/hosting
-- **Firestore:** https://console.firebase.google.com/project/agritectum-platform/firestore
-- **Functions:** https://console.firebase.google.com/project/agritectum-platform/functions
+- **Project:** https://console.firebase.google.com/project/taklaget-service-app
+- **Hosting:** https://console.firebase.google.com/project/taklaget-service-app/hosting
+- **Firestore:** https://console.firebase.google.com/project/taklaget-service-app/firestore
+- **Functions:** https://console.firebase.google.com/project/taklaget-service-app/functions
 
 ---
 
 **Last Updated:** 2025-01-31  
-**Maintained By:** AI Agents Working on Agritectum Platform
+**Maintained By:** AI Agents Working on Taklaget Project
 

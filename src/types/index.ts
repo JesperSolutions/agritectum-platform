@@ -6,9 +6,16 @@ export interface User {
   permissionLevel: PermissionLevel;
   branchId?: string;
   branchIds?: string[]; // For superadmin access to multiple branches
-  customerId?: string; // For customer role
   createdAt: string;
   lastLogin?: string;
+  // Customer user fields
+  userType?: 'internal' | 'customer';
+  companyId?: string; // For customer users linked to companies
+  customerProfile?: {
+    phone?: string;
+    address?: string;
+    companyName?: string;
+  };
 }
 
 export type UserRole = 'inspector' | 'branchAdmin' | 'superadmin' | 'customer';
@@ -50,14 +57,6 @@ export const canManageUsers = (permissionLevel: PermissionLevel): boolean => {
 
 export const canManageBranches = (permissionLevel: PermissionLevel): boolean => {
   return permissionLevel >= PERMISSION_LEVELS.SUPER_ADMIN;
-};
-
-export const isCustomer = (permissionLevel: PermissionLevel): boolean => {
-  return permissionLevel === PERMISSION_LEVELS.CUSTOMER;
-};
-
-export const isCustomerRole = (role: UserRole): boolean => {
-  return role === 'customer';
 };
 
 export interface Branch {
@@ -127,11 +126,6 @@ export interface Customer {
   totalReports: number;
   totalRevenue: number;
   notes?: string;
-  // Customer account linking
-  uid?: string; // Firebase Auth UID when customer has account
-  userId?: string; // Link to users collection
-  buildings?: string[]; // Array of building IDs
-  isRegistered?: boolean; // Whether customer has user account
 }
 
 export interface Employee {
@@ -190,26 +184,6 @@ export interface Appointment {
   cancelReason?: string;
 }
 
-export interface Building {
-  id: string;
-  customerId: string;
-  address: string;
-  name?: string; // Optional building name
-  description?: string;
-  reportIds: string[]; // All reports for this building
-  latestReportId?: string;
-  status: 'active' | 'inactive';
-  createdAt: string;
-  updatedAt: string;
-  // Location data
-  latitude?: number;
-  longitude?: number;
-  // Building details
-  buildingType?: string;
-  yearBuilt?: number;
-  totalArea?: number; // Square meters
-}
-
 export interface Report {
   id: string;
   createdBy: string;
@@ -220,8 +194,6 @@ export interface Report {
   customerAddress: string;
   customerPhone?: string;
   customerEmail?: string;
-  customerId?: string; // Link to customer account
-  buildingId?: string; // Link to specific building
   customerType?: 'individual' | 'company'; // Customer type: individual or company
   buildingAddress?: string; // Building address for company customers (when different from main address)
   roofType: RoofType;
@@ -325,7 +297,8 @@ export interface CustomClaims {
   permissionLevel: PermissionLevel;
   branchId?: string;
   branchIds?: string[];
-  customerId?: string; // For customer role
+  userType?: 'internal' | 'customer';
+  companyId?: string;
 }
 
 export interface OfflineReport extends Omit<Report, 'id'> {
@@ -351,7 +324,6 @@ export interface Offer {
   createdByName: string;
   
   // Customer information
-  customerId?: string; // Link to customer account
   customerName: string;
   customerEmail: string;
   customerPhone?: string;
@@ -429,6 +401,89 @@ export interface OfferNotificationSettings {
   expirationWarningDays: number; // Default: 3
 }
 
+// Company Types
+
+export interface Company {
+  id: string;
+  name: string;
+  cvrNumber?: string;
+  vatNumber?: string;
+  address: string;
+  phone?: string;
+  email?: string;
+  website?: string;
+  createdAt: string;
+  createdBy: string;
+  branchId?: string; // Service provider branch
+  isActive: boolean;
+}
+
+// Building Types
+
+export interface Building {
+  id: string;
+  companyId?: string; // If owned by company
+  customerId?: string; // If owned by individual customer
+  address: string;
+  buildingType?: 'residential' | 'commercial' | 'industrial';
+  roofType?: RoofType;
+  roofSize?: number; // m²
+  latitude?: number;
+  longitude?: number;
+  createdAt: string;
+  createdBy: string;
+  branchId?: string;
+}
+
+// Scheduled Visit Types (extends Appointment)
+
+export type ScheduledVisitStatus = 'scheduled' | 'in_progress' | 'completed' | 'cancelled' | 'no_show';
+
+export interface ScheduledVisit {
+  id: string;
+  branchId: string;
+  
+  // Customer information
+  customerId?: string; // Optional link to customers collection
+  customerName: string;
+  customerAddress: string;
+  customerPhone?: string;
+  customerEmail?: string;
+  customerCompany?: string;
+  
+  // Building and company links
+  buildingId?: string;
+  companyId?: string;
+  
+  // Assignment information
+  assignedInspectorId: string;
+  assignedInspectorName: string;
+  
+  // Scheduling information
+  scheduledDate: string; // ISO date string: "2025-10-02"
+  scheduledTime: string; // Time string: "10:00"
+  duration: number;      // Duration in minutes (default: 120)
+  
+  // Status and workflow
+  status: ScheduledVisitStatus;
+  reportId?: string; // Links to report once inspection starts
+  
+  // Details
+  title: string;                  // e.g., "Roof Inspection - Åkergatan 15"
+  description?: string;           // Admin notes for inspector
+  inspectorNotes?: string;        // Inspector's post-visit notes
+  visitType: 'inspection' | 'maintenance' | 'repair' | 'other';
+  
+  // Metadata
+  createdBy: string;
+  createdByName: string;
+  createdAt: string;
+  updatedAt: string;
+  completedAt?: string;
+  cancelledAt?: string;
+  cancelReason?: string;
+}
+
 // Service Agreements Types
 
 export interface ServiceAgreement {
@@ -453,6 +508,9 @@ export interface ServiceAgreement {
   price?: number;
   currency?: string;
   notes?: string;
+  // Building and company links
+  buildingId?: string;
+  companyId?: string;
   // Location for map
   latitude?: number;
   longitude?: number;
@@ -490,7 +548,9 @@ export interface ServiceAgreement {
   };
   billingFrequency?: 'annual' | 'semi-annual'; // Årlig eller halvårlig betaling
   signatures?: {
-    supplier?: string; // Leverandør navn
-    customer?: string; // Kunde navn
+    supplier?: string; // Leverandør navn eller billede URL
+    customer?: string; // Kunde navn eller billede URL
+    supplierImageUrl?: string; // Leverandør underskrift billede
+    customerImageUrl?: string; // Kunde underskrift billede
   };
 }

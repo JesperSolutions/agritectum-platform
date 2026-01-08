@@ -1019,7 +1019,7 @@ const ReportView: React.FC = () => {
               {report.status === 'completed' && (
                 <button
                   onClick={() => handleStatusChange('sent')}
-                  className='inline-flex items-center px-4 py-2 border border-slate-200 text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500'
+                  className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
                 >
                   <Send className='w-4 h-4 mr-2' />
                   {t('reportView.markAsSent')}

@@ -41,7 +41,7 @@ export const resetUserPassword = onCall(async (request) => {
     }
 
     // Get target user's record
-    await admin.auth().getUser(userId);
+    const targetUserRecord = await admin.auth().getUser(userId);
     const targetUserDoc = await admin.firestore().collection('users').doc(userId).get();
     
     if (!targetUserDoc.exists) {

@@ -44,7 +44,7 @@ const MarketingPage: React.FC = () => {
             <div className="flex items-center space-x-3">
               <Building2 className="h-8 w-8 text-blue-600" />
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">{BRAND_CONFIG.BRAND_NAME}</h1>
+                <h1 className="text-2xl font-bold text-gray-900">Taklaget Service</h1>
                 <p className="text-sm text-gray-600">Professional Roof Inspection Management</p>
               </div>
             </div>
@@ -198,7 +198,7 @@ const MarketingPage: React.FC = () => {
 
             {/* Solutions */}
             <div>
-              <h3 className="text-2xl font-bold text-green-600 mb-8">{BRAND_CONFIG.BRAND_NAME} Solution</h3>
+              <h3 className="text-2xl font-bold text-green-600 mb-8">Taklaget Solution</h3>
               <div className="space-y-6">
                 <div className="flex items-start">
                   <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-4 mt-1">
@@ -728,7 +728,7 @@ const MarketingPage: React.FC = () => {
               Proven Results
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Real metrics from building management companies using {BRAND_CONFIG.BRAND_NAME}
+              Real metrics from Nordic roofing companies using Taklaget Service
             </p>
           </div>
 
@@ -753,7 +753,7 @@ const MarketingPage: React.FC = () => {
                 </div>
               </div>
               <blockquote className="text-gray-700 italic">
-                "{BRAND_CONFIG.BRAND_NAME} transformed our inspection process. What used to take 3 hours now takes 90 minutes. 
+                "Taklaget transformed our inspection process. What used to take 3 hours now takes 90 minutes. 
                 Our customers love the professional reports and faster turnaround."
               </blockquote>
               <p className="text-sm text-gray-500 mt-4">— Erik Lindqvist, Branch Manager</p>
@@ -964,12 +964,12 @@ const MarketingPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center space-x-3 mb-4">
             <Building2 className="h-8 w-8 text-blue-400" />
-            <span className="text-2xl font-bold">{BRAND_CONFIG.BRAND_NAME}</span>
+            <span className="text-2xl font-bold">Taklaget Service</span>
           </div>
           <p className="text-gray-400 mb-6">
             Professional roof inspection management platform designed for modern roofing businesses.
           </p>
-          <p className="text-gray-500">© 2025 {BRAND_CONFIG.LEGAL_ENTITY}. All rights reserved.</p>
+          <p className="text-gray-500">© 2025 Taklaget AB. All rights reserved.</p>
         </div>
       </footer>
     </div>

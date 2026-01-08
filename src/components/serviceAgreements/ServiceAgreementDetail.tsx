@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { ServiceAgreement } from '../../types';
 import { useIntl } from '../../hooks/useIntl';
-import { X, Edit, Trash2, User, MapPin, Mail, Phone, Calendar, DollarSign, FileCheck, Clock, ExternalLink, Copy, Check } from 'lucide-react';
+import { X, Edit, Trash2, User, MapPin, Mail, Phone, Calendar, DollarSign, FileCheck, Clock, ExternalLink, Copy, Check, Send, CheckCircle } from 'lucide-react';
 import { useToast } from '../../contexts/ToastContext';
-import { formatCurrencyAmount, Currency } from '../../utils/currencyUtils';
+import { sendServiceAgreementToCustomer } from '../../services/serviceAgreementService';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface ServiceAgreementDetailProps {
   agreement: ServiceAgreement;
@@ -19,8 +20,10 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
   onDelete,
 }) => {
   const { t, locale } = useIntl();
-  const { showSuccess } = useToast();
+  const { showSuccess, showError } = useToast();
+  const { currentUser } = useAuth();
   const [copied, setCopied] = useState(false);
+  const [sending, setSending] = useState(false);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -58,9 +61,40 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
     }
   };
 
+  // Get currency based on locale
+  const getCurrencyForLocale = (): string => {
+    if (locale.startsWith('da')) return 'DKK';
+    if (locale.startsWith('de')) return 'EUR';
+    return 'SEK'; // Default to SEK for Swedish
+  };
+
   const formatCurrency = (amount: number, currency?: string) => {
-    const currencyCode = (currency as Currency) || 'SEK';
-    return formatCurrencyAmount(amount, currencyCode, locale);
+    const defaultCurrency = currency || getCurrencyForLocale();
+    // Use the locale from useIntl hook to get proper formatting (1.123,50 format)
+    return new Intl.NumberFormat(locale, {
+      style: 'currency',
+      currency: defaultCurrency,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(amount);
+  };
+
+  const handleSend = async () => {
+    if (!agreement.customerEmail) {
+      showError(t('serviceAgreement.detail.noEmail') || 'Customer email is required to send the agreement');
+      return;
+    }
+
+    setSending(true);
+    try {
+      await sendServiceAgreementToCustomer(agreement.id, agreement.customerEmail);
+      showSuccess(t('serviceAgreement.detail.sent') || 'Service agreement sent to customer successfully');
+    } catch (error) {
+      console.error('Error sending service agreement:', error);
+      showError(t('serviceAgreement.detail.sendError') || 'Failed to send service agreement');
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -70,7 +104,7 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
         <div className='sticky top-0 bg-white border-b border-slate-200 px-8 py-6 flex items-center justify-between z-10'>
           <div>
             <h2 className='text-2xl font-bold text-slate-900 tracking-tight'>{t('serviceAgreement.detail.title')}</h2>
-            <p className='text-sm text-slate-600 mt-1'>{agreement.title}</p>
+            <p className='text-sm text-slate-600 mt-1'>{agreement.customerName}</p>
           </div>
           <button
             onClick={onClose}
@@ -186,7 +220,174 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
             )}
           </div>
 
-          {/* Price */}
+          {/* Purpose */}
+          {agreement.purpose && (
+            <div className='bg-slate-50 rounded-xl p-6 border border-slate-200'>
+              <h4 className='text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3'>
+                {t('serviceAgreement.form.purpose.title') || '1. AFTALENS FORMÅL'}
+              </h4>
+              <p className='text-slate-700 whitespace-pre-wrap'>{agreement.purpose}</p>
+            </div>
+          )}
+
+          {/* Service Visits */}
+          {agreement.serviceVisits && (agreement.serviceVisits.oneAnnual || agreement.serviceVisits.twoAnnual) && (
+            <div className='bg-slate-50 rounded-xl p-6 border border-slate-200'>
+              <h4 className='text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3'>
+                {t('serviceAgreement.form.services.serviceVisits') || 'SERVICEBESØG:'}
+              </h4>
+              <div className='space-y-2'>
+                {agreement.serviceVisits.oneAnnual && (
+                  <div className='flex items-center gap-2 text-slate-700'>
+                    <CheckCircle className='w-5 h-5 text-green-600' />
+                    <span>{t('serviceAgreement.form.services.oneAnnual') || '1 årligt servicebesøg'}</span>
+                  </div>
+                )}
+                {agreement.serviceVisits.twoAnnual && (
+                  <div className='flex items-center gap-2 text-slate-700'>
+                    <CheckCircle className='w-5 h-5 text-green-600' />
+                    <span>{t('serviceAgreement.form.services.twoAnnual') || '2 årlige servicebesøg'}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Standard Services */}
+          {agreement.standardServices && agreement.standardServices.length > 0 && (
+            <div className='bg-slate-50 rounded-xl p-6 border border-slate-200'>
+              <h4 className='text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3'>
+                {t('serviceAgreement.form.services.standardServices') || 'STANDARDYDELSER:'}
+              </h4>
+              <div className='space-y-2'>
+                {agreement.standardServices.map(service => (
+                  <div key={service} className='flex items-center gap-2 text-slate-700'>
+                    <CheckCircle className='w-5 h-5 text-green-600' />
+                    <span>{t(`serviceAgreement.form.services.${service}`) || service}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Addons */}
+          {agreement.addons && (
+            (agreement.addons.skylights?.length || agreement.addons.solar?.length || agreement.addons.steel?.length || agreement.addons.sedum?.length) && (
+              <div className='bg-slate-50 rounded-xl p-6 border border-slate-200'>
+                <h4 className='text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3'>
+                  {t('serviceAgreement.form.addons.title') || '3. TILLÆG (VALGFRIE YDELSER)'}
+                </h4>
+                <div className='space-y-4'>
+                  {agreement.addons.skylights && agreement.addons.skylights.length > 0 && (
+                    <div>
+                      <h5 className='text-sm font-medium text-slate-800 mb-2'>
+                        {t('serviceAgreement.form.addons.skylights.title') || 'OVENLYS & FALDSIKRING:'}
+                      </h5>
+                      <div className='space-y-1 pl-4'>
+                        {agreement.addons.skylights.map(addon => (
+                          <div key={addon} className='flex items-center gap-2 text-slate-700'>
+                            <CheckCircle className='w-4 h-4 text-green-600' />
+                            <span className='text-sm'>{t(`serviceAgreement.form.addons.${addon}`) || addon}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {agreement.addons.solar && agreement.addons.solar.length > 0 && (
+                    <div>
+                      <h5 className='text-sm font-medium text-slate-800 mb-2'>
+                        {t('serviceAgreement.form.addons.solar.title') || 'SOLCELLER:'}
+                      </h5>
+                      <div className='space-y-1 pl-4'>
+                        {agreement.addons.solar.map(addon => (
+                          <div key={addon} className='flex items-center gap-2 text-slate-700'>
+                            <CheckCircle className='w-4 h-4 text-green-600' />
+                            <span className='text-sm'>{t(`serviceAgreement.form.addons.${addon}`) || addon}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {agreement.addons.steel && agreement.addons.steel.length > 0 && (
+                    <div>
+                      <h5 className='text-sm font-medium text-slate-800 mb-2'>
+                        {t('serviceAgreement.form.addons.steel.title') || 'STÅLTAG:'}
+                      </h5>
+                      <div className='space-y-1 pl-4'>
+                        {agreement.addons.steel.map(addon => (
+                          <div key={addon} className='flex items-center gap-2 text-slate-700'>
+                            <CheckCircle className='w-4 h-4 text-green-600' />
+                            <span className='text-sm'>{t(`serviceAgreement.form.addons.${addon}`) || addon}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {agreement.addons.sedum && agreement.addons.sedum.length > 0 && (
+                    <div>
+                      <h5 className='text-sm font-medium text-slate-800 mb-2'>
+                        {t('serviceAgreement.form.addons.sedum.title') || 'SEDUMTAG (GRØNT TAG):'}
+                      </h5>
+                      <div className='space-y-1 pl-4'>
+                        {agreement.addons.sedum.map(addon => (
+                          <div key={addon} className='flex items-center gap-2 text-slate-700'>
+                            <CheckCircle className='w-4 h-4 text-green-600' />
+                            <span className='text-sm'>{t(`serviceAgreement.form.addons.${addon}`) || addon}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )
+          )}
+
+          {/* Pricing Structure */}
+          {agreement.pricingStructure && (agreement.pricingStructure.perRoof || agreement.pricingStructure.perSquareMeter) && (
+            <div className='bg-slate-50 rounded-xl p-6 border border-slate-200'>
+              <h4 className='text-sm font-semibold text-slate-500 uppercase tracking-wide mb-4 flex items-center gap-2'>
+                <DollarSign className='w-4 h-4' />
+                {t('serviceAgreement.form.pricing.title') || '6. PRIS & FAKTURERING'}
+              </h4>
+              <div className='space-y-3'>
+                {agreement.pricingStructure.perRoof && (
+                  <div className='flex justify-between items-center'>
+                    <span className='text-slate-600'>
+                      {t('serviceAgreement.form.pricing.perRoof') || 'Opstarts pris per tag:'}
+                    </span>
+                    <span className='text-slate-900 font-bold text-lg'>
+                      {formatCurrency(agreement.pricingStructure.perRoof, agreement.currency || 'DKK')}
+                    </span>
+                  </div>
+                )}
+                {agreement.pricingStructure.perSquareMeter && (
+                  <div className='flex justify-between items-center'>
+                    <span className='text-slate-600'>
+                      {t('serviceAgreement.form.pricing.perSquareMeter') || 'Pris pr. år per m²:'}
+                    </span>
+                    <span className='text-slate-900 font-bold text-lg'>
+                      {formatCurrency(agreement.pricingStructure.perSquareMeter, agreement.currency || 'DKK')} / m²
+                    </span>
+                  </div>
+                )}
+                {agreement.billingFrequency && (
+                  <div className='flex justify-between items-center pt-2 border-t border-slate-200'>
+                    <span className='text-slate-600'>
+                      {t('serviceAgreement.form.pricing.billingFrequency') || 'Faktureringsfrekvens:'}
+                    </span>
+                    <span className='text-slate-900 font-medium'>
+                      {agreement.billingFrequency === 'annual' 
+                        ? (t('serviceAgreement.form.pricing.annual') || 'Årlig betaling')
+                        : (t('serviceAgreement.form.pricing.semiAnnual') || 'Halvårlig betaling')}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Price (legacy) */}
           {agreement.price && (
             <div className='bg-slate-50 rounded-xl p-6 border border-slate-200'>
               <h4 className='text-sm font-semibold text-slate-500 uppercase tracking-wide mb-4 flex items-center gap-2'>
@@ -199,12 +400,41 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
             </div>
           )}
 
-          {/* Description */}
-          {agreement.description && (
-            <div>
-              <h4 className='text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3'>{t('serviceAgreement.form.description')}</h4>
-              <div className='bg-slate-50 rounded-lg p-4 border border-slate-200'>
-                <p className='text-slate-700 whitespace-pre-wrap'>{agreement.description}</p>
+          {/* Signatures */}
+          {agreement.signatures && (agreement.signatures.supplier || agreement.signatures.customer || agreement.signatures.supplierImageUrl || agreement.signatures.customerImageUrl) && (
+            <div className='bg-slate-50 rounded-xl p-6 border border-slate-200'>
+              <h4 className='text-sm font-semibold text-slate-500 uppercase tracking-wide mb-4'>
+                {t('serviceAgreement.form.signatures.title') || '7. UNDERSKRIFTER'}
+              </h4>
+              <div className='grid grid-cols-2 gap-4'>
+                <div>
+                  <p className='text-xs text-slate-500 uppercase tracking-wide mb-2'>
+                    {t('serviceAgreement.form.signatures.supplier') || 'Leverandør:'}
+                  </p>
+                  {agreement.signatures.supplierImageUrl ? (
+                    <img
+                      src={agreement.signatures.supplierImageUrl}
+                      alt='Supplier signature'
+                      className='h-20 w-auto border border-slate-300 rounded'
+                    />
+                  ) : (
+                    <p className='text-slate-900 font-medium'>{agreement.signatures.supplier || '-'}</p>
+                  )}
+                </div>
+                <div>
+                  <p className='text-xs text-slate-500 uppercase tracking-wide mb-2'>
+                    {t('serviceAgreement.form.signatures.customer') || 'Kunde:'}
+                  </p>
+                  {agreement.signatures.customerImageUrl ? (
+                    <img
+                      src={agreement.signatures.customerImageUrl}
+                      alt='Customer signature'
+                      className='h-20 w-auto border border-slate-300 rounded'
+                    />
+                  ) : (
+                    <p className='text-slate-900 font-medium'>{agreement.signatures.customer || '-'}</p>
+                  )}
+                </div>
               </div>
             </div>
           )}
@@ -301,6 +531,25 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
           >
             {t('common.buttons.close')}
           </button>
+          {agreement.customerEmail && (
+            <button
+              onClick={handleSend}
+              disabled={sending}
+              className='px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium uppercase tracking-wide flex items-center gap-2 shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed'
+            >
+              {sending ? (
+                <>
+                  <Clock className='h-5 w-5 animate-spin' />
+                  {t('serviceAgreement.detail.sending') || 'Sending...'}
+                </>
+              ) : (
+                <>
+                  <Send className='h-5 w-5' />
+                  {t('serviceAgreement.detail.send') || 'Send'}
+                </>
+              )}
+            </button>
+          )}
           <button
             onClick={onEdit}
             className='px-6 py-3 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors font-medium uppercase tracking-wide flex items-center gap-2 shadow-sm hover:shadow-md'

@@ -26,16 +26,22 @@ import {
 import OfflineIndicator from '../OfflineIndicator';
 import NotificationCenter from '../NotificationCenter';
 import AgritectumLogo from '../AgritectumLogo';
-import { BRAND_CONFIG } from '../../config/brand';
 
 const Layout: React.FC = () => {
   const { currentUser, logout } = useAuth();
   const { state } = useReports();
-  const { t } = useIntl();
   const navigate = useNavigate();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [branchInfo, setBranchInfo] = useState<{ name: string; logoUrl?: string } | null>(null);
+  const { t } = useIntl();
+
+  // Redirect customer users to portal
+  useEffect(() => {
+    if (currentUser && (currentUser.role === 'customer' || currentUser.userType === 'customer')) {
+      navigate('/portal/dashboard', { replace: true });
+    }
+  }, [currentUser, navigate]);
 
   // Initialize page state persistence
   usePageState({ persistBranch: true, persistFilters: true });
@@ -135,13 +141,12 @@ const Layout: React.FC = () => {
       path: '/admin/service-agreements',
       roles: ['superadmin', 'branchAdmin'],
     },
-    // Temporarily disabled - hiding until needed
-    // {
-    //   label: t('navigation.schedule'),
-    //   icon: Calendar,
-    //   path: '/schedule',
-    //   roles: ['superadmin', 'branchAdmin', 'inspector'],
-    // },
+    {
+      label: t('navigation.schedule'),
+      icon: Calendar,
+      path: '/schedule',
+      roles: ['superadmin', 'branchAdmin', 'inspector'],
+    },
     // Temporarily disabled - restructuring flow
     // {
     //   label: t('navigation.offers'),
@@ -200,7 +205,7 @@ const Layout: React.FC = () => {
       return (
         <div className='flex items-center space-x-2 text-orange-600'>
           <WifiOff className='w-4 h-4' />
-          <span className='text-sm'>Offline</span>
+          <span className='text-sm'>{t('common.offline')}</span>
           {state.offlineReports.length > 0 && (
             <span className='bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded-full'>
               {state.offlineReports.length} pending
@@ -270,21 +275,18 @@ const Layout: React.FC = () => {
             {/* Logo and Branch Info */}
             <div className='flex items-center flex-shrink-0 px-6 mb-6'>
               <Link to='/dashboard' className='flex items-center gap-3 w-full'>
-                <div className='flex-shrink-0'>
-                  <div className='bg-white rounded-xl p-2 border border-slate-200 shadow-sm'>
-                    <AgritectumLogo size="md" showText={false} />
+                <AgritectumLogo size="sm" />
+                {branchInfo?.name && (
+                  <div className='flex-1 min-w-0'>
+                    <div className='text-xs text-slate-500 truncate leading-tight'>{branchInfo.name}</div>
                   </div>
-                </div>
-                <div className='flex-1 min-w-0'>
-                  <div className='text-lg font-bold text-slate-900 leading-tight'>{BRAND_CONFIG.BRAND_NAME.toUpperCase()}</div>
-                  <div className='text-xs text-slate-500 truncate leading-tight'>{branchInfo?.name || t('common.buildingPerformance') || 'Building Performance Platform'}</div>
-                </div>
+                )}
               </Link>
             </div>
 
             {/* User info */}
             <div className='px-6 mb-6'>
-              <div className='text-xs text-slate-500'>Signed in as</div>
+              <div className='text-xs text-slate-500'>{t('common.signedInAs')}</div>
               <div className='text-xs font-medium text-slate-900 truncate' title={currentUser?.email}>
                 {currentUser?.email}
               </div>
@@ -292,9 +294,9 @@ const Layout: React.FC = () => {
                 {currentUser?.role === 'branchAdmin'
                   ? t('dashboard.roles.branchAdmin')
                   : currentUser?.role === 'inspector'
-                    ? 'Inspector'
+                    ? t('dashboard.roles.inspector')
                     : currentUser?.role === 'superadmin'
-                      ? 'Super Admin'
+                      ? t('dashboard.roles.superadmin')
                       : currentUser?.role || 'User'}
               </div>
             </div>

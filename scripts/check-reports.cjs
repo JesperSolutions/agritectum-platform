@@ -26,7 +26,7 @@ async function initAdmin({ emulator, serviceAccount }) {
 		process.env.FIRESTORE_EMULATOR_HOST = process.env.FIRESTORE_EMULATOR_HOST || '127.0.0.1:8080';
 		process.env.FIREBASE_AUTH_EMULATOR_HOST = process.env.FIREBASE_AUTH_EMULATOR_HOST || '127.0.0.1:9099';
 		// Emulator does not require credentials
-		admin.initializeApp({ projectId: 'agritectum-platform' });
+		admin.initializeApp({ projectId: 'taklaget-service-app' });
 		console.log('🔥 Using Firestore Emulator at', process.env.FIRESTORE_EMULATOR_HOST);
 		return;
 	}
@@ -38,9 +38,9 @@ async function initAdmin({ emulator, serviceAccount }) {
 	const sa = require(require('path').resolve(process.cwd(), serviceAccount));
 	admin.initializeApp({
 		credential: admin.credential.cert(sa),
-		projectId: sa.project_id || 'agritectum-platform',
+		projectId: sa.project_id || 'taklaget-service-app',
 	});
-	console.log('🔐 Using Production with service account for project:', sa.project_id || 'agritectum-platform');
+	console.log('🔐 Using Production with service account for project:', sa.project_id || 'taklaget-service-app');
 }
 
 async function main() {

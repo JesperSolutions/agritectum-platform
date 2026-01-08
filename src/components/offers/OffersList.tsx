@@ -2,7 +2,6 @@ import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useIntl } from '../../hooks/useIntl';
 import { Offer, OfferStatus } from '../../types';
-import { formatCurrencyAmount, Currency } from '../../utils/currencyUtils';
 import {
   Eye,
   Send,
@@ -45,7 +44,7 @@ const OffersList: React.FC<OffersListProps> = ({
   onDelete,
 }) => {
   const navigate = useNavigate();
-  const { t, locale } = useIntl();
+  const { t } = useIntl();
   const [sortField, setSortField] = useState<keyof Offer>('createdAt');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [statusFilter, setStatusFilter] = useState<OfferStatus | 'all'>('all');
@@ -242,7 +241,7 @@ const OffersList: React.FC<OffersListProps> = ({
                     </div>
                     <div className="text-right">
                       <div className="text-2xl font-bold text-gray-900">
-                        {offer.totalAmount ? formatCurrencyAmount(offer.totalAmount, (offer.currency as Currency) || 'SEK', locale) : formatCurrencyAmount(0, 'SEK', locale)}
+                        {offer.totalAmount ? offer.totalAmount.toLocaleString('sv-SE') : '0'} {offer.currency || 'SEK'}
                       </div>
                       {isOverdue && <div className="text-xs text-red-600 font-semibold mt-1">Overdue ({daysPending}d)</div>}
                     </div>

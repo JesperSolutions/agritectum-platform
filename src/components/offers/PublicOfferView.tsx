@@ -6,13 +6,9 @@ import { CheckCircle, XCircle, Clock, AlertCircle } from 'lucide-react';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import { logOfferEvent } from '../../utils/logger';
-import { BRAND_CONFIG } from '../../config/brand';
-import { useIntl } from '../../hooks/useIntl';
-import { formatCurrencyAmount, Currency } from '../../utils/currencyUtils';
 
 const PublicOfferView: React.FC = () => {
   const { offerId } = useParams<{ offerId: string }>();
-  const { t, locale } = useIntl();
   const navigate = useNavigate();
   const [offer, setOffer] = useState<Offer | null>(null);
   const [loading, setLoading] = useState(true);
@@ -176,10 +172,10 @@ const PublicOfferView: React.FC = () => {
             {error || 'The offer you are looking for does not exist or has been removed.'}
           </p>
           <button
-            onClick={() => window.location.href = import.meta.env.VITE_WEBSITE_URL || 'https://example.com'}
-            className="px-6 py-3 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors"
+            onClick={() => window.location.href = 'https://agritectum.com'}
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
-{t('common.goToHomepage') || 'Go to Homepage'}
+            Go to Homepage
           </button>
         </div>
       </div>
@@ -194,7 +190,7 @@ const PublicOfferView: React.FC = () => {
         {/* Header */}
         <div className="bg-white rounded-lg shadow-lg overflow-hidden mb-6">
           <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-8 py-6">
-            <h1 className="text-3xl font-bold text-white mb-2">{BRAND_CONFIG.BRAND_NAME}</h1>
+            <h1 className="text-3xl font-bold text-white mb-2">Agritectum Professional Roofing</h1>
             <p className="text-blue-100">Your Roof Repair Offer</p>
           </div>
 
@@ -290,24 +286,24 @@ const PublicOfferView: React.FC = () => {
               <div className="bg-gray-50 rounded-lg p-4 space-y-2">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Labor Cost:</span>
-                  <span className="font-medium">{formatCurrencyAmount(offer.laborCost, (offer.currency as Currency) || 'SEK', locale)}</span>
+                  <span className="font-medium">{offer.laborCost.toLocaleString()} {offer.currency}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Material Cost:</span>
-                  <span className="font-medium">{formatCurrencyAmount(offer.materialCost, (offer.currency as Currency) || 'SEK', locale)}</span>
+                  <span className="font-medium">{offer.materialCost.toLocaleString()} {offer.currency}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Travel Cost:</span>
-                  <span className="font-medium">{formatCurrencyAmount(offer.travelCost, (offer.currency as Currency) || 'SEK', locale)}</span>
+                  <span className="font-medium">{offer.travelCost.toLocaleString()} {offer.currency}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Overhead:</span>
-                  <span className="font-medium">{formatCurrencyAmount(offer.overheadCost, (offer.currency as Currency) || 'SEK', locale)}</span>
+                  <span className="font-medium">{offer.overheadCost.toLocaleString()} {offer.currency}</span>
                 </div>
                 <div className="flex justify-between border-t border-gray-300 pt-2 mt-2">
                   <span className="text-lg font-semibold text-gray-900">Total Amount:</span>
                   <span className="text-2xl font-bold text-blue-600">
-                    {formatCurrencyAmount(offer.totalAmount, (offer.currency as Currency) || 'SEK', locale)}
+                    {offer.totalAmount.toLocaleString()} {offer.currency}
                   </span>
                 </div>
               </div>
@@ -344,7 +340,7 @@ const PublicOfferView: React.FC = () => {
 
         {/* Contact Information */}
         <div className="mt-6 text-center text-gray-600 text-sm">
-          <p>Questions? Contact us at {import.meta.env.VITE_SUPPORT_EMAIL || 'support@example.com'}</p>
+          <p>Questions? Contact us at support@agritectum.com</p>
         </div>
       </div>
 

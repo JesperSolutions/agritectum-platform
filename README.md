@@ -5,7 +5,7 @@
 [![Version](https://img.shields.io/badge/version-2.0.0-blue)](package.json)
 [![Tech Stack](https://img.shields.io/badge/tech-React%20%7C%20Firebase%20%7C%20TypeScript-blue)](README.md)
 
-Professional roof inspection management system for Nordic companies. Multi-branch support, offline-first PWA, smart PDF generation, and role-based access control.
+Professional roof inspection management system with customer portal. Multi-branch support, offline-first PWA, smart PDF generation, role-based access control, and customer-facing user portal.
 
 ## 🚀 Quick Links
 
@@ -44,16 +44,16 @@ Professional roof inspection management system for Nordic companies. Multi-branc
 
 ### ⚠️ Development Workflow
 
-**Important**: All coding should be done in the development environment. Use Firebase emulators for local testing before deploying to production.
+**Important**: All coding must be done in the testing environment (`develop` branch + test Firebase project). Only move to production when explicitly requested.
 
-See [DEVELOPMENT_WORKFLOW.md](./docs/01-getting-started/DEVELOPMENT_WORKFLOW.md) for complete guidelines.
+See [DEVELOPMENT_WORKFLOW.md](./DEVELOPMENT_WORKFLOW.md) for complete guidelines.
 
 ### Installation
 
 ```bash
 # Clone repository
 git clone <repository-url>
-cd agritectum-platform
+cd taklaget-service-app
 
 # Install dependencies
 npm install
@@ -140,10 +140,11 @@ Set these for production:
 
 ## 📖 Documentation
 
-- **Development Workflow**: [DEVELOPMENT_WORKFLOW.md](./docs/01-getting-started/DEVELOPMENT_WORKFLOW.md) - **Read this first!**
-- **Full Documentation**: [GitHub Pages](https://your-username.github.io/agritectum-platform)
-- **Employee Onboarding**: [Onboarding Guide](https://your-username.github.io/agritectum-platform/onboarding.html)
-- **Tech Stack Details**: [Technology Overview](https://your-username.github.io/agritectum-platform/tech-stack.html)
+- **Development Workflow**: [DEVELOPMENT_WORKFLOW.md](./DEVELOPMENT_WORKFLOW.md) - **Read this first!**
+- **Test Environment Setup**: [docs/01-getting-started/TEST_ENVIRONMENT.md](./docs/01-getting-started/TEST_ENVIRONMENT.md)
+- **Full Documentation**: [GitHub Pages](https://your-username.github.io/taklaget-service-app)
+- **Employee Onboarding**: [Onboarding Guide](https://your-username.github.io/taklaget-service-app/onboarding.html)
+- **Tech Stack Details**: [Technology Overview](https://your-username.github.io/taklaget-service-app/tech-stack.html)
 - **API Documentation**: See `src/services/` directory
 - **Contributing Guidelines**: See [CONTRIBUTING.md](CONTRIBUTING.md)
 
@@ -170,7 +171,7 @@ localStorage.setItem('debug', 'true');
 
 ## 📄 License
 
-This project is proprietary software. All rights reserved.
+This project is proprietary software for Taklaget AB. All rights reserved.
 
 ## 🆘 Support
 
@@ -180,4 +181,4 @@ This project is proprietary software. All rights reserved.
 
 ---
 
-**Agritectum Platform** - Professional roof inspection management for Nordic companies.
+**Taklaget Service App** - Professional roof inspection management for Nordic companies.

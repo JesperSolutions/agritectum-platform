@@ -27,8 +27,17 @@ export const LazyUserProfile = lazyWithRetry(() => import('./UserProfile'));
 export const LazyOfferThankYou = lazyWithRetry(() => import('./offers/OfferThankYou'));
 export const LazyServiceAgreements = lazyWithRetry(() => import('./admin/ServiceAgreements'));
 export const LazyPublicServiceAgreementView = lazyWithRetry(() => import('./serviceAgreements/PublicServiceAgreementView'));
-export const LazyCustomerRegistration = lazyWithRetry(() => import('./auth/CustomerRegistration'));
-export const LazyCustomerDashboard = lazyWithRetry(() => import('./customer/CustomerDashboard'));
+
+// Portal components
+export const LazyPortalLayout = lazyWithRetry(() => import('./portal/PortalLayout'));
+export const LazyPortalDashboard = lazyWithRetry(() => import('./portal/PortalDashboard'));
+export const LazyPortalLogin = lazyWithRetry(() => import('./portal/PortalLogin'));
+export const LazyPortalRegister = lazyWithRetry(() => import('./portal/PortalRegister'));
+export const LazyBuildingsList = lazyWithRetry(() => import('./portal/BuildingsList'));
+export const LazyBuildingDetail = lazyWithRetry(() => import('./portal/BuildingDetail'));
+export const LazyServiceAgreementsList = lazyWithRetry(() => import('./portal/ServiceAgreementsList'));
+export const LazyScheduledVisitsList = lazyWithRetry(() => import('./portal/ScheduledVisitsList'));
+export const LazyCustomerProfile = lazyWithRetry(() => import('./portal/CustomerProfile'));
 
 // Lazy load utility components
 export const LazyEmailDialog = lazy(() => import('./email/EmailDialog'));

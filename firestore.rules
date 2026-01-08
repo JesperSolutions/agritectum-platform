@@ -39,8 +39,12 @@ service cloud.firestore {
       return isAuthenticated() && getPermissionLevel() == -1;
     }
     
-    function getCustomerId() {
-      return request.auth.token.customerId != null ? request.auth.token.customerId : "";
+    function getUserType() {
+      return request.auth.token.userType != null ? request.auth.token.userType : "internal";
+    }
+    
+    function getUserCompanyId() {
+      return request.auth.token.companyId != null ? request.auth.token.companyId : "";
     }
     
     // Helper function to check if user is authenticated (fallback for users without custom claims)
@@ -57,12 +61,15 @@ service cloud.firestore {
       );
       
       // Allow branch admins and superadmins to create users in their branch
+      // Allow customers to create their own account
       allow create: if isAuthenticated() && (
         isSuperadmin() ||
-        (isBranchAdmin() && (request.resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+        (isBranchAdmin() && (request.resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
+        (isCustomer() && request.auth.uid == userId && request.resource.data.userType == "customer")
       );
       
       // Allow branch admins and superadmins to update users in their branch
+      // Allow customers to update their own profile
       allow update: if isAuthenticated() && (
         isSuperadmin() ||
         (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
@@ -107,12 +114,6 @@ service cloud.firestore {
       // Allow public read access for customer reports (when isPublic is true)
       allow read: if resource.data.isPublic == true;
       
-      // Allow customers to read their own reports
-      allow read: if isCustomer() && (
-        resource.data.customerId == getCustomerId() ||
-        resource.data.customerEmail == request.auth.token.email
-      );
-      
       // Allow authenticated read access for internal users
       allow read: if isAuthenticated() && (
         isSuperadmin() ||
@@ -142,27 +143,10 @@ service cloud.firestore {
     
     // Customers collection
     match /customers/{customerId} {
-      // Allow customers to read their own customer record
-      allow read: if isCustomer() && (
-        resource.data.uid == request.auth.uid ||
-        resource.data.userId == request.auth.uid ||
-        customerId == getCustomerId()
-      );
-      
       allow read: if isAuthenticated() && (
         isSuperadmin() ||
         (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
         (isInspector() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
-      );
-      
-      // Allow customers to update limited fields in their own record
-      allow update: if isCustomer() && (
-        resource.data.uid == request.auth.uid ||
-        resource.data.userId == request.auth.uid ||
-        customerId == getCustomerId()
-      ) && (
-        // Only allow updating specific fields
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['phone', 'address', 'updatedAt'])
       );
       // Create requires branch match and creator match; allow main branch users across branches
       allow create: if isAuthenticated() &&
@@ -351,12 +335,6 @@ service cloud.firestore {
       allow read: if resource.data.status in ['pending', 'awaiting_response'] && 
         resource.data.publicLink != null;
       
-      // Allow customers to read their own offers
-      allow read: if isCustomer() && (
-        resource.data.customerId == getCustomerId() ||
-        resource.data.customerEmail == request.auth.token.email
-      );
-      
       // Authenticated read access for internal users
       allow read: if isAuthenticated() && (
         isSuperadmin() ||
@@ -372,18 +350,6 @@ service cloud.firestore {
         (isInspector() && (request.resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
       ) && request.resource.data.createdBy == request.auth.uid;
       
-      // Customers can update their own offers to respond (accept/reject)
-      allow update: if isCustomer() && (
-        resource.data.customerId == getCustomerId() ||
-        resource.data.customerEmail == request.auth.token.email
-      ) && (
-        // Only allow updating response fields
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['customerResponse', 'customerResponseReason', 'customerResponseAt', 'status', 'respondedAt', 'statusHistory', 'updatedAt'])
-      ) && (
-        // Only allow responding to pending offers
-        resource.data.status in ['pending', 'awaiting_response']
-      );
-      
       // Update offers - branch admins and superadmins
       allow update: if isAuthenticated() && (
         isSuperadmin() ||
@@ -398,13 +364,147 @@ service cloud.firestore {
       );
     }
     
+    // Companies collection
+    match /companies/{companyId} {
+      // Customers can read their own companies
+      allow read: if isAuthenticated() && (
+        isCustomer() && (
+          resource.data.id == getUserCompanyId() ||
+          // Allow if customer's user document has this companyId
+          request.auth.uid != null
+        ) ||
+        isSuperadmin() ||
+        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
+        (isInspector() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+      );
+      
+      // Only internal users can create companies
+      allow create: if isAuthenticated() && 
+        !isCustomer() && (
+          isSuperadmin() ||
+          (isBranchAdmin() && (request.resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+        ) &&
+        request.resource.data.createdBy == request.auth.uid;
+      
+      // Only internal users can update companies
+      allow update: if isAuthenticated() && 
+        !isCustomer() && (
+          isSuperadmin() ||
+          (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+        );
+      
+      // Only internal users can delete companies
+      allow delete: if isAuthenticated() && 
+        !isCustomer() && (
+          isSuperadmin() ||
+          (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+        );
+    }
+    
+    // Buildings collection
+    match /buildings/{buildingId} {
+      // Customers can read their own buildings (by customerId or companyId)
+      allow read: if isAuthenticated() && (
+        isCustomer() && (
+          resource.data.customerId == request.auth.uid ||
+          (resource.data.companyId != null && resource.data.companyId == getUserCompanyId())
+        ) ||
+        isSuperadmin() ||
+        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
+        (isInspector() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+      );
+      
+      // Customers can create buildings linked to their account
+      // Internal users can create buildings in their branch
+      allow create: if isAuthenticated() && (
+        (isCustomer() && (
+          request.resource.data.customerId == request.auth.uid ||
+          (request.resource.data.companyId != null && request.resource.data.companyId == getUserCompanyId())
+        )) ||
+        (isSuperadmin() ||
+        (isBranchAdmin() && (request.resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")))
+      ) &&
+        request.resource.data.createdBy == request.auth.uid;
+      
+      // Customers can update their own buildings
+      // Internal users can update buildings in their branch
+      allow update: if isAuthenticated() && (
+        (isCustomer() && (
+          resource.data.customerId == request.auth.uid ||
+          (resource.data.companyId != null && resource.data.companyId == getUserCompanyId())
+        )) ||
+        isSuperadmin() ||
+        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
+        (isInspector() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+      );
+      
+      // Customers can delete their own buildings
+      // Internal users can delete buildings in their branch
+      allow delete: if isAuthenticated() && (
+        (isCustomer() && (
+          resource.data.customerId == request.auth.uid ||
+          (resource.data.companyId != null && resource.data.companyId == getUserCompanyId())
+        )) ||
+        isSuperadmin() ||
+        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+      );
+    }
+    
+    // Scheduled Visits collection (renamed from appointments)
+    match /scheduledVisits/{visitId} {
+      // Customers can read visits for their buildings/companies
+      allow read: if isAuthenticated() && (
+        (isCustomer() && (
+          resource.data.customerId == request.auth.uid ||
+          (resource.data.buildingId != null && 
+           exists(/databases/$(database)/documents/buildings/$(resource.data.buildingId)) &&
+           get(/databases/$(database)/documents/buildings/$(resource.data.buildingId)).data.customerId == request.auth.uid) ||
+          (resource.data.companyId != null && resource.data.companyId == getUserCompanyId())
+        )) ||
+        isSuperadmin() ||
+        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
+        (isInspector() && resource.data.assignedInspectorId == request.auth.uid)
+      );
+      
+      // Only internal users can create scheduled visits
+      allow create: if isAuthenticated() && 
+        !isCustomer() && (
+          isSuperadmin() ||
+          (isBranchAdmin() && (request.resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+        ) && 
+        request.resource.data.createdBy == request.auth.uid;
+      
+      // Only internal users can update scheduled visits
+      // Customers cannot modify visits (read-only)
+      allow update: if isAuthenticated() && 
+        !isCustomer() && (
+          isSuperadmin() ||
+          (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
+          (isInspector() && resource.data.assignedInspectorId == request.auth.uid)
+        );
+      
+      // Only internal users can delete scheduled visits
+      allow delete: if isAuthenticated() && 
+        !isCustomer() && (
+          isSuperadmin() ||
+          (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+        );
+    }
+    
     // Service Agreements collection
     match /serviceAgreements/{agreementId} {
       // Allow public read access if agreement is public (no authentication required)
       allow get: if resource.data.isPublic == true;
       
-      // Allow customers to read their own service agreements
-      allow read: if isCustomer() && resource.data.customerId == getCustomerId();
+      // Customers can read agreements linked to their account
+      allow get: if isAuthenticated() && 
+        isCustomer() && (
+          resource.data.customerId == request.auth.uid ||
+          (resource.data.buildingId != null && 
+           exists(/databases/$(database)/documents/buildings/$(resource.data.buildingId)) &&
+           get(/databases/$(database)/documents/buildings/$(resource.data.buildingId)).data.customerId == request.auth.uid) ||
+          (resource.data.companyId != null && resource.data.companyId == getUserCompanyId())
+        );
       
       // Allow authenticated read access for admins
       // For single document reads, check branchId match
@@ -414,10 +514,11 @@ service cloud.firestore {
       );
       
       // Allow list queries for branch admins and superadmins
-      // Note: Client-side filtering by branchId is required for branch admins
+      // Customers can list their own agreements
       allow list: if isAuthenticated() && (
         isSuperadmin() ||
-        isBranchAdmin()
+        isBranchAdmin() ||
+        isCustomer()
       );
       
       allow create: if isAuthenticated() && 

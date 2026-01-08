@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useIntl } from '../../hooks/useIntl';
 import { useToast } from '../../contexts/ToastContext';
 import { ServiceAgreement, Customer } from '../../types';
-import { X, AlertCircle, RefreshCw, ChevronDown, ChevronUp, Info } from 'lucide-react';
+import { X, AlertCircle, RefreshCw, ChevronDown, ChevronUp, Info, Upload, X as XIcon, Image as ImageIcon } from 'lucide-react';
 import {
   createServiceAgreement,
   updateServiceAgreement,
 } from '../../services/serviceAgreementService';
-import { getCustomers } from '../../services/customerService';
+import { getCustomers, getCustomerById } from '../../services/customerService';
 import DateInput from '../DateInput';
+import { uploadImageToStorage, compressImage } from '../../services/imageUploadService';
 
 interface ServiceAgreementFormProps {
   mode: 'create' | 'edit';
@@ -43,17 +44,12 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     customerId: '',
-    agreementType: 'maintenance' as 'maintenance' | 'inspection' | 'repair' | 'other',
-    title: '',
-    description: '',
+    agreementType: 'maintenance' as 'maintenance' | 'other',
     startDate: '',
     endDate: '',
     nextServiceDate: '',
-    serviceFrequency: 'annual' as 'weekly' | 'monthly' | 'quarterly' | 'biannual' | 'annual' | 'custom',
-    serviceInterval: 365,
+    serviceFrequency: 'annual' as 'quarterly' | 'biannual' | 'annual',
     status: 'active' as 'active' | 'expired' | 'cancelled' | 'pending',
-    price: '',
-    currency: defaultCurrency,
     notes: '',
     // Paper version fields
     purpose: '',
@@ -76,6 +72,8 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
     signatures: {
       supplier: '',
       customer: '',
+      supplierImageUrl: '',
+      customerImageUrl: '',
     },
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -85,6 +83,12 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
     steel: false,
     sedum: false,
   });
+  const [uploadingSignature, setUploadingSignature] = useState<{ supplier: boolean; customer: boolean }>({
+    supplier: false,
+    customer: false,
+  });
+  const supplierImageInputRef = useRef<HTMLInputElement>(null);
+  const customerImageInputRef = useRef<HTMLInputElement>(null);
 
   const fetchCustomers = async () => {
     if (!currentUser) return;
@@ -113,21 +117,59 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
   }, [currentUser]);
 
   useEffect(() => {
-    if (mode === 'edit' && agreement) {
+    if (mode === 'edit' && agreement && agreement.customerId) {
+      // When editing, ensure the customer is in the list
       const selectedCustomer = customers.find(c => c.id === agreement.customerId);
+      
+      // If customer not found in list, fetch it separately (might be from different branch)
+      if (!selectedCustomer && agreement.customerId) {
+        getCustomerById(agreement.customerId)
+          .then(customer => {
+            if (customer) {
+              setCustomers(prev => {
+                // Only add if not already in list
+                if (!prev.find(c => c.id === customer.id)) {
+                  return [...prev, customer];
+                }
+                return prev;
+              });
+            }
+          })
+          .catch(error => {
+            console.error('Error fetching customer for agreement:', error);
+          });
+      }
+      
+      // Handle backwards compatibility for agreementType
+      const agreementType = (agreement.agreementType === 'inspection' || agreement.agreementType === 'repair') 
+        ? 'other' 
+        : (agreement.agreementType === 'maintenance' ? 'maintenance' : 'other');
+      
+      // Handle backwards compatibility for serviceFrequency
+      let serviceFrequency: 'quarterly' | 'biannual' | 'annual' = 'annual';
+      if (agreement.serviceFrequency === 'quarterly') {
+        serviceFrequency = 'quarterly';
+      } else if (agreement.serviceFrequency === 'biannual') {
+        serviceFrequency = 'biannual';
+      } else if (agreement.serviceFrequency === 'annual') {
+        serviceFrequency = 'annual';
+      } else {
+        // Convert old frequencies to closest match
+        if (agreement.serviceFrequency === 'weekly' || agreement.serviceFrequency === 'monthly') {
+          serviceFrequency = 'quarterly';
+        } else {
+          serviceFrequency = 'annual';
+        }
+      }
+      
       setFormData({
         customerId: agreement.customerId,
-        agreementType: agreement.agreementType,
-        title: agreement.title,
-        description: agreement.description || '',
+        agreementType,
         startDate: agreement.startDate.split('T')[0],
         endDate: agreement.endDate.split('T')[0],
         nextServiceDate: agreement.nextServiceDate.split('T')[0],
-        serviceFrequency: agreement.serviceFrequency,
-        serviceInterval: agreement.serviceInterval || 365,
+        serviceFrequency,
         status: agreement.status,
-        price: agreement.price?.toString() || '',
-        currency: agreement.currency || defaultCurrency,
         notes: agreement.notes || '',
         // Paper version fields
         purpose: agreement.purpose || '',
@@ -136,10 +178,37 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
         addons: agreement.addons || { skylights: [], solar: [], steel: [], sedum: [] },
         pricingStructure: agreement.pricingStructure || { perRoof: '', perSquareMeter: '' },
         billingFrequency: agreement.billingFrequency || 'annual',
-        signatures: agreement.signatures || { supplier: '', customer: '' },
+        signatures: agreement.signatures || { supplier: '', customer: '', supplierImageUrl: '', customerImageUrl: '' },
       });
     }
   }, [mode, agreement, customers]);
+
+  // Auto-fill service visits based on frequency (only when frequency changes, not on initial load)
+  const [prevFrequency, setPrevFrequency] = useState<string | null>(null);
+  useEffect(() => {
+    // Only auto-fill if frequency actually changed (not on initial mount)
+    if (prevFrequency !== null && prevFrequency !== formData.serviceFrequency) {
+      if (formData.serviceFrequency === 'annual') {
+        setFormData(prev => ({
+          ...prev,
+          serviceVisits: {
+            oneAnnual: true,
+            twoAnnual: false,
+          },
+        }));
+      } else if (formData.serviceFrequency === 'biannual') {
+        setFormData(prev => ({
+          ...prev,
+          serviceVisits: {
+            oneAnnual: false,
+            twoAnnual: true,
+          },
+        }));
+      }
+      // For quarterly, don't auto-fill - let user select manually
+    }
+    setPrevFrequency(formData.serviceFrequency);
+  }, [formData.serviceFrequency, prevFrequency]);
 
   // Helper functions for checkbox handling
   const toggleServiceVisit = (type: 'oneAnnual' | 'twoAnnual') => {
@@ -176,14 +245,47 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
     });
   };
 
+  const handleSignatureImageUpload = async (type: 'supplier' | 'customer', file: File) => {
+    if (!currentUser || !formData.customerId) return;
+    
+    setUploadingSignature(prev => ({ ...prev, [type]: true }));
+    try {
+      // Compress image
+      const compressedFile = await compressImage(file);
+      
+      // Create storage reference for signature images
+      const { ref, uploadBytes, getDownloadURL } = await import('firebase/storage');
+      const { storage } = await import('../../config/firebase');
+      const timestamp = Date.now();
+      const fileName = `signature_${type}_${timestamp}_${compressedFile.name}`;
+      const storagePath = `service-agreements/${formData.customerId}/signatures/${fileName}`;
+      const fileRef = ref(storage, storagePath);
+      
+      // Upload to Firebase Storage
+      const snapshot = await uploadBytes(fileRef, compressedFile);
+      const downloadURL = await getDownloadURL(snapshot.ref);
+      
+      // Update form data
+      setFormData({
+        ...formData,
+        signatures: {
+          ...formData.signatures,
+          [`${type}ImageUrl`]: downloadURL,
+        },
+      });
+    } catch (error) {
+      console.error(`Error uploading ${type} signature:`, error);
+      showError(t('common.errorOccurred') || 'Failed to upload signature image');
+    } finally {
+      setUploadingSignature(prev => ({ ...prev, [type]: false }));
+    }
+  };
+
   const validate = (): boolean => {
     const newErrors: Record<string, string> = {};
 
     if (!formData.customerId) {
       newErrors.customerId = t('serviceAgreement.validation.customerRequired');
-    }
-    if (!formData.title.trim()) {
-      newErrors.title = t('serviceAgreement.validation.titleRequired');
     }
     if (!formData.startDate) {
       newErrors.startDate = t('serviceAgreement.validation.startDateRequired');
@@ -238,16 +340,13 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
         createdBy: currentUser.uid,
         createdByName: currentUser.displayName || currentUser.email,
         agreementType: formData.agreementType,
-        title: formData.title,
-        description: formData.description || undefined,
+        title: '', // Keep for backwards compatibility but always empty
+        description: undefined,
         startDate: new Date(formData.startDate).toISOString(),
         endDate: new Date(formData.endDate).toISOString(),
         nextServiceDate: new Date(formData.nextServiceDate).toISOString(),
         serviceFrequency: formData.serviceFrequency,
-        serviceInterval: formData.serviceFrequency === 'custom' ? formData.serviceInterval : undefined,
         status: formData.status,
-        price: formData.price ? parseFloat(formData.price) : undefined,
-        currency: formData.currency,
         notes: formData.notes || undefined,
         // Paper version fields - always use default purpose text
         purpose: t('serviceAgreement.form.purpose.text') || 'Løbende service og vedligehold af taget for at sikre funktion, tæthed og lang levetid. Aftalen omfatter både udbedring af begyndende skader, forebyggende kontrol samt dokumentation til brug for drift og eventuel garantisikring.',
@@ -255,11 +354,16 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
         standardServices: formData.standardServices.length > 0 ? formData.standardServices : undefined,
         addons: (formData.addons.skylights?.length || formData.addons.solar?.length || formData.addons.steel?.length || formData.addons.sedum?.length) ? formData.addons : undefined,
         pricingStructure: (formData.pricingStructure.perRoof || formData.pricingStructure.perSquareMeter) ? {
-          perRoof: formData.pricingStructure.perRoof ? parseFloat(formData.pricingStructure.perRoof) : undefined,
-          perSquareMeter: formData.pricingStructure.perSquareMeter ? parseFloat(formData.pricingStructure.perSquareMeter) : undefined,
+          perRoof: formData.pricingStructure.perRoof && formData.pricingStructure.perRoof !== '0' ? parseFloat(formData.pricingStructure.perRoof) : undefined,
+          perSquareMeter: formData.pricingStructure.perSquareMeter && formData.pricingStructure.perSquareMeter !== '0' ? parseFloat(formData.pricingStructure.perSquareMeter) : undefined,
         } : undefined,
         billingFrequency: formData.billingFrequency,
-        signatures: (formData.signatures.supplier || formData.signatures.customer) ? formData.signatures : undefined,
+        signatures: (formData.signatures.supplier || formData.signatures.customer || formData.signatures.supplierImageUrl || formData.signatures.customerImageUrl) ? {
+          supplier: formData.signatures.supplier || undefined,
+          customer: formData.signatures.customer || undefined,
+          supplierImageUrl: formData.signatures.supplierImageUrl || undefined,
+          customerImageUrl: formData.signatures.customerImageUrl || undefined,
+        } : undefined,
       };
 
       if (mode === 'create') {
@@ -322,7 +426,7 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
                   </button>
                 </div>
               </div>
-            ) : customerError === 'noCustomers' ? (
+            ) : customerError === 'noCustomers' && mode === 'create' ? (
               <div className='w-full px-4 py-2 border border-yellow-300 rounded-lg bg-yellow-50'>
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center'>
@@ -349,7 +453,7 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
                 <option value=''>{t('serviceAgreement.form.customerPlaceholder')}</option>
                 {customers.map(customer => (
                   <option key={customer.id} value={customer.id}>
-                    {customer.name} {customer.address ? `- ${customer.address}` : ''}
+                    {customer.company ? `${customer.company} - ${customer.name}` : customer.name} {customer.address ? `- ${customer.address}` : ''}
                   </option>
                 ))}
               </select>
@@ -367,37 +471,8 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
               className='w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-700 focus:border-transparent'
             >
               <option value='maintenance'>{t('serviceAgreement.type.maintenance')}</option>
-              <option value='inspection'>{t('serviceAgreement.type.inspection')}</option>
-              <option value='repair'>{t('serviceAgreement.type.repair')}</option>
               <option value='other'>{t('serviceAgreement.type.other')}</option>
             </select>
-          </div>
-
-          <div>
-            <label className='block text-sm font-medium text-slate-700 mb-2'>
-              {t('serviceAgreement.form.titleLabel')} *
-            </label>
-            <input
-              type='text'
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              placeholder={t('serviceAgreement.form.titlePlaceholder')}
-              className='w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-700 focus:border-transparent'
-            />
-            {errors.title && <p className='text-red-600 text-sm mt-1'>{errors.title}</p>}
-          </div>
-
-          <div>
-            <label className='block text-sm font-medium text-slate-700 mb-2'>
-              {t('serviceAgreement.form.description')}
-            </label>
-            <textarea
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder={t('serviceAgreement.form.descriptionPlaceholder')}
-              rows={3}
-              className='w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-700 focus:border-transparent'
-            />
           </div>
 
           <div className='grid grid-cols-2 gap-4'>
@@ -453,60 +528,10 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
               onChange={(e) => setFormData({ ...formData, serviceFrequency: e.target.value as any })}
               className='w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-700 focus:border-transparent'
             >
-              <option value='weekly'>{t('serviceAgreement.frequency.weekly')}</option>
-              <option value='monthly'>{t('serviceAgreement.frequency.monthly')}</option>
               <option value='quarterly'>{t('serviceAgreement.frequency.quarterly')}</option>
               <option value='biannual'>{t('serviceAgreement.frequency.biannual')}</option>
               <option value='annual'>{t('serviceAgreement.frequency.annual')}</option>
-              <option value='custom'>{t('serviceAgreement.frequency.custom')}</option>
             </select>
-          </div>
-
-          {formData.serviceFrequency === 'custom' && (
-            <div>
-              <label className='block text-sm font-medium text-slate-700 mb-2'>
-                {t('serviceAgreement.form.serviceInterval')}
-              </label>
-              <input
-                type='number'
-                value={formData.serviceInterval}
-                onChange={(e) => setFormData({ ...formData, serviceInterval: parseInt(e.target.value) || 365 })}
-                className='w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-700 focus:border-transparent'
-                min={1}
-              />
-            </div>
-          )}
-
-          <div className='grid grid-cols-2 gap-4'>
-            <div>
-              <label className='block text-sm font-medium text-slate-700 mb-2'>
-                {t('serviceAgreement.form.price')}
-              </label>
-              <input
-                type='number'
-                value={formData.price}
-                onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                className='w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-700 focus:border-transparent'
-                min={0}
-                step={0.01}
-              />
-            </div>
-
-            <div>
-              <label className='block text-sm font-medium text-slate-700 mb-2'>
-                {t('serviceAgreement.form.currency')}
-              </label>
-              <select
-                value={formData.currency}
-                onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
-                className='w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-700 focus:border-transparent'
-              >
-                <option value='SEK'>SEK</option>
-                <option value='DKK'>DKK</option>
-                <option value='EUR'>EUR</option>
-                <option value='USD'>USD</option>
-              </select>
-            </div>
           </div>
 
           {/* Paper Version Fields */}
@@ -612,17 +637,27 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
                 <div className='space-y-2 pl-4'>
                   {[
                     { key: 'skylightCleaning', label: t('serviceAgreement.form.addons.skylightCleaning') || 'Rensning/inspektion af ovenlyskupler' },
-                    { key: 'annualInspection', label: t('serviceAgreement.form.addons.annualInspection') || 'Årligt eftersyn (EN 365)' },
+                    { key: 'annualInspection', label: t('serviceAgreement.form.addons.annualInspection') || 'Årligt eftersyn (EN 365)', tooltip: t('serviceAgreement.form.addons.en365Tooltip') || 'EN 365 er en europæisk standard for personlig værnemiddel mod fald fra højde. Eftersynet sikrer, at udstyret opfylder sikkerhedskravene.' },
                     { key: 'safetyEquipmentControl', label: t('serviceAgreement.form.addons.safetyEquipmentControl') || 'Kontrol af liner, wires, seler og karabiner' },
                   ].map(addon => (
-                    <label key={addon.key} className='flex items-center cursor-pointer'>
+                    <label key={addon.key} className='flex items-center cursor-pointer group'>
                       <input
                         type='checkbox'
                         checked={(formData.addons.skylights || []).includes(addon.key)}
                         onChange={() => toggleAddon('skylights', addon.key)}
                         className='w-5 h-5 text-slate-700 border-slate-300 rounded focus:ring-slate-700 mr-3'
                       />
-                      <span className='text-sm text-slate-700'>{addon.label}</span>
+                      <span className='text-sm text-slate-700 flex items-center'>
+                        {addon.label}
+                        {addon.tooltip && (
+                          <span className='ml-2 relative'>
+                            <Info className='w-4 h-4 text-slate-400 group-hover:text-slate-600' />
+                            <span className='absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 bg-slate-800 text-white text-xs rounded shadow-lg z-10'>
+                              {addon.tooltip}
+                            </span>
+                          </span>
+                        )}
+                      </span>
                     </label>
                   ))}
                 </div>
@@ -649,7 +684,7 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
                       className='w-5 h-5 text-slate-700 border-slate-300 rounded focus:ring-slate-700 mr-3'
                     />
                     <span className='text-sm text-slate-700'>
-                      {t('serviceAgreement.form.addons.solarCleaning') || 'Rensning af solceller (1–2 gange årligt)'}
+                      {t('serviceAgreement.form.addons.solarCleaning') || 'Rensning af solceller'}
                     </span>
                   </label>
                 </div>
@@ -737,6 +772,8 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
                     <li>{t('serviceAgreement.form.serviceReport.damageDescription') || 'Beskrivelse af eventuelle skader'}</li>
                     <li>{t('serviceAgreement.form.serviceReport.recommendations') || 'Anbefalinger til udbedring og vedligehold'}</li>
                     <li>{t('serviceAgreement.form.serviceReport.annualReport') || 'Årlig tilstandsrapport'}</li>
+                    <li>{t('serviceAgreement.form.serviceReport.digitalPlatform') || 'Adgang til digital platform'}</li>
+                    <li>{t('serviceAgreement.form.serviceReport.esgReport') || 'ESG-rapport (miljø, social, governance)'}</li>
                   </ul>
                 </div>
               </div>
@@ -766,7 +803,7 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
                     <label className='flex items-center mb-2 cursor-pointer'>
                       <input
                         type='checkbox'
-                        checked={!!formData.pricingStructure.perRoof}
+                        checked={formData.pricingStructure.perRoof !== '' && formData.pricingStructure.perRoof !== undefined}
                         onChange={(e) => {
                           setFormData({
                             ...formData,
@@ -779,21 +816,33 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
                         className='w-5 h-5 text-slate-700 border-slate-300 rounded focus:ring-slate-700 mr-2'
                       />
                       <span className='text-sm font-medium text-slate-700'>
-                        {t('serviceAgreement.form.pricing.perRoof') || 'Pris start pr. år per tag:'}
+                        {t('serviceAgreement.form.pricing.perRoof') || 'Opstarts pris per tag:'}
                       </span>
                     </label>
                     <input
                       type='number'
-                      value={formData.pricingStructure.perRoof}
-                      onChange={(e) => setFormData({
-                        ...formData,
-                        pricingStructure: { ...formData.pricingStructure, perRoof: e.target.value },
-                      })}
+                      value={formData.pricingStructure.perRoof === '0' ? '' : formData.pricingStructure.perRoof}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        setFormData({
+                          ...formData,
+                          pricingStructure: { ...formData.pricingStructure, perRoof: value },
+                        });
+                      }}
+                      onBlur={(e) => {
+                        // If empty on blur and checkbox is checked, set to empty string (not '0')
+                        if (!e.target.value && formData.pricingStructure.perRoof !== '') {
+                          setFormData({
+                            ...formData,
+                            pricingStructure: { ...formData.pricingStructure, perRoof: '' },
+                          });
+                        }
+                      }}
                       placeholder='DKK'
                       className='w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-700 focus:border-transparent disabled:bg-slate-100 disabled:cursor-not-allowed'
                       min={0}
                       step={0.01}
-                      disabled={!formData.pricingStructure.perRoof}
+                      disabled={formData.pricingStructure.perRoof === '' || formData.pricingStructure.perRoof === undefined}
                     />
                   </div>
                 </div>
@@ -802,7 +851,7 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
                   <label className='flex items-center mb-2 cursor-pointer'>
                     <input
                       type='checkbox'
-                      checked={!!formData.pricingStructure.perSquareMeter}
+                      checked={formData.pricingStructure.perSquareMeter !== '' && formData.pricingStructure.perSquareMeter !== undefined}
                       onChange={(e) => {
                         setFormData({
                           ...formData,
@@ -820,16 +869,28 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
                   </label>
                   <input
                     type='number'
-                    value={formData.pricingStructure.perSquareMeter}
-                    onChange={(e) => setFormData({
-                      ...formData,
-                      pricingStructure: { ...formData.pricingStructure, perSquareMeter: e.target.value },
-                    })}
+                    value={formData.pricingStructure.perSquareMeter === '0' ? '' : formData.pricingStructure.perSquareMeter}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setFormData({
+                        ...formData,
+                        pricingStructure: { ...formData.pricingStructure, perSquareMeter: value },
+                      });
+                    }}
+                    onBlur={(e) => {
+                      // If empty on blur and checkbox is checked, set to empty string (not '0')
+                      if (!e.target.value && formData.pricingStructure.perSquareMeter !== '') {
+                        setFormData({
+                          ...formData,
+                          pricingStructure: { ...formData.pricingStructure, perSquareMeter: '' },
+                        });
+                      }
+                    }}
                     placeholder='DKK'
                     className='w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-700 focus:border-transparent disabled:bg-slate-100 disabled:cursor-not-allowed'
                     min={0}
                     step={0.01}
-                    disabled={!formData.pricingStructure.perSquareMeter}
+                    disabled={formData.pricingStructure.perSquareMeter === '' || formData.pricingStructure.perSquareMeter === undefined}
                   />
                 </div>
               </div>
@@ -888,8 +949,59 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
                     signatures: { ...formData.signatures, supplier: e.target.value },
                   })}
                   placeholder={t('serviceAgreement.form.signatures.supplierPlaceholder') || 'Navn'}
-                  className='w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-700 focus:border-transparent'
+                  className='w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-700 focus:border-transparent mb-2'
                 />
+                <input
+                  ref={supplierImageInputRef}
+                  type='file'
+                  accept='image/*'
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      handleSignatureImageUpload('supplier', file);
+                    }
+                  }}
+                  className='hidden'
+                />
+                <div className='flex items-center gap-2'>
+                  <button
+                    type='button'
+                    onClick={() => supplierImageInputRef.current?.click()}
+                    disabled={uploadingSignature.supplier}
+                    className='px-3 py-2 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed'
+                  >
+                    {uploadingSignature.supplier ? (
+                      <>
+                        <RefreshCw className='w-4 h-4 animate-spin' />
+                        {t('common.uploading') || 'Uploading...'}
+                      </>
+                    ) : (
+                      <>
+                        <Upload className='w-4 h-4' />
+                        {t('serviceAgreement.form.signatures.uploadImage') || 'Upload billede'}
+                      </>
+                    )}
+                  </button>
+                  {formData.signatures.supplierImageUrl && (
+                    <div className='relative inline-block'>
+                      <img
+                        src={formData.signatures.supplierImageUrl}
+                        alt='Supplier signature'
+                        className='h-12 w-auto border border-slate-300 rounded'
+                      />
+                      <button
+                        type='button'
+                        onClick={() => setFormData({
+                          ...formData,
+                          signatures: { ...formData.signatures, supplierImageUrl: '' },
+                        })}
+                        className='absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600'
+                      >
+                        <XIcon className='w-3 h-3' />
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
               <div>
                 <label className='block text-sm font-medium text-slate-700 mb-2'>
@@ -903,8 +1015,59 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
                     signatures: { ...formData.signatures, customer: e.target.value },
                   })}
                   placeholder={t('serviceAgreement.form.signatures.customerPlaceholder') || 'Navn'}
-                  className='w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-700 focus:border-transparent'
+                  className='w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-700 focus:border-transparent mb-2'
                 />
+                <input
+                  ref={customerImageInputRef}
+                  type='file'
+                  accept='image/*'
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      handleSignatureImageUpload('customer', file);
+                    }
+                  }}
+                  className='hidden'
+                />
+                <div className='flex items-center gap-2'>
+                  <button
+                    type='button'
+                    onClick={() => customerImageInputRef.current?.click()}
+                    disabled={uploadingSignature.customer}
+                    className='px-3 py-2 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed'
+                  >
+                    {uploadingSignature.customer ? (
+                      <>
+                        <RefreshCw className='w-4 h-4 animate-spin' />
+                        {t('common.uploading') || 'Uploading...'}
+                      </>
+                    ) : (
+                      <>
+                        <Upload className='w-4 h-4' />
+                        {t('serviceAgreement.form.signatures.uploadImage') || 'Upload billede'}
+                      </>
+                    )}
+                  </button>
+                  {formData.signatures.customerImageUrl && (
+                    <div className='relative inline-block'>
+                      <img
+                        src={formData.signatures.customerImageUrl}
+                        alt='Customer signature'
+                        className='h-12 w-auto border border-slate-300 rounded'
+                      />
+                      <button
+                        type='button'
+                        onClick={() => setFormData({
+                          ...formData,
+                          signatures: { ...formData.signatures, customerImageUrl: '' },
+                        })}
+                        className='absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600'
+                      >
+                        <XIcon className='w-3 h-3' />
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>

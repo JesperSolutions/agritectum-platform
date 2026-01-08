@@ -1,6 +1,6 @@
 {
   "dashboard.title": "Översikt",
-  "dashboard.subtitle": "Välkommen till TagLaget",
+  "dashboard.subtitle": "Välkommen till Agritectum Platform",
   "dashboard.branchAdmin": "Filialadministratör",
   "dashboard.branchOverview": "Filialöversikt",
   "dashboard.greeting.morning": "God morgon",
@@ -126,5 +126,30 @@
   "dashboard.branchPerformance": "Filialprestanda",
   "dashboard.totalRevenue": "Total omsättning",
   "dashboard.reports": "rapporter",
-  "dashboard.pending": "Väntande"
+  "dashboard.pending": "Väntande",
+  
+  "dashboard.serviceAgreements.activeAgreements": "Aktiva avtal",
+  "dashboard.serviceAgreements.ofTotal": "av {total} totalt",
+  "dashboard.serviceAgreements.monthlyRevenue": "Månadsomsättning",
+  "dashboard.serviceAgreements.sekPerMonthRecurring": "SEK/månad återkommande",
+  "dashboard.serviceAgreements.expiringSoon": "Går snart ut",
+  "dashboard.serviceAgreements.next30Days": "Nästa 30 dagar",
+  
+  "dashboard.scheduledVisits.title": "Schemalagda besök",
+  "dashboard.scheduledVisits.viewCalendar": "Visa kalender",
+  "dashboard.scheduledVisits.upcoming7Days": "Kommande (7 dagar)",
+  "dashboard.scheduledVisits.scheduledVisits": "Schemalagda besök",
+  "dashboard.scheduledVisits.overdue": "Försenade",
+  
+  "dashboard.financialOverview.title": "Ekonomisk översikt",
+  "dashboard.financialOverview.viewAnalytics": "Visa analyser",
+  "dashboard.financialOverview.oneTimeRevenue": "Engångsintäkter",
+  "dashboard.financialOverview.sekReportsOffers": "SEK (rapporter & offerter)",
+  "dashboard.financialOverview.recurringRevenue": "Återkommande intäkter",
+  "dashboard.financialOverview.sekPerYear": "SEK/år ({monthly}/månad)",
+  "dashboard.financialOverview.sekAllSources": "SEK (alla källor)",
+  "dashboard.financialOverview.recurringPercent": "Återkommande %",
+  "dashboard.financialOverview.ofTotalRevenue": "av total omsättning",
+  
+  "dashboard.todayTasks": "Dagens uppgifter"
 }

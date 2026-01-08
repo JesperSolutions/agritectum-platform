@@ -436,9 +436,9 @@ const AllReports: React.FC<AllReportsProps> = () => {
       case 'offer_expired':
         return 'bg-orange-100 text-orange-800';
       case 'archived':
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-slate-100 text-slate-800';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-slate-100 text-slate-800';
     }
   };
 
@@ -476,15 +476,15 @@ const AllReports: React.FC<AllReportsProps> = () => {
   if (!currentUser || (currentUser.role !== 'superadmin' && currentUser.role !== 'branchAdmin' && currentUser.role !== 'inspector')) {
     logger.debug('AllReports Debug - Access denied, showing access denied screen');
     return (
-      <div className='min-h-screen bg-gray-50 flex items-center justify-center'>
+      <div className='min-h-screen bg-slate-50 flex items-center justify-center'>
         <div className='text-center'>
           <div className='text-red-600 text-6xl mb-4'>🚫</div>
-          <h2 className='text-2xl font-bold text-gray-900 mb-2'>Access Denied</h2>
-          <p className='text-gray-600'>You need appropriate permissions to view reports.</p>
-          <p className='text-sm text-gray-500 mt-2'>
+          <h2 className='text-2xl font-bold text-slate-900 mb-2'>{t('errors.access.denied')}</h2>
+          <p className='text-slate-600'>{t('errors.access.deniedMessage')}</p>
+          <p className='text-sm text-slate-500 mt-2'>
             Current role: {currentUser?.role || 'No role'}
           </p>
-          <div className='mt-4 p-4 bg-gray-100 rounded text-left text-xs'>
+          <div className='mt-4 p-4 bg-slate-100 rounded text-left text-xs'>
             <p>
               <strong>Debug Info:</strong>
             </p>
@@ -741,26 +741,26 @@ const AllReports: React.FC<AllReportsProps> = () => {
             <div className='grid grid-cols-1 md:grid-cols-4 gap-4'>
               {/* Search */}
               <div>
-                <label className='block text-sm font-medium text-gray-700 mb-2'>Search</label>
+                <label className='block text-sm font-medium text-slate-700 mb-2'>Search</label>
                 <div className='relative'>
-                  <Search className='h-5 w-5 absolute left-3 top-3 text-gray-400' />
+                  <Search className='h-5 w-5 absolute left-3 top-3 text-slate-400' />
                   <input
                     type='text'
                     value={searchTerm}
                     onChange={e => setSearchTerm(e.target.value)}
                     placeholder='Search reports...'
-                    className='pl-10 w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
+                    className='pl-10 w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm'
                   />
                 </div>
               </div>
 
               {/* Status Filter */}
               <div>
-<label className='block text-sm font-medium text-gray-700 mb-2'>{t('dashboard.status')}</label>
+<label className='block text-sm font-medium text-slate-700 mb-2'>{t('dashboard.status')}</label>
                 <select
                   value={statusFilter}
                   onChange={e => setStatusFilter(e.target.value)}
-                  className='w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
+                  className='w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm'
                 >
                   <option value='all'>{t('reports.filters.allReports')}</option>
                   <option value='draft'>{t('reports.filters.draft')}</option>
@@ -777,11 +777,11 @@ const AllReports: React.FC<AllReportsProps> = () => {
               {/* Branch Filter - Only show for super admins */}
               {currentUser?.role === 'superadmin' && (
                 <div>
-<label className='block text-sm font-medium text-gray-700 mb-2'>{t('navigation.branches')}</label>
+<label className='block text-sm font-medium text-slate-700 mb-2'>{t('navigation.branches')}</label>
                   <select
                     value={branchFilter}
                     onChange={e => setBranchFilter(e.target.value)}
-                    className='w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
+                    className='w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm'
                   >
 <option value='all'>{t('reports.allBranches')}</option>
                     {branches.map(branch => (
@@ -795,12 +795,12 @@ const AllReports: React.FC<AllReportsProps> = () => {
 
               {/* Sort */}
               <div>
-                <label className='block text-sm font-medium text-gray-700 mb-2'>Sort By</label>
+                <label className='block text-sm font-medium text-slate-700 mb-2'>Sort By</label>
                 <div className='flex space-x-2'>
                   <select
                     value={sortBy}
                     onChange={e => setSortBy(e.target.value)}
-                    className='flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
+                    className='flex-1 border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm'
                   >
 <option value='createdAt'>{t('customer.created')}</option>
                     <option value='customerName'>{t('customer.name')}</option>
@@ -809,7 +809,7 @@ const AllReports: React.FC<AllReportsProps> = () => {
                   </select>
                   <button
                     onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-                    className='px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50'
+                    className='px-3 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 shadow-sm text-sm font-medium text-slate-700 bg-white'
                   >
                     {sortOrder === 'asc' ? (
                       <ChevronUp className='h-4 w-4' />
@@ -827,7 +827,7 @@ const AllReports: React.FC<AllReportsProps> = () => {
         {loading && (
           <div className='flex items-center justify-center py-12'>
             <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600'></div>
-            <span className='ml-3 text-gray-600'>Loading reports...</span>
+            <span className='ml-3 text-slate-600'>Loading reports...</span>
           </div>
         )}
 
@@ -878,7 +878,7 @@ const AllReports: React.FC<AllReportsProps> = () => {
                   <table className='min-w-full divide-y divide-slate-200'>
                     <thead className='bg-slate-50'>
                       <tr>
-                        <th className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-12'>
+                        <th className='px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider w-12'>
                           <button
                             onClick={handleSelectAll}
                             className='flex items-center justify-center'
@@ -887,33 +887,33 @@ const AllReports: React.FC<AllReportsProps> = () => {
                             filteredAndSortedReports.length > 0 ? (
                               <CheckSquare className='h-4 w-4 text-blue-600' />
                             ) : (
-                              <Square className='h-4 w-4 text-gray-400' />
+                              <Square className='h-4 w-4 text-slate-400' />
                             )}
                           </button>
                         </th>
-                        <th className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[200px]'>
+                        <th className='px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider min-w-[200px]'>
                           {t('customer.name')}
                         </th>
-                        <th className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[150px]'>
+                        <th className='px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider min-w-[150px]'>
                           {t('navigation.branches')}
                         </th>
-                        <th className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[100px]'>
+                        <th className='px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider min-w-[100px]'>
                           {t('dashboard.status')}
                         </th>
-                        <th className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[120px]'>
+                        <th className='px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider min-w-[120px]'>
                           {t('dashboard.revenue')}
                         </th>
-                        <th className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[120px]'>
+                        <th className='px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider min-w-[120px]'>
                           {t('customer.created')}
                         </th>
-                        <th className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[200px]'>
+                        <th className='px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider min-w-[200px]'>
                           {t('reports.actions')}
                         </th>
                       </tr>
                     </thead>
                     <tbody className='bg-white divide-y divide-gray-200'>
                       {filteredAndSortedReports.map(report => (
-                        <tr key={report.id} className='hover:bg-gray-50'>
+                        <tr key={report.id} className='hover:bg-slate-50'>
                           <td className='px-4 py-4 whitespace-nowrap'>
                             <button
                               onClick={() => handleSelectReport(report.id)}
@@ -922,13 +922,13 @@ const AllReports: React.FC<AllReportsProps> = () => {
                               {selectedReports.has(report.id) ? (
                                 <CheckSquare className='h-4 w-4 text-blue-600' />
                               ) : (
-                                <Square className='h-4 w-4 text-gray-400' />
+                                <Square className='h-4 w-4 text-slate-400' />
                               )}
                             </button>
                           </td>
                           <td className='px-4 py-4 whitespace-nowrap'>
                             <div>
-                              <div className='text-sm font-medium text-gray-900'>
+                              <div className='text-sm font-medium text-slate-900'>
                                 <div className="flex items-center gap-2">
                                   <span>{report.customerName || 'Unknown Customer'}</span>
                                   {report.customerType === 'company' && (
@@ -938,15 +938,15 @@ const AllReports: React.FC<AllReportsProps> = () => {
                                   )}
                                 </div>
                               </div>
-                              <div className='text-sm text-gray-500'>
+                              <div className='text-sm text-slate-500'>
                                 {report.customerEmail || 'No email'}
                               </div>
                             </div>
                           </td>
                           <td className='px-4 py-4 whitespace-nowrap'>
                             <div className='flex items-center'>
-                              <Building className='h-4 w-4 text-gray-400 mr-2 flex-shrink-0' />
-                              <span className='text-sm text-gray-900 truncate'>
+                              <Building className='h-4 w-4 text-slate-400 mr-2 flex-shrink-0' />
+                              <span className='text-sm text-slate-900 truncate'>
                                 {getBranchName(report.branchId || '')}
                               </span>
                             </div>
@@ -960,16 +960,16 @@ const AllReports: React.FC<AllReportsProps> = () => {
                           </td>
                           <td className='px-4 py-4 whitespace-nowrap'>
                             <div className='flex items-center'>
-                              <DollarSign className='h-4 w-4 text-gray-400 mr-1 flex-shrink-0' />
-                              <span className='text-sm font-medium text-gray-900'>
+                              <DollarSign className='h-4 w-4 text-slate-400 mr-1 flex-shrink-0' />
+                              <span className='text-sm font-medium text-slate-900'>
                                 {formatCurrencySafe(report.recommendedActions?.reduce((sum, action) => sum + (action.estimatedCost || 0), 0) || 0)}
                               </span>
                             </div>
                           </td>
                           <td className='px-4 py-4 whitespace-nowrap'>
                             <div className='flex items-center'>
-                              <Calendar className='h-4 w-4 text-gray-400 mr-2 flex-shrink-0' />
-                              <span className='text-sm text-gray-900'>
+                              <Calendar className='h-4 w-4 text-slate-400 mr-2 flex-shrink-0' />
+                              <span className='text-sm text-slate-900'>
                                 {formatDate(report.createdAt)}
                               </span>
                             </div>
@@ -1011,7 +1011,7 @@ const AllReports: React.FC<AllReportsProps> = () => {
                 {/* Mobile Card View */}
                 <div className='lg:hidden'>
                   {filteredAndSortedReports.map(report => (
-                    <div key={report.id} className='border-b border-gray-200 p-4 hover:bg-gray-50'>
+                    <div key={report.id} className='border-b border-slate-200 p-4 hover:bg-slate-50'>
                       <div className='flex items-start justify-between mb-3'>
                         <div className='flex items-center'>
                           <button
@@ -1125,15 +1125,15 @@ const AllReports: React.FC<AllReportsProps> = () => {
 
         {/* Report Detail Modal */}
         {selectedReport && (
-          <div className='fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50'>
+          <div className='fixed inset-0 bg-slate-600 bg-opacity-50 overflow-y-auto h-full w-full z-50'>
             <div className='relative top-20 mx-auto p-5 border w-11/12 max-w-4xl shadow-lg rounded-md bg-white'>
               <div className='flex justify-between items-center mb-4'>
-                <h3 className='text-lg font-medium text-gray-900'>
+                <h3 className='text-lg font-medium text-slate-900'>
                   Report Details - {selectedReport.customerName}
                 </h3>
                 <button
                   onClick={() => setSelectedReport(null)}
-                  className='text-gray-400 hover:text-gray-600'
+                  className='text-slate-400 hover:text-slate-600'
                 >
                   <svg className='h-6 w-6' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
                     <path
@@ -1148,7 +1148,7 @@ const AllReports: React.FC<AllReportsProps> = () => {
 
               <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                 <div>
-                  <h4 className='font-medium text-gray-900 mb-2'>Customer Information</h4>
+                  <h4 className='font-medium text-slate-900 mb-2'>Customer Information</h4>
                   <div className='space-y-2 text-sm'>
                     <p>
                       <span className='font-medium'>Name:</span> {selectedReport.customerName}
@@ -1171,7 +1171,7 @@ const AllReports: React.FC<AllReportsProps> = () => {
                 </div>
 
                 <div>
-                  <h4 className='font-medium text-gray-900 mb-2'>Report Information</h4>
+                  <h4 className='font-medium text-slate-900 mb-2'>Report Information</h4>
                   <div className='space-y-2 text-sm'>
                     <p>
                       <span className='font-medium'>Status:</span>
@@ -1199,14 +1199,14 @@ const AllReports: React.FC<AllReportsProps> = () => {
 
               {selectedReport.issuesFound && selectedReport.issuesFound.length > 0 && (
                 <div className='mt-6'>
-                  <h4 className='font-medium text-gray-900 mb-2'>Issues Found</h4>
+                  <h4 className='font-medium text-slate-900 mb-2'>Issues Found</h4>
                   <div className='space-y-2'>
                     {selectedReport.issuesFound.map((issue, index) => (
-                      <div key={index} className='p-3 bg-gray-50 rounded-md'>
+                      <div key={index} className='p-3 bg-slate-50 rounded-lg'>
                         <div className='flex justify-between items-start'>
                           <div>
                             <p className='font-medium text-sm'>{issue.description}</p>
-                            <p className='text-xs text-gray-500 mt-1'>{issue.location}</p>
+                            <p className='text-xs text-slate-500 mt-1'>{issue.location}</p>
                           </div>
                           <span
                             className={`px-2 py-1 text-xs font-semibold rounded-full ${
@@ -1229,7 +1229,7 @@ const AllReports: React.FC<AllReportsProps> = () => {
               <div className='mt-6 flex justify-end space-x-3'>
                 <button
                   onClick={() => setSelectedReport(null)}
-                  className='px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400'
+                  className='px-4 py-2 border border-slate-200 rounded-lg shadow-sm text-sm font-medium text-slate-700 bg-white hover:bg-slate-50'
                 >
                   Close
                 </button>

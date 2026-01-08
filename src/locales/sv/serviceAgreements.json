@@ -215,7 +215,8 @@
   "serviceAgreement.form.addons.annualInspection": "Årlig eftersyn (EN 365)",
   "serviceAgreement.form.addons.safetyEquipmentControl": "Kontroll av liner, wires, selar och karabiner",
   "serviceAgreement.form.addons.solar.title": "SOLCELLER:",
-  "serviceAgreement.form.addons.solarCleaning": "Rensning av solceller (1–2 gånger årligen)",
+  "serviceAgreement.form.addons.solarCleaning": "Rensning av solceller",
+  "serviceAgreement.form.addons.en365Tooltip": "EN 365 är en europeisk standard för personlig skyddsutrustning mot fall från höjd. Inspektionen säkerställer att utrustningen uppfyller säkerhetskraven.",
   "serviceAgreement.form.addons.steel.title": "STÅLTAK:",
   "serviceAgreement.form.addons.mossRemoval": "Rensning av lav och mossa",
   "serviceAgreement.form.addons.chemicalTreatment": "Kemisk takbehandling",
@@ -231,10 +232,12 @@
   "serviceAgreement.form.serviceReport.damageDescription": "Beskrivning av eventuella skador",
   "serviceAgreement.form.serviceReport.recommendations": "Rekommendationer för reparation och underhåll",
   "serviceAgreement.form.serviceReport.annualReport": "Årlig tillståndsrapport",
+  "serviceAgreement.form.serviceReport.digitalPlatform": "Tillgång till digital plattform",
+  "serviceAgreement.form.serviceReport.esgReport": "ESG-rapport (miljö, social, styrning)",
   "serviceAgreement.form.agreementPeriod.title": "5. AVTALSPERIOD",
   "serviceAgreement.form.agreementPeriod.note": "Avtalet löper i 12 månader och förlängs automatiskt, om det inte sägs upp.",
   "serviceAgreement.form.pricing.title": "6. PRIS & FAKTURERING",
-  "serviceAgreement.form.pricing.perRoof": "Pris start per år per tak:",
+  "serviceAgreement.form.pricing.perRoof": "Startpris per tak:",
   "serviceAgreement.form.pricing.perSquareMeter": "Pris per år per m²:",
   "serviceAgreement.form.pricing.billingFrequency": "Faktureringsfrekvens:",
   "serviceAgreement.form.pricing.annual": "Årlig betalning",
@@ -243,6 +246,12 @@
   "serviceAgreement.form.signatures.supplier": "Leverantör:",
   "serviceAgreement.form.signatures.supplierPlaceholder": "Namn",
   "serviceAgreement.form.signatures.customer": "Kund:",
-  "serviceAgreement.form.signatures.customerPlaceholder": "Namn"
+  "serviceAgreement.form.signatures.customerPlaceholder": "Namn",
+  "serviceAgreement.form.signatures.uploadImage": "Ladda upp bild",
+  "serviceAgreement.detail.send": "Skicka",
+  "serviceAgreement.detail.sending": "Skickar...",
+  "serviceAgreement.detail.sent": "Serviceavtal skickat till kund",
+  "serviceAgreement.detail.sendError": "Kunde inte skicka serviceavtal",
+  "serviceAgreement.detail.noEmail": "Kundens e-post krävs för att skicka avtalet"
 }
 

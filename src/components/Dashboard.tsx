@@ -64,9 +64,6 @@ const OriginalDashboard: React.FC = () => {
 
   useEffect(() => {
     if (currentUser) {
-      console.log('🔍 Dashboard Debug - Current user:', currentUser);
-      console.log('🔍 Dashboard Debug - User permission level:', currentUser.permissionLevel);
-      console.log('🔍 Dashboard Debug - User branch ID:', currentUser.branchId);
       fetchReports();
 
       // Load branch information for branch admins and inspectors
@@ -78,19 +75,14 @@ const OriginalDashboard: React.FC = () => {
 
   const loadBranchInfo = useCallback(async (branchId: string) => {
     try {
-      console.log('🔍 Dashboard Debug - Loading branch info for ID:', branchId);
       const branch = await branchService.getBranchById(branchId);
-      console.log('🔍 Dashboard Debug - Branch data loaded:', branch);
 
       if (branch) {
         const branchData = {
           name: branch.name,
           logoUrl: branch.logoUrl,
         };
-        console.log('🔍 Dashboard Debug - Setting branch info:', branchData);
         setBranchInfo(branchData);
-      } else {
-        console.log('🔍 Dashboard Debug - No branch found for ID:', branchId);
       }
     } catch (error) {
       console.error('Error loading branch info:', error);
@@ -120,13 +112,6 @@ const OriginalDashboard: React.FC = () => {
     }
   }, [state.reports, dataActions]);
 
-  useEffect(() => {
-    console.log('🔍 Dashboard Debug - Reports state changed:', state.reports.length, 'reports');
-    console.log('🔍 Dashboard Debug - Reports data:', state.reports);
-    console.log('🔍 Dashboard Debug - Loading state:', state.loading);
-    console.log('🔍 Dashboard Debug - Current branch info:', branchInfo);
-    console.log('🔍 Dashboard Debug - Error state:', state.error);
-  }, [state.reports, state.loading, state.error, branchInfo]);
 
   // Ensure fresh data when user focuses or returns to dashboard
   useEffect(() => {
@@ -304,7 +289,7 @@ const OriginalDashboard: React.FC = () => {
           {(currentUser?.role === 'inspector' || currentUser?.role === 'branchAdmin') && (
             <Link
               to='/report/new'
-              className='inline-flex items-center px-4 py-2 border border-slate-200 text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-colors'
+              className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors'
             >
               <Plus className='w-4 h-4 mr-2' />
               New Report
@@ -531,10 +516,10 @@ const OriginalDashboard: React.FC = () => {
               <div className='mt-6'>
                 <Link
                   to='/report/new'
-                  className='inline-flex items-center px-4 py-2 border border-slate-200 shadow-sm text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500'
+                  className='inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
                 >
                   <Plus className='w-4 h-4 mr-2' />
-                  {t('reports.new')}
+                  New Report
                 </Link>
               </div>
             )}

@@ -51,7 +51,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({
   // Determine if FAB should be visible based on scroll position and context
   useEffect(() => {
     try {
-      const stored = localStorage.getItem('taklaget:quickActions:hidden');
+      const stored = localStorage.getItem('agritectum:quickActions:hidden');
       if (stored === 'true') {
         setIsDismissed(true);
       }
@@ -83,7 +83,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({
   const handleDismiss = () => {
     setIsDismissed(true);
     try {
-      localStorage.setItem('taklaget:quickActions:hidden', 'true');
+      localStorage.setItem('agritectum:quickActions:hidden', 'true');
     } catch (error) {
       console.warn('Unable to persist quick action preference', error);
     }
@@ -92,7 +92,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({
   const handleRestore = () => {
     setIsDismissed(false);
     try {
-      localStorage.removeItem('taklaget:quickActions:hidden');
+      localStorage.removeItem('agritectum:quickActions:hidden');
     } catch (error) {
       console.warn('Unable to clear quick action preference', error);
     }
@@ -117,7 +117,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({
             id: 'new-customer',
             label: t('quickActions.newCustomer'),
             icon: <Users className="w-5 h-5" />,
-            onClick: () => navigate('/customers'),
+            onClick: () => navigate('/admin/customers'),
             color: 'secondary',
             requiresAuth: true,
           },

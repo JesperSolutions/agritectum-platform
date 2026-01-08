@@ -2,13 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Mail, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
 import { unsubscribeUser, validateUnsubscribeToken } from '../services/emailPreferenceService';
-import { BRAND_CONFIG } from '../config/brand';
-import { useIntl } from '../hooks/useIntl';
 
 const UnsubscribePage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { t } = useIntl();
   const [status, setStatus] = useState<'loading' | 'success' | 'error' | 'invalid'>('loading');
   const [message, setMessage] = useState('');
 
@@ -37,7 +34,7 @@ const UnsubscribePage: React.FC = () => {
         
         if (success) {
           setStatus('success');
-          setMessage(`You have been successfully unsubscribed from all ${BRAND_CONFIG.BRAND_NAME} emails.`);
+          setMessage(`You have been successfully unsubscribed from all Taklaget emails.`);
         } else {
           setStatus('error');
           setMessage('Failed to unsubscribe. Please try again or contact support.');
@@ -83,7 +80,7 @@ const UnsubscribePage: React.FC = () => {
       <div className="max-w-md w-full">
         <div className="bg-white rounded-lg shadow-lg p-8 text-center">
           <div className="mb-6">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">{BRAND_CONFIG.BRAND_NAME}</h1>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">Taklaget</h1>
             <p className="text-gray-600">Email Unsubscribe</p>
           </div>
 
@@ -109,23 +106,23 @@ const UnsubscribePage: React.FC = () => {
           {status === 'success' && (
             <div className="mt-6 space-y-3">
               <p className="text-sm text-gray-600">
-                You will no longer receive emails from {BRAND_CONFIG.BRAND_NAME}. If you change your mind, 
+                You will no longer receive emails from Taklaget. If you change your mind, 
                 you can contact us to resubscribe.
               </p>
               
               <div className="flex flex-col space-y-2">
                 <button
                   onClick={() => navigate('/')}
-                  className="w-full bg-slate-700 text-white py-2 px-4 rounded-md hover:bg-slate-800 transition-colors"
+                  className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
                 >
-                  {t('common.goToHomepage') || 'Go to Homepage'}
+                  Go to Homepage
                 </button>
                 
                 <a
-                  href={`mailto:${import.meta.env.VITE_SUPPORT_EMAIL || 'support@example.com'}`}
+                  href="mailto:support@taklaget.app"
                   className="w-full bg-gray-100 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-200 transition-colors text-center"
                 >
-                  {t('common.contactSupport') || 'Contact Support'}
+                  Contact Support
                 </a>
               </div>
             </div>
@@ -136,16 +133,16 @@ const UnsubscribePage: React.FC = () => {
               <div className="flex flex-col space-y-2">
                 <button
                   onClick={() => window.location.reload()}
-                  className="w-full bg-slate-700 text-white py-2 px-4 rounded-md hover:bg-slate-800 transition-colors"
+                  className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
                 >
-                  {t('common.tryAgain') || 'Try Again'}
+                  Try Again
                 </button>
                 
                 <a
-                  href={`mailto:${import.meta.env.VITE_SUPPORT_EMAIL || 'support@example.com'}`}
+                  href="mailto:support@taklaget.app"
                   className="w-full bg-gray-100 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-200 transition-colors text-center"
                 >
-                  {t('common.contactSupport') || 'Contact Support'}
+                  Contact Support
                 </a>
               </div>
             </div>
@@ -160,17 +157,17 @@ const UnsubscribePage: React.FC = () => {
               
               <div className="flex flex-col space-y-2">
                 <a
-                  href={`mailto:${import.meta.env.VITE_SUPPORT_EMAIL || 'support@example.com'}`}
+                  href="mailto:support@taklaget.app"
                   className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors text-center"
                 >
-                  {t('common.contactSupport') || 'Contact Support'}
+                  Contact Support
                 </a>
                 
                 <button
                   onClick={() => navigate('/')}
                   className="w-full bg-gray-100 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-200 transition-colors"
                 >
-                  {t('common.goToHomepage') || 'Go to Homepage'}
+                  Go to Homepage
                 </button>
               </div>
             </div>
@@ -178,7 +175,7 @@ const UnsubscribePage: React.FC = () => {
 
           <div className="mt-8 pt-6 border-t border-gray-200">
             <p className="text-xs text-gray-500">
-              © 2025 {BRAND_CONFIG.LEGAL_ENTITY}. All rights reserved.
+              © 2025 Taklaget AB. All rights reserved.
             </p>
           </div>
         </div>

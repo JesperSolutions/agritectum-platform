@@ -44,8 +44,8 @@ export const sendUserInvitation = async (
     // Create invitation email request
     const mailDoc = {
       to: employee.email,
-      from: import.meta.env.VITE_FROM_EMAIL || 'noreply@example.com',
-      replyTo: import.meta.env.VITE_REPLY_TO_EMAIL || 'support@example.com',
+      from: 'noreply@agritectum.com',
+      replyTo: 'support@agritectum.com',
       template: {
         name: 'user-invitation',
         data: {
@@ -53,7 +53,7 @@ export const sendUserInvitation = async (
           email: employee.email,
           temporaryPassword,
           loginUrl: `${window.location.origin}/login`,
-          companyName: 'TagLaget',
+          companyName: 'Agritectum',
           invitedBy,
           expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('sv-SE'), // 7 days
         },

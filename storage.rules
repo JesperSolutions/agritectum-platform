@@ -69,6 +69,111 @@ service firebase.storage {
       allow write: if canWriteReport(reportId);
     }
     
+    // Buildings folder - building photos and documents
+    match /buildings/{buildingId}/{allPaths=**} {
+      // Helper to check building access
+      function hasBuildingAccess() {
+        let building = firestore.get(/databases/(default)/documents/buildings/$(buildingId));
+        return building.data != null && (
+          // Customer can access their own buildings
+          (request.auth != null && request.auth.token.permissionLevel == -1 &&
+           (building.data.customerId == request.auth.uid ||
+            (building.data.companyId != null && building.data.companyId == request.auth.token.companyId))) ||
+          // Internal users can access buildings in their branch
+          (request.auth != null && request.auth.token.permissionLevel >= 0 &&
+           (building.data.branchId == request.auth.token.branchId ||
+            request.auth.token.branchId == 'main' ||
+            request.auth.token.permissionLevel >= 2))
+        );
+      }
+      
+      allow read: if hasBuildingAccess();
+      allow write: if hasBuildingAccess();
+    }
+    
+    // Companies folder - company documents
+    match /companies/{companyId}/{allPaths=**} {
+      // Helper to check company access
+      function hasCompanyAccess() {
+        let company = firestore.get(/databases/(default)/documents/companies/$(companyId));
+        return company.data != null && (
+          // Customer can access their own company
+          (request.auth != null && request.auth.token.permissionLevel == -1 &&
+           company.data.id == request.auth.token.companyId) ||
+          // Internal users can access companies in their branch
+          (request.auth != null && request.auth.token.permissionLevel >= 0 &&
+           (company.data.branchId == request.auth.token.branchId ||
+            request.auth.token.branchId == 'main' ||
+            request.auth.token.permissionLevel >= 2))
+        );
+      }
+      
+      allow read: if hasCompanyAccess();
+      // Only internal users can write company documents
+      allow write: if request.auth != null && 
+                      request.auth.token.permissionLevel >= 0 && 
+                      hasCompanyAccess();
+    }
+    
+    // Service Agreements folder - agreement documents and PDFs
+    match /serviceAgreements/{agreementId}/{allPaths=**} {
+      // Helper to check agreement access
+      function hasAgreementAccess() {
+        let agreement = firestore.get(/databases/(default)/documents/serviceAgreements/$(agreementId));
+        return agreement.data != null && (
+          // Public agreements are readable by all
+          agreement.data.isPublic == true ||
+          // Customer can access their own agreements
+          (request.auth != null && request.auth.token.permissionLevel == -1 &&
+           (agreement.data.customerId == request.auth.uid ||
+            (agreement.data.buildingId != null &&
+             exists(/databases/(default)/documents/buildings/$(agreement.data.buildingId)) &&
+             get(/databases/(default)/documents/buildings/$(agreement.data.buildingId)).data.customerId == request.auth.uid) ||
+            (agreement.data.companyId != null && agreement.data.companyId == request.auth.token.companyId))) ||
+          // Internal users can access agreements in their branch
+          (request.auth != null && request.auth.token.permissionLevel >= 0 &&
+           (agreement.data.branchId == request.auth.token.branchId ||
+            request.auth.token.branchId == 'main' ||
+            request.auth.token.permissionLevel >= 2))
+        );
+      }
+      
+      allow read: if hasAgreementAccess();
+      // Only internal users can write agreement documents
+      allow write: if request.auth != null && 
+                      request.auth.token.permissionLevel >= 0 && 
+                      hasAgreementAccess();
+    }
+    
+    // Scheduled Visits folder - visit photos
+    match /scheduledVisits/{visitId}/{allPaths=**} {
+      // Helper to check visit access
+      function hasVisitAccess() {
+        let visit = firestore.get(/databases/(default)/documents/scheduledVisits/$(visitId));
+        return visit.data != null && (
+          // Customer can access visits for their buildings/companies
+          (request.auth != null && request.auth.token.permissionLevel == -1 &&
+           (visit.data.customerId == request.auth.uid ||
+            (visit.data.buildingId != null &&
+             exists(/databases/(default)/documents/buildings/$(visit.data.buildingId)) &&
+             get(/databases/(default)/documents/buildings/$(visit.data.buildingId)).data.customerId == request.auth.uid) ||
+            (visit.data.companyId != null && visit.data.companyId == request.auth.token.companyId))) ||
+          // Internal users can access visits in their branch
+          (request.auth != null && request.auth.token.permissionLevel >= 0 &&
+           (visit.data.branchId == request.auth.token.branchId ||
+            request.auth.token.branchId == 'main' ||
+            request.auth.token.permissionLevel >= 2 ||
+            visit.data.assignedInspectorId == request.auth.uid))
+        );
+      }
+      
+      allow read: if hasVisitAccess();
+      // Only internal users can write visit photos
+      allow write: if request.auth != null && 
+                      request.auth.token.permissionLevel >= 0 && 
+                      hasVisitAccess();
+    }
+    
     // Deny all other access
     match /{allPaths=**} {
       allow read, write: if false;

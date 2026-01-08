@@ -7,7 +7,7 @@ const admin = require('firebase-admin');
 function resolveServiceAccountPath() {
   const envPath = process.env.SERVICE_ACCOUNT_PATH;
   if (envPath && fs.existsSync(envPath)) return envPath;
-  const defaultPath = path.resolve(process.cwd(), 'agritectum-platform-firebase-adminsdk-fbsvc-54a6dc422d.json');
+  const defaultPath = path.resolve(process.cwd(), 'taklaget-service-app-firebase-adminsdk-fbsvc-54a6dc422d.json');
   if (fs.existsSync(defaultPath)) return defaultPath;
   throw new Error('Service account JSON not found. Set SERVICE_ACCOUNT_PATH to an absolute path or use ADC.');
 }

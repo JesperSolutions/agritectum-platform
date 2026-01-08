@@ -11,6 +11,7 @@ import {
   where,
   orderBy,
   Timestamp,
+  serverTimestamp,
 } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { ServiceAgreement } from '../types';
@@ -108,29 +109,6 @@ export const createServiceAgreement = async (
 };
 
 // Get all service agreements (with optional branch filtering)
-/**
- * Get all service agreements for a specific customer
- */
-export const getServiceAgreementsForCustomer = async (customerId: string): Promise<ServiceAgreement[]> => {
-  try {
-    const agreementsRef = collection(db, 'serviceAgreements');
-    const q = query(
-      agreementsRef,
-      where('customerId', '==', customerId),
-      orderBy('createdAt', 'desc')
-    );
-
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as ServiceAgreement[];
-  } catch (error) {
-    console.error('Error fetching customer service agreements:', error);
-    throw new Error('Failed to fetch customer service agreements');
-  }
-};
-
 export const getServiceAgreements = async (branchId?: string): Promise<ServiceAgreement[]> => {
   try {
     const agreementsRef = collection(db, 'serviceAgreements');
@@ -323,6 +301,64 @@ export const generatePublicToken = (): string => {
   return token;
 };
 
+// Send service agreement to customer via email
+export const sendServiceAgreementToCustomer = async (
+  agreementId: string,
+  customerEmail: string
+): Promise<void> => {
+  try {
+    const agreementRef = doc(db, 'serviceAgreements', agreementId);
+    const agreementSnap = await getDoc(agreementRef);
+    
+    if (!agreementSnap.exists()) {
+      throw new Error('Service agreement not found');
+    }
+    
+    const agreement = { id: agreementSnap.id, ...agreementSnap.data() } as ServiceAgreement;
+    
+    // Ensure agreement is public and has a token
+    if (!agreement.isPublic || !agreement.publicToken) {
+      const token = generatePublicToken();
+      await updateDoc(agreementRef, {
+        isPublic: true,
+        publicToken: token,
+        updatedAt: serverTimestamp(),
+      });
+      agreement.isPublic = true;
+      agreement.publicToken = token;
+    }
+    
+    const publicLink = `${window.location.origin}/service-agreement/public/${agreement.publicToken}`;
+    
+    // Add to mail collection for Trigger Email extension
+    const mailRef = collection(db, 'mail');
+    await addDoc(mailRef, {
+      to: customerEmail,
+      template: {
+        name: 'service-agreement-sent',
+        data: {
+          customerName: agreement.customerName,
+          agreementType: agreement.agreementType,
+          startDate: agreement.startDate,
+          endDate: agreement.endDate,
+          nextServiceDate: agreement.nextServiceDate,
+          publicLink: publicLink,
+        },
+      },
+    });
+    
+    // Update agreement with sent timestamp
+    await updateDoc(agreementRef, {
+      emailSent: true,
+      sentAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    });
+  } catch (error) {
+    console.error('Error sending service agreement to customer:', error);
+    throw new Error('Failed to send service agreement to customer');
+  }
+};
+
 // Get service agreement by public token
 export const getServiceAgreementByPublicToken = async (token: string): Promise<ServiceAgreement | null> => {
   try {
@@ -378,6 +414,108 @@ export const acceptServiceAgreementPublic = async (
   } catch (error) {
     console.error('Error accepting service agreement:', error);
     throw error instanceof Error ? error : new Error('Failed to accept service agreement');
+  }
+};
+
+// Get service agreements by customer ID
+export const getServiceAgreementsByCustomer = async (customerId: string): Promise<ServiceAgreement[]> => {
+  try {
+    const agreementsRef = collection(db, 'serviceAgreements');
+    const q = query(
+      agreementsRef,
+      where('customerId', '==', customerId),
+      orderBy('createdAt', 'desc')
+    );
+
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as ServiceAgreement[];
+  } catch (error: any) {
+    console.error('Error fetching service agreements by customer:', error);
+    
+    if (error.code === 'failed-precondition' || error.message?.includes('index')) {
+      console.warn('⚠️ Missing Firestore index detected. Falling back to client-side filtering.');
+      const agreementsRef = collection(db, 'serviceAgreements');
+      const snapshot = await getDocs(agreementsRef);
+      const agreements = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as ServiceAgreement[];
+
+      return agreements.filter(agreement => agreement.customerId === customerId);
+    }
+
+    throw new Error('Failed to fetch service agreements by customer');
+  }
+};
+
+// Get service agreements by building ID
+export const getServiceAgreementsByBuilding = async (buildingId: string): Promise<ServiceAgreement[]> => {
+  try {
+    const agreementsRef = collection(db, 'serviceAgreements');
+    const q = query(
+      agreementsRef,
+      where('buildingId', '==', buildingId),
+      orderBy('createdAt', 'desc')
+    );
+
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as ServiceAgreement[];
+  } catch (error: any) {
+    console.error('Error fetching service agreements by building:', error);
+    
+    if (error.code === 'failed-precondition' || error.message?.includes('index')) {
+      console.warn('⚠️ Missing Firestore index detected. Falling back to client-side filtering.');
+      const agreementsRef = collection(db, 'serviceAgreements');
+      const snapshot = await getDocs(agreementsRef);
+      const agreements = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as ServiceAgreement[];
+
+      return agreements.filter(agreement => agreement.buildingId === buildingId);
+    }
+
+    throw new Error('Failed to fetch service agreements by building');
+  }
+};
+
+// Get service agreements by company ID
+export const getServiceAgreementsByCompany = async (companyId: string): Promise<ServiceAgreement[]> => {
+  try {
+    const agreementsRef = collection(db, 'serviceAgreements');
+    const q = query(
+      agreementsRef,
+      where('companyId', '==', companyId),
+      orderBy('createdAt', 'desc')
+    );
+
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as ServiceAgreement[];
+  } catch (error: any) {
+    console.error('Error fetching service agreements by company:', error);
+    
+    if (error.code === 'failed-precondition' || error.message?.includes('index')) {
+      console.warn('⚠️ Missing Firestore index detected. Falling back to client-side filtering.');
+      const agreementsRef = collection(db, 'serviceAgreements');
+      const snapshot = await getDocs(agreementsRef);
+      const agreements = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as ServiceAgreement[];
+
+      return agreements.filter(agreement => agreement.companyId === companyId);
+    }
+
+    throw new Error('Failed to fetch service agreements by company');
   }
 };
 

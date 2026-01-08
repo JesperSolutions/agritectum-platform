@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useIntl } from '../../hooks/useIntl';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -22,6 +23,7 @@ import { sendTestEmail, testEmailSetup } from '../../services/triggerEmailServic
 
 const AdminTestingPage: React.FC = () => {
   const { currentUser } = useAuth();
+  const { t } = useIntl();
   const [testEmail, setTestEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<{
@@ -33,13 +35,13 @@ const AdminTestingPage: React.FC = () => {
   // Only show for admins
   if (!currentUser || currentUser.permissionLevel < 1) {
     return (
-      <div className='min-h-screen bg-gray-50 flex items-center justify-center'>
+      <div className='min-h-screen bg-slate-50 flex items-center justify-center'>
         <Card className='w-full max-w-md'>
           <CardContent className='pt-6'>
             <div className='text-center'>
               <XCircle className='h-12 w-12 text-red-500 mx-auto mb-4' />
-              <h2 className='text-xl font-semibold text-gray-900 mb-2'>Access Denied</h2>
-              <p className='text-gray-600'>You need admin privileges to access this page.</p>
+              <h2 className='text-xl font-semibold text-slate-900 mb-2'>{t('errors.access.denied')}</h2>
+              <p className='text-slate-600'>{t('errors.access.deniedMessage')}</p>
             </div>
           </CardContent>
         </Card>
@@ -155,7 +157,7 @@ const AdminTestingPage: React.FC = () => {
                   Email System Testing
                 </CardTitle>
                 <CardDescription>
-                  Test the email system and verify SMTP configuration
+                  Test the noreply@taklaget.app email system and verify SMTP configuration
                 </CardDescription>
               </CardHeader>
               <CardContent className='space-y-6'>
@@ -250,7 +252,7 @@ const AdminTestingPage: React.FC = () => {
                   <h4 className='font-medium text-blue-900 mb-2'>Email System Configuration</h4>
                   <div className='text-sm text-blue-800 space-y-1'>
                     <p>
-                      <strong>From Address:</strong> {import.meta.env.VITE_FROM_EMAIL || 'noreply@example.com'}
+                      <strong>From Address:</strong> noreply@taklaget.app
                     </p>
                     <p>
                       <strong>SMTP Server:</strong> smtp.office365.com:587

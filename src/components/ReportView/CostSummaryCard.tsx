@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { DollarSign, Edit2, Save, X, Pencil } from 'lucide-react';
 import { Report } from '../../types';
 import { useIntl } from '../../hooks/useIntl';
-import { formatCurrencyAmount, getCurrencyPreference, Currency } from '../../utils/currencyUtils';
 
 interface CostSummaryCardProps {
   report: Report;
@@ -22,11 +21,10 @@ const CostSummaryCard: React.FC<CostSummaryCardProps> = ({
   canEdit,
   onUpdate,
 }) => {
-  const { t, locale } = useIntl();
+  const { t, formatCurrency } = useIntl();
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
-  const [selectedCurrency] = useState<Currency>(getCurrencyPreference());
   const [costs, setCosts] = useState({
     laborCost: report.laborCost || 0,
     materialCost: report.materialCost || 0,
@@ -60,7 +58,16 @@ const CostSummaryCard: React.FC<CostSummaryCardProps> = ({
   }, [costs, report, isEditing]);
 
   const formatCurrencySafe = (value: number) => {
-    return formatCurrencyAmount(value, selectedCurrency, locale);
+    try {
+      // Format number with US/English style (comma as thousand separator, period as decimal)
+      const formatted = value.toLocaleString('en-US', { 
+        minimumFractionDigits: 2, 
+        maximumFractionDigits: 2 
+      });
+      return `${formatted} SEK`;
+    } catch (error) {
+      return `${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} SEK`;
+    }
   };
 
   // Calculate recommended actions total

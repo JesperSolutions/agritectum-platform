@@ -1,6 +1,7 @@
 import React from 'react';
 import { AlertTriangle, RefreshCw, Home, Mail, ExternalLink } from 'lucide-react';
 import { Button } from './ui/button';
+import { useIntl } from '../hooks/useIntl';
 
 interface EnhancedErrorDisplayProps {
   error: string | Error;
@@ -16,41 +17,43 @@ const EnhancedErrorDisplay: React.FC<EnhancedErrorDisplayProps> = ({
   onRetry,
   onGoHome,
   showContactSupport = true,
-  title = 'Something went wrong',
+  title = undefined,
   className = '',
 }) => {
+  const { t } = useIntl();
+  
   const getErrorMessage = (error: string | Error): string => {
     if (typeof error === 'string') return error;
 
-    const message = error.message || 'An unexpected error occurred';
+    const message = error.message || t('errors.general.unexpected');
 
     // Provide user-friendly messages for common errors
     if (message.includes('permission')) {
-      return "You don't have permission to perform this action. Please contact your administrator.";
+      return t('errors.permissionDenied');
     }
 
     if (message.includes('network') || message.includes('fetch')) {
-      return 'Network connection issue. Please check your internet connection and try again.';
+      return t('errors.network.description');
     }
 
     if (message.includes('not found') || message.includes('404')) {
-      return 'The requested resource was not found. It may have been moved or deleted.';
+      return t('errors.network.notFound');
     }
 
     if (message.includes('timeout')) {
-      return 'The request timed out. Please try again in a moment.';
+      return t('errors.network.timeout');
     }
 
     if (message.includes('unauthorized') || message.includes('401')) {
-      return 'You are not authorized to access this resource. Please log in again.';
+      return t('errors.network.unauthorized');
     }
 
     if (message.includes('server error') || message.includes('500')) {
-      return 'A server error occurred. Our team has been notified and is working to fix it.';
+      return t('errors.network.serverError');
     }
 
     if (message.includes('validation')) {
-      return 'Please check your input and try again. Some required fields may be missing.';
+      return t('errors.form.validationFailed');
     }
 
     return message;
@@ -122,33 +125,33 @@ const EnhancedErrorDisplay: React.FC<EnhancedErrorDisplayProps> = ({
     switch (errorType) {
       case 'network':
         return [
-          'Check your internet connection',
-          'Try refreshing the page',
-          'Wait a moment and try again',
+          t('errors.suggestions.network.checkConnection'),
+          t('errors.suggestions.network.refreshPage'),
+          t('errors.suggestions.network.waitAndRetry'),
         ];
       case 'permission':
         return [
-          'Log out and log back in',
-          'Contact your administrator',
-          'Check if your account has the required permissions',
+          t('errors.suggestions.permission.relogin'),
+          t('errors.suggestions.permission.contactAdmin'),
+          t('errors.suggestions.permission.checkPermissions'),
         ];
       case 'validation':
         return [
-          'Check all required fields are filled',
-          'Verify your input format',
-          'Try a different approach',
+          t('errors.suggestions.validation.checkFields'),
+          t('errors.suggestions.validation.verifyFormat'),
+          t('errors.suggestions.validation.tryDifferent'),
         ];
       case 'server':
         return [
-          'Wait a few minutes and try again',
-          'Contact support if the issue persists',
-          'Check our status page for updates',
+          t('errors.suggestions.server.waitAndRetry'),
+          t('errors.suggestions.server.contactSupport'),
+          t('errors.suggestions.server.checkStatus'),
         ];
       default:
         return [
-          'Try refreshing the page',
-          'Check your internet connection',
-          'Contact support if the issue continues',
+          t('errors.suggestions.general.refreshPage'),
+          t('errors.suggestions.general.checkConnection'),
+          t('errors.suggestions.general.contactSupport'),
         ];
     }
   };
@@ -160,8 +163,8 @@ const EnhancedErrorDisplay: React.FC<EnhancedErrorDisplayProps> = ({
         <div className='flex items-center space-x-3 mb-4'>
           <div className='text-2xl'>{getErrorIcon()}</div>
           <div>
-            <h3 className='font-semibold text-lg'>{title}</h3>
-            <p className='text-sm opacity-90'>We encountered an issue</p>
+            <h3 className='font-semibold text-lg'>{title || t('errors.general.title')}</h3>
+            <p className='text-sm opacity-90'>{t('errors.display.encounteredIssue')}</p>
           </div>
         </div>
 
@@ -172,7 +175,7 @@ const EnhancedErrorDisplay: React.FC<EnhancedErrorDisplayProps> = ({
 
         {/* Suggested Actions */}
         <div className='mb-6'>
-          <h4 className='font-medium text-sm mb-2'>Suggested actions:</h4>
+          <h4 className='font-medium text-sm mb-2'>{t('errors.display.suggestedActions')}</h4>
           <ul className='text-xs space-y-1 opacity-90'>
             {getSuggestedActions().map((action, index) => (
               <li key={index} className='flex items-start'>
@@ -194,7 +197,7 @@ const EnhancedErrorDisplay: React.FC<EnhancedErrorDisplayProps> = ({
                 className='flex items-center space-x-2'
               >
                 <RefreshCw className='h-4 w-4' />
-                <span>Try Again</span>
+                <span>{t('common.errorState.retry')}</span>
               </Button>
             )}
 
@@ -206,7 +209,7 @@ const EnhancedErrorDisplay: React.FC<EnhancedErrorDisplayProps> = ({
                 className='flex items-center space-x-2'
               >
                 <Home className='h-4 w-4' />
-                <span>Go Home</span>
+                <span>{t('common.goToDashboard')}</span>
               </Button>
             )}
           </div>
@@ -214,14 +217,14 @@ const EnhancedErrorDisplay: React.FC<EnhancedErrorDisplayProps> = ({
           {/* Contact Support */}
           {showContactSupport && (
             <div className='pt-3 border-t border-current border-opacity-20'>
-              <p className='text-xs opacity-90 mb-2'>Still having trouble?</p>
+              <p className='text-xs opacity-90 mb-2'>{t('errors.display.stillHavingTrouble')}</p>
               <div className='flex items-center space-x-2'>
                 <Mail className='h-4 w-4' />
                 <a
-                  href={`mailto:${import.meta.env.VITE_SUPPORT_EMAIL || 'support@example.com'}?subject=Technical Support Request`}
+                  href={`mailto:support@taklaget.app?subject=${encodeURIComponent(t('errors.display.supportSubject'))}`}
                   className='text-xs underline hover:no-underline flex items-center space-x-1'
                 >
-                  <span>Contact Support</span>
+                  <span>{t('errors.display.contactSupport')}</span>
                   <ExternalLink className='h-3 w-3' />
                 </a>
               </div>

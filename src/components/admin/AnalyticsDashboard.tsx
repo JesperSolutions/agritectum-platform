@@ -45,15 +45,8 @@ import LoadingProgress from '../LoadingProgress';
 import { getServiceAgreements } from '../../services/serviceAgreementService';
 import { getOffers } from '../../services/offerService';
 import { ServiceAgreement, Offer } from '../../types';
-import {
-  Currency,
-  getCurrencyPreference,
-  setCurrencyPreference,
-  detectCurrencyFromLocale,
-  formatCurrencyAmount,
-  getCurrencyInfo,
-  CURRENCIES,
-} from '../../utils/currencyUtils';
+import { formatCurrencyAmount, getCurrencyCode } from '../../utils/currency';
+import type { SupportedLocale } from '../../utils/geolocation';
 
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
 
@@ -149,7 +142,8 @@ interface AnalyticsData {
 const AnalyticsDashboard: React.FC = () => {
   const { currentUser } = useAuth();
   const { reports, fetchReports } = useReports();
-  const { t } = useIntl();
+  const { t, locale } = useIntl();
+  const currentLocale = locale as SupportedLocale;
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null);
   const [serviceAgreements, setServiceAgreements] = useState<ServiceAgreement[]>([]);
   const [offers, setOffers] = useState<Offer[]>([]);
@@ -171,10 +165,6 @@ const AnalyticsDashboard: React.FC = () => {
   );
   const [showFilters, setShowFilters] = useState(false);
   const [hoveredElement, setHoveredElement] = useState<string | null>(null);
-  const [selectedCurrency, setSelectedCurrency] = useState<Currency>(() => {
-    // Initialize with stored preference or detect from locale
-    return getCurrencyPreference();
-  });
 
   // Define calculateAnalytics function first
   const calculateAnalytics = useCallback(
@@ -629,21 +619,9 @@ const AnalyticsDashboard: React.FC = () => {
     });
   };
 
-  const exportData = async (format: 'csv' | 'excel') => {
-    if (!analyticsData) return;
-    
-    if (format === 'csv') {
-      try {
-        const { exportAnalyticsToCSV } = await import('../../services/exportService');
-        exportAnalyticsToCSV(analyticsData, 'analytics-dashboard');
-      } catch (error) {
-        console.error('Error exporting analytics:', error);
-        alert('Failed to export analytics. Please try again.');
-      }
-    } else {
-      // Excel export would require a library like xlsx
-      alert('Excel export coming soon. Please use CSV export for now.');
-    }
+  const exportData = (format: 'csv' | 'excel') => {
+    // Placeholder for export functionality
+    console.log(`Exporting data as ${format}`);
   };
 
   const Tooltip: React.FC<{ content: string; children: React.ReactNode; id: string }> = ({
@@ -658,7 +636,7 @@ const AnalyticsDashboard: React.FC = () => {
     >
       {children}
       {hoveredElement === id && (
-        <div className='absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg shadow-lg z-50 whitespace-nowrap'>
+        <div className='absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-slate-900 text-white text-sm rounded-lg shadow-lg z-50 whitespace-nowrap'>
           {content}
           <div className='absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900'></div>
         </div>
@@ -668,7 +646,7 @@ const AnalyticsDashboard: React.FC = () => {
 
   if (loading) {
     return (
-      <div className='min-h-screen bg-gray-50 flex items-center justify-center'>
+      <div className='min-h-screen bg-slate-50 flex items-center justify-center'>
         <div className='bg-white rounded-lg shadow-lg p-8 max-w-4xl w-full mx-4'>
           <LoadingProgress
             message={loadingMessage}
@@ -684,7 +662,7 @@ const AnalyticsDashboard: React.FC = () => {
   if (!analyticsData) {
     return (
       <div className='text-center py-8'>
-        <p className='text-gray-500'>No analytics data available</p>
+        <p className='text-slate-500'>No analytics data available</p>
       </div>
     );
   }
@@ -742,11 +720,11 @@ const AnalyticsDashboard: React.FC = () => {
         <div className='bg-white p-4 rounded-xl shadow-sm border border-slate-200'>
           <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
             <div>
-              <label className='block text-sm font-medium text-gray-700 mb-2'>{t('common.timeframe')}</label>
+              <label className='block text-sm font-medium text-slate-700 mb-2'>{t('common.timeframe')}</label>
               <select
                 value={selectedTimeframe}
                 onChange={e => setSelectedTimeframe(e.target.value as any)}
-                className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                className='w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm'
               >
                 <option value='7d'>{t('analytics.last7Days')}</option>
                 <option value='30d'>{t('analytics.last30Days')}</option>
@@ -755,11 +733,11 @@ const AnalyticsDashboard: React.FC = () => {
               </select>
             </div>
             <div>
-              <label className='block text-sm font-medium text-gray-700 mb-2'>{t('common.branch')}</label>
+              <label className='block text-sm font-medium text-slate-700 mb-2'>{t('common.branch')}</label>
               <select
                 value={selectedBranch}
                 onChange={e => setSelectedBranch(e.target.value)}
-                className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                className='w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm'
                 disabled={currentUser?.role !== 'superadmin'} // Only superadmin can change branch filter
               >
                 {currentUser?.role === 'superadmin' ? (
@@ -781,7 +759,7 @@ const AnalyticsDashboard: React.FC = () => {
                 )}
               </select>
               {currentUser?.role !== 'superadmin' && (
-                <p className='text-xs text-gray-500 mt-1'>
+                <p className='text-xs text-slate-500 mt-1'>
                   {t('analytics.branchFilterNote')}
                 </p>
               )}
@@ -789,7 +767,7 @@ const AnalyticsDashboard: React.FC = () => {
             <div className='flex items-end'>
               <button
                 onClick={() => setShowFilters(false)}
-                className='w-full px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg text-sm'
+                className='w-full px-4 py-2 bg-slate-700 hover:bg-slate-800 text-white rounded-lg text-sm font-medium shadow-sm transition-colors'
               >
                 {t('common.applyFilters')}
               </button>
@@ -858,11 +836,11 @@ const AnalyticsDashboard: React.FC = () => {
                         </p>
                       </div>
                       <p className='text-3xl font-bold text-slate-900 mb-1'>
-                        {formatCurrencyAmount(analyticsData.totalRevenue, selectedCurrency, locale)}
+                        {formatCurrencyAmount(analyticsData.totalRevenue, currentLocale)}
                       </p>
                       <p className='text-slate-500 text-sm flex items-center'>
                         <Target className='w-3 h-3 mr-1' />
-                        Avg: {formatCurrencyAmount(Math.round(analyticsData.averageReportValue), selectedCurrency, locale)}
+                        Avg: {formatCurrencyAmount(Math.round(analyticsData.averageReportValue), currentLocale)}
                       </p>
                     </div>
                   </div>
@@ -942,7 +920,7 @@ const AnalyticsDashboard: React.FC = () => {
                         </p>
                       </div>
                       <p className='text-3xl font-bold text-blue-900 mb-1'>
-                        {formatCurrencyAmount(analyticsData.totalBusinessRevenue, selectedCurrency, locale)}
+                        {formatCurrencyAmount(analyticsData.totalBusinessRevenue, currentLocale)}
                       </p>
                       <p className='text-blue-600 text-sm flex items-center'>
                         <TrendingUp className='w-3 h-3 mr-1' />
@@ -969,7 +947,7 @@ const AnalyticsDashboard: React.FC = () => {
                         </p>
                       </div>
                       <p className='text-3xl font-bold text-green-900 mb-1'>
-                        {formatCurrencyAmount(analyticsData.monthlyEarnings, selectedCurrency, locale)}
+                        {formatCurrencyAmount(analyticsData.monthlyEarnings, currentLocale)}
                       </p>
                       <p className='text-green-600 text-sm flex items-center'>
                         <TrendingUp className='w-3 h-3 mr-1' />
@@ -996,7 +974,7 @@ const AnalyticsDashboard: React.FC = () => {
                         </p>
                       </div>
                       <p className='text-3xl font-bold text-purple-900 mb-1'>
-                        {formatCurrencyAmount(analyticsData.yearlyEarnings, selectedCurrency, locale)}
+                        {formatCurrencyAmount(analyticsData.yearlyEarnings, currentLocale)}
                       </p>
                       <p className='text-purple-600 text-sm flex items-center'>
                         <TrendingUp className='w-3 h-3 mr-1' />
@@ -1123,7 +1101,7 @@ const AnalyticsDashboard: React.FC = () => {
                       </div>
                       <div className='text-right'>
                         <p className='font-semibold text-slate-900'>
-                          {formatCurrencyAmount(customer.revenue, selectedCurrency, locale)}
+                          {formatCurrencyAmount(customer.revenue, currentLocale)}
                         </p>
                         <p className='text-sm text-slate-600'>{customer.reportCount} {t('analytics.reports')}</p>
                       </div>
@@ -1191,10 +1169,10 @@ const AnalyticsDashboard: React.FC = () => {
       {/* Report Insights */}
       <div className='bg-white rounded-lg shadow'>
         <div
-          className='flex items-center justify-between p-6 cursor-pointer hover:bg-gray-50'
+          className='flex items-center justify-between p-6 cursor-pointer hover:bg-slate-50'
           onClick={() => toggleSection('reports')}
         >
-          <h3 className='text-lg font-semibold text-gray-900 flex items-center'>
+          <h3 className='text-lg font-semibold text-slate-900 flex items-center'>
             <FileText className='w-5 h-5 mr-2' />
             {t('analytics.reportInsights')}
           </h3>
@@ -1208,7 +1186,7 @@ const AnalyticsDashboard: React.FC = () => {
           <div className='px-6 pb-6'>
             <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
               <div>
-                <h4 className='text-lg font-semibold text-gray-900 mb-4'>{t('analytics.reportsByRoofType')}</h4>
+                <h4 className='text-lg font-semibold text-slate-900 mb-4'>{t('analytics.reportsByRoofType')}</h4>
                 <div className='h-80'>
                   <ResponsiveContainer width="100%" height="100%">
                     <RechartsPieChart>
@@ -1233,7 +1211,7 @@ const AnalyticsDashboard: React.FC = () => {
               </div>
 
               <div>
-                <h4 className='text-lg font-semibold text-gray-900 mb-4'>{t('analytics.branchPerformance')}</h4>
+                <h4 className='text-lg font-semibold text-slate-900 mb-4'>{t('analytics.branchPerformance')}</h4>
                 <div className='h-80'>
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={analyticsData.branchPerformance}>
@@ -1326,7 +1304,7 @@ const AnalyticsDashboard: React.FC = () => {
                   </p>
                 </div>
                 <p className='text-3xl font-bold text-blue-900'>
-                  {formatCurrencyAmount(analyticsData.serviceAgreementRevenue, selectedCurrency, locale)}
+                  {formatCurrencyAmount(analyticsData.serviceAgreementRevenue, currentLocale)}
                 </p>
               </div>
             </div>
@@ -1381,7 +1359,7 @@ const AnalyticsDashboard: React.FC = () => {
                       </div>
                       <div className='text-right'>
                         <p className='font-semibold text-slate-900'>
-                          {formatCurrencyAmount(status.revenue, selectedCurrency, locale)}
+                          {formatCurrencyAmount(status.revenue, currentLocale)}
                         </p>
                       </div>
                     </div>
@@ -1487,10 +1465,10 @@ const AnalyticsDashboard: React.FC = () => {
       {/* User & Branch Management */}
       <div className='bg-white rounded-lg shadow'>
         <div
-          className='flex items-center justify-between p-6 cursor-pointer hover:bg-gray-50'
+          className='flex items-center justify-between p-6 cursor-pointer hover:bg-slate-50'
           onClick={() => toggleSection('management')}
         >
-          <h3 className='text-lg font-semibold text-gray-900 flex items-center'>
+          <h3 className='text-lg font-semibold text-slate-900 flex items-center'>
             <Building className='w-5 h-5 mr-2' />
             {t('analytics.userBranchManagement')}
           </h3>
@@ -1509,21 +1487,21 @@ const AnalyticsDashboard: React.FC = () => {
                   {analyticsData.reportsPerEmployee.map((employee, index) => (
                     <div
                       key={employee.name}
-                      className='flex items-center justify-between p-3 bg-gray-50 rounded-lg'
+                      className='flex items-center justify-between p-3 bg-slate-50 rounded-lg'
                     >
                       <div className='flex items-center'>
                         <div className='w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-semibold text-sm'>
                           {index + 1}
                         </div>
                         <div className='ml-3'>
-                          <p className='font-medium text-gray-900'>{employee.name}</p>
-                          <p className='text-sm text-gray-600'>{t('analytics.inspector')}</p>
+                          <p className='font-medium text-slate-900'>{employee.name}</p>
+                          <p className='text-sm text-slate-600'>{t('analytics.inspector')}</p>
                         </div>
                       </div>
                       <div className='text-right'>
-                        <p className='font-semibold text-gray-900'>{employee.count} {t('analytics.reports')}</p>
-                        <p className='text-sm text-gray-600'>
-                          {formatCurrencyAmount(employee.revenue, selectedCurrency, locale)}
+                        <p className='font-semibold text-slate-900'>{employee.count} {t('analytics.reports')}</p>
+                        <p className='text-sm text-slate-600'>
+                          {formatCurrencyAmount(employee.revenue, currentLocale)}
                         </p>
                       </div>
                     </div>
@@ -1539,16 +1517,16 @@ const AnalyticsDashboard: React.FC = () => {
                   {analyticsData.branchPerformance.map((branch) => (
                     <div key={branch.branch} className='p-3 border rounded-lg'>
                       <div className='flex items-center justify-between mb-2'>
-                        <span className='font-medium text-gray-900'>{branch.branch}</span>
-                        <span className='text-sm text-gray-600'>{branch.reports} {t('analytics.reports')}</span>
+                        <span className='font-medium text-slate-900'>{branch.branch}</span>
+                        <span className='text-sm text-slate-600'>{branch.reports} {t('analytics.reports')}</span>
                       </div>
-                      <div className='flex justify-between text-sm text-gray-600 mb-2'>
-                        <span>{t('analytics.revenue')}: {formatCurrencyAmount(branch.revenue, selectedCurrency, locale)}</span>
+                      <div className='flex justify-between text-sm text-slate-600 mb-2'>
+                        <span>{t('analytics.revenue')}: {formatCurrencyAmount(branch.revenue, currentLocale)}</span>
                         <span>
-                          {t('analytics.efficiency')}: {formatCurrencyAmount(Math.round(branch.efficiency), selectedCurrency, locale)}
+                          {t('analytics.efficiency')}: {formatCurrencyAmount(Math.round(branch.efficiency), currentLocale)}
                         </span>
                       </div>
-                      <div className='w-full bg-gray-200 rounded-full h-2'>
+                      <div className='w-full bg-slate-200 rounded-full h-2'>
                         <div
                           className='bg-blue-600 h-2 rounded-full'
                           style={{

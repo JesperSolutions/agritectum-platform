@@ -106,31 +106,13 @@ export const getOffers = async (user: User): Promise<Offer[]> => {
         where('branchId', '==', user.branchId),
         orderBy('createdAt', 'desc')
       );
-    } else if (user.permissionLevel === 0 && user.branchId && user.uid) {
+    } else if (user.branchId && user.uid) {
       // Inspector: see only their own offers
       q = query(
         offersRef,
         where('createdBy', '==', user.uid),
         orderBy('createdAt', 'desc')
       );
-    } else if (user.permissionLevel === -1 && user.uid) {
-      // Customer: see offers for their customerId
-      // First get customerId from user document or claims
-      const customerId = (user as any).customerId;
-      if (customerId) {
-        q = query(
-          offersRef,
-          where('customerId', '==', customerId),
-          orderBy('createdAt', 'desc')
-        );
-      } else {
-        // Fallback: query by customerEmail
-        q = query(
-          offersRef,
-          where('customerEmail', '==', user.email),
-          orderBy('createdAt', 'desc')
-        );
-      }
     } else {
       return [];
     }
@@ -143,52 +125,6 @@ export const getOffers = async (user: User): Promise<Offer[]> => {
   } catch (error) {
     console.error('Error fetching offers:', error);
     throw new Error('Failed to fetch offers');
-  }
-};
-
-/**
- * Get all offers for a specific customer
- */
-export const getOffersForCustomer = async (customerId: string): Promise<Offer[]> => {
-  try {
-    const offersRef = collection(db, 'offers');
-    const q = query(
-      offersRef,
-      where('customerId', '==', customerId),
-      orderBy('createdAt', 'desc')
-    );
-
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as Offer[];
-  } catch (error) {
-    console.error('Error fetching customer offers:', error);
-    // Fallback: try querying by email if customerId query fails
-    try {
-      const customerRef = doc(db, 'customers', customerId);
-      const customerDoc = await getDoc(customerRef);
-      if (customerDoc.exists()) {
-        const customerData = customerDoc.data();
-        if (customerData.email) {
-          const offersRef = collection(db, 'offers');
-          const q = query(
-            offersRef,
-            where('customerEmail', '==', customerData.email),
-            orderBy('createdAt', 'desc')
-          );
-          const querySnapshot = await getDocs(q);
-          return querySnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data(),
-          })) as Offer[];
-        }
-      }
-    } catch (fallbackError) {
-      console.error('Fallback query also failed:', fallbackError);
-    }
-    throw new Error('Failed to fetch customer offers');
   }
 };
 

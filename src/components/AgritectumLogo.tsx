@@ -1,6 +1,4 @@
 import React from 'react';
-import { Building2 } from 'lucide-react';
-import { BRAND_CONFIG } from '../config/brand';
 
 interface AgritectumLogoProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
@@ -24,16 +22,20 @@ const AgritectumLogo: React.FC<AgritectumLogoProps> = ({
 
   return (
     <div className={`flex items-center ${container} ${className}`}>
-      {/* Logo Icon */}
-      <div className={`${logo} flex-shrink-0 flex items-center justify-center bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl shadow-lg`}>
-        <Building2 className="w-3/4 h-3/4 text-white" />
+      {/* Logo Emblem */}
+      <div className={`${logo} flex-shrink-0`}>
+        <img 
+          src="/agritectum-logomark.png" 
+          alt="Agritectum Platform Logo" 
+          className="w-full h-full object-contain"
+        />
       </div>
 
       {/* Text */}
       {showText && (
         <div className="flex flex-col">
-          <span className={`font-bold text-gray-900 ${text}`}>{BRAND_CONFIG.BRAND_NAME.toUpperCase()}</span>
-          <span className={`text-gray-600 font-medium ${size === 'sm' ? 'text-xs' : 'text-sm'}`}>Building Performance Platform</span>
+          <span className={`font-bold text-slate-900 ${text}`}>AGRITECTUM</span>
+          <span className={`text-slate-600 font-medium ${size === 'sm' ? 'text-xs' : 'text-sm'}`}>Platform</span>
         </div>
       )}
     </div>
@@ -41,4 +43,5 @@ const AgritectumLogo: React.FC<AgritectumLogoProps> = ({
 };
 
 export default AgritectumLogo;
+
 

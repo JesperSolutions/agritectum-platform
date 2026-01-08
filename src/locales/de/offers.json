@@ -102,7 +102,7 @@
   "offers.create.success": "Offert skapad",
   "offers.create.error": "Kunde inte skapa offert",
 
-  "offers.public.title": "Agritectum Gebäudeinspektion",
+  "offers.public.title": "Agritectum Professionella Takservice",
   "offers.public.subtitle": "Din takreparationsoffert",
   "offers.public.offerExpired": "Offert utgången",
   "offers.public.offerExpiredMessage": "Denna offert är inte längre giltig.",
@@ -121,7 +121,7 @@
   "offers.public.acceptError": "Kunde inte acceptera offert. Försök igen eller kontakta oss.",
   "offers.public.rejectSuccess": "Tack för din feedback. Vi uppskattar att du tog dig tid att svara.",
   "offers.public.rejectError": "Kunde inte skicka avslag. Försök igen eller kontakta oss.",
-  "offers.public.questions": "Frågor? Kontakta oss på support@taklaget.app",
+  "offers.public.questions": "Frågor? Kontakta oss på support@agritectum.com",
   "offers.public.notFound": "Offert hittades inte",
   "offers.public.notFoundMessage": "Offerten du letar efter finns inte eller har tagits bort.",
   "offers.public.goToHomepage": "Gå till startsidan",

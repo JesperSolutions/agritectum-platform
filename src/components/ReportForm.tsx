@@ -913,8 +913,12 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
       const inspectionDateStart = new Date(inspectionDate);
       inspectionDateStart.setHours(0, 0, 0, 0);
 
-      if (inspectionDateStart > today) {
-        errors.inspectionDate = t('form.validation.inspectionDateFuture');
+      // Allow future dates for scheduled inspections, only reject dates more than 1 year in the past
+      const oneYearAgo = new Date(today);
+      oneYearAgo.setFullYear(today.getFullYear() - 1);
+      
+      if (inspectionDateStart < oneYearAgo) {
+        errors.inspectionDate = t('form.validation.inspectionDateTooOld') || t('form.validation.inspectionDatePast') || 'Inspektionsdatumet er for langt tilbage i tiden';
       }
     }
 
@@ -1578,7 +1582,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                 </MaterialFormField>
 
                 <MaterialFormField
-                  label="Kundtyp"
+                  label={t('form.fields.customerType') || 'Kundetype'}
                   error={validationErrors.customerType}
                   touched={!!validationErrors.customerType}
                 >
@@ -1594,8 +1598,8 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                       clearFieldError('customerType');
                     }}
                     options={[
-                      { value: 'individual', label: 'Privatperson' },
-                      { value: 'company', label: 'Företag' },
+                      { value: 'individual', label: t('form.fields.customerTypeIndividual') || 'Privatperson' },
+                      { value: 'company', label: t('form.fields.customerTypeCompany') || 'Firma' },
                     ]}
                   />
                 </MaterialFormField>
@@ -1651,7 +1655,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                 {formData.customerType === 'company' && (
                   <div className='md:col-span-2'>
                     <MaterialFormField
-                      label="Byggnadsadress (för företag)"
+                      label={t('form.fields.buildingAddress') || 'Bygningsadresse (for firma)'}
                       error={validationErrors.buildingAddress}
                       touched={!!validationErrors.buildingAddress}
                     >
@@ -1663,7 +1667,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                           setFormData(prev => ({ ...prev, buildingAddress: e.target.value }));
                           clearFieldError('buildingAddress');
                         }}
-                        placeholder='Ange specifik byggnadsadress om den skiljer sig från huvudadressen'
+                        placeholder={t('form.fields.buildingAddressPlaceholder') || 'Angiv specifik bygningsadresse hvis den afviger fra hovedadressen'}
                         autoComplete='street-address'
                       />
                     </MaterialFormField>
@@ -1805,7 +1809,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                     }}
                     onBlur={triggerValidation}
                     required
-                    placeholder={t('form.placeholder.date') || 'åååå-mm-dd'}
+                    placeholder={t('form.placeholder.date') || (currentUser && currentUser.branchId ? 'dd/mm/åååå' : 'åååå-mm-dd')}
                   />
                 </MaterialFormField>
 
@@ -2401,8 +2405,8 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
             </div>
           )}
 
-          {/* Action Buttons - Desktop */}
-          <div className='hidden md:block bg-white p-6 rounded-lg shadow-sm border border-gray-200'>
+          {/* Action Buttons */}
+          <div className='bg-white p-6 rounded-lg shadow-sm border border-gray-200'>
             <div className='flex flex-wrap gap-3 justify-between'>
               <div className='flex gap-3'>
                 <button
@@ -2490,63 +2494,6 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
               </div>
             </div>
           </div>
-
-          {/* Mobile Action Buttons - Sticky Bottom Bar */}
-          <div className='md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50 p-4 safe-area-inset-bottom'>
-            <div className='flex gap-2'>
-              {currentStep > 1 && (
-                <button
-                  type='button'
-                  onClick={() => setCurrentStep(prev => Math.max(1, prev - 1))}
-                  className='flex-1 min-h-[44px] px-4 py-3 border border-slate-300 rounded-lg text-base font-medium text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500 active:bg-slate-100'
-                >
-                  {t('form.buttons.previous')}
-                </button>
-              )}
-              {currentStep < totalSteps ? (
-                <button
-                  type='button'
-                  onClick={() => {
-                    const isStepValid = validateStep(currentStep);
-                    if (isStepValid) {
-                      setCurrentStep(prev => Math.min(totalSteps, prev + 1));
-                    } else {
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                      setNotification({
-                        message: t('form.validation.stepValidationFailed') || 'Please fix the validation errors before continuing',
-                        type: 'error',
-                      });
-                      setTimeout(() => setNotification(null), 5000);
-                    }
-                  }}
-                  className='flex-1 min-h-[44px] px-4 py-3 border border-transparent rounded-lg text-base font-medium text-white bg-slate-700 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-500 active:bg-slate-900'
-                >
-                  {t('form.buttons.next')}
-                </button>
-              ) : (
-                <>
-                  <button
-                    type='submit'
-                    disabled={loading}
-                    className='flex-1 min-h-[44px] px-4 py-3 border border-transparent rounded-lg text-base font-medium text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 disabled:opacity-50 active:bg-gray-800'
-                  >
-                    {loading ? <LoadingSpinner size='sm' /> : t('form.buttons.saveAsDraft')}
-                  </button>
-                  <button
-                    type='button'
-                    onClick={e => handleSubmit(e, 'completed')}
-                    disabled={loading}
-                    className='flex-1 min-h-[44px] px-4 py-3 border border-transparent rounded-lg text-base font-medium text-white bg-slate-700 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-500 disabled:opacity-50 active:bg-slate-900'
-                  >
-                    {loading ? <LoadingSpinner size='sm' /> : t('form.buttons.completeReport')}
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-          
-          {/* Spacer for mobile bottom bar */}
-          <div className='md:hidden h-24'></div>
         </form>
 
         {/* Cancel Confirmation Dialog */}

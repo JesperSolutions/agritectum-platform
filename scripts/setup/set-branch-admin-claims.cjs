@@ -24,7 +24,7 @@ try {
   // Find the service account key file (it has a unique suffix)
   const projectRoot = path.join(__dirname, '..');
   const files = fs.readdirSync(projectRoot);
-  const serviceAccountFile = files.find(f => f.startsWith('agritectum-platform-firebase-adminsdk-fbsvc-') && f.endsWith('.json'));
+  const serviceAccountFile = files.find(f => f.startsWith('taklaget-service-app-firebase-adminsdk-fbsvc-') && f.endsWith('.json'));
   
   if (!serviceAccountFile) {
     throw new Error('Service account key file not found. Please download it from Firebase Console.');

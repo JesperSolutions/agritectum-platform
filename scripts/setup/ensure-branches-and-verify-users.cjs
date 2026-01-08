@@ -55,7 +55,7 @@ async function ensureBranchesExist() {
       const projectRoot = path.join(__dirname, '..', '..');
       const files = fs.readdirSync(projectRoot);
       const serviceAccountFile = files.find(f => 
-        (f.startsWith('agritectum-platform-firebase-adminsdk-') || f.startsWith('agritectum-platform-firebase-adminsdk-fbsvc-')) && 
+        (f.startsWith('taklaget-service-app-firebase-adminsdk-') || f.startsWith('taklaget-service-app-firebase-adminsdk-fbsvc-')) && 
         f.endsWith('.json')
       );
       
@@ -135,7 +135,7 @@ async function verifyAllUsers() {
       const projectRoot = path.join(__dirname, '..', '..');
       const files = fs.readdirSync(projectRoot);
       const serviceAccountFile = files.find(f => 
-        (f.startsWith('agritectum-platform-firebase-adminsdk-') || f.startsWith('agritectum-platform-firebase-adminsdk-fbsvc-')) && 
+        (f.startsWith('taklaget-service-app-firebase-adminsdk-') || f.startsWith('taklaget-service-app-firebase-adminsdk-fbsvc-')) && 
         f.endsWith('.json')
       );
       

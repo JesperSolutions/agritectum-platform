@@ -28,7 +28,7 @@ const args = process.argv.slice(2);
 const projectIndex = args.indexOf('--project');
 const projectId = projectIndex !== -1 && args[projectIndex + 1] 
   ? args[projectIndex + 1] 
-  : 'agritectum-platform';
+  : 'taklaget-service-app-test';
 
 console.log(`📍 Geocoding service agreements for project: ${projectId}\n`);
 

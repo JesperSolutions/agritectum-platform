@@ -48,7 +48,7 @@ export const generateReportPDF = onRequest({ region: 'europe-west1' }, async (re
     }
 
     // Construct the public report URL
-    const baseUrl = process.env.APP_URL || 'https://agritectum-platform.web.app';
+    const baseUrl = process.env.APP_URL || 'https://taklaget-service-app.web.app';
     const reportUrl = `${baseUrl}/report/public/${reportId}`;
     
     console.log(`🖨️ Generating PDF for report: ${reportId}`);

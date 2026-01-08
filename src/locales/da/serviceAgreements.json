@@ -215,7 +215,8 @@
   "serviceAgreement.form.addons.annualInspection": "Årligt eftersyn (EN 365)",
   "serviceAgreement.form.addons.safetyEquipmentControl": "Kontrol af liner, wires, seler og karabiner",
   "serviceAgreement.form.addons.solar.title": "SOLCELLER:",
-  "serviceAgreement.form.addons.solarCleaning": "Rensning af solceller (1–2 gange årligt)",
+  "serviceAgreement.form.addons.solarCleaning": "Rensning af solceller",
+  "serviceAgreement.form.addons.en365Tooltip": "EN 365 er en europæisk standard for personlig værnemiddel mod fald fra højde. Eftersynet sikrer, at udstyret opfylder sikkerhedskravene.",
   "serviceAgreement.form.addons.steel.title": "STÅLTAG:",
   "serviceAgreement.form.addons.mossRemoval": "Rensning af lav og mos",
   "serviceAgreement.form.addons.chemicalTreatment": "Kemisk tagbehandling",
@@ -231,10 +232,12 @@
   "serviceAgreement.form.serviceReport.damageDescription": "Beskrivelse af eventuelle skader",
   "serviceAgreement.form.serviceReport.recommendations": "Anbefalinger til udbedring og vedligehold",
   "serviceAgreement.form.serviceReport.annualReport": "Årlig tilstandsrapport",
+  "serviceAgreement.form.serviceReport.digitalPlatform": "Adgang til digital platform",
+  "serviceAgreement.form.serviceReport.esgReport": "ESG-rapport (miljø, social, governance)",
   "serviceAgreement.form.agreementPeriod.title": "5. AFTALEPERIODE",
   "serviceAgreement.form.agreementPeriod.note": "Aftalen løber i 12 måneder og forlænges automatisk, medmindre den opsiges.",
   "serviceAgreement.form.pricing.title": "6. PRIS & FAKTURERING",
-  "serviceAgreement.form.pricing.perRoof": "Pris start pr. år per tag:",
+  "serviceAgreement.form.pricing.perRoof": "Opstarts pris per tag:",
   "serviceAgreement.form.pricing.perSquareMeter": "Pris pr. år per m²:",
   "serviceAgreement.form.pricing.billingFrequency": "Faktureringsfrekvens:",
   "serviceAgreement.form.pricing.annual": "Årlig betaling",
@@ -243,6 +246,12 @@
   "serviceAgreement.form.signatures.supplier": "Leverandør:",
   "serviceAgreement.form.signatures.supplierPlaceholder": "Navn",
   "serviceAgreement.form.signatures.customer": "Kunde:",
-  "serviceAgreement.form.signatures.customerPlaceholder": "Navn"
+  "serviceAgreement.form.signatures.customerPlaceholder": "Navn",
+  "serviceAgreement.form.signatures.uploadImage": "Upload billede",
+  "serviceAgreement.detail.send": "Send",
+  "serviceAgreement.detail.sending": "Sender...",
+  "serviceAgreement.detail.sent": "Serviceaftale sendt til kunde",
+  "serviceAgreement.detail.sendError": "Kunne ikke sende serviceaftale",
+  "serviceAgreement.detail.noEmail": "Kunde email er påkrævet for at sende aftalen"
 }
 

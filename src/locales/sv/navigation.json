@@ -21,6 +21,8 @@
   "navigation.branchDetails": "Filialdetaljer",
   "navigation.offerDetails": "Offertdetaljer",
   "navigation.serviceAgreements": "Serviceavtal",
+  "navigation.buildings": "Byggnader",
+  "navigation.scheduledVisits": "Schemalagda besök",
 
   "breadcrumb.home": "Start",
   "breadcrumb.dashboard": "Översikt",
