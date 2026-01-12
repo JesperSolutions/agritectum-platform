@@ -1,6 +1,7 @@
-// Version should match package.json version to force updates
-// Update this when deploying to ensure users get fresh code
-const CACHE_NAME = 'agritectum-v4.0.0-REACT-FIX'; 
+// Version will be derived from package.json version + deploy timestamp to ensure fresh cache per deploy
+// During build/deploy a script can replace the BUILD_VERSION token with the current version/timestamp.
+const BUILD_VERSION = 'v1.0.2b-20260112114853'; // e.g. v1.0.2-20260112T1234
+const CACHE_NAME = `agritectum-${BUILD_VERSION}`;
 const OFFLINE_URL = '/offline.html';
 
 // Files to cache (minimal - only HTML for offline)

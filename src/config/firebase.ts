@@ -10,13 +10,14 @@ const getFirebaseConfig = () => {
   const mode = import.meta.env.MODE; // 'development', 'test', or 'production'
   
   // Production config (default for production builds) - Agritectum Platform
+  // Require VITE_FIREBASE_* variables in production builds. Do not fall back to hardcoded prod credentials here.
   const prodConfig = {
-    apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyB7t5LITs2cydGizXE5cJAlIY7Q3p9wR1k',
-    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'agritectum-platform.firebaseapp.com',
-    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'agritectum-platform',
-    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'agritectum-platform.firebasestorage.app',
-    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '831129873464',
-    appId: import.meta.env.VITE_FIREBASE_APP_ID || '1:831129873464:web:eda440c687b5e883c84acd',
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY || '',
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || '',
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || '',
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || '',
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '',
+    appId: import.meta.env.VITE_FIREBASE_APP_ID || '',
   };
   
   // Test environment config (uses test Firebase project)
@@ -42,18 +43,15 @@ const firebaseConfig = getFirebaseConfig();
 // Validate required config based on environment
 const mode = import.meta.env.MODE;
 if (mode === 'production') {
-  // In production, we use fallback values if env vars are not set
-  // This allows the app to work without requiring env vars in Firebase Hosting
-  // The fallback values are hardcoded above and will be used automatically
-  const hasEnvVars = import.meta.env.VITE_FIREBASE_API_KEY && 
-                     import.meta.env.VITE_FIREBASE_AUTH_DOMAIN &&
-                     import.meta.env.VITE_FIREBASE_PROJECT_ID;
-  
-  if (!hasEnvVars) {
-    // Only warn, don't error - fallback values will be used
-    console.warn(
-      '⚠️ Firebase config: Using fallback hardcoded values in production. For custom config, set VITE_FIREBASE_* environment variables.'
-    );
+  // In production we expect the VITE_FIREBASE_* environment variables to be set by the deploy process.
+  const missing: string[] = [];
+  if (!import.meta.env.VITE_FIREBASE_API_KEY) missing.push('VITE_FIREBASE_API_KEY');
+  if (!import.meta.env.VITE_FIREBASE_AUTH_DOMAIN) missing.push('VITE_FIREBASE_AUTH_DOMAIN');
+  if (!import.meta.env.VITE_FIREBASE_PROJECT_ID) missing.push('VITE_FIREBASE_PROJECT_ID');
+
+  if (missing.length > 0) {
+    console.error(`⚠️ Firebase config: Missing environment variables for production: ${missing.join(', ')}.`);
+    console.error('Set the VITE_FIREBASE_* variables in your Firebase Hosting or CI environment before building.');
   }
 } else if (mode === 'test') {
   // In test mode, warn if test-specific vars are missing

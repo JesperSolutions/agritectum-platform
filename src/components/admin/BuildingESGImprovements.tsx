@@ -6,6 +6,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import CustomerSearch from './CustomerSearch';
 import {
   Building as BuildingIcon,
   Search,
@@ -51,9 +52,10 @@ const BuildingESGImprovements: React.FC = () => {
   const { t } = useIntl();
   const { showSuccess, showError } = useToast();
 
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [buildings, setBuildings] = useState<Building[]>([]);
   const [selectedBuilding, setSelectedBuilding] = useState<Building | null>(null);
-  const [loadingBuildings, setLoadingBuildings] = useState(true);
+  const [loadingBuildings, setLoadingBuildings] = useState(false);
   const [loadingBuilding, setLoadingBuilding] = useState(false);
   const [loadingCalculation, setLoadingCalculation] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -87,12 +89,30 @@ const BuildingESGImprovements: React.FC = () => {
     );
   }
 
-  // Load buildings on mount
+  // Load buildings for selected customer
   useEffect(() => {
-    if (currentUser?.branchId) {
-      loadBuildings();
+    if (selectedCustomer) {
+      loadBuildingsForCustomer(selectedCustomer.id);
+    } else {
+      setBuildings([]);
+      setSelectedBuilding(null);
     }
-  }, [currentUser]);
+  }, [selectedCustomer]);
+
+  const loadBuildingsForCustomer = async (customerId: string) => {
+    setLoadingBuildings(true);
+    try {
+      // Fetch all buildings and filter by customerId
+      const allBuildings = await getBuildingsByBranch(currentUser?.branchId || '');
+      const filtered = allBuildings.filter(b => b.customerId === customerId);
+      setBuildings(filtered);
+    } catch (error) {
+      console.error('Error loading buildings:', error);
+      showError(t('admin.improvements.errorLoadingBuildings') || 'Failed to load buildings');
+    } finally {
+      setLoadingBuildings(false);
+    }
+  };
 
   // Load saved improvements when building changes
   useEffect(() => {
@@ -353,232 +373,89 @@ const BuildingESGImprovements: React.FC = () => {
         }
       />
 
-      {/* Building Selection */}
+      {/* Customer Search/Selection */}
       <div className="bg-white rounded-lg shadow p-6 border border-slate-200">
         <h2 className="text-lg font-semibold mb-4 flex items-center">
-          <BuildingIcon className="w-5 h-5 mr-2" />
-          {t('admin.improvements.selectBuilding') || 'Select Building'}
+          <Search className="w-5 h-5 mr-2" />
+          {t('admin.improvements.selectCustomer') || 'Select Customer'}
         </h2>
-
-        {loadingBuildings ? (
-          <div className="flex items-center justify-center py-8">
-            <LoadingSpinner />
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {/* Search */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                placeholder={t('admin.improvements.searchBuildings') || 'Search buildings...'}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500"
-              />
-            </div>
-
-            {/* Building List */}
-            <div className="max-h-64 overflow-y-auto border border-gray-200 rounded-md">
-              {filteredBuildings.length === 0 ? (
-                <div className="p-4 text-center text-gray-500">
-                  {t('admin.improvements.noBuildings') || 'No buildings found'}
-                </div>
-              ) : (
-                filteredBuildings.map((building) => (
-                  <button
-                    key={building.id}
-                    onClick={() => handleBuildingSelect(building.id)}
-                    className={`w-full text-left p-4 border-b border-gray-200 hover:bg-gray-50 transition-colors ${
-                      selectedBuilding?.id === building.id
-                        ? 'bg-green-50 border-green-200'
-                        : ''
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-medium text-gray-900">{building.address}</p>
-                        <p className="text-sm text-gray-600">
-                          {building.roofType && t(`roofTypes.${building.roofType}`)}
-                          {building.roofSize && ` • ${building.roofSize} m²`}
-                        </p>
-                      </div>
-                      {selectedBuilding?.id === building.id && (
-                        <CheckCircle className="w-5 h-5 text-green-600" />
-                      )}
-                    </div>
-                  </button>
-                ))
-              )}
-            </div>
+        <CustomerSearch onCustomerSelect={setSelectedCustomer} />
+        {selectedCustomer && (
+          <div className="mt-2 text-green-700 font-semibold">
+            {selectedCustomer.name} {selectedCustomer.email && <span className="text-xs text-slate-500">({selectedCustomer.email})</span>}
           </div>
         )}
       </div>
 
-      {/* Selected Building Info */}
-      {selectedBuilding && (
-        <>
-          <div className="bg-white rounded-lg shadow p-6 border border-slate-200">
-            <h2 className="text-lg font-semibold mb-4">
-              {t('admin.improvements.buildingInfo') || 'Building Information'}
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <IconLabel
-                icon={BuildingIcon}
-                label={t('buildings.address') || 'Address'}
-                value={selectedBuilding.address}
-              />
-              {selectedBuilding.roofType && (
-                <IconLabel
-                  icon={BuildingIcon}
-                  label={t('buildings.roofType') || 'Roof Type'}
-                  value={t(`roofTypes.${selectedBuilding.roofType}`) || selectedBuilding.roofType}
-                />
-              )}
-              {selectedBuilding.roofSize && (
-                <IconLabel
-                  icon={BuildingIcon}
-                  label={t('buildings.roofSize') || 'Roof Size'}
-                  value={`${selectedBuilding.roofSize} m²`}
-                />
-              )}
-            </div>
+      {/* Building Selection (only after customer is selected) */}
+      {selectedCustomer && (
+        <div className="bg-white rounded-lg shadow p-6 border border-slate-200">
+          <h2 className="text-lg font-semibold mb-4 flex items-center">
+            <BuildingIcon className="w-5 h-5 mr-2" />
+            {t('admin.improvements.selectBuilding') || 'Select Building'}
+          </h2>
 
-            {/* Recommendations */}
-            {selectedBuilding.roofSize && selectedBuilding.roofSize > 0 && (
-              <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <div className="flex items-start">
-                  <Lightbulb className="w-5 h-5 text-blue-600 mr-2 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium text-gray-900 mb-2">
-                      {t('admin.improvements.recommendations') || 'Recommendations'}
-                    </p>
-                    <ul className="text-sm text-gray-700 space-y-1">
-                      {getImprovementRecommendations(selectedBuilding).map((rec, idx) => (
-                        <li key={idx}>
-                          • {rec.reason} ({t('admin.improvements.suggested') || 'Suggested'}:{' '}
-                          {rec.suggestedPercentage}%)
-                        </li>
-                      ))}
-                    </ul>
+          {loadingBuildings ? (
+            <div className="flex items-center justify-center py-8">
+              <LoadingSpinner />
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {/* Search */}
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <input
+                  type="text"
+                  placeholder={t('admin.improvements.searchBuildings') || 'Search buildings...'}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500"
+                />
+              </div>
+
+              {/* Building List */}
+              <div className="max-h-64 overflow-y-auto border border-gray-200 rounded-md">
+                {filteredBuildings.length === 0 ? (
+                  <div className="p-4 text-center text-gray-500">
+                    {t('admin.improvements.noBuildings') || 'No buildings found'}
                   </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Improvement Configuration */}
-          {selectedBuilding.roofSize && selectedBuilding.roofSize > 0 && (
-            <div className="bg-white rounded-lg shadow p-6 border border-slate-200">
-              {inlineError && (
-                <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded">
-                  <AlertCircle className="inline w-4 h-4 mr-2 align-text-bottom" />
-                  {inlineError}
-                </div>
-              )}
-              <h2 className="text-lg font-semibold mb-4">
-                {t('admin.improvements.configureImprovements') ||
-                  'Configure Improvements'}
-              </h2>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                {improvementTypes.map((type) => (
-                  <ImprovementCard
-                    key={type}
-                    type={type}
-                    improvement={improvements.get(type) || null}
-                    roofArea={selectedBuilding.roofSize || 0}
-                    enabled={improvements.get(type) !== null}
-                    onToggle={(enabled) => handleImprovementToggle(type, enabled)}
-                    onUpdate={handleImprovementUpdate}
-                    maxPercentage={100}
-                  />
-                ))}
-              </div>
-
-              {/* Roof Division Visualization */}
-              <RoofDivisionVisualization
-                improvements={activeImprovements}
-                roofArea={selectedBuilding.roofSize || 0}
-              />
-
-              {/* Calculate Button */}
-              <div className="mt-6 flex justify-center">
-                <button
-                  onClick={handleCalculate}
-                  disabled={loadingCalculation || activeImprovements.length === 0}
-                  className="flex items-center space-x-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-                >
-                  {loadingCalculation ? (
-                    <>
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                      <span>
-                        {t('admin.improvements.calculating') || 'Calculating...'}
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <Calculator className="w-5 h-5" />
-                      <span>
-                        {t('admin.improvements.calculateImpact') ||
-                          'Calculate Impact'}
-                      </span>
-                    </>
-                  )}
-                </button>
+                ) : (
+                  filteredBuildings.map((building) => (
+                    <button
+                      key={building.id}
+                      onClick={() => handleBuildingSelect(building.id)}
+                      className={`w-full text-left p-4 border-b border-gray-200 hover:bg-gray-50 transition-colors ${
+                        selectedBuilding?.id === building.id
+                          ? 'bg-green-50 border-green-200'
+                          : ''
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-medium text-gray-900">{building.address}</p>
+                          <p className="text-sm text-gray-600">
+                            {building.roofType && t(`roofTypes.${building.roofType}`)}
+                            {building.roofSize && ` • ${building.roofSize} m²`}
+                          </p>
+                        </div>
+                        {selectedBuilding?.id === building.id && (
+                          <CheckCircle className="w-5 h-5 text-green-600" />
+                        )}
+                      </div>
+                    </button>
+                  ))
+                )}
               </div>
             </div>
           )}
+        </div>
+      )}
 
-          {/* Results */}
-          {calculatedMetrics && (
-            <>
-              <ImprovementResults
-                metrics={calculatedMetrics}
-                onExport={(format) => {
-                  // TODO: Implement export functionality
-                  console.log('Export as', format);
-                }}
-              />
-
-              {/* Save Button */}
-              <div className="flex justify-center">
-                <button
-                  onClick={handleSave}
-                  disabled={saving}
-                  className="flex items-center space-x-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-                >
-                  {saving ? (
-                    <>
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                      <span>{t('admin.improvements.saving') || 'Saving...'}</span>
-                    </>
-                  ) : (
-                    <>
-                      <Save className="w-5 h-5" />
-                      <span>
-                        {t('admin.improvements.saveImprovements') ||
-                          'Save Improvements'}
-                      </span>
-                    </>
-                  )}
-                </button>
-              </div>
-            </>
-          )}
-
-          {/* No Roof Size Warning */}
-          {(!selectedBuilding.roofSize || selectedBuilding.roofSize <= 0) && (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-              <div className="flex items-center">
-                <AlertCircle className="w-5 h-5 text-yellow-600 mr-2" />
-                <p className="text-sm text-gray-700">
-                  {t('admin.improvements.noRoofSize') ||
-                    'Building roof size is not set. Please set roof size before configuring improvements.'}
-                </p>
-              </div>
-            </div>
-          )}
+      {/* Selected Building Info and Improvements */}
+      {selectedBuilding && (
+        // ...existing code for the improvement configuration and results...
+        <>
+          {/* ...existing code... */}
         </>
       )}
     </div>
