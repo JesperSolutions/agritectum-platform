@@ -27,7 +27,7 @@ import {
   ImprovementType,
 } from '../../types';
 import {
-  getBuildingsByBranch,
+  getBuildingsByCustomer,
   getBuildingById,
 } from '../../services/buildingService';
 import {
@@ -102,10 +102,8 @@ const BuildingESGImprovements: React.FC = () => {
   const loadBuildingsForCustomer = async (customerId: string) => {
     setLoadingBuildings(true);
     try {
-      // Fetch all buildings and filter by customerId
-      const allBuildings = await getBuildingsByBranch(currentUser?.branchId || '');
-      const filtered = allBuildings.filter(b => b.customerId === customerId);
-      setBuildings(filtered);
+  const buildingsForCustomer = await getBuildingsByCustomer(customerId, currentUser?.branchId);
+  setBuildings(buildingsForCustomer || []);
     } catch (error) {
       console.error('Error loading buildings:', error);
       showError(t('admin.improvements.errorLoadingBuildings') || 'Failed to load buildings');
@@ -120,21 +118,6 @@ const BuildingESGImprovements: React.FC = () => {
       loadSavedImprovements();
     }
   }, [selectedBuilding]);
-
-  const loadBuildings = async () => {
-    if (!currentUser?.branchId) return;
-    setLoadingBuildings(true);
-    try {
-      const data = await getBuildingsByBranch(currentUser.branchId);
-      setBuildings(data);
-    } catch (error) {
-      console.error('Error loading buildings:', error);
-      showError(t('admin.improvements.errorLoadingBuildings') || 'Failed to load buildings');
-    } finally {
-      setLoadingBuildings(false);
-    }
-  };
-
   const loadSavedImprovements = async () => {
     if (!selectedBuilding) return;
     try {

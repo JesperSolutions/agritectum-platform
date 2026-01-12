@@ -30,7 +30,7 @@ import {
 } from 'lucide-react';
 import { Building, ESGMetrics, RoofDivisionAreas } from '../../types';
 import {
-  getBuildingsByBranch,
+  getBuildingsByCustomer,
   getBuildingById,
 } from '../../services/buildingService';
 import {
@@ -107,10 +107,9 @@ const ESGService: React.FC = () => {
   const loadBuildingsForCustomer = async (customerId: string) => {
     setLoadingBuildings(true);
     try {
-      // Fetch all buildings and filter by customerId
-      const allBuildings = await getBuildingsByBranch(currentUser?.branchId || '');
-      const filtered = allBuildings.filter(b => b.customerId === customerId);
-      setBuildings(filtered);
+  // Use the customer-aware API which will include branchId and fallback logic
+  const buildingsForCustomer = await getBuildingsByCustomer(customerId, currentUser?.branchId);
+  setBuildings(buildingsForCustomer || []);
     } catch (error) {
       console.error('Error loading buildings:', error);
       showError(t('admin.esgService.errorLoadingBuildings') || 'Failed to load buildings');
