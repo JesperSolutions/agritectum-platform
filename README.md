@@ -90,6 +90,18 @@ npm run dev
 - 🔄 **Real-Time Sync** - Live data synchronization across devices
 - 📊 **Analytics Dashboard** - Branch-specific performance metrics
 
+## 🗂️ Legacy Code
+
+Legacy code is organized in `src/legacy/` directories:
+- **Components:** Unused components moved for reference
+- **Services:** Legacy wrappers marked for backward compatibility
+- **Documentation:** See `src/legacy/ARCHIVE_MANIFEST.md` for complete inventory
+
+**Guidelines:**
+- Do not use code from `src/legacy/` in new implementations
+- Check ARCHIVE_MANIFEST.md for migration paths
+- Legacy code is kept for reference and potential rollback only
+
 ## 📋 Available Scripts
 
 ```bash

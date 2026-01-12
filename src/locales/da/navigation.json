@@ -36,6 +36,9 @@
 
   "menu.toggle": "Skift menu",
   "menu.close": "Luk menu",
-  "menu.open": "Åbn menu"
+  "menu.open": "Åbn menu",
+
+  "navigation.buildings": "Bygninger",
+  "navigation.scheduledVisits": "Planlagte besøg"
 }
 

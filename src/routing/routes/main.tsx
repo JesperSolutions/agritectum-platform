@@ -13,12 +13,15 @@ import {
   LazyAnalyticsDashboard,
   LazyAllReports,
   LazyCustomerManagement,
+  LazyCustomerProfile,
   LazyQATestingPage,
   LazySchedulePage,
   LazyEmailTemplateViewer,
   LazyOffersPage,
   LazyUserProfile,
   LazyServiceAgreements,
+  LazyBuildingESGImprovements,
+  LazyESGService,
   LoadingFallback,
 } from '../../components/LazyComponents';
 import AdminTestingPage from '../../components/admin/AdminTestingPage';
@@ -150,12 +153,51 @@ export const mainRoutes: RouteObject[] = [
         errorElement: <RouteErrorBoundary />,
       },
       {
+        path: 'admin/customers/:customerId',
+        element: (
+          <ProtectedRoute allowedRoles={['superadmin', 'branchAdmin']}>
+            <EnhancedErrorBoundary context='Customer Profile'>
+              <Suspense fallback={<LoadingFallback />}>
+                <LazyCustomerProfile />
+              </Suspense>
+            </EnhancedErrorBoundary>
+          </ProtectedRoute>
+        ),
+        errorElement: <RouteErrorBoundary />,
+      },
+      {
         path: 'admin/service-agreements',
         element: (
           <ProtectedRoute allowedRoles={['superadmin', 'branchAdmin']}>
             <EnhancedErrorBoundary context='Service Agreements'>
               <Suspense fallback={<LoadingFallback />}>
                 <LazyServiceAgreements />
+              </Suspense>
+            </EnhancedErrorBoundary>
+          </ProtectedRoute>
+        ),
+        errorElement: <RouteErrorBoundary />,
+      },
+      {
+        path: 'admin/building-esg-improvements',
+        element: (
+          <ProtectedRoute allowedRoles={['superadmin', 'branchAdmin']}>
+            <EnhancedErrorBoundary context='Building ESG Improvements'>
+              <Suspense fallback={<LoadingFallback />}>
+                <LazyBuildingESGImprovements />
+              </Suspense>
+            </EnhancedErrorBoundary>
+          </ProtectedRoute>
+        ),
+        errorElement: <RouteErrorBoundary />,
+      },
+      {
+        path: 'admin/esg-service',
+        element: (
+          <ProtectedRoute allowedRoles={['superadmin', 'branchAdmin']}>
+            <EnhancedErrorBoundary context='ESG Service'>
+              <Suspense fallback={<LoadingFallback />}>
+                <LazyESGService />
               </Suspense>
             </EnhancedErrorBoundary>
           </ProtectedRoute>

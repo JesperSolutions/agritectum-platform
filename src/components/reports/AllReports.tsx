@@ -590,7 +590,7 @@ const AllReports: React.FC<AllReportsProps> = () => {
                   onClick={() => setShowToolsMenu(prev => !prev)}
                   className='inline-flex items-center px-3 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 shadow-sm'
                 >
-                  Tools
+                  {t('reports.tools') || 'Tools'}
                   <ChevronDown className='h-4 w-4 ml-2 text-slate-500' />
                 </button>
                 {showToolsMenu && (
@@ -598,14 +598,15 @@ const AllReports: React.FC<AllReportsProps> = () => {
                     <button
                       onClick={async () => {
                         setShowToolsMenu(false);
-                        if (confirm('Delete ONLY temporary reports (IDs starting with temp_)? This is safe and only removes incomplete drafts.')) {
+                        const confirmMessage = t('reports.confirmCleanTemp') || 'Delete ONLY temporary reports (IDs starting with temp_)? This is safe and only removes incomplete drafts.';
+                        if (confirm(confirmMessage)) {
                           await cleanupTempReports();
                           await fetchReports();
                         }
                       }}
                       className='w-full text-left px-4 py-2 text-sm hover:bg-slate-50 text-slate-700'
                     >
-                      Clean temporary reports (temp_)
+                      {t('reports.cleanTempReports') || 'Clean temporary reports (temp_)'}
                     </button>
                   </div>
                 )}
@@ -614,7 +615,7 @@ const AllReports: React.FC<AllReportsProps> = () => {
                 onClick={() => fetchReports()}
                 className='inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-slate-700 hover:bg-slate-800 shadow-sm'
               >
-                Refresh
+                {t('reports.refresh')}
               </button>
             </div>
           </div>
@@ -860,13 +861,13 @@ const AllReports: React.FC<AllReportsProps> = () => {
                 icon={FileText}
                 title={searchTerm || statusFilter !== 'all' || branchFilter !== 'all'
                   ? t('reports.noReportsFound')
-                  : 'Inga rapporter än'}
+                  : t('reports.noReports')}
                 description={searchTerm || statusFilter !== 'all' || branchFilter !== 'all'
                   ? t('reports.tryAdjustingFilters')
-                  : 'Skapa en ny rapport för att börja'}
+                  : t('reports.noReportsMessage')}
                 actionLabel={searchTerm || statusFilter !== 'all' || branchFilter !== 'all'
                   ? undefined
-                  : 'Skapa ny rapport'}
+                  : t('reports.newReport')}
                 onAction={searchTerm || statusFilter !== 'all' || branchFilter !== 'all'
                   ? undefined
                   : () => navigate('/report/new')}

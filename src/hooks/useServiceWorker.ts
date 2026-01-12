@@ -5,18 +5,11 @@ export const useServiceWorker = () => {
   const [installPrompt, setInstallPrompt] = useState<any>(null);
 
   useEffect(() => {
-    // Register service worker
+    // NOTE: Service worker registration moved to App.tsx to avoid duplicates
+    // This hook only handles SW messaging and PWA features
+    
+    // Listen for messages from service worker
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker
-        .register('/sw.js')
-        .then(registration => {
-          console.log('SW registered: ', registration);
-        })
-        .catch(registrationError => {
-          console.log('SW registration failed: ', registrationError);
-        });
-
-      // Listen for messages from service worker
       navigator.serviceWorker.addEventListener('message', event => {
         if (event.data && event.data.type === 'SYNC_OFFLINE_REPORTS') {
           // Trigger sync in React app

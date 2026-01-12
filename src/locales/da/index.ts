@@ -19,6 +19,7 @@ import profile from './profile.json';
 import analytics from './analytics.json';
 import notifications from './notifications.json';
 import serviceAgreements from './serviceAgreements.json';
+import buildings from './buildings.json';
 
 // Combine all translation files into a single object
 const daMessages = {
@@ -40,6 +41,7 @@ const daMessages = {
   ...analytics,
   ...notifications,
   ...serviceAgreements,
+  ...buildings,
 };
 
 export default daMessages;

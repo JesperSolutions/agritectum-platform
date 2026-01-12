@@ -1,5 +1,17 @@
-// Legacy email service - now redirects to Trigger Email service
-// This file is kept for backward compatibility but should be migrated to triggerEmailService.ts
+/**
+ * @legacy
+ * @deprecated Legacy email service wrapper - now redirects to Trigger Email service
+ * @movedDate 2025-01-11 (marked as legacy)
+ * @reason This file is a legacy wrapper for backward compatibility
+ * 
+ * This file was marked as legacy on 2025-01-11 because:
+ * - It re-exports everything from triggerEmailService.ts
+ * - Kept for backward compatibility only
+ * - Should be migrated to triggerEmailService.ts
+ * 
+ * Migration: Import directly from './triggerEmailService' instead of './emailService'
+ * See src/legacy/ARCHIVE_MANIFEST.md for details
+ */
 
 import { getFunctions, httpsCallable } from 'firebase/functions';
 

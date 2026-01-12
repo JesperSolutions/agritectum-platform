@@ -55,6 +55,12 @@
   "resetPassword.error.passwordRequirements": "Lösenordet måste innehålla stora och små bokstäver samt siffror",
   "resetPassword.error.passwordTooWeak": "Lösenordet är för svagt",
   "resetPassword.error.passwordsDoNotMatch": "Lösenorden matchar inte",
-  "resetPassword.error.generic": "Kunde inte återställa lösenord. Försök igen senare."
+  "resetPassword.error.generic": "Kunde inte återställa lösenord. Försök igen senare.",
+  "login.customerPortal": "Kundportal",
+  "login.welcomeMessage": "Logga in för att komma åt ditt konto",
+  "login.showPassword": "Visa lösenord",
+  "login.hidePassword": "Dölj lösenord",
+  "login.noAccount": "Har du inget konto?",
+  "login.registerHere": "Registrera här"
 }
 

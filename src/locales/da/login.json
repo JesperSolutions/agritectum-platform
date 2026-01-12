@@ -55,6 +55,13 @@
   "resetPassword.error.passwordRequirements": "Adgangskoden skal indeholde store og små bogstaver samt tal",
   "resetPassword.error.passwordTooWeak": "Adgangskoden er for svag",
   "resetPassword.error.passwordsDoNotMatch": "Adgangskoderne matcher ikke",
-  "resetPassword.error.generic": "Kunne ikke nulstille adgangskode. Prøv igen senere."
+  "resetPassword.error.generic": "Kunne ikke nulstille adgangskode. Prøv igen senere.",
+  "login.customerPortal": "Kundeportal",
+  "login.welcomeMessage": "Log ind for at få adgang til din konto",
+  "login.showPassword": "Vis adgangskode",
+  "login.hidePassword": "Skjul adgangskode",
+  "login.noAccount": "Har du ikke en konto?",
+  "login.registerHere": "Registrer her",
+  "login.errors.signInFailed": "Login mislykkedes"
 }
 

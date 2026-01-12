@@ -55,6 +55,13 @@
   "resetPassword.error.passwordRequirements": "Das Passwort muss Groß- und Kleinbuchstaben sowie Zahlen enthalten",
   "resetPassword.error.passwordTooWeak": "Das Passwort ist zu schwach",
   "resetPassword.error.passwordsDoNotMatch": "Die Passwörter stimmen nicht überein",
-  "resetPassword.error.generic": "Passwort konnte nicht zurückgesetzt werden. Bitte versuchen Sie es später erneut."
+  "resetPassword.error.generic": "Passwort konnte nicht zurückgesetzt werden. Bitte versuchen Sie es später erneut.",
+  "login.customerPortal": "Kundenportal",
+  "login.welcomeMessage": "Melden Sie sich an, um auf Ihr Konto zuzugreifen",
+  "login.showPassword": "Passwort anzeigen",
+  "login.hidePassword": "Passwort ausblenden",
+  "login.noAccount": "Haben Sie kein Konto?",
+  "login.registerHere": "Hier registrieren",
+  "login.errors.signInFailed": "Anmeldung fehlgeschlagen"
 }
 

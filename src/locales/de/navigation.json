@@ -36,6 +36,9 @@
 
   "menu.toggle": "Menü umschalten",
   "menu.close": "Menü schließen",
-  "menu.open": "Menü öffnen"
+  "menu.open": "Menü öffnen",
+
+  "navigation.buildings": "Gebäude",
+  "navigation.scheduledVisits": "Geplante Besuche"
 }
 

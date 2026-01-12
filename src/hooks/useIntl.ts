@@ -7,7 +7,22 @@ export const useIntl = () => {
   const locale = intl.locale as SupportedLocale;
 
   return {
-    t: (id: string, values?: Record<string, any>) => intl.formatMessage({ id }, values),
+    t: (id: string, values?: Record<string, any>) => {
+      try {
+        const result = intl.formatMessage({ id }, values);
+        // In development, log if the key wasn't found (formatMessage returns the key if not found)
+        if (import.meta.env.DEV && result === id) {
+          console.warn(`[useIntl] Translation key not found: "${id}" for locale "${locale}"`);
+        }
+        return result;
+      } catch (error) {
+        // If formatMessage throws, log and return the key
+        if (import.meta.env.DEV) {
+          console.error(`[useIntl] Error translating key "${id}":`, error);
+        }
+        return id;
+      }
+    },
     formatNumber: (value: number, options?: Intl.NumberFormatOptions) =>
       intl.formatNumber(value, options),
     formatCurrency: (value: number, currency?: string) => {

@@ -26,6 +26,9 @@ import { resetUserPassword, viewUserPassword } from './userPasswordManagement';
 
 // Offer follow-up functions
 import { checkOfferFollowUps, testOfferFollowUp, publicRespondToOffer, checkEmailHealth } from './offerFollowUp';
+
+// Appointment reminder functions
+import { sendAppointmentReminders } from './appointmentReminders';
 // Backfill utilities
 import { backfillOfferTimestamps } from './backfillOfferTimestamps';
 import { backfillReportTimestamps } from './backfillReportTimestamps';
@@ -63,6 +66,9 @@ export { resetUserPassword, viewUserPassword };
 export { checkOfferFollowUps, testOfferFollowUp };
 export { publicRespondToOffer };
 export { checkEmailHealth };
+
+// Export appointment reminder functions
+export { sendAppointmentReminders };
 // Export maintenance functions
 export { backfillOfferTimestamps };
 export { backfillReportTimestamps };

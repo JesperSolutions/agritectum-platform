@@ -8,9 +8,8 @@ interface ListCardProps {
 }
 
 /**
- * Standardized list card component matching reference design
- * Uses: bg-white rounded-lg shadow p-6 border border-slate-200
- * Hover effect: hover:shadow-lg transition-shadow
+ * Standardized list card component using Material Design tokens
+ * Uses: Material Design elevation, 4dp border radius, slate colors
  */
 const ListCard: React.FC<ListCardProps> = ({
   children,
@@ -20,8 +19,8 @@ const ListCard: React.FC<ListCardProps> = ({
   return (
     <div
       className={cn(
-        'bg-white rounded-lg shadow p-6 border border-slate-200',
-        onClick && 'cursor-pointer hover:shadow-lg transition-shadow',
+        'rounded-material border border-slate-200 bg-white shadow-material-2 p-6 transition-shadow duration-material',
+        onClick && 'cursor-pointer hover:shadow-material-3',
         className
       )}
       onClick={onClick}

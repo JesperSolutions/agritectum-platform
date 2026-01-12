@@ -20,6 +20,9 @@
   "common.buttons.filter": "Filtern",
   "common.buttons.sort": "Sortieren",
   "common.filters": "Filter",
+  "common.filters.all": "Alle",
+  "common.filters.upcoming": "Bevorstehend",
+  "common.filters.past": "Vergangen",
   "common.buttons.export": "Exportieren",
   "common.buttons.import": "Importieren",
   "common.buttons.download": "Herunterladen",
@@ -40,6 +43,7 @@
   "common.status.inactive": "Inaktiv",
   "common.status.pending": "Ausstehend",
   "common.status.completed": "Abgeschlossen",
+  "common.status.expired": "Abgelaufen",
   "common.status.draft": "Entwurf",
   "common.status.sent": "Gesendet",
   "common.status.archived": "Archiviert",
@@ -209,6 +213,12 @@
   "issueTemplates.mossGrowth.description": "Moos- oder Algenwachstum auf der Dachoberfläche, das Feuchtigkeit halten und Schäden verursachen kann.",
   "issueTemplates.mossGrowth.location": "Schattige Bereiche",
 
-  "roofImage.pinInstruction": "💡 Klicken Sie auf das Bild, um Markierungen hinzuzufügen, die Problemstellen kennzeichnen. Markierungen können mit spezifischen Problemen verknüpft werden."
+  "roofImage.pinInstruction": "💡 Klicken Sie auf das Bild, um Markierungen hinzuzufügen, die Problemstellen kennzeichnen. Markierungen können mit spezifischen Problemen verknüpft werden.",
+
+  "common.signedInAs": "Angemeldet als",
+  "common.roles.customer": "Kunde",
+  "common.roles.inspector": "Inspektor",
+  "common.roles.branchAdmin": "Filialadministrator",
+  "common.roles.superAdmin": "Superadministrator"
 }
 

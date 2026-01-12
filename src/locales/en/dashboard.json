@@ -151,5 +151,25 @@
   "dashboard.financialOverview.recurringPercent": "Recurring %",
   "dashboard.financialOverview.ofTotalRevenue": "of total revenue",
   
-  "dashboard.todayTasks": "Today's Tasks"
+  "dashboard.todayTasks": "Today's Tasks",
+  "dashboard.noTasksToday": "No tasks today",
+  "dashboard.personalWorkspace": "Personal Workspace",
+  
+  "dashboard.pendingCustomerResponses.title": "Pending Customer Responses",
+  "dashboard.rejectedOrders.title": "Rejected Orders",
+  "dashboard.rejectedOrders.rejectedOn": "Rejected on",
+  "dashboard.upcomingInspections.title": "Upcoming Inspections",
+  "dashboard.viewAll": "View All",
+  "dashboard.viewCalendar": "View Calendar",
+  "dashboard.andMore": "+{count} more",
+  
+  "dashboard.quickActions.title": "Quick Actions",
+  "dashboard.quickActions.createAppointment": "Create Appointment",
+  "dashboard.quickActions.scheduleInspection": "Schedule inspection",
+  "dashboard.quickActions.addCustomer": "Add Customer",
+  "dashboard.quickActions.newCustomer": "New customer",
+  "dashboard.quickActions.newReport": "New Report",
+  "dashboard.quickActions.createReport": "Create report",
+  "dashboard.quickActions.serviceAgreement": "Service Agreement",
+  "dashboard.quickActions.createAgreement": "Create agreement"
 }

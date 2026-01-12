@@ -5,18 +5,31 @@ This directory contains the centralized design system for the Agritectum Platfor
 ## Overview
 
 The design system provides:
-- **Design Tokens**: Colors, spacing, typography, shadows, etc.
+- **Design Tokens**: Colors, spacing, typography, shadows, borders, motion
 - **Component Patterns**: Standardized class name patterns for common UI elements
-- **Utilities**: Helper functions for working with design tokens
+- **Utilities**: Helper functions for working with design tokens, accessibility, and responsive design
 
 ## Structure
 
 ```
 src/design-system/
-├── tokens.ts          # Design tokens (colors, spacing, etc.)
-├── components.ts      # Component class name patterns
-├── utilities.ts       # Utility functions
-└── README.md         # This file
+├── tokens/
+│   ├── colors.ts          # Unified slate color palette
+│   ├── typography.ts      # Roboto typography scale
+│   ├── spacing.ts         # 8dp grid system
+│   ├── shadows.ts          # Material elevation system
+│   ├── borders.ts         # Border radius and width tokens
+│   ├── motion.ts          # Transition timing and easing
+│   └── index.ts           # Centralized exports
+├── utilities/
+│   ├── accessibility.ts  # A11y helper functions
+│   ├── responsive.ts      # Breakpoint utilities
+│   ├── theme.ts           # Theme utilities
+│   └── index.ts           # Centralized exports
+├── tokens.ts              # Legacy tokens (deprecated - use tokens/ directory)
+├── components.ts          # Component class name patterns
+├── utilities.ts           # Legacy utilities (deprecated - use utilities/ directory)
+└── README.md             # This file
 ```
 
 ## Usage
@@ -24,11 +37,16 @@ src/design-system/
 ### Importing Tokens
 
 ```typescript
-import { colors, spacing, borderRadius } from '@/design-system/tokens';
+// New unified token system (recommended)
+import { colors, typography, spacing, shadows, borders, motion } from '@/design-system/tokens';
+
+// Or import from specific token files
+import { colors } from '@/design-system/tokens/colors';
+import { typography } from '@/design-system/tokens/typography';
 
 // Use in component
-<div className={colors.ui.background.card}>
-  <p className={colors.ui.text.primary}>Content</p>
+<div className={`${colors.card.bg} ${colors.card.border} ${shadows.shadows.card}`}>
+  <p className={colors.text.primary}>Content</p>
 </div>
 ```
 
@@ -199,15 +217,31 @@ import { getButtonClasses } from '@/design-system/components';
 
 ## Best Practices
 
-1. **Always use design tokens** - Don't hardcode colors or spacing
-2. **Use component patterns** - Use standardized class patterns for consistency
-3. **Leverage utilities** - Use utility functions for dynamic styling
-4. **Follow naming conventions** - Use semantic names (primary, secondary, etc.)
-5. **Document exceptions** - If you need to deviate, document why
+1. **Always use design tokens** - Don't hardcode colors, spacing, or other values
+2. **Use unified components** - Use Button, Card, Input from `src/components/ui/`
+3. **Material Design first** - Follow Material Design 3 specifications
+4. **Slate colors only** - Use slate colors for UI (brand colors for marketing only)
+5. **8dp grid system** - Use 8dp increments for all spacing
+6. **4dp border radius** - Use `rounded-material` (4px) for all interactive elements
+7. **Accessibility first** - Ensure WCAG 2.1 AA compliance
 
-## Exceptions
+## Documentation
 
-Some components use Material Design patterns (e.g., `SchedulePage.tsx`). These are acceptable exceptions and should be documented. The design system supports both Tailwind and Material Design patterns.
+- [Design Tokens Reference](../../docs/design-system/TOKENS_REFERENCE.md)
+- [Component Guidelines](../../docs/design-system/COMPONENT_GUIDELINES.md)
+- [Migration Guide](../../docs/design-system/MIGRATION_GUIDE.md)
+- [Accessibility Standards](../../docs/design-system/ACCESSIBILITY.md)
+
+## Migration Status
+
+- ✅ Design token system enhanced
+- ✅ Unified Button component
+- ✅ Unified Card component
+- ✅ Unified Input component
+- ✅ Unified StatusBadge component
+- ⏳ Color migration (gray-* → slate-*) - In progress
+- ⏳ Border radius standardization - In progress
+- ⏳ Shadow migration - In progress
 
 ## Future Enhancements
 

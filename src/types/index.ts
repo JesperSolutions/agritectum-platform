@@ -174,6 +174,12 @@ export interface Appointment {
   inspectorNotes?: string;        // Inspector's post-appointment notes
   appointmentType?: 'inspection' | 'follow_up' | 'estimate' | 'other';
   
+  // Customer response (for acceptance/denial workflow)
+  customerResponse?: 'pending' | 'accepted' | 'rejected';
+  customerResponseAt?: string;
+  customerResponseReason?: string;
+  scheduledVisitId?: string; // Link to scheduledVisit
+  
   // Metadata
   createdBy: string;
   createdByName: string;
@@ -190,12 +196,14 @@ export interface Report {
   createdByName: string;
   branchId: string;
   inspectionDate: string;
+  customerId?: string; // Link to customers collection
   customerName: string;
   customerAddress: string;
   customerPhone?: string;
   customerEmail?: string;
   customerType?: 'individual' | 'company'; // Customer type: individual or company
-  buildingAddress?: string; // Building address for company customers (when different from main address)
+  buildingId: string; // Required: Link to buildings collection - all reports must be associated with a building
+  buildingAddress?: string; // Building address (denormalized for quick access, but buildingId is source of truth)
   roofType: RoofType;
   roofAge?: number;
   roofSize?: number; // Total roof area in square meters (optional)
@@ -420,6 +428,23 @@ export interface Company {
 
 // Building Types
 
+/**
+ * ESG Metrics interface for building-level sustainability tracking
+ * Adapted from agritectum-roof-calculator/src/types/esg.ts
+ */
+export interface ESGMetrics {
+  sustainabilityScore: number; // 0-100
+  carbonFootprint: number; // kg CO₂
+  solarPotential: number; // kWh/year
+  recyclingPotential: number; // 0-100%
+  annualCO2Offset: number; // kg CO₂/year
+  neutralityTimeline: number | null; // years to CO2 neutrality
+  sdgAlignment: string[]; // Array of SDG goals addressed
+  sdgScore: number; // 0-100
+  rating: string; // Sustainability rating
+  lastCalculated?: string; // ISO date
+}
+
 export interface Building {
   id: string;
   companyId?: string; // If owned by company
@@ -433,6 +458,98 @@ export interface Building {
   createdAt: string;
   createdBy: string;
   branchId?: string;
+  esgMetrics?: ESGMetrics; // Optional ESG metrics
+}
+
+// Building ESG Improvements Types
+
+export type ImprovementType =
+  | 'green_roof' // Sedum/green roof
+  | 'solar_panels' // Solar power
+  | 'water_management' // Water retention/collection
+  | 'insulation' // Enhanced insulation
+  | 'cooling' // Cooling systems
+  | 'biodiversity'; // Biodiversity enhancements
+
+export interface RoofImprovement {
+  type: ImprovementType;
+  percentage: number; // 0-100% of roof area
+  startYear: number; // When improvement starts (0 = immediate)
+  costPerSqm: number; // Cost per square meter
+  estimatedCost?: number; // Total estimated cost (calculated)
+}
+
+export interface ImprovementMetrics {
+  totalCost: number;
+  annualSavings: number;
+  paybackPeriod: number;
+  npv: number;
+  irr: number;
+  roi: number;
+}
+
+// ESG Service Report Types
+
+/**
+ * Roof division areas for ESG service reports
+ * Based on the 4 areas from agritectum-roof-calculator project
+ */
+export interface RoofDivisionAreas {
+  greenRoof: number; // Percentage allocated to Green Roof Area (uses "Green Roof System")
+  noxReduction: number; // Percentage allocated to NOₓ Reduction Area (uses "Photocatalytic Coating")
+  coolRoof: number; // Percentage allocated to Cool Roof Area (uses "White - Cool Roof Coating")
+  socialActivities: number; // Percentage allocated to Social Activities Area (uses "Social Activities Area")
+}
+
+/**
+ * ESG Service Report - Created by branch managers
+ * Stores roof division data and calculated ESG metrics
+ */
+export interface ESGServiceReport {
+  id: string;
+  buildingId: string;
+  branchId: string;
+  createdBy: string; // Branch manager user ID
+  createdAt: string;
+  updatedAt: string;
+  roofSize: number; // m² - Confirmed roof square meters
+  divisions: RoofDivisionAreas; // Percentage allocation for each area (must sum to 100%)
+  calculatedMetrics?: ESGMetrics; // Calculated ESG metrics
+  isPublic: boolean; // Whether report is publicly accessible
+  publicLinkId?: string; // Unique ID for public access (used in URL)
+}
+
+export interface BuildingImprovements {
+  id: string;
+  buildingId: string;
+  roofArea: number; // Total roof area in m²
+  improvements: RoofImprovement[];
+  calculatedAt: string;
+  calculatedBy: string;
+  branchId: string;
+
+  // Calculated metrics
+  metrics: {
+    totalCost: number;
+    annualCO2Reduction: number;
+    annualEnergySavings: number; // kWh
+    annualWaterSavings: number; // m³
+    paybackPeriod: number; // years
+    roi10Year: number; // %
+    sustainabilityScore: number; // 0-100
+    neutralityTimeline: number | null; // years
+  };
+
+  // Scenario analysis
+  scenarios: {
+    optimistic: ImprovementMetrics;
+    realistic: ImprovementMetrics;
+    pessimistic: ImprovementMetrics;
+  };
+
+  // Metadata
+  createdAt: string;
+  updatedAt: string;
 }
 
 // Scheduled Visit Types (extends Appointment)
@@ -467,6 +584,13 @@ export interface ScheduledVisit {
   // Status and workflow
   status: ScheduledVisitStatus;
   reportId?: string; // Links to report once inspection starts
+  appointmentId?: string; // Link back to appointment
+  
+  // Customer response (for acceptance/denial workflow)
+  customerResponse?: 'pending' | 'accepted' | 'rejected';
+  customerResponseAt?: string;
+  customerResponseReason?: string;
+  publicToken?: string; // For public acceptance link
   
   // Details
   title: string;                  // e.g., "Roof Inspection - Åkergatan 15"
@@ -553,4 +677,18 @@ export interface ServiceAgreement {
     supplierImageUrl?: string; // Leverandør underskrift billede
     customerImageUrl?: string; // Kunde underskrift billede
   };
+}
+
+// Rejected Order Types
+export interface RejectedOrder {
+  id: string;
+  appointmentId: string;
+  scheduledVisitId?: string;
+  customerId: string;
+  customerName: string;
+  branchId: string;
+  rejectedAt: string;
+  rejectedReason?: string;
+  createdBy: string; // Branch manager who created original appointment
+  createdAt: string;
 }

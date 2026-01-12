@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useReports } from '../../contexts/ReportContextSimple';
 import { useIntl } from '../../hooks/useIntl';
 import { usePageState, useBranchContext } from '../../hooks/usePageState';
 import Breadcrumb from '../navigation/Breadcrumb';
-import QuickActions from '../navigation/QuickActions';
+import NavigationMenu, { NavigationItem } from './NavigationMenu';
 import {
   Home,
   FileText,
@@ -22,6 +22,9 @@ import {
   Mail,
   User,
   FileCheck,
+  Settings,
+  Leaf,
+  DollarSign,
 } from 'lucide-react';
 import OfflineIndicator from '../OfflineIndicator';
 import NotificationCenter from '../NotificationCenter';
@@ -78,118 +81,149 @@ const Layout: React.FC = () => {
     }
   };
 
-  // Check if a route is currently active
-  const isActiveRoute = (path: string) => {
-    if (path === '/dashboard') {
-      return location.pathname === '/dashboard' || location.pathname === '/';
-    }
-    return location.pathname.startsWith(path);
-  };
+  // Build navigation menu structure based on user role
+  const navigationItems = useMemo((): NavigationItem[] => {
+    if (!currentUser) return [];
 
-  const navigationItems = [
-    {
-      label: t('navigation.dashboard'),
+    const role = currentUser.role;
+    const items: NavigationItem[] = [];
+
+    // Dashboard (always first, standalone)
+    items.push({
+      label: 'Dashboard',
       icon: Home,
       path: '/dashboard',
-      roles: ['inspector', 'branchAdmin', 'superadmin'],
-    },
-    {
-      label: t('navigation.profile'),
-      icon: User,
-      path: '/profile',
-      roles: ['inspector', 'branchAdmin', 'superadmin'],
-    },
-    {
-      label: t('reports.new'),
-      icon: FileText,
-      path: '/report/new',
-      roles: ['inspector', 'branchAdmin'],
-    },
-    {
-      label: t('navigation.myReports'),
-      icon: FileText,
-      path: '/reports',
-      roles: ['inspector'],
-    },
-    {
-      label: t('navigation.branches'),
-      icon: Building,
-      path: '/admin/branches',
-      roles: ['superadmin'],
-    },
-    {
-      label: t('navigation.users'),
-      icon: Users,
-      path: '/admin/users',
-      roles: ['superadmin', 'branchAdmin'],
-    },
-    {
-      label: t('navigation.analytics'),
-      icon: BarChart3,
-      path: '/admin/analytics',
-      roles: ['superadmin', 'branchAdmin'],
-    },
-    {
-      label: t('navigation.customers'),
-      icon: Users,
-      path: '/admin/customers',
-      roles: ['superadmin', 'branchAdmin', 'inspector'],
-    },
-    {
-      label: t('navigation.serviceAgreements'),
-      icon: FileCheck,
-      path: '/admin/service-agreements',
-      roles: ['superadmin', 'branchAdmin'],
-    },
-    {
-      label: t('navigation.schedule'),
+    });
+
+    // Reports section - Data Entry & Reports
+    const reportsChildren: NavigationItem[] = [
+      {
+        label: 'New Report',
+        path: '/report/new',
+        roles: ['inspector', 'branchAdmin', 'superadmin'],
+      },
+    ];
+
+    if (role === 'inspector') {
+      reportsChildren.push({
+        label: 'My Reports',
+        path: '/reports',
+      });
+    } else if (role === 'branchAdmin' || role === 'superadmin') {
+      reportsChildren.push({
+        label: 'All Reports',
+        path: '/admin/reports',
+      });
+    }
+
+    if (reportsChildren.length > 0) {
+      items.push({
+        label: 'Reports',
+        icon: FileText,
+        children: reportsChildren.filter(child => 
+          !child.roles || child.roles.includes(role)
+        ),
+      });
+    }
+
+    // Operations section - Day-to-day operational tasks
+    const operationsChildren: NavigationItem[] = [
+      {
+        label: 'Schedule',
+        path: '/schedule',
+        roles: ['inspector', 'branchAdmin', 'superadmin'],
+      },
+      {
+        label: 'Customers',
+        path: '/admin/customers',
+        roles: ['inspector', 'branchAdmin', 'superadmin'],
+      },
+      {
+        label: 'Offers',
+        path: '/offers',
+        roles: ['inspector', 'branchAdmin', 'superadmin'],
+      },
+    ];
+
+    if (role === 'branchAdmin' || role === 'superadmin') {
+      operationsChildren.push({
+        label: 'Service Agreements',
+        path: '/admin/service-agreements',
+      });
+    }
+
+    items.push({
+      label: 'Operations',
       icon: Calendar,
-      path: '/schedule',
-      roles: ['superadmin', 'branchAdmin', 'inspector'],
-    },
-    // Temporarily disabled - restructuring flow
-    // {
-    //   label: t('navigation.offers'),
-    //   icon: DollarSign,
-    //   path: '/offers',
-    //   roles: ['inspector', 'branchAdmin', 'superadmin'],
-    // },
-    {
-      label: 'Email Templates',
-      icon: Mail,
-      path: '/admin/email-templates',
-      roles: ['superadmin'],
-    },
-    {
-      label: t('navigation.reports'),
-      icon: FileText,
-      path: '/admin/reports',
-      roles: ['superadmin', 'branchAdmin'],
-    },
-    ...(process.env.NODE_ENV === 'development'
-      ? [
-          {
-            label: t('navigation.qa'),
-            icon: TestTube,
-            path: '/admin/qa',
-            roles: ['superadmin'],
-          },
-        ]
-      : []),
-  ];
+      children: operationsChildren.filter(child => 
+        !child.roles || child.roles.includes(role)
+      ),
+    });
 
-  const filteredNavigation = navigationItems.filter(item => {
-    if (!currentUser) return false;
+    // Administration section (for branchAdmin and superadmin)
+    if (role === 'branchAdmin' || role === 'superadmin') {
+      const adminChildren: NavigationItem[] = [
+        {
+          label: 'Users',
+          path: '/admin/users',
+        },
+        {
+          label: 'Analytics',
+          path: '/admin/analytics',
+        },
+        {
+          label: 'ESG Service',
+          path: '/admin/esg-service',
+        },
+        {
+          label: 'ESG Improvements',
+          path: '/admin/building-esg-improvements',
+        },
+      ];
 
-    // Check if user role is in allowed roles
-    if (!item.roles.includes(currentUser.role)) return false;
+      if (role === 'superadmin') {
+        adminChildren.splice(1, 0, {
+          label: 'Branches',
+          path: '/admin/branches',
+        });
+        adminChildren.push({
+          label: 'Email Templates',
+          path: '/admin/email-templates',
+        });
+      }
 
-    // Additional permission checks for specific routes
-    if (item.path === '/admin/qa' && currentUser.role !== 'superadmin') return false;
-    if (item.path === '/admin/branches' && currentUser.role !== 'superadmin') return false;
+      items.push({
+        label: 'Administration',
+        icon: Settings,
+        children: adminChildren,
+      });
+    }
 
-    return true;
-  });
+    // Settings section - User settings
+    const settingsChildren: NavigationItem[] = [
+      {
+        label: 'Profile',
+        path: '/profile',
+      },
+    ];
+
+    // Add QA Testing in development mode for superadmin
+    if (process.env.NODE_ENV === 'development' && role === 'superadmin') {
+      settingsChildren.push({
+        label: 'QA Testing',
+        path: '/admin/qa',
+        icon: TestTube,
+      });
+    }
+
+    items.push({
+      label: 'Settings',
+      icon: User,
+      children: settingsChildren,
+    });
+
+    return items;
+  }, [currentUser]);
 
   const SyncIndicator = () => {
     if (state.syncInProgress) {
@@ -242,24 +276,15 @@ const Layout: React.FC = () => {
       {isMobileMenuOpen && (
         <div className='lg:hidden bg-white border-b border-slate-200'>
           <nav className='px-4 py-2'>
-            {filteredNavigation.map(item => (
-              <Link
-                key={item.path}
-                to={item.path}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={`flex items-center space-x-3 px-3 py-3 rounded-lg transition-all ${
-                  isActiveRoute(item.path)
-                    ? 'bg-slate-200 text-slate-900 shadow-sm font-semibold'
-                    : 'text-slate-700 hover:bg-slate-100'
-                }`}
-              >
-                <item.icon className={`w-5 h-5 flex-shrink-0 ${isActiveRoute(item.path) ? 'text-slate-900' : 'text-slate-600'}`} />
-                <span>{item.label}</span>
-              </Link>
-            ))}
+            <NavigationMenu
+              items={navigationItems}
+              currentUserRole={currentUser?.role || ''}
+              isMobile={true}
+              onItemClick={() => setIsMobileMenuOpen(false)}
+            />
             <button
               onClick={handleLogout}
-              className='flex items-center space-x-3 px-3 py-3 text-slate-700 hover:bg-slate-100 rounded-lg transition-all w-full font-medium hover:text-slate-900'
+              className='flex items-center space-x-3 px-3 py-3 text-slate-700 hover:bg-slate-100 rounded-lg transition-all w-full font-medium hover:text-slate-900 mt-2'
             >
               <LogOut className='w-5 h-5' />
               <span>{t('common.signOut')}</span>
@@ -302,21 +327,12 @@ const Layout: React.FC = () => {
             </div>
 
             {/* Navigation */}
-            <nav className='flex-1 px-4 space-y-1'>
-              {filteredNavigation.map(item => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-all ${
-                    isActiveRoute(item.path)
-                      ? 'bg-slate-200 text-slate-900 shadow-sm font-semibold'
-                      : 'text-slate-700 hover:bg-slate-100 hover:shadow-sm'
-                  }`}
-                >
-                  <item.icon className={`w-5 h-5 flex-shrink-0 ${isActiveRoute(item.path) ? 'text-slate-900' : 'text-slate-600'}`} />
-                  <span className='truncate'>{item.label}</span>
-                </Link>
-              ))}
+            <nav className='flex-1 px-4'>
+              <NavigationMenu
+                items={navigationItems}
+                currentUserRole={currentUser?.role || ''}
+                isMobile={false}
+              />
             </nav>
 
             {/* Footer */}
@@ -355,18 +371,6 @@ const Layout: React.FC = () => {
             </div>
           </main>
         </div>
-
-        {/* Quick Actions FAB - Context-aware actions */}
-        <QuickActions 
-          context={
-            location.pathname.startsWith('/report/view') ? 'report' :
-            location.pathname.startsWith('/reports') ? 'reports' :
-            location.pathname.startsWith('/offers') ? 'offers' :
-            location.pathname.startsWith('/customers') ? 'customer' :
-            'dashboard'
-          }
-          reportId={location.pathname.includes('/report/view/') ? location.pathname.split('/').pop() : undefined}
-        />
 
         {/* Offline Indicator */}
         <OfflineIndicator />

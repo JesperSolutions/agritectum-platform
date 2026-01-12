@@ -33,11 +33,25 @@ export const getScheduledVisits = async (user: User): Promise<ScheduledVisit[]> 
       q = query(visitsRef, orderBy('scheduledDate', 'desc'));
     } else if (user.permissionLevel >= 1 && user.branchId) {
       // Branch Admin: see all visits in their branch
-      q = query(
-        visitsRef,
-        where('branchId', '==', user.branchId),
-        orderBy('scheduledDate', 'desc')
-      );
+      // Note: This query requires a Firestore composite index on (branchId, scheduledDate)
+      try {
+        q = query(
+          visitsRef,
+          where('branchId', '==', user.branchId),
+          orderBy('scheduledDate', 'desc')
+        );
+      } catch (queryError: any) {
+        // If composite index error, try without orderBy
+        if (queryError.code === 'failed-precondition' || queryError.message?.includes('index')) {
+          console.warn('⚠️ Composite index missing, querying without orderBy:', queryError);
+          q = query(
+            visitsRef,
+            where('branchId', '==', user.branchId)
+          );
+        } else {
+          throw queryError;
+        }
+      }
     } else if (user.uid) {
       // Inspector: see only their own visits
       try {
@@ -62,7 +76,43 @@ export const getScheduledVisits = async (user: User): Promise<ScheduledVisit[]> 
       return [];
     }
 
-    const querySnapshot = await getDocs(q);
+    let querySnapshot;
+    try {
+      querySnapshot = await getDocs(q);
+    } catch (queryError: any) {
+      // If the query itself fails (e.g., missing index), fall back to client-side filtering
+      if (queryError.code === 'failed-precondition' || queryError.message?.includes('index')) {
+        console.warn('⚠️ Missing Firestore index detected. Falling back to client-side filtering.');
+        const snapshot = await getDocs(visitsRef);
+        let allVisits = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as ScheduledVisit[];
+
+        // Apply client-side filtering based on user role
+        if (user.permissionLevel >= 1 && user.branchId) {
+          allVisits = allVisits.filter(visit => visit.branchId === user.branchId);
+        } else if (user.uid && !canAccessAllBranches(user.permissionLevel)) {
+          allVisits = allVisits.filter(visit => visit.assignedInspectorId === user.uid);
+        }
+
+        // Sort manually
+        allVisits.sort((a, b) => {
+          const dateA = a.scheduledDate || '';
+          const dateB = b.scheduledDate || '';
+          return dateB.localeCompare(dateA); // Descending
+        });
+
+        // For customers, filter by their buildings/companies
+        if (user.permissionLevel === -1) {
+          allVisits = await filterVisitsForCustomer(allVisits, user);
+        }
+
+        return allVisits;
+      }
+      throw queryError;
+    }
+
     let visits = querySnapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data(),
@@ -73,7 +123,7 @@ export const getScheduledVisits = async (user: User): Promise<ScheduledVisit[]> 
       visits = await filterVisitsForCustomer(visits, user);
     }
 
-    // Sort manually if we couldn't use orderBy
+    // Sort manually if we couldn't use orderBy (shouldn't happen now, but keep as safety)
     if (visits.length > 0 && !q) {
       visits.sort((a, b) => {
         const dateA = a.scheduledDate || '';
@@ -86,7 +136,40 @@ export const getScheduledVisits = async (user: User): Promise<ScheduledVisit[]> 
   } catch (error: any) {
     console.error('❌ Error fetching scheduled visits:', error);
     if (error.code === 'failed-precondition') {
-      throw new Error('Firestore index required. Please create a composite index for (assignedInspectorId, scheduledDate) in Firestore.');
+      // Final fallback: try to fetch all and filter client-side
+      try {
+        console.warn('⚠️ Attempting final fallback: fetching all visits and filtering client-side');
+        const visitsRef = collection(db, 'scheduledVisits');
+        const snapshot = await getDocs(visitsRef);
+        let allVisits = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as ScheduledVisit[];
+
+        // Apply client-side filtering based on user role
+        if (user.permissionLevel >= 1 && user.branchId) {
+          allVisits = allVisits.filter(visit => visit.branchId === user.branchId);
+        } else if (user.uid && !canAccessAllBranches(user.permissionLevel)) {
+          allVisits = allVisits.filter(visit => visit.assignedInspectorId === user.uid);
+        }
+
+        // Sort manually
+        allVisits.sort((a, b) => {
+          const dateA = a.scheduledDate || '';
+          const dateB = b.scheduledDate || '';
+          return dateB.localeCompare(dateA); // Descending
+        });
+
+        // For customers, filter by their buildings/companies
+        if (user.permissionLevel === -1) {
+          allVisits = await filterVisitsForCustomer(allVisits, user);
+        }
+
+        return allVisits;
+      } catch (fallbackError) {
+        console.error('❌ Fallback also failed:', fallbackError);
+        throw new Error('Firestore index required. Please create composite indexes for scheduledVisits in Firestore.');
+      }
     }
     throw new Error(error.message || 'Failed to fetch scheduled visits');
   }
@@ -357,6 +440,127 @@ export const deleteScheduledVisit = async (visitId: string): Promise<void> => {
   } catch (error) {
     console.error('Error deleting scheduled visit:', error);
     throw new Error('Failed to delete scheduled visit');
+  }
+};
+
+/**
+ * Accept a scheduled visit (customer accepts appointment)
+ */
+export const acceptScheduledVisit = async (
+  visitId: string,
+  customerData?: { name?: string; email?: string }
+): Promise<void> => {
+  try {
+    const visitRef = doc(db, 'scheduledVisits', visitId);
+    const visitSnap = await getDoc(visitRef);
+    
+    if (!visitSnap.exists()) {
+      throw new Error('Scheduled visit not found');
+    }
+
+    const visit = visitSnap.data() as ScheduledVisit;
+    const now = new Date().toISOString();
+
+    // Update scheduled visit
+    await updateDoc(visitRef, {
+      customerResponse: 'accepted',
+      customerResponseAt: now,
+      status: 'scheduled', // Ensure status is scheduled
+      updatedAt: now,
+    });
+
+    // Update corresponding appointment if linked
+    if (visit.appointmentId) {
+      const { updateAppointment } = await import('./appointmentService');
+      await updateAppointment(visit.appointmentId, {
+        customerResponse: 'accepted',
+        customerResponseAt: now,
+        status: 'scheduled',
+      });
+    }
+
+    // Send notifications
+    if (visit.appointmentId) {
+      const { getAppointment } = await import('./appointmentService');
+      const appointment = await getAppointment(visit.appointmentId);
+      if (appointment) {
+        const { notifyCustomerOfAcceptance } = await import('./appointmentNotificationService');
+        await notifyCustomerOfAcceptance(appointment, { ...visit, customerResponse: 'accepted', customerResponseAt: now });
+      }
+    }
+
+    console.log('✅ Scheduled visit accepted:', visitId);
+  } catch (error) {
+    console.error('Error accepting scheduled visit:', error);
+    throw new Error('Failed to accept scheduled visit');
+  }
+};
+
+/**
+ * Reject a scheduled visit (customer denies appointment)
+ */
+export const rejectScheduledVisit = async (
+  visitId: string,
+  reason?: string,
+  customerData?: { name?: string; email?: string }
+): Promise<void> => {
+  try {
+    const visitRef = doc(db, 'scheduledVisits', visitId);
+    const visitSnap = await getDoc(visitRef);
+    
+    if (!visitSnap.exists()) {
+      throw new Error('Scheduled visit not found');
+    }
+
+    const visit = visitSnap.data() as ScheduledVisit;
+    const now = new Date().toISOString();
+
+    // Update scheduled visit
+    await updateDoc(visitRef, {
+      customerResponse: 'rejected',
+      customerResponseAt: now,
+      customerResponseReason: reason,
+      status: 'cancelled',
+      cancelledAt: now,
+      cancelReason: reason || 'Rejected by customer',
+      updatedAt: now,
+    });
+
+    // Cancel corresponding appointment if linked
+    if (visit.appointmentId) {
+      const { cancelAppointment } = await import('./appointmentService');
+      await cancelAppointment(visit.appointmentId, reason || 'Rejected by customer');
+      
+      // Create rejected order record
+      const { createRejectedOrder } = await import('./rejectedOrderService');
+      await createRejectedOrder({
+        appointmentId: visit.appointmentId,
+        scheduledVisitId: visitId,
+        customerId: visit.customerId || '',
+        customerName: visit.customerName,
+        branchId: visit.branchId,
+        rejectedAt: now,
+        rejectedReason: reason,
+        createdBy: visit.createdBy,
+      });
+
+      // Send notifications
+      const { getAppointment } = await import('./appointmentService');
+      const appointment = await getAppointment(visit.appointmentId);
+      if (appointment) {
+        const { notifyOfRejection } = await import('./appointmentNotificationService');
+        await notifyOfRejection(
+          { ...appointment, customerResponse: 'rejected', customerResponseAt: now },
+          { ...visit, customerResponse: 'rejected', customerResponseAt: now },
+          reason
+        );
+      }
+    }
+
+    console.log('✅ Scheduled visit rejected:', visitId);
+  } catch (error) {
+    console.error('Error rejecting scheduled visit:', error);
+    throw new Error('Failed to reject scheduled visit');
   }
 };
 

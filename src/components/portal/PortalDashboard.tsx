@@ -57,6 +57,9 @@ const PortalDashboard: React.FC = () => {
     .filter(v => v.status === 'scheduled' && new Date(v.scheduledDate) >= new Date())
     .sort((a, b) => a.scheduledDate.localeCompare(b.scheduledDate))
     .slice(0, 5);
+  const pendingAcceptances = visits
+    .filter(v => v.customerResponse === 'pending' && v.status === 'scheduled')
+    .sort((a, b) => a.scheduledDate.localeCompare(b.scheduledDate));
 
   return (
     <div className='space-y-8'>
@@ -115,6 +118,40 @@ const PortalDashboard: React.FC = () => {
           </Link>
         </div>
       </div>
+
+      {/* Pending Acceptances */}
+      {pendingAcceptances.length > 0 && (
+        <div className='bg-yellow-50 border border-yellow-200 rounded-lg shadow'>
+          <div className='p-6 border-b border-yellow-200'>
+            <h2 className='text-xl font-semibold text-gray-900'>Action Required: Pending Appointments</h2>
+            <p className='text-sm text-gray-600 mt-1'>You have {pendingAcceptances.length} appointment{pendingAcceptances.length !== 1 ? 's' : ''} waiting for your response</p>
+          </div>
+          <div className='p-6'>
+            <div className='space-y-4'>
+              {pendingAcceptances.map((visit) => (
+                <div
+                  key={visit.id}
+                  className='flex items-center justify-between p-4 border border-yellow-300 rounded-lg bg-white hover:bg-yellow-50'
+                >
+                  <div>
+                    <p className='font-medium text-gray-900'>{visit.title}</p>
+                    <p className='text-sm text-gray-600 mt-1'>
+                      {new Date(visit.scheduledDate).toLocaleDateString()} at {visit.scheduledTime}
+                    </p>
+                    <p className='text-sm text-gray-500 mt-1'>{visit.customerAddress}</p>
+                  </div>
+                  <Link
+                    to={`/portal/appointment/${visit.id}/respond?token=${visit.publicToken || ''}`}
+                    className='px-4 py-2 text-sm font-medium bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors'
+                  >
+                    Respond
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Upcoming Visits */}
       {upcomingVisits.length > 0 && (

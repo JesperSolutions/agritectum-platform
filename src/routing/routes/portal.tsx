@@ -9,7 +9,8 @@ import {
   LazyBuildingDetail,
   LazyServiceAgreementsList,
   LazyScheduledVisitsList,
-  LazyCustomerProfile,
+  LazyAcceptAppointmentView,
+  LazyPortalCustomerProfile,
   LoadingFallback,
 } from '../../components/LazyComponents';
 
@@ -77,10 +78,19 @@ export const portalRoutes: RouteObject[] = [
         errorElement: <RouteErrorBoundary />,
       },
       {
+        path: 'appointment/:visitId/respond',
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <LazyAcceptAppointmentView />
+          </Suspense>
+        ),
+        errorElement: <RouteErrorBoundary />,
+      },
+      {
         path: 'profile',
         element: (
           <Suspense fallback={<LoadingFallback />}>
-            <LazyCustomerProfile />
+            <LazyPortalCustomerProfile />
           </Suspense>
         ),
         errorElement: <RouteErrorBoundary />,

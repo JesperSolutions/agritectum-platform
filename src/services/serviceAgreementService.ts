@@ -418,14 +418,28 @@ export const acceptServiceAgreementPublic = async (
 };
 
 // Get service agreements by customer ID
-export const getServiceAgreementsByCustomer = async (customerId: string): Promise<ServiceAgreement[]> => {
+export const getServiceAgreementsByCustomer = async (
+  customerId: string,
+  branchId?: string
+): Promise<ServiceAgreement[]> => {
   try {
     const agreementsRef = collection(db, 'serviceAgreements');
-    const q = query(
-      agreementsRef,
-      where('customerId', '==', customerId),
-      orderBy('createdAt', 'desc')
-    );
+    let q;
+
+    if (branchId) {
+      q = query(
+        agreementsRef,
+        where('customerId', '==', customerId),
+        where('branchId', '==', branchId),
+        orderBy('createdAt', 'desc')
+      );
+    } else {
+      q = query(
+        agreementsRef,
+        where('customerId', '==', customerId),
+        orderBy('createdAt', 'desc')
+      );
+    }
 
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map(doc => ({
@@ -444,7 +458,16 @@ export const getServiceAgreementsByCustomer = async (customerId: string): Promis
         ...doc.data(),
       })) as ServiceAgreement[];
 
-      return agreements.filter(agreement => agreement.customerId === customerId);
+      let filtered = agreements.filter(agreement => agreement.customerId === customerId);
+      if (branchId) {
+        filtered = filtered.filter(agreement => agreement.branchId === branchId);
+      }
+
+      return filtered.sort((a, b) => {
+        const aDate = new Date(a.createdAt).getTime();
+        const bDate = new Date(b.createdAt).getTime();
+        return bDate - aDate;
+      });
     }
 
     throw new Error('Failed to fetch service agreements by customer');

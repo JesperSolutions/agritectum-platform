@@ -16,24 +16,29 @@ import profile from './profile.json';
 import analytics from './analytics.json';
 import notifications from './notifications.json';
 import serviceAgreements from './serviceAgreements.json';
+import buildings from './buildings.json';
 
-export default {
-  common,
-  navigation,
-  dashboard,
-  reports,
-  reportForm,
-  offers,
-  customers,
-  schedule,
-  admin,
-  email,
-  validation,
-  errors,
-  address,
-  login,
-  profile,
-  analytics,
-  notifications,
-  serviceAgreements,
+// Combine all translation files into a single flat object (same structure as Swedish)
+const enMessages = {
+  ...common,
+  ...navigation,
+  ...dashboard,
+  ...reports,
+  ...reportForm,
+  ...offers,
+  ...customers,
+  ...schedule,
+  ...admin,
+  ...email,
+  ...validation,
+  ...errors,
+  ...address,
+  ...login,
+  ...profile,
+  ...analytics,
+  ...notifications,
+  ...serviceAgreements,
+  ...buildings,
 };
+
+export default enMessages;

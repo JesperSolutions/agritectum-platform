@@ -228,6 +228,8 @@ function VirtualList<T>({
     );
   }
 
+  // react-window expects a component reference (not JSX element)
+  // ListItem is properly defined as a function component, which react-window accepts
   return (
     <div className={`virtual-list ${className}`}>
       <List

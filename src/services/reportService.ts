@@ -135,6 +135,158 @@ export const getReport = async (reportId: string, branchId?: string): Promise<Re
   }
 };
 
+// Get reports by building ID
+export const getReportsByBuildingId = async (
+  buildingId: string,
+  branchId?: string
+): Promise<Report[]> => {
+  try {
+    const reportsRef = collection(db, 'reports');
+    let q;
+
+    // Try to query by buildingId first
+    try {
+      if (branchId) {
+        q = query(
+          reportsRef,
+          where('buildingId', '==', buildingId),
+          where('branchId', '==', branchId),
+          orderBy('createdAt', 'desc')
+        );
+      } else {
+        q = query(
+          reportsRef,
+          where('buildingId', '==', buildingId),
+          orderBy('createdAt', 'desc')
+        );
+      }
+
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as Report[];
+    } catch (indexError: any) {
+      // If index doesn't exist, fall back to client-side filtering
+      if (indexError.code === 'failed-precondition' || indexError.message?.includes('index')) {
+        console.warn('⚠️ Missing Firestore index for buildingId. Falling back to client-side filtering.');
+        
+        // Fetch all reports (with branch filter if provided)
+        let allReportsQuery = reportsRef;
+        if (branchId) {
+          allReportsQuery = query(reportsRef, where('branchId', '==', branchId));
+        }
+        const allReportsSnapshot = await getDocs(allReportsQuery);
+        const allReports = allReportsSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Report[];
+
+        // Client-side filter by buildingId
+        return allReports.filter(report => report.buildingId === buildingId)
+          .sort((a, b) => {
+            const aDate = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt || 0);
+            const bDate = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || 0);
+            return bDate.getTime() - aDate.getTime();
+          });
+      }
+      throw indexError;
+    }
+  } catch (error) {
+    console.error('Error fetching reports by building ID:', error);
+    throw new Error('Failed to fetch reports by building ID');
+  }
+};
+
+export const getReportsByCustomerId = async (
+  customerId: string,
+  branchId?: string
+): Promise<Report[]> => {
+  try {
+    const reportsRef = collection(db, 'reports');
+    let q;
+
+    // Try to query by customerId first (for new reports)
+    try {
+      if (branchId) {
+        q = query(
+          reportsRef,
+          where('customerId', '==', customerId),
+          where('branchId', '==', branchId),
+          orderBy('createdAt', 'desc')
+        );
+      } else {
+        q = query(
+          reportsRef,
+          where('customerId', '==', customerId),
+          orderBy('createdAt', 'desc')
+        );
+      }
+
+      const querySnapshot = await getDocs(q);
+      const reports = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as Report[];
+
+      // If we found reports with customerId, return them
+      if (reports.length > 0) {
+        return reports;
+      }
+    } catch (indexError: any) {
+      // If index doesn't exist, fall back to client-side filtering
+      if (indexError.code === 'failed-precondition' || indexError.message?.includes('index')) {
+        console.warn('⚠️ Missing Firestore index for customerId. Falling back to client-side filtering.');
+      }
+    }
+
+    // Fallback: Get all reports and filter by customerId or customerName
+    // First, get the customer to match by name
+    const { getCustomerById } = await import('./customerService');
+    const customer = await getCustomerById(customerId);
+    
+    if (!customer) {
+      return [];
+    }
+
+    // Fetch all reports (with branch filter if provided)
+    if (branchId) {
+      q = query(reportsRef, where('branchId', '==', branchId));
+    } else {
+      q = query(reportsRef);
+    }
+
+    const querySnapshot = await getDocs(q);
+    const allReports = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as Report[];
+
+    // Filter by customerId (for new reports) or customerName (for legacy reports)
+    const customerReports = allReports.filter(report => {
+      // Match by customerId if available
+      if (report.customerId === customerId) {
+        return true;
+      }
+      // Fallback: match by customer name for legacy reports
+      if (report.customerName?.toLowerCase() === customer.name?.toLowerCase()) {
+        return true;
+      }
+      return false;
+    });
+
+    // Sort by creation date (newest first)
+    return customerReports.sort((a, b) => {
+      const aDate = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt || 0);
+      const bDate = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || 0);
+      return bDate.getTime() - aDate.getTime();
+    });
+  } catch (error) {
+    console.error('Error fetching reports by customer ID:', error);
+    throw new Error('Failed to fetch reports by customer ID');
+  }
+};
+
 export const createReport = async (
   reportData: Omit<Report, 'id'>,
   branchId?: string
@@ -159,13 +311,56 @@ export const createReport = async (
     });
     console.log('🔍 ReportService Debug - Customer ID:', customerId);
 
+    // Find or create building - all reports must be linked to a building
+    console.log('🔍 ReportService Debug - Finding/creating building...');
+    const { findOrCreateBuilding, getBuildingById } = await import('./buildingService');
+    
+    let buildingId: string;
+    
+    // If buildingId is provided, use it (user selected existing building)
+    if (reportData.buildingId) {
+      buildingId = reportData.buildingId;
+      console.log('🔍 ReportService Debug - Using provided building ID:', buildingId);
+    } else {
+      // Otherwise, find or create building based on address
+      const buildingAddress = reportData.buildingAddress || reportData.customerAddress;
+      
+      if (!buildingAddress) {
+        throw new Error('Building address is required to create a report');
+      }
+
+      buildingId = await findOrCreateBuilding(
+        customerId,
+        buildingAddress,
+        branchId,
+        reportData.roofType,
+        reportData.roofSize,
+        undefined, // buildingType - can be inferred later
+        reportData.createdBy
+      );
+      console.log('🔍 ReportService Debug - Created/found building ID:', buildingId);
+    }
+
+    // Get building details to use as source of truth
+    const building = await getBuildingById(buildingId);
+    
     // Create the report document
     console.log('🔍 ReportService Debug - Creating report document...');
     const reportsRef = collection(db, 'reports');
     
+    // Use building data as source of truth for roof information
+    const reportWithBuilding = {
+      ...reportData,
+      buildingId: buildingId, // Required: Link to building
+      customerId: customerId,
+      buildingAddress: building?.address || buildingAddress, // Use building address as source of truth
+      roofType: building?.roofType || reportData.roofType, // Prefer building's roof type
+      roofSize: building?.roofSize || reportData.roofSize, // Prefer building's roof size
+    };
+    
     // Filter out undefined values to prevent Firestore errors
     const cleanReportData = Object.fromEntries(
-      Object.entries(reportData).filter(([_, value]) => value !== undefined)
+      Object.entries(reportWithBuilding).filter(([_, value]) => value !== undefined)
     );
     
     const docRef = await addDoc(reportsRef, {

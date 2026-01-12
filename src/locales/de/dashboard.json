@@ -126,6 +126,31 @@
   "dashboard.branchPerformance": "Filialleistung",
   "dashboard.totalRevenue": "Gesamtumsatz",
   "dashboard.reports": "Berichte",
-  "dashboard.pending": "Ausstehend"
+  "dashboard.pending": "Ausstehend",
+  
+  "dashboard.serviceAgreements.activeAgreements": "Aktive Verträge",
+  "dashboard.serviceAgreements.ofTotal": "von {total} insgesamt",
+  "dashboard.serviceAgreements.monthlyRevenue": "Monatsumsatz",
+  "dashboard.serviceAgreements.sekPerMonthRecurring": "SEK/Monat wiederkehrend",
+  "dashboard.serviceAgreements.expiringSoon": "Läuft bald ab",
+  "dashboard.serviceAgreements.next30Days": "Nächste 30 Tage",
+  
+  "dashboard.scheduledVisits.title": "Geplante Besuche",
+  "dashboard.scheduledVisits.viewCalendar": "Kalender anzeigen",
+  "dashboard.scheduledVisits.upcoming7Days": "Kommende (7 Tage)",
+  "dashboard.scheduledVisits.scheduledVisits": "Geplante Besuche",
+  "dashboard.scheduledVisits.overdue": "Überfällig",
+  
+  "dashboard.financialOverview.title": "Finanzübersicht",
+  "dashboard.financialOverview.viewAnalytics": "Analysen anzeigen",
+  "dashboard.financialOverview.oneTimeRevenue": "Einmalige Einnahmen",
+  "dashboard.financialOverview.sekReportsOffers": "SEK (Berichte & Angebote)",
+  "dashboard.financialOverview.recurringRevenue": "Wiederkehrende Einnahmen",
+  "dashboard.financialOverview.sekPerYear": "SEK/Jahr ({monthly}/Monat)",
+  "dashboard.financialOverview.sekAllSources": "SEK (alle Quellen)",
+  "dashboard.financialOverview.recurringPercent": "Wiederkehrend %",
+  "dashboard.financialOverview.ofTotalRevenue": "vom Gesamtumsatz",
+  
+  "dashboard.todayTasks": "Heutige Aufgaben"
 }
 

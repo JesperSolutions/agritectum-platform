@@ -56,6 +56,17 @@ const IntlProvider: React.FC<IntlProviderProps> = ({ children }) => {
   const activeLocale = currentLocale || defaultLocale;
   const activeMessages = messages[activeLocale] || messages[defaultLocale];
 
+  // Debug logging in development
+  if (import.meta.env.DEV && isInitialized) {
+    console.log('[IntlProvider] Active locale:', activeLocale);
+    console.log('[IntlProvider] Available locales:', Object.keys(messages));
+    console.log('[IntlProvider] Messages object keys (first 10):', Object.keys(activeMessages || {}).slice(0, 10));
+    console.log('[IntlProvider] Has navigation.scheduledVisits:', 'navigation.scheduledVisits' in (activeMessages || {}));
+    if (activeMessages && activeMessages['navigation.scheduledVisits']) {
+      console.log('[IntlProvider] navigation.scheduledVisits value:', activeMessages['navigation.scheduledVisits']);
+    }
+  }
+
   // Show loading state while detecting (optional - can be removed if not needed)
   if (!isInitialized) {
     // Return with default locale while detecting

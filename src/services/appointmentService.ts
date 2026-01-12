@@ -207,7 +207,14 @@ export const getUpcomingAppointments = async (
 };
 
 /**
- * Create a new appointment
+ * Generate a unique public token for customer access
+ */
+const generatePublicToken = (): string => {
+  return `visit_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
+};
+
+/**
+ * Create a new appointment and automatically create corresponding scheduledVisit
  */
 export const createAppointment = async (
   appointmentData: Omit<Appointment, 'id' | 'createdAt' | 'updatedAt'>
@@ -216,18 +223,78 @@ export const createAppointment = async (
     const appointmentsRef = collection(db, 'appointments');
     const now = new Date().toISOString();
 
+    // Set initial customer response to pending
+    const appointmentWithResponse = {
+      ...appointmentData,
+      customerResponse: 'pending' as const,
+      createdAt: now,
+      updatedAt: now,
+    };
+
     // Filter out undefined values to prevent Firestore errors
     const cleanData = Object.fromEntries(
-      Object.entries({
-        ...appointmentData,
-        createdAt: now,
-        updatedAt: now,
-      }).filter(([_, value]) => value !== undefined)
+      Object.entries(appointmentWithResponse).filter(([_, value]) => value !== undefined)
     );
 
     const docRef = await addDoc(appointmentsRef, cleanData);
+    const appointmentId = docRef.id;
 
-    return docRef.id;
+    // Automatically create corresponding scheduledVisit for customer portal
+    if (appointmentData.customerId || appointmentData.customerEmail) {
+      try {
+        const { createScheduledVisit } = await import('./scheduledVisitService');
+        const publicToken = generatePublicToken();
+        
+        // Map appointment type to visit type
+        const visitTypeMap: Record<string, 'inspection' | 'maintenance' | 'repair' | 'other'> = {
+          inspection: 'inspection',
+          follow_up: 'maintenance',
+          estimate: 'other',
+          other: 'other',
+        };
+        
+        const scheduledVisitData = {
+          branchId: appointmentData.branchId,
+          customerId: appointmentData.customerId,
+          customerName: appointmentData.customerName,
+          customerAddress: appointmentData.customerAddress,
+          customerPhone: appointmentData.customerPhone,
+          customerEmail: appointmentData.customerEmail,
+          customerCompany: appointmentData.customerCompany,
+          assignedInspectorId: appointmentData.assignedInspectorId,
+          assignedInspectorName: appointmentData.assignedInspectorName,
+          scheduledDate: appointmentData.scheduledDate,
+          scheduledTime: appointmentData.scheduledTime,
+          duration: appointmentData.duration,
+          status: 'scheduled' as const,
+          appointmentId: appointmentId,
+          customerResponse: 'pending' as const,
+          publicToken: publicToken,
+          title: appointmentData.title,
+          description: appointmentData.description,
+          visitType: visitTypeMap[appointmentData.appointmentType || 'inspection'] || 'inspection',
+          createdBy: appointmentData.createdBy,
+          createdByName: appointmentData.createdByName,
+        };
+
+        const scheduledVisitId = await createScheduledVisit(scheduledVisitData);
+        
+        // Link scheduledVisit back to appointment
+        await updateDoc(docRef, {
+          scheduledVisitId: scheduledVisitId,
+        });
+
+        console.log('✅ Created scheduledVisit for appointment:', {
+          appointmentId,
+          scheduledVisitId,
+        });
+      } catch (visitError) {
+        console.error('⚠️ Failed to create scheduledVisit (non-blocking):', visitError);
+        // Don't fail appointment creation if scheduledVisit creation fails
+      }
+    }
+
+    return appointmentId;
   } catch (error) {
     console.error('Error creating appointment:', error);
     throw new Error('Failed to create appointment');
@@ -323,8 +390,26 @@ export const cancelAppointment = async (
       status: 'cancelled',
       cancelledAt: new Date().toISOString(),
       cancelReason: reason,
+      customerResponse: 'rejected',
       updatedAt: new Date().toISOString(),
     });
+
+    // Also cancel corresponding scheduledVisit if linked
+    const appointment = await getAppointment(appointmentId);
+    if (appointment?.scheduledVisitId) {
+      try {
+        const { updateScheduledVisit } = await import('./scheduledVisitService');
+        await updateScheduledVisit(appointment.scheduledVisitId, {
+          status: 'cancelled',
+          cancelledAt: new Date().toISOString(),
+          cancelReason: reason,
+          customerResponse: 'rejected',
+        });
+      } catch (visitError) {
+        console.error('Error updating scheduled visit:', visitError);
+        // Don't fail appointment cancellation if visit update fails
+      }
+    }
   } catch (error) {
     console.error('Error cancelling appointment:', error);
     throw new Error('Failed to cancel appointment');

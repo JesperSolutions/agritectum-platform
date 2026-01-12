@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { useIntl } from '../../hooks/useIntl';
 import { getBuildingsByCustomer, createBuilding } from '../../services/buildingService';
 import { Building } from '../../types';
 import { Building as BuildingIcon, Plus, MapPin } from 'lucide-react';
 import LoadingSpinner from '../common/LoadingSpinner';
+import ListCard from '../shared/cards/ListCard';
+import PageHeader from '../shared/layouts/PageHeader';
+import IconLabel from '../shared/layouts/IconLabel';
 
 const BuildingsList: React.FC = () => {
   const { currentUser } = useAuth();
+  const { t } = useIntl();
   const [buildings, setBuildings] = useState<Building[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -68,25 +73,25 @@ const BuildingsList: React.FC = () => {
   return (
     <div className='space-y-6'>
       <div className='flex justify-between items-center'>
-        <div>
-          <h1 className='text-3xl font-bold text-gray-900'>Buildings</h1>
-          <p className='mt-2 text-gray-600'>Manage your buildings and properties</p>
-        </div>
+        <PageHeader
+          title={t('buildings.title') || 'Buildings'}
+          subtitle={t('buildings.subtitle') || 'Manage your buildings and properties'}
+        />
         <button
           onClick={() => setShowForm(!showForm)}
-          className='flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700'
+          className='flex items-center space-x-2 px-4 py-2 bg-slate-700 text-white rounded-md hover:bg-slate-800 transition-colors'
         >
           <Plus className='w-5 h-5' />
-          <span>Add Building</span>
+          <span>{t('buildings.addBuilding') || 'Add Building'}</span>
         </button>
       </div>
 
       {showForm && (
         <div className='bg-white rounded-lg shadow p-6'>
-          <h2 className='text-xl font-semibold mb-4'>Add New Building</h2>
+          <h2 className='text-xl font-semibold mb-4'>{t('buildings.addBuilding')}</h2>
           <form onSubmit={handleSubmit} className='space-y-4'>
             <div>
-              <label className='block text-sm font-medium text-gray-700 mb-2'>Address *</label>
+              <label className='block text-sm font-medium text-gray-700 mb-2'>{t('buildings.address')} *</label>
               <input
                 type='text'
                 value={formData.address}
@@ -97,35 +102,35 @@ const BuildingsList: React.FC = () => {
             </div>
             <div className='grid grid-cols-2 gap-4'>
               <div>
-                <label className='block text-sm font-medium text-gray-700 mb-2'>Building Type</label>
+                <label className='block text-sm font-medium text-gray-700 mb-2'>{t('buildings.buildingType')}</label>
                 <select
                   value={formData.buildingType}
                   onChange={(e) => setFormData({ ...formData, buildingType: e.target.value as Building['buildingType'] })}
                   className='w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500'
                 >
-                  <option value='residential'>Residential</option>
-                  <option value='commercial'>Commercial</option>
-                  <option value='industrial'>Industrial</option>
+                  <option value='residential'>{t('buildings.residential')}</option>
+                  <option value='commercial'>{t('buildings.commercial')}</option>
+                  <option value='industrial'>{t('buildings.industrial')}</option>
                 </select>
               </div>
               <div>
-                <label className='block text-sm font-medium text-gray-700 mb-2'>Roof Type</label>
+                <label className='block text-sm font-medium text-gray-700 mb-2'>{t('buildings.roofType')}</label>
                 <select
                   value={formData.roofType}
                   onChange={(e) => setFormData({ ...formData, roofType: e.target.value as Building['roofType'] })}
                   className='w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500'
                 >
-                  <option value='tile'>Tile</option>
-                  <option value='metal'>Metal</option>
-                  <option value='shingle'>Shingle</option>
-                  <option value='slate'>Slate</option>
-                  <option value='flat'>Flat</option>
-                  <option value='other'>Other</option>
+                  <option value='tile'>{t('roofTypes.tile')}</option>
+                  <option value='metal'>{t('roofTypes.metal')}</option>
+                  <option value='shingle'>{t('roofTypes.shingle')}</option>
+                  <option value='slate'>{t('roofTypes.slate')}</option>
+                  <option value='flat'>{t('roofTypes.flat')}</option>
+                  <option value='other'>{t('roofTypes.other')}</option>
                 </select>
               </div>
             </div>
             <div>
-              <label className='block text-sm font-medium text-gray-700 mb-2'>Roof Size (m²)</label>
+              <label className='block text-sm font-medium text-gray-700 mb-2'>{t('buildings.roofSize')}</label>
               <input
                 type='number'
                 value={formData.roofSize}
@@ -138,14 +143,14 @@ const BuildingsList: React.FC = () => {
                 type='submit'
                 className='px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700'
               >
-                Create Building
+                {t('buildings.createBuilding')}
               </button>
               <button
                 type='button'
                 onClick={() => setShowForm(false)}
                 className='px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300'
               >
-                Cancel
+                {t('buildings.cancel')}
               </button>
             </div>
           </form>
@@ -153,14 +158,14 @@ const BuildingsList: React.FC = () => {
       )}
 
       {buildings.length === 0 ? (
-        <div className='bg-white rounded-lg shadow p-12 text-center'>
+        <div className='bg-white rounded-lg shadow p-12 text-center border border-slate-200'>
           <BuildingIcon className='w-16 h-16 text-gray-400 mx-auto mb-4' />
-          <p className='text-gray-600 mb-4'>No buildings yet</p>
+          <p className='text-gray-600 mb-4'>{t('buildings.noBuildings') || 'No buildings yet'}</p>
           <button
             onClick={() => setShowForm(true)}
-            className='px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700'
+            className='px-4 py-2 bg-slate-700 text-white rounded-md hover:bg-slate-800 transition-colors'
           >
-            Add Your First Building
+            {t('buildings.addFirstBuilding') || 'Add Your First Building'}
           </button>
         </div>
       ) : (
@@ -169,23 +174,32 @@ const BuildingsList: React.FC = () => {
             <Link
               key={building.id}
               to={`/portal/buildings/${building.id}`}
-              className='bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow'
+              className='block'
             >
-              <div className='flex items-start justify-between mb-4'>
-                <BuildingIcon className='w-8 h-8 text-green-600' />
-                <span className='px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded'>
-                  {building.buildingType || 'N/A'}
-                </span>
-              </div>
-              <h3 className='font-semibold text-gray-900 mb-2'>{building.address}</h3>
-              <div className='space-y-1 text-sm text-gray-600'>
-                {building.roofType && (
-                  <p>Roof: {building.roofType}</p>
-                )}
-                {building.roofSize && (
-                  <p>Size: {building.roofSize} m²</p>
-                )}
-              </div>
+              <ListCard>
+                <div className='flex items-start justify-between mb-4'>
+                  <BuildingIcon className='w-8 h-8 text-slate-700' />
+                  <span className='px-2 py-1 text-xs font-medium bg-slate-100 text-slate-700 rounded'>
+                    {building.buildingType ? t(`buildings.${building.buildingType}`) : 'N/A'}
+                  </span>
+                </div>
+                <h3 className='font-semibold text-gray-900 mb-4'>{building.address}</h3>
+                <div className='space-y-2'>
+                  {building.roofType && (
+                    <IconLabel
+                      icon={MapPin}
+                      label={t('buildings.roofType')}
+                      value={t(`roofTypes.${building.roofType}`) || building.roofType}
+                      iconClassName='w-4 h-4 text-gray-400'
+                    />
+                  )}
+                  {building.roofSize && (
+                    <p className='text-sm text-gray-600'>
+                      {t('buildings.size')}: {building.roofSize} m²
+                    </p>
+                  )}
+                </div>
+              </ListCard>
             </Link>
           ))}
         </div>

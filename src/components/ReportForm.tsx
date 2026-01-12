@@ -21,6 +21,7 @@ import {
   ActionPriority,
   ActionUrgency,
   Customer,
+  Building,
   MapMarker,
   RoofPinMarker,
 } from '../types';
@@ -311,6 +312,9 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
   const [foundCustomer, setFoundCustomer] = useState<Customer | null>(null);
   const [foundReport, setFoundReport] = useState<Report | null>(null);
   const [currentStep, setCurrentStep] = useState(1);
+  const [customerBuildings, setCustomerBuildings] = useState<Building[]>([]);
+  const [selectedBuildingId, setSelectedBuildingId] = useState<string | null>(null);
+  const [loadingBuildings, setLoadingBuildings] = useState(false);
   const [formResetKey, setFormResetKey] = useState(0);
   const totalSteps = FORM_CONSTANTS.TOTAL_STEPS;
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
@@ -482,6 +486,8 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
           setFoundCustomer(customer);
           setFoundReport(latestReport);
           setShowAutoCompleteDialog(true);
+          // Load buildings for this customer
+          setCustomerIdForBuildings(customer.id);
         }
       }
     } catch (error) {
@@ -499,6 +505,52 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
       return () => clearTimeout(timeoutId);
     }
   }, [mode, formData.customerName, checkForExistingCustomer]);
+
+  // Load buildings when customerId is available
+  useEffect(() => {
+    if (customerIdForBuildings && currentUser && mode === 'create') {
+      const loadBuildings = async () => {
+        setLoadingBuildings(true);
+        try {
+          const { getBuildingsByCustomer } = await import('../services/buildingService');
+          const buildings = await getBuildingsByCustomer(customerIdForBuildings, currentUser.branchId);
+          setCustomerBuildings(buildings);
+          
+          // If there's only one building, auto-select it
+          if (buildings.length === 1) {
+            const building = buildings[0];
+            setSelectedBuildingId(building.id);
+            setFormData(prev => ({
+              ...prev,
+              buildingAddress: building.address,
+              roofType: building.roofType || prev.roofType,
+              roofSize: building.roofSize || prev.roofSize,
+            }));
+          }
+        } catch (error) {
+          console.error('Error loading buildings:', error);
+        } finally {
+          setLoadingBuildings(false);
+        }
+      };
+      
+      loadBuildings();
+    }
+  }, [customerIdForBuildings, currentUser, mode]);
+
+  // Handle building selection - use building data as source of truth
+  const handleBuildingSelect = useCallback((buildingId: string) => {
+    const building = customerBuildings.find(b => b.id === buildingId);
+    if (building) {
+      setSelectedBuildingId(buildingId);
+      setFormData(prev => ({
+        ...prev,
+        buildingAddress: building.address,
+        roofType: building.roofType || prev.roofType,
+        roofSize: building.roofSize || prev.roofSize,
+      }));
+    }
+  }, [customerBuildings]);
 
   // Update form data when URL customer params are provided (for customer-to-report flow)
   useEffect(() => {
@@ -1090,6 +1142,73 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                 updatedReport.customerName || 'Untitled Report',
                 'completed'
               );
+              
+              // Update customer status and notify customer if report is public
+              if (updatedReport.isPublic || updatedReport.isShared) {
+                try {
+                  const { updateScheduledVisit, getScheduledVisitsByCustomer } = await import('../services/scheduledVisitService');
+                  const { getAppointment } = await import('../services/appointmentService');
+                  const { collection, query, where, getDocs } = await import('firebase/firestore');
+                  const { db } = await import('../config/firebase');
+                  
+                  // Find scheduled visit linked to this report's appointment
+                  if (updatedReport.appointmentId) {
+                    const appointment = await getAppointment(updatedReport.appointmentId);
+                    if (appointment?.scheduledVisitId) {
+                      await updateScheduledVisit(appointment.scheduledVisitId, {
+                        status: 'completed',
+                        reportId: reportId,
+                        completedAt: new Date().toISOString(),
+                      });
+                      
+                      // Notify customer
+                      if (appointment.customerId || appointment.customerEmail) {
+                        const { collection: mailCollection, addDoc } = await import('firebase/firestore');
+                        const { serverTimestamp } = await import('firebase/firestore');
+                        const mailRef = mailCollection(db, 'mail');
+                        const reportLink = `${window.location.origin}/report/view/${reportId}`;
+                        
+                        if (appointment.customerEmail) {
+                          await addDoc(mailRef, {
+                            to: appointment.customerEmail,
+                            template: {
+                              name: 'report-completed',
+                              data: {
+                                customerName: appointment.customerName,
+                                reportLink: reportLink,
+                                appointmentDate: appointment.scheduledDate,
+                              },
+                            },
+                          });
+                        }
+                        
+                        if (appointment.customerId) {
+                          const notificationsRef = mailCollection(db, 'notifications');
+                          await addDoc(notificationsRef, {
+                            userId: appointment.customerId,
+                            type: 'report_completed',
+                            title: 'Inspection Report Completed',
+                            message: `Your roof inspection report is now available. View it here.`,
+                            link: `/portal/scheduled-visits`,
+                            read: false,
+                            metadata: {
+                              reportId: reportId,
+                              appointmentId: updatedReport.appointmentId,
+                              scheduledVisitId: appointment.scheduledVisitId,
+                              category: 'report',
+                              priority: 'medium',
+                            },
+                            createdAt: serverTimestamp(),
+                          });
+                        }
+                      }
+                    }
+                  }
+                } catch (error) {
+                  console.error('Error updating customer status on report completion:', error);
+                  // Don't fail report completion if customer notification fails
+                }
+              }
             } else {
               // Regular update
               await notifyReportUpdated(updatedReport);
@@ -1652,7 +1771,48 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                   />
                 </div>
 
-                {formData.customerType === 'company' && (
+                {/* Building Selection - Use building inventory as source of truth */}
+                {customerBuildings.length > 0 && (
+                  <div className='md:col-span-2'>
+                    <MaterialFormField
+                      label={t('form.fields.selectBuilding') || 'Vælg bygning'}
+                      error={validationErrors.buildingId}
+                      touched={!!validationErrors.buildingId}
+                    >
+                      {loadingBuildings ? (
+                        <div className='text-sm text-slate-500'>Indlæser bygninger...</div>
+                      ) : (
+                        <MaterialSelect
+                          id='buildingId'
+                          value={selectedBuildingId || ''}
+                          onChange={e => {
+                            const buildingId = e.target.value;
+                            if (buildingId) {
+                              handleBuildingSelect(buildingId);
+                            } else {
+                              setSelectedBuildingId(null);
+                            }
+                            clearFieldError('buildingId');
+                          }}
+                          options={[
+                            { value: '', label: t('form.fields.selectBuildingPlaceholder') || 'Vælg en bygning eller opret ny...' },
+                            ...customerBuildings.map(building => ({
+                              value: building.id,
+                              label: `${building.address}${building.roofType ? ` (${building.roofType})` : ''}${building.roofSize ? ` - ${building.roofSize} m²` : ''}`,
+                            })),
+                          ]}
+                        />
+                      )}
+                    </MaterialFormField>
+                    {selectedBuildingId && (
+                      <div className='mt-2 text-sm text-slate-600'>
+                        {t('form.messages.buildingDataUsed') || 'Bygningsdata bruges som kilde til tagtype og størrelse'}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {formData.customerType === 'company' && !selectedBuildingId && (
                   <div className='md:col-span-2'>
                     <MaterialFormField
                       label={t('form.fields.buildingAddress') || 'Bygningsadresse (for firma)'}

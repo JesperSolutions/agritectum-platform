@@ -491,6 +491,55 @@ service cloud.firestore {
         );
     }
     
+    // Rejected Orders collection
+    match /rejectedOrders/{orderId} {
+      // Branch admins and superadmins can read rejected orders in their branch
+      allow read: if isAuthenticated() && (
+        isSuperadmin() ||
+        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+      );
+      
+      // Only system (via Cloud Functions) or branch admins can create rejected orders
+      allow create: if isAuthenticated() && (
+        isSuperadmin() ||
+        (isBranchAdmin() && (request.resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+      );
+      
+      // Only superadmins can update or delete rejected orders
+      allow update, delete: if isSuperadmin();
+    }
+    
+    // ESG Service Reports collection
+    match /esgServiceReports/{reportId} {
+      // Allow public read access if report is public (no authentication required)
+      allow get: if resource.data.isPublic == true;
+      
+      // Allow authenticated read access for branch managers and superadmins
+      allow read: if isAuthenticated() && (
+        isSuperadmin() ||
+        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+      );
+      
+      // Allow branch managers and superadmins to create reports
+      allow create: if isAuthenticated() && 
+        request.resource.data.createdBy == request.auth.uid &&
+        (request.resource.data.branchId == getUserBranchId() || getUserBranchId() == "main") &&
+        // Basic required fields validation
+        request.resource.data.keys().hasAll(["buildingId", "branchId", "roofSize", "divisions", "isPublic"]);
+      
+      // Allow branch managers and superadmins to update reports
+      allow update: if isAuthenticated() && (
+        isSuperadmin() ||
+        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+      );
+      
+      // Allow branch managers and superadmins to delete reports
+      allow delete: if isAuthenticated() && (
+        isSuperadmin() ||
+        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+      );
+    }
+    
     // Service Agreements collection
     match /serviceAgreements/{agreementId} {
       // Allow public read access if agreement is public (no authentication required)

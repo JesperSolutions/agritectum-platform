@@ -7,11 +7,12 @@
  * All data loading logic copied from original dashboards for full functionality.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useReports } from '../../contexts/ReportContextSimple';
 import { useIntl } from '../../hooks/useIntl';
+import { useToast } from '../../contexts/ToastContext';
 import {
   Building,
   Users,
@@ -29,6 +30,11 @@ import {
   User,
   FileCheck,
   TrendingUp,
+  XCircle,
+  Bell,
+  Zap,
+  Plus,
+  Eye,
 } from 'lucide-react';
 import LoadingSpinner from '../common/LoadingSpinner';
 
@@ -69,7 +75,10 @@ const SmartDashboard: React.FC = () => {
   const { currentUser } = useAuth();
   const { state, fetchReports } = useReports();
   const { t } = useIntl();
+  const { showInfo } = useToast();
   const navigate = useNavigate();
+  const welcomeToastShown = useRef(false);
+  const loadAttempted = useRef(false);
   const [loading, setLoading] = useState(true);
   const [branchStats, setBranchStats] = useState<BranchStats[]>([]);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
@@ -82,12 +91,37 @@ const SmartDashboard: React.FC = () => {
   // Branch Admin specific state
   const [serviceAgreements, setServiceAgreements] = useState<any[]>([]);
   const [scheduledVisits, setScheduledVisits] = useState<any[]>([]);
+  const [appointments, setAppointments] = useState<any[]>([]);
+  const [rejectedOrders, setRejectedOrders] = useState<any[]>([]);
 
   useEffect(() => {
-    if (currentUser) {
+    if (currentUser && !loadAttempted.current) {
+      loadAttempted.current = true;
       loadDashboardData();
+      
+      // Show welcome toast once per session
+      if (!welcomeToastShown.current) {
+        const lastWelcomeTime = localStorage.getItem('lastWelcomeToast');
+        const now = Date.now();
+        // Show welcome toast if it's been more than 1 hour since last login
+        if (!lastWelcomeTime || (now - parseInt(lastWelcomeTime)) > 3600000) {
+          const welcomeMessage = currentUser?.role === 'branchAdmin'
+            ? t('dashboard.welcomeBack', { name: currentUser?.displayName || currentUser?.email || 'User' })
+            : t('dashboard.welcomeBack', { name: currentUser?.displayName || currentUser?.email || 'User' });
+          showInfo(welcomeMessage);
+          localStorage.setItem('lastWelcomeToast', now.toString());
+        }
+        welcomeToastShown.current = true;
+      }
     }
-  }, [currentUser]);
+    
+    // Reset loadAttempted when user changes
+    return () => {
+      if (!currentUser) {
+        loadAttempted.current = false;
+      }
+    };
+  }, [currentUser?.uid, showInfo, t]);
 
   const loadDashboardData = async () => {
     try {
@@ -152,6 +186,8 @@ const SmartDashboard: React.FC = () => {
     const { getUsers } = await import('../../services/userService');
     const { getServiceAgreements } = await import('../../services/serviceAgreementService');
     const { getScheduledVisits } = await import('../../services/scheduledVisitService');
+    const { getAppointments } = await import('../../services/appointmentService');
+    const { getRejectedOrdersByBranch } = await import('../../services/rejectedOrderService');
     
     await fetchReports();
     
@@ -167,6 +203,22 @@ const SmartDashboard: React.FC = () => {
     if (currentUser) {
       const visits = await getScheduledVisits(currentUser);
       setScheduledVisits(visits);
+      
+      // Load appointments for this branch
+      const apts = await getAppointments(currentUser);
+      setAppointments(apts);
+      
+      // Load rejected orders for this branch
+      if (currentUser.branchId) {
+        try {
+          const rejected = await getRejectedOrdersByBranch(currentUser.branchId);
+          setRejectedOrders(rejected);
+        } catch (error) {
+          // Handle errors gracefully - service should return empty array, but catch just in case
+          console.warn('Could not load rejected orders:', error);
+          setRejectedOrders([]);
+        }
+      }
     }
 
     const teamMembersData: TeamMember[] = users.map(user => {
@@ -412,18 +464,6 @@ const SmartDashboard: React.FC = () => {
 
   return (
     <div className='space-y-6 font-material max-w-7xl mx-auto'>
-      {/* Welcome Message */}
-      <div className='bg-white rounded-xl shadow-sm border border-slate-200 p-6'>
-        <h2 className='text-2xl font-semibold text-slate-900'>
-          {t('dashboard.welcomeBack', { name: currentUser?.displayName || currentUser?.email || 'User' })} 👋
-        </h2>
-        <p className='text-slate-600 mt-1'>
-          {currentUser?.role === 'inspector' && `You have ${todayTasks.length} appointments today.`}
-          {currentUser?.role === 'branchAdmin' && `You have ${state.reports?.filter(r => r.status === 'draft').length || 0} draft reports and ${teamMembers.length} team members.`}
-          {currentUser?.role === 'superadmin' && `You have ${branchStats.length} branches under management.`}
-        </p>
-      </div>
-
       {/* Material Design Header - Role-Specific Color */}
       <div className='bg-gradient-to-r from-slate-900 to-slate-700 rounded-2xl shadow-lg p-8 text-white'>
         <div className='flex items-center justify-between'>
@@ -847,6 +887,263 @@ const SmartDashboard: React.FC = () => {
                 </div>
               );
             })()}
+          </div>
+        </div>
+      )}
+
+      {/* Pending Customer Responses Widget for Branch Admin */}
+      {currentUser?.role === 'branchAdmin' && appointments.length > 0 && (() => {
+        const pendingResponses = appointments.filter(apt => apt.customerResponse === 'pending');
+        if (pendingResponses.length === 0) return null;
+        
+        return (
+          <div className='bg-white rounded-xl shadow-sm border border-slate-200'>
+            <div className='p-6 border-b border-slate-200 flex items-center justify-between'>
+              <h2 className='text-2xl font-semibold text-slate-900 flex items-center gap-2'>
+                <Bell className='w-6 h-6 text-orange-600' />
+                {t('dashboard.pendingCustomerResponses.title') || 'Pending Customer Responses'}
+                <span className='ml-2 px-2.5 py-0.5 bg-orange-100 text-orange-800 rounded-full text-sm font-medium'>
+                  {pendingResponses.length}
+                </span>
+              </h2>
+              <button
+                onClick={() => navigate('/schedule')}
+                className='px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium shadow-sm'
+              >
+                {t('dashboard.viewAll') || 'View All'} →
+              </button>
+            </div>
+            <div className='p-6'>
+              <div className='space-y-3'>
+                {pendingResponses.slice(0, 5).map((apt) => (
+                  <div
+                    key={apt.id}
+                    className='bg-orange-50 border border-orange-200 rounded-lg p-4 hover:bg-orange-100 transition-colors cursor-pointer'
+                    onClick={() => navigate(`/schedule?appointment=${apt.id}`)}
+                  >
+                    <div className='flex items-start justify-between'>
+                      <div className='flex-1'>
+                        <h3 className='font-semibold text-slate-900 mb-1'>{apt.customerName}</h3>
+                        <p className='text-sm text-slate-600 mb-2'>{apt.customerAddress}</p>
+                        <div className='flex items-center gap-4 text-xs text-slate-500'>
+                          <span className='flex items-center gap-1'>
+                            <Calendar className='w-3 h-3' />
+                            {apt.scheduledDate} {apt.scheduledTime}
+                          </span>
+                          {apt.assignedInspectorName && (
+                            <span className='flex items-center gap-1'>
+                              <User className='w-3 h-3' />
+                              {apt.assignedInspectorName}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <span className='px-2.5 py-1 bg-orange-200 text-orange-800 rounded-full text-xs font-medium'>
+                        {t('schedule.status.awaitingResponse') || 'Awaiting Response'}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {pendingResponses.length > 5 && (
+                <p className='text-sm text-slate-500 mt-4 text-center'>
+                  {t('dashboard.andMore', { count: pendingResponses.length - 5 }) || `+${pendingResponses.length - 5} more`}
+                </p>
+              )}
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* Rejected Orders Widget for Branch Admin */}
+      {currentUser?.role === 'branchAdmin' && rejectedOrders.length > 0 && (
+        <div className='bg-white rounded-xl shadow-sm border border-slate-200'>
+          <div className='p-6 border-b border-slate-200 flex items-center justify-between'>
+            <h2 className='text-2xl font-semibold text-slate-900 flex items-center gap-2'>
+              <XCircle className='w-6 h-6 text-red-600' />
+              {t('dashboard.rejectedOrders.title') || 'Rejected Orders'}
+              <span className='ml-2 px-2.5 py-0.5 bg-red-100 text-red-800 rounded-full text-sm font-medium'>
+                {rejectedOrders.length}
+              </span>
+            </h2>
+            <button
+              onClick={() => navigate('/admin/customers?tab=rejected')}
+              className='px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium shadow-sm'
+            >
+              {t('dashboard.viewAll') || 'View All'} →
+            </button>
+          </div>
+          <div className='p-6'>
+            <div className='space-y-3'>
+              {rejectedOrders.slice(0, 5).map((order) => (
+                <div
+                  key={order.id}
+                  className='bg-red-50 border border-red-200 rounded-lg p-4'
+                >
+                  <div className='flex items-start justify-between'>
+                    <div className='flex-1'>
+                      <h3 className='font-semibold text-slate-900 mb-1'>{order.customerName}</h3>
+                      <p className='text-sm text-slate-600 mb-2'>
+                        {t('dashboard.rejectedOrders.rejectedOn') || 'Rejected on'}: {new Date(order.rejectedAt).toLocaleDateString()}
+                      </p>
+                      {order.rejectedReason && (
+                        <p className='text-xs text-slate-500 italic'>"{order.rejectedReason}"</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {rejectedOrders.length > 5 && (
+              <p className='text-sm text-slate-500 mt-4 text-center'>
+                {t('dashboard.andMore', { count: rejectedOrders.length - 5 }) || `+${rejectedOrders.length - 5} more`}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Upcoming Inspections Widget for Branch Admin */}
+      {currentUser?.role === 'branchAdmin' && scheduledVisits.length > 0 && (() => {
+        const now = new Date();
+        const nextWeek = new Date(now);
+        nextWeek.setDate(nextWeek.getDate() + 7);
+        
+        const upcoming = scheduledVisits
+          .filter(v => {
+            const visitDate = new Date(v.scheduledDate);
+            return visitDate >= now && visitDate <= nextWeek && v.status === 'scheduled';
+          })
+          .sort((a, b) => new Date(a.scheduledDate).getTime() - new Date(b.scheduledDate).getTime())
+          .slice(0, 5);
+        
+        if (upcoming.length === 0) return null;
+        
+        return (
+          <div className='bg-white rounded-xl shadow-sm border border-slate-200'>
+            <div className='p-6 border-b border-slate-200 flex items-center justify-between'>
+              <h2 className='text-2xl font-semibold text-slate-900 flex items-center gap-2'>
+                <Calendar className='w-6 h-6 text-blue-600' />
+                {t('dashboard.upcomingInspections.title') || 'Upcoming Inspections'}
+                <span className='ml-2 px-2.5 py-0.5 bg-blue-100 text-blue-800 rounded-full text-sm font-medium'>
+                  {upcoming.length}
+                </span>
+              </h2>
+              <button
+                onClick={() => navigate('/schedule')}
+                className='px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium shadow-sm'
+              >
+                {t('dashboard.viewCalendar') || 'View Calendar'} →
+              </button>
+            </div>
+            <div className='p-6'>
+              <div className='space-y-3'>
+                {upcoming.map((visit) => (
+                  <div
+                    key={visit.id}
+                    className='bg-blue-50 border border-blue-200 rounded-lg p-4 hover:bg-blue-100 transition-colors cursor-pointer'
+                    onClick={() => navigate(`/schedule?visit=${visit.id}`)}
+                  >
+                    <div className='flex items-start justify-between'>
+                      <div className='flex-1'>
+                        <h3 className='font-semibold text-slate-900 mb-1'>{visit.customerName || visit.buildingAddress}</h3>
+                        <p className='text-sm text-slate-600 mb-2'>{visit.buildingAddress || visit.customerAddress}</p>
+                        <div className='flex items-center gap-4 text-xs text-slate-500'>
+                          <span className='flex items-center gap-1'>
+                            <Calendar className='w-3 h-3' />
+                            {visit.scheduledDate} {visit.scheduledTime || ''}
+                          </span>
+                          {visit.assignedInspectorName && (
+                            <span className='flex items-center gap-1'>
+                              <User className='w-3 h-3' />
+                              {visit.assignedInspectorName}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <span className='px-2.5 py-1 bg-blue-200 text-blue-800 rounded-full text-xs font-medium'>
+                        {t(`schedule.status.${visit.status}`) || visit.status}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* Quick Actions Widget for Branch Admin */}
+      {currentUser?.role === 'branchAdmin' && (
+        <div className='bg-white rounded-xl shadow-sm border border-slate-200'>
+          <div className='p-6 border-b border-slate-200'>
+            <h2 className='text-2xl font-semibold text-slate-900 flex items-center gap-2'>
+              <Zap className='w-6 h-6 text-yellow-600' />
+              {t('dashboard.quickActions.title') || 'Quick Actions'}
+            </h2>
+          </div>
+          <div className='p-6'>
+            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
+              <button
+                onClick={() => navigate('/schedule?action=create')}
+                className='bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg p-4 text-left transition-colors'
+              >
+                <div className='flex items-center gap-3'>
+                  <div className='w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center'>
+                    <Calendar className='w-5 h-5 text-blue-600' />
+                  </div>
+                  <div>
+                    <p className='font-semibold text-slate-900 text-sm'>{t('dashboard.quickActions.createAppointment') || 'Create Appointment'}</p>
+                    <p className='text-xs text-slate-500 mt-1'>{t('dashboard.quickActions.scheduleInspection') || 'Schedule inspection'}</p>
+                  </div>
+                </div>
+              </button>
+              
+              <button
+                onClick={() => navigate('/admin/customers?action=create')}
+                className='bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg p-4 text-left transition-colors'
+              >
+                <div className='flex items-center gap-3'>
+                  <div className='w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center'>
+                    <User className='w-5 h-5 text-green-600' />
+                  </div>
+                  <div>
+                    <p className='font-semibold text-slate-900 text-sm'>{t('dashboard.quickActions.addCustomer') || 'Add Customer'}</p>
+                    <p className='text-xs text-slate-500 mt-1'>{t('dashboard.quickActions.newCustomer') || 'New customer'}</p>
+                  </div>
+                </div>
+              </button>
+              
+              <button
+                onClick={() => navigate('/report/new')}
+                className='bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg p-4 text-left transition-colors'
+              >
+                <div className='flex items-center gap-3'>
+                  <div className='w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center'>
+                    <FileText className='w-5 h-5 text-purple-600' />
+                  </div>
+                  <div>
+                    <p className='font-semibold text-slate-900 text-sm'>{t('dashboard.quickActions.newReport') || 'New Report'}</p>
+                    <p className='text-xs text-slate-500 mt-1'>{t('dashboard.quickActions.createReport') || 'Create report'}</p>
+                  </div>
+                </div>
+              </button>
+              
+              <button
+                onClick={() => navigate('/admin/service-agreements?action=create')}
+                className='bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg p-4 text-left transition-colors'
+              >
+                <div className='flex items-center gap-3'>
+                  <div className='w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center'>
+                    <FileCheck className='w-5 h-5 text-orange-600' />
+                  </div>
+                  <div>
+                    <p className='font-semibold text-slate-900 text-sm'>{t('dashboard.quickActions.serviceAgreement') || 'Service Agreement'}</p>
+                    <p className='text-xs text-slate-500 mt-1'>{t('dashboard.quickActions.createAgreement') || 'Create agreement'}</p>
+                  </div>
+                </div>
+              </button>
+            </div>
           </div>
         </div>
       )}

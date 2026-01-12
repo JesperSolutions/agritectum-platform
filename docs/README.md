@@ -91,6 +91,15 @@ Completed feature documentation and archived specifications.
 
 ### archive/
 Historical documentation, completed work, and legacy guides.
+- **code/** - Archived code documentation
+- **LEGACY_CODE_CLEANUP_SUMMARY.md** - Summary of legacy code organization
+
+## Legacy Code
+
+The codebase maintains a `src/legacy/` directory for deprecated or unused code:
+- See `src/legacy/ARCHIVE_MANIFEST.md` for complete inventory
+- Legacy code is kept for reference and potential rollback
+- Do not use legacy code in new implementations
 
 ## 🚀 Quick Start Guide
 

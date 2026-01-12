@@ -105,6 +105,9 @@
 
   "reports.customerSearch": "Customer Search",
   "reports.refresh": "Refresh",
+  "reports.tools": "Tools",
+  "reports.cleanTempReports": "Clean temporary reports (temp_)",
+  "reports.confirmCleanTemp": "Delete ONLY temporary reports (IDs starting with temp_)? This is safe and only removes incomplete drafts.",
   "reports.status": "Status",
   "reports.branch": "Branch",
   "reports.dateCreated": "Created",

@@ -29,16 +29,40 @@ function App() {
       console.log('PWA was installed');
     };
 
-    // Register service worker
+    // Register service worker (only once)
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker
-        .register('/sw.js')
-        .then(registration => {
-          console.log('SW registered: ', registration);
-        })
-        .catch(error => {
-          logger.error('App.serviceWorkerRegistration', error);
-        });
+      // Check if already registered to avoid duplicates
+      navigator.serviceWorker.getRegistration().then(existingRegistration => {
+        if (!existingRegistration) {
+          navigator.serviceWorker
+            .register('/sw.js', { updateViaCache: 'none' })
+            .then(registration => {
+              console.log('SW registered: ', registration);
+              
+              // Force update check
+              registration.update();
+              
+              // Listen for updates
+              registration.addEventListener('updatefound', () => {
+                const newWorker = registration.installing;
+                if (newWorker) {
+                  newWorker.addEventListener('statechange', () => {
+                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                      // New service worker available, prompt user to reload
+                      if (window.confirm('A new version is available. Reload to update?')) {
+                        newWorker.postMessage({ type: 'SKIP_WAITING' });
+                        window.location.reload();
+                      }
+                    }
+                  });
+                }
+              });
+            })
+            .catch(error => {
+              logger.error('App.serviceWorkerRegistration', error);
+            });
+        }
+      });
     }
 
     // Add event listeners

@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
-// Import existing logo from repo root
+// Import existing logo from public folder
 // Vite will bundle and return a URL
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import logoUrl from '../../main logo.png';
+import logoUrl from '../../public/agritectum-logomark.png';
 
 export function useFavicon(customUrl?: string) {
   useEffect(() => {

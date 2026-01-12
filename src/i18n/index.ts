@@ -1,5 +1,6 @@
 import { createIntl, createIntlCache } from 'react-intl';
 import svMessages from '../locales/sv/index';
+import enMessages from '../locales/en/index';
 import daMessages from '../locales/da/index';
 import deMessages from '../locales/de/index';
 import type { SupportedLocale } from '../utils/geolocation';
@@ -9,13 +10,33 @@ import { storeLocale } from '../utils/geolocation';
 const cache = createIntlCache();
 
 // Import messages for all supported locales
+// Note: svMessages and enMessages are default exports, so they're already the flat objects
 const messages: Record<SupportedLocale, any> = {
   'sv-SE': svMessages,
+  'en-US': enMessages,
   'da-DK': daMessages,
-  'en-US': svMessages, // Fallback to Swedish until English translations are added
   'de-DE': deMessages,
   'no-NO': svMessages, // Fallback to Swedish until Norwegian translations are added
 };
+
+// Debug logging in development to verify message structure
+if (import.meta.env.DEV) {
+  console.log('[i18n] Messages loaded for locales:', Object.keys(messages));
+  console.log('[i18n] English messages type:', typeof enMessages);
+  console.log('[i18n] English messages is object:', typeof enMessages === 'object' && enMessages !== null);
+  if (enMessages && typeof enMessages === 'object') {
+    const enKeys = Object.keys(enMessages);
+    console.log('[i18n] English messages keys count:', enKeys.length);
+    console.log('[i18n] English messages first 5 keys:', enKeys.slice(0, 5));
+    console.log('[i18n] English has navigation.scheduledVisits:', 'navigation.scheduledVisits' in enMessages);
+    if (enMessages['navigation.scheduledVisits']) {
+      console.log('[i18n] English navigation.scheduledVisits value:', enMessages['navigation.scheduledVisits']);
+    }
+  }
+  if (svMessages && typeof svMessages === 'object') {
+    console.log('[i18n] Swedish has navigation.scheduledVisits:', 'navigation.scheduledVisits' in svMessages);
+  }
+}
 
 // Default locale
 const defaultLocale: SupportedLocale = 'sv-SE';

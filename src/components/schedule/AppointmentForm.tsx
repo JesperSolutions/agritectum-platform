@@ -252,7 +252,25 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({ isOpen, onClose, onSu
         await appointmentService.updateAppointment(appointment.id, appointmentData);
         showSuccess(t('schedule.appointment.updatedSuccessfully') || 'Appointment updated successfully');
       } else {
-        await appointmentService.createAppointment(appointmentData);
+        const appointmentId = await appointmentService.createAppointment(appointmentData);
+        
+        // Get the created appointment and scheduledVisit to send notifications
+        try {
+          const createdAppointment = await appointmentService.getAppointment(appointmentId);
+          if (createdAppointment?.scheduledVisitId) {
+            const { getScheduledVisit } = await import('../../services/scheduledVisitService');
+            const scheduledVisit = await getScheduledVisit(createdAppointment.scheduledVisitId);
+            
+            if (scheduledVisit && createdAppointment) {
+              const { notifyCustomerOfAppointment } = await import('../../services/appointmentNotificationService');
+              await notifyCustomerOfAppointment(createdAppointment, scheduledVisit);
+            }
+          }
+        } catch (notificationError) {
+          console.error('Error sending notifications (non-blocking):', notificationError);
+          // Don't fail appointment creation if notifications fail
+        }
+        
         showSuccess(t('schedule.appointment.createdSuccessfully') || 'Appointment scheduled successfully');
       }
 

@@ -42,26 +42,17 @@ const firebaseConfig = getFirebaseConfig();
 // Validate required config based on environment
 const mode = import.meta.env.MODE;
 if (mode === 'production') {
-  const requiredVars = [
-    'VITE_FIREBASE_API_KEY',
-    'VITE_FIREBASE_AUTH_DOMAIN',
-    'VITE_FIREBASE_PROJECT_ID',
-    'VITE_FIREBASE_STORAGE_BUCKET',
-    'VITE_FIREBASE_MESSAGING_SENDER_ID',
-    'VITE_FIREBASE_APP_ID',
-  ];
+  // In production, we use fallback values if env vars are not set
+  // This allows the app to work without requiring env vars in Firebase Hosting
+  // The fallback values are hardcoded above and will be used automatically
+  const hasEnvVars = import.meta.env.VITE_FIREBASE_API_KEY && 
+                     import.meta.env.VITE_FIREBASE_AUTH_DOMAIN &&
+                     import.meta.env.VITE_FIREBASE_PROJECT_ID;
   
-  const missingVars = requiredVars.filter(
-    varName => !import.meta.env[varName]
-  );
-  
-  if (missingVars.length > 0) {
-    console.error(
-      '❌ Missing required Firebase environment variables:',
-      missingVars.join(', ')
-    );
-    console.error(
-      'Please set these in your production environment or .env file'
+  if (!hasEnvVars) {
+    // Only warn, don't error - fallback values will be used
+    console.warn(
+      '⚠️ Firebase config: Using fallback hardcoded values in production. For custom config, set VITE_FIREBASE_* environment variables.'
     );
   }
 } else if (mode === 'test') {

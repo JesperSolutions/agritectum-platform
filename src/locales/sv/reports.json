@@ -105,6 +105,9 @@
 
   "reports.customerSearch": "Kundsökning",
   "reports.refresh": "Uppdatera",
+  "reports.tools": "Verktyg",
+  "reports.cleanTempReports": "Rensa temporära rapporter (temp_)",
+  "reports.confirmCleanTemp": "Ta bort ENDAST temporära rapporter (ID:n som börjar med temp_)? Detta är säkert och tar bara bort ofullständiga utkast.",
   "reports.status": "Status",
   "reports.branch": "Företag",
   "reports.dateCreated": "Skapad",

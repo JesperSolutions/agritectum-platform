@@ -502,7 +502,14 @@ Update status in docs/09-requirements/
 - TypeScript strict mode
 - Error handling in all async functions
 
-#### 5. Incremental Improvements
+#### 5. Legacy Code Management
+- Legacy code organized in `src/legacy/` directories
+- See `src/legacy/ARCHIVE_MANIFEST.md` for complete inventory
+- Legacy code kept for reference and potential rollback
+- Do not use legacy code in new implementations
+- Document rationale when archiving new code
+
+#### 6. Incremental Improvements
 - Medium priority items tracked separately
 - Progress summaries maintained
 - Clear distinction between must-have and nice-to-have
@@ -749,6 +756,32 @@ feat: Add offer preview modal
 - `src/utils/formDataValidation.ts` - Form validation
 
 ---
+
+## Legacy Code Reference
+
+### Legacy Code Organization
+
+The codebase maintains legacy code in `src/legacy/` for reference:
+
+**Structure:**
+```
+src/legacy/
+├── components/     # Unused components
+├── services/       # Legacy service wrappers
+├── utilities/      # Legacy utilities (if any)
+└── ARCHIVE_MANIFEST.md  # Complete inventory
+```
+
+**Guidelines:**
+- Check `src/legacy/ARCHIVE_MANIFEST.md` before referencing legacy code
+- Do not import from `src/legacy/` in new implementations
+- Legacy code is kept for reference and potential rollback only
+- When archiving new code, add metadata headers and update ARCHIVE_MANIFEST.md
+
+**Common Legacy Patterns:**
+- Wrapper components that delegate to new implementations
+- Deprecated functions kept for backward compatibility
+- Unused alternate implementations
 
 ## Common Tasks Reference
 

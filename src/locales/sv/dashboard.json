@@ -151,5 +151,25 @@
   "dashboard.financialOverview.recurringPercent": "Återkommande %",
   "dashboard.financialOverview.ofTotalRevenue": "av total omsättning",
   
-  "dashboard.todayTasks": "Dagens uppgifter"
+  "dashboard.todayTasks": "Dagens uppgifter",
+  "dashboard.noTasksToday": "Inga uppgifter idag",
+  "dashboard.personalWorkspace": "Personligt arbetsområde",
+  
+  "dashboard.pendingCustomerResponses.title": "Väntande kundsvar",
+  "dashboard.rejectedOrders.title": "Avvisade order",
+  "dashboard.rejectedOrders.rejectedOn": "Avvisad den",
+  "dashboard.upcomingInspections.title": "Kommande inspektioner",
+  "dashboard.viewAll": "Visa alla",
+  "dashboard.viewCalendar": "Visa kalender",
+  "dashboard.andMore": "+{count} fler",
+  
+  "dashboard.quickActions.title": "Snabbåtgärder",
+  "dashboard.quickActions.createAppointment": "Skapa besök",
+  "dashboard.quickActions.scheduleInspection": "Schemalägg inspektion",
+  "dashboard.quickActions.addCustomer": "Lägg till kund",
+  "dashboard.quickActions.newCustomer": "Ny kund",
+  "dashboard.quickActions.newReport": "Ny rapport",
+  "dashboard.quickActions.createReport": "Skapa rapport",
+  "dashboard.quickActions.serviceAgreement": "Serviceavtal",
+  "dashboard.quickActions.createAgreement": "Skapa avtal"
 }

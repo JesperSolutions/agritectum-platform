@@ -159,8 +159,14 @@ export const openReportPDF = async (
 };
 
 /**
- * Legacy compatibility function
+ * @deprecated Legacy compatibility function
+ * @legacy
  * Maintains the same interface as the old enhancedPdfService
+ * 
+ * This function is deprecated and kept for backward compatibility only.
+ * Migration: Use generateReportPDF(reportId, options) instead
+ * 
+ * @see generateReportPDF
  */
 export const generateEnhancedReportPDF = async (
   report: Report,

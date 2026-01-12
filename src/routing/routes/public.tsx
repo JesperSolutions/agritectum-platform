@@ -6,6 +6,7 @@ import {
   LazyPublicOfferView,
   LazyOfferThankYou,
   LazyPublicServiceAgreementView,
+  LazyPublicESGReportView,
   LoadingFallback,
 } from '../../components/LazyComponents';
 import PublicReportView from '../../components/reports/PublicReportView';
@@ -48,6 +49,17 @@ export const publicRoutes: RouteObject[] = [
       <ErrorBoundary>
         <Suspense fallback={<LoadingFallback />}>
           <LazyPublicServiceAgreementView />
+        </Suspense>
+      </ErrorBoundary>
+    ),
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
+    path: '/esg-report/public/:reportId',
+    element: (
+      <ErrorBoundary>
+        <Suspense fallback={<LoadingFallback />}>
+          <LazyPublicESGReportView />
         </Suspense>
       </ErrorBoundary>
     ),

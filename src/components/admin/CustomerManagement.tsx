@@ -239,7 +239,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
 
   // Handle customer actions
   const handleViewCustomer = (customer: Customer) => {
-    setSelectedCustomer(customer);
+    navigate(`/admin/customers/${customer.id}`);
   };
 
   const handleEditCustomer = (customer: Customer) => {
@@ -781,15 +781,15 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
             ) : filteredAndSortedCustomers.length === 0 ? (
               <EmptyState
                 icon={Building}
-                title={searchTerm ? 'Inga kunder hittades' : 'Inga kunder än'}
+                title={searchTerm ? t('customer.emptyState.noCustomersFound') : t('customer.emptyState.noCustomersYet')}
                 description={searchTerm
-                  ? 'Försök justera dina söktermer.'
+                  ? t('customer.emptyState.tryAdjustingSearch')
                   : isReadOnly
-                  ? 'Inga kunder har skapats än.'
-                  : 'Skapa din första kund för att börja.'}
+                  ? t('customer.emptyState.noCustomersCreatedYet')
+                  : t('customer.emptyState.createFirstCustomer')}
                 actionLabel={searchTerm || isReadOnly
                   ? undefined
-                  : 'Skapa ny kund'}
+                  : t('customer.emptyState.createNewCustomer')}
                 onAction={searchTerm || isReadOnly
                   ? undefined
                   : handleCreateCustomer}
@@ -823,7 +823,12 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                           <td className='px-6 py-4 whitespace-nowrap'>
                             <div>
                               <div className='flex items-center gap-2'>
-                                <span className='text-sm font-medium text-slate-900'>{customer.name}</span>
+                                <button
+                                  onClick={() => navigate(`/admin/customers/${customer.id}`)}
+                                  className='text-sm font-medium text-slate-900 hover:text-blue-600 hover:underline cursor-pointer transition-colors'
+                                >
+                                  {customer.name}
+                                </button>
                                 {customer.customerType === 'company' && (
                                   <span className="px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded-full">
                                     Företag

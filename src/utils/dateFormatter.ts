@@ -103,5 +103,90 @@ export const formatDate = (
   }
 };
 
-// Note: Swedish formatters are in a separate file if needed
-// This file focuses on the MM/DD/YYYY at HH:mm format for consistency
+/**
+ * Format date to Swedish format (YYYY-MM-DD)
+ * Legacy function for backward compatibility
+ * @deprecated Use formatDate or formatDateTime instead
+ */
+export const formatSwedishDate = (
+  date: Date | string | number | null | undefined
+): string => {
+  if (!date) return '-';
+  
+  try {
+    let dateObj: Date;
+    
+    if (date && typeof date === 'object' && 'toDate' in date && typeof (date as any).toDate === 'function') {
+      dateObj = (date as any).toDate();
+    } else if (typeof date === 'string') {
+      if (date.includes('T')) {
+        dateObj = new Date(date);
+      } else {
+        const [year, month, day] = date.split('-').map(Number);
+        dateObj = new Date(year, month - 1, day);
+      }
+    } else if (typeof date === 'number') {
+      dateObj = new Date(date);
+    } else {
+      dateObj = date as Date;
+    }
+    
+    if (isNaN(dateObj.getTime())) {
+      return '-';
+    }
+    
+    const year = dateObj.getFullYear().toString();
+    const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
+    const day = dateObj.getDate().toString().padStart(2, '0');
+    
+    return `${year}-${month}-${day}`;
+  } catch (error) {
+    console.error('Error formatting Swedish date:', error);
+    return '-';
+  }
+};
+
+/**
+ * Format date to Swedish format with time (YYYY-MM-DD HH:mm)
+ * Legacy function for backward compatibility
+ * @deprecated Use formatDateTime instead
+ */
+export const formatSwedishDateTime = (
+  date: Date | string | number | null | undefined
+): string => {
+  if (!date) return '-';
+  
+  try {
+    let dateObj: Date;
+    
+    if (date && typeof date === 'object' && 'toDate' in date && typeof (date as any).toDate === 'function') {
+      dateObj = (date as any).toDate();
+    } else if (typeof date === 'string') {
+      if (date.includes('T')) {
+        dateObj = new Date(date);
+      } else {
+        const [year, month, day] = date.split('-').map(Number);
+        dateObj = new Date(year, month - 1, day);
+      }
+    } else if (typeof date === 'number') {
+      dateObj = new Date(date);
+    } else {
+      dateObj = date as Date;
+    }
+    
+    if (isNaN(dateObj.getTime())) {
+      return '-';
+    }
+    
+    const year = dateObj.getFullYear().toString();
+    const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
+    const day = dateObj.getDate().toString().padStart(2, '0');
+    const hours = dateObj.getHours().toString().padStart(2, '0');
+    const minutes = dateObj.getMinutes().toString().padStart(2, '0');
+    
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
+  } catch (error) {
+    console.error('Error formatting Swedish date-time:', error);
+    return '-';
+  }
+};

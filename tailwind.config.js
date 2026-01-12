@@ -4,12 +4,12 @@ export default {
     content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
   	extend: {
-  		// Material Design: Standard 4dp border radius
+  		// Material Design: Standard 4dp border radius (unified design system)
   		borderRadius: {
-  			lg: 'var(--radius)',
-  			md: 'calc(var(--radius) - 2px)',
-  			sm: 'calc(var(--radius) - 4px)',
-  			'material': '4px', // Material Design standard
+  			'material': '4px', // Material Design standard - use for all interactive elements
+  			lg: 'var(--radius)', // Legacy - migrating to rounded-material
+  			md: 'calc(var(--radius) - 2px)', // Legacy - migrating to rounded-material
+  			sm: 'calc(var(--radius) - 4px)', // Legacy - migrating to rounded-material
   		},
   		// Material Design: Elevation shadows (6 levels)
   		boxShadow: {
@@ -30,7 +30,8 @@ export default {
   			'material': ['Roboto', 'system-ui', '-apple-system', 'sans-serif'],
   		},
 		colors: {
-			// Taklaget Brand Colors
+			// Taklaget Brand Colors (RESERVED FOR MARKETING PAGES ONLY)
+			// UI components should use slate colors from design system
 			brand: {
 				orange: {
 					50: '#fff7ed',
@@ -69,6 +70,7 @@ export default {
 					900: '#78350f',
 				}
 			},
+			// CSS Variable Colors (for compatibility)
 			background: 'hsl(var(--background))',
 			foreground: 'hsl(var(--foreground))',
 			card: {
@@ -79,12 +81,14 @@ export default {
 				DEFAULT: 'hsl(var(--popover))',
 				foreground: 'hsl(var(--popover-foreground))'
 			},
+			// Primary/Secondary use brand colors (for marketing compatibility)
+			// UI components should use slate-700 for primary buttons
 			primary: {
-				DEFAULT: '#f97316', // Brand orange
+				DEFAULT: '#f97316', // Brand orange (marketing only)
 				foreground: '#ffffff'
 			},
 			secondary: {
-				DEFAULT: '#1e40af', // Brand dark blue
+				DEFAULT: '#1e40af', // Brand dark blue (marketing only)
 				foreground: '#ffffff'
 			},
 			muted: {
@@ -92,7 +96,7 @@ export default {
 				foreground: 'hsl(var(--muted-foreground))'
 			},
 			accent: {
-				DEFAULT: '#fbbf24', // Brand warm yellow
+				DEFAULT: '#fbbf24', // Brand warm yellow (marketing only)
 				foreground: '#1e40af'
 			},
 			destructive: {
@@ -109,6 +113,20 @@ export default {
 				'4': 'hsl(var(--chart-4))',
 				'5': 'hsl(var(--chart-5))'
 			}
+		},
+		// Spacing: 8dp grid system (0.5rem = 8px base unit)
+		spacing: {
+			// Material Design 8dp increments
+			'0.5': '0.125rem', // 2px (0.25dp)
+			'1': '0.25rem',   // 4px (0.5dp)
+			'2': '0.5rem',    // 8px (1dp) - base unit
+			'3': '0.75rem',   // 12px (1.5dp)
+			'4': '1rem',      // 16px (2dp)
+			'6': '1.5rem',    // 24px (3dp)
+			'8': '2rem',      // 32px (4dp)
+			'12': '3rem',     // 48px (6dp)
+			'16': '4rem',     // 64px (8dp)
+			'24': '6rem',     // 96px (12dp)
 		}
   	}
   },

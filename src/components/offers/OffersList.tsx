@@ -21,6 +21,8 @@ import {
 } from '../ui/dropdown-menu';
 import { formatSwedishDate, formatSwedishDateTime } from '../../utils/dateFormatter';
 import EmptyState from '../common/EmptyState';
+import StatusBadge from '../shared/badges/StatusBadge';
+import ListCard from '../shared/cards/ListCard';
 
 interface OffersListProps {
   offers: Offer[];
@@ -51,24 +53,7 @@ const OffersList: React.FC<OffersListProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [copying, setCopying] = useState<string | null>(null);
 
-  // Get status badge
-  const getStatusBadge = (status: OfferStatus) => {
-    const badges = {
-      pending: { color: 'bg-yellow-100 text-yellow-800', icon: Clock, label: 'Pending' },
-      accepted: { color: 'bg-green-100 text-green-800', icon: CheckCircle, label: 'Accepted' },
-      rejected: { color: 'bg-red-100 text-red-800', icon: XCircle, label: 'Rejected' },
-      awaiting_response: { color: 'bg-orange-100 text-orange-800', icon: AlertCircle, label: 'Awaiting Response' },
-      expired: { color: 'bg-gray-100 text-gray-800', icon: XCircle, label: 'Expired' },
-    };
-    const badge = badges[status] || { color: 'bg-gray-100 text-gray-800', icon: Clock, label: 'Unknown' };
-    const Icon = badge.icon;
-    return (
-      <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${badge.color}`}>
-        <Icon className="w-3 h-3" />
-        {badge.label}
-      </span>
-    );
-  };
+  // Note: StatusBadge component will be used instead
 
   // Calculate days pending
   const getDaysPending = (offer: Offer): number => {
@@ -157,23 +142,23 @@ const OffersList: React.FC<OffersListProps> = ({
             />
           </div>
 
-          {/* Quick Status Pills */}
+          {/* Quick Status Pills - Using FilterTabs pattern */}
           <div className="flex flex-wrap items-center gap-2">
             {[
-              { key: 'all', label: 'All' },
-              { key: 'pending', label: 'Pending' },
-              { key: 'awaiting_response', label: 'Awaiting' },
-              { key: 'accepted', label: 'Accepted' },
-              { key: 'rejected', label: 'Rejected' },
-              { key: 'expired', label: 'Expired' },
+              { key: 'all', label: t('common.filters.all') || 'All' },
+              { key: 'pending', label: t('offers.status.pending') || 'Pending' },
+              { key: 'awaiting_response', label: t('offers.status.awaitingResponse') || 'Awaiting' },
+              { key: 'accepted', label: t('offers.status.accepted') || 'Accepted' },
+              { key: 'rejected', label: t('offers.status.rejected') || 'Rejected' },
+              { key: 'expired', label: t('offers.status.expired') || 'Expired' },
             ].map(pill => (
               <button
                 key={pill.key}
                 onClick={() => setStatusFilter(pill.key as any)}
-                className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   (statusFilter as any) === pill.key
-                    ? 'bg-blue-600 text-white border-blue-600'
-                    : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
+                    ? 'bg-slate-700 text-white'
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                 }`}
               >
                 {pill.label}
@@ -221,17 +206,16 @@ const OffersList: React.FC<OffersListProps> = ({
           {filteredAndSortedOffers.map((offer) => {
             const daysPending = getDaysPending(offer);
             const isOverdue = daysPending > 7 && offer.status === 'pending';
-            const StatusBadge = getStatusBadge(offer.status || 'pending');
 
             return (
-              <div key={offer.id} className={`group bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow`}>
+              <ListCard key={offer.id} className="group">
                 <div className="p-5">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <div className="text-base font-semibold text-gray-900">{offer.customerName || 'Unknown'}</div>
                       <div className="text-sm text-gray-500">{offer.customerEmail || 'No email'}</div>
                     </div>
-                    {StatusBadge}
+                    <StatusBadge status={offer.status || 'pending'} />
                   </div>
 
                   <div className="mt-4 flex items-center justify-between">
@@ -315,7 +299,7 @@ const OffersList: React.FC<OffersListProps> = ({
                     )}
                   </div>
                 </div>
-              </div>
+              </ListCard>
             );
           })}
         </div>

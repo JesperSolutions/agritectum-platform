@@ -20,6 +20,9 @@
   "common.buttons.filter": "Filtrer",
   "common.buttons.sort": "Sorter",
   "common.filters": "Filter",
+  "common.filters.all": "Alle",
+  "common.filters.upcoming": "Kommende",
+  "common.filters.past": "Tidligere",
   "common.buttons.export": "Eksporter",
   "common.buttons.import": "Importer",
   "common.buttons.download": "Download",
@@ -40,6 +43,7 @@
   "common.status.inactive": "Inaktiv",
   "common.status.pending": "Afventer",
   "common.status.completed": "Færdig",
+  "common.status.expired": "Udløbet",
   "common.status.draft": "Kladde",
   "common.status.sent": "Sendt",
   "common.status.archived": "Arkiveret",
@@ -209,6 +213,12 @@
   "issueTemplates.mossGrowth.description": "Mos eller algevækst på tagfladen, hvilket kan beholde fugt og forårsage skader.",
   "issueTemplates.mossGrowth.location": "Skyggede områder",
 
-  "roofImage.pinInstruction": "💡 Klik på billedet for at tilføje markører, der markerer problemsteder. Markører kan linkes til specifikke problemer."
+  "roofImage.pinInstruction": "💡 Klik på billedet for at tilføje markører, der markerer problemsteder. Markører kan linkes til specifikke problemer.",
+
+  "common.signedInAs": "Logget ind som",
+  "common.roles.customer": "Kunde",
+  "common.roles.inspector": "Inspektør",
+  "common.roles.branchAdmin": "Filialadministrator",
+  "common.roles.superAdmin": "Superadministrator"
 }
 

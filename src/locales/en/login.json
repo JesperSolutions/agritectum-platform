@@ -55,5 +55,11 @@
   "resetPassword.error.passwordRequirements": "Password must contain uppercase and lowercase letters and numbers",
   "resetPassword.error.passwordTooWeak": "Password is too weak",
   "resetPassword.error.passwordsDoNotMatch": "Passwords do not match",
-  "resetPassword.error.generic": "Could not reset password. Please try again later."
+  "resetPassword.error.generic": "Could not reset password. Please try again later.",
+  "login.customerPortal": "Customer Portal",
+  "login.welcomeMessage": "Sign in to access your account",
+  "login.showPassword": "Show password",
+  "login.hidePassword": "Hide password",
+  "login.noAccount": "Don't have an account?",
+  "login.registerHere": "Register here"
 }

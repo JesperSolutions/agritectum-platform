@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useIntl } from '../../hooks/useIntl';
 import { getScheduledVisitsByCustomer } from '../../services/scheduledVisitService';
 import { ScheduledVisit } from '../../types';
-import { Calendar, MapPin, User } from 'lucide-react';
+import { Calendar, MapPin, User, CheckCircle, XCircle, ExternalLink } from 'lucide-react';
 import LoadingSpinner from '../common/LoadingSpinner';
 import FilterTabs from '../shared/filters/FilterTabs';
 import StatusBadge from '../shared/badges/StatusBadge';
@@ -11,10 +12,12 @@ import IconLabel from '../shared/layouts/IconLabel';
 import ListCard from '../shared/cards/ListCard';
 import PageHeader from '../shared/layouts/PageHeader';
 import { formatDateTime } from '../../utils/dateFormatter';
+import { Button } from '../ui/button';
 
 const ScheduledVisitsList: React.FC = () => {
   const { currentUser } = useAuth();
   const { t } = useIntl();
+  const navigate = useNavigate();
   const [visits, setVisits] = useState<ScheduledVisit[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'upcoming' | 'past'>('all');
@@ -118,6 +121,41 @@ const ScheduledVisitsList: React.FC = () => {
 
               {visit.description && (
                 <p className='mt-4 text-sm text-gray-600'>{visit.description}</p>
+              )}
+
+              {/* Action buttons for pending visits */}
+              {visit.customerResponse === 'pending' && visit.status === 'scheduled' && (
+                <div className='mt-6 pt-4 border-t border-slate-200 flex gap-3'>
+                  <Button
+                    onClick={() => navigate(`/portal/appointment/${visit.id}/respond?token=${visit.publicToken || ''}`)}
+                    className='flex-1 bg-green-600 hover:bg-green-700'
+                  >
+                    <CheckCircle className='w-4 h-4 mr-2' />
+                    {t('schedule.visits.accept') || 'Accept'}
+                  </Button>
+                  <Button
+                    onClick={() => navigate(`/portal/appointment/${visit.id}/respond?token=${visit.publicToken || ''}`)}
+                    variant='outline'
+                    className='flex-1 border-red-300 text-red-700 hover:bg-red-50'
+                  >
+                    <XCircle className='w-4 h-4 mr-2' />
+                    {t('schedule.visits.reject') || 'Reject'}
+                  </Button>
+                </div>
+              )}
+
+              {/* Report link for completed visits */}
+              {visit.status === 'completed' && visit.reportId && (
+                <div className='mt-6 pt-4 border-t border-slate-200'>
+                  <Button
+                    onClick={() => window.open(`/report/view/${visit.reportId}`, '_blank')}
+                    variant='outline'
+                    className='w-full'
+                  >
+                    <ExternalLink className='w-4 h-4 mr-2' />
+                    {t('schedule.visits.viewReport') || 'View Inspection Report'}
+                  </Button>
+                </div>
               )}
             </ListCard>
           ))}

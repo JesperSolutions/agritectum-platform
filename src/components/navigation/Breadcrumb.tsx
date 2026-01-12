@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
-import { ChevronRight, Home, Building, Users, FileText, BarChart3, Settings, DollarSign } from 'lucide-react';
+import { ChevronRight, Home, Building, Users, FileText, BarChart3, Settings, DollarSign, Calendar, FileCheck, Mail, Leaf, User } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useIntl } from '../../hooks/useIntl';
 
@@ -31,13 +31,21 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({
   const routeMap: Record<string, BreadcrumbItem> = {
     '/': { label: t('navigation.home'), icon: <Home className="w-4 h-4" /> },
     '/dashboard': { label: t('navigation.dashboard'), icon: <Home className="w-4 h-4" /> },
+    '/profile': { label: t('navigation.profile') || 'Profile', icon: <User className="w-4 h-4" /> },
     '/admin/branches': { label: t('navigation.branches'), icon: <Building className="w-4 h-4" /> },
     '/admin/users': { label: t('navigation.users'), icon: <Users className="w-4 h-4" /> },
     '/admin/reports': { label: t('navigation.reports'), icon: <FileText className="w-4 h-4" /> },
     '/reports': { label: t('navigation.reports'), icon: <FileText className="w-4 h-4" /> },
     '/offers': { label: t('navigation.offers'), icon: <DollarSign className="w-4 h-4" /> },
-    '/analytics': { label: t('navigation.analytics'), icon: <BarChart3 className="w-4 h-4" /> },
+    '/schedule': { label: t('navigation.schedule') || 'Schedule', icon: <Calendar className="w-4 h-4" /> },
+    '/admin/customers': { label: t('navigation.customers'), icon: <Users className="w-4 h-4" /> },
     '/customers': { label: t('navigation.customers'), icon: <Users className="w-4 h-4" /> },
+    '/admin/service-agreements': { label: t('navigation.serviceAgreements') || 'Service Agreements', icon: <FileCheck className="w-4 h-4" /> },
+    '/admin/analytics': { label: t('navigation.analytics'), icon: <BarChart3 className="w-4 h-4" /> },
+    '/analytics': { label: t('navigation.analytics'), icon: <BarChart3 className="w-4 h-4" /> },
+    '/admin/building-esg-improvements': { label: t('navigation.esgImprovements') || 'ESG Improvements', icon: <Leaf className="w-4 h-4" /> },
+    '/admin/esg-service': { label: t('navigation.esgService') || 'ESG Service', icon: <Leaf className="w-4 h-4" /> },
+    '/admin/email-templates': { label: t('navigation.emailTemplates') || 'Email Templates', icon: <Mail className="w-4 h-4" /> },
     '/settings': { label: t('navigation.settings'), icon: <Settings className="w-4 h-4" /> },
     '/report/new': { label: t('navigation.newReport'), icon: <FileText className="w-4 h-4" /> },
     '/report/edit': { label: t('navigation.editReport'), icon: <FileText className="w-4 h-4" /> },

@@ -22,6 +22,7 @@ export default defineConfig({
     include: ['leaflet'],
   },
   build: {
+    sourcemap: true, // Enable source maps for production debugging
     modulePreload: { polyfill: true },
     manifest: true,
     commonjsOptions: {

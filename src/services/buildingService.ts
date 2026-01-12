@@ -12,7 +12,18 @@ import {
   orderBy,
 } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
-import { Building } from '../types';
+import { Building, Report, ServiceAgreement, ScheduledVisit } from '../types';
+
+export interface BuildingActivity {
+  id: string;
+  type: 'report' | 'service_agreement' | 'appointment' | 'scheduled_visit';
+  title: string;
+  description?: string;
+  date: string;
+  status?: string;
+  link?: string;
+  metadata?: Record<string, unknown>;
+}
 
 const removeUndefinedFields = <T extends Record<string, unknown>>(data: T): T => {
   const cleanedEntries = Object.entries(data).reduce<Record<string, unknown>>((acc, [key, value]) => {
@@ -84,34 +95,193 @@ export const getBuildingById = async (buildingId: string): Promise<Building | nu
 };
 
 // Get buildings by customer ID
-export const getBuildingsByCustomer = async (customerId: string): Promise<Building[]> => {
+/**
+ * Get all buildings for a branch
+ * @param branchId - Branch ID
+ * @returns Array of buildings
+ */
+export const getBuildingsByBranch = async (branchId: string): Promise<Building[]> => {
   try {
     const buildingsRef = collection(db, 'buildings');
     const q = query(
+      buildingsRef,
+      where('branchId', '==', branchId),
+      orderBy('createdAt', 'desc')
+    );
+    const snapshot = await getDocs(q);
+
+    return snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as Building[];
+  } catch (error) {
+    console.error('Error fetching buildings by branch:', error);
+    throw error;
+  }
+};
+
+export const getBuildingsByCustomer = async (customerId: string, branchId?: string): Promise<Building[]> => {
+  try {
+    const buildingsRef = collection(db, 'buildings');
+    let q;
+    
+    // Try to query with branchId if provided (for better security and performance)
+    if (branchId) {
+      try {
+        q = query(
+          buildingsRef,
+          where('customerId', '==', customerId),
+          where('branchId', '==', branchId),
+          orderBy('createdAt', 'desc')
+        );
+        
+        const querySnapshot = await getDocs(q);
+        return querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Building[];
+      } catch (indexError: any) {
+        // If composite index doesn't exist, fall back to querying by branchId first
+        if (indexError.code === 'failed-precondition' || indexError.message?.includes('index')) {
+          console.warn('⚠️ Missing Firestore index for (customerId, branchId). Falling back to branchId query + client-side filtering.');
+          
+          // Query by branchId first (this should work with existing indexes)
+          try {
+            q = query(
+              buildingsRef,
+              where('branchId', '==', branchId),
+              orderBy('createdAt', 'desc')
+            );
+            
+            const branchSnapshot = await getDocs(q);
+            const buildings = branchSnapshot.docs.map(doc => ({
+              id: doc.id,
+              ...doc.data(),
+            })) as Building[];
+            
+            // Filter by customerId on client side
+            return buildings.filter(building => building.customerId === customerId);
+          } catch (branchError: any) {
+            // If index is still building, try without orderBy
+            if (branchError.code === 'failed-precondition' || branchError.message?.includes('index')) {
+              console.warn('⚠️ Index still building. Querying without orderBy...');
+              try {
+                q = query(
+                  buildingsRef,
+                  where('branchId', '==', branchId)
+                );
+                
+                const branchSnapshot = await getDocs(q);
+                const buildings = branchSnapshot.docs.map(doc => ({
+                  id: doc.id,
+                  ...doc.data(),
+                })) as Building[];
+                
+                // Filter by customerId on client side and sort manually
+                const filtered = buildings.filter(building => building.customerId === customerId);
+                return filtered.sort((a, b) => {
+                  const aDate = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+                  const bDate = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+                  return bDate - aDate;
+                });
+              } catch (simpleError: any) {
+                console.error('Error fetching buildings (simple query):', simpleError);
+                return [];
+              }
+            }
+            // If even branchId query fails, return empty array
+            console.error('Error fetching buildings by branch:', branchError);
+            return [];
+          }
+        } else {
+          throw indexError;
+        }
+      }
+    }
+    
+    // Fallback: Query by customerId only (or if no branchId provided)
+    q = query(
       buildingsRef,
       where('customerId', '==', customerId),
       orderBy('createdAt', 'desc')
     );
 
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(doc => ({
+    const buildings = querySnapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data(),
     })) as Building[];
+    
+    // Filter by branchId on client side if provided
+    if (branchId) {
+      return buildings.filter(building => building.branchId === branchId);
+    }
+    
+    return buildings;
   } catch (error: any) {
     console.error('Error fetching buildings by customer:', error);
     
-    // Handle missing index error
+    // Handle missing index error - fallback to querying by branchId if available
     if (error.code === 'failed-precondition' || error.message?.includes('index')) {
-      console.warn('⚠️ Missing Firestore index detected. Falling back to client-side filtering.');
-      const buildingsRef = collection(db, 'buildings');
-      const snapshot = await getDocs(buildingsRef);
-      const buildings = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Building[];
+      if (branchId) {
+        console.warn('⚠️ Missing Firestore index detected. Falling back to branchId query + client-side filtering.');
+        try {
+          const buildingsRef = collection(db, 'buildings');
+          let q = query(
+            buildingsRef,
+            where('branchId', '==', branchId),
+            orderBy('createdAt', 'desc')
+          );
+          
+          try {
+            const snapshot = await getDocs(q);
+            const buildings = snapshot.docs.map(doc => ({
+              id: doc.id,
+              ...doc.data(),
+            })) as Building[];
 
-      return buildings.filter(building => building.customerId === customerId);
+            // Filter by customerId on client side
+            return buildings.filter(building => building.customerId === customerId);
+          } catch (indexError: any) {
+            // If index is still building, try without orderBy
+            if (indexError.code === 'failed-precondition' || indexError.message?.includes('index')) {
+              console.warn('⚠️ Index still building. Querying without orderBy...');
+              q = query(
+                buildingsRef,
+                where('branchId', '==', branchId)
+              );
+              
+              const snapshot = await getDocs(q);
+              const buildings = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data(),
+              })) as Building[];
+
+              // Filter by customerId on client side and sort manually
+              const filtered = buildings.filter(building => building.customerId === customerId);
+              return filtered.sort((a, b) => {
+                const aDate = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+                const bDate = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+                return bDate - aDate;
+              });
+            }
+            throw indexError;
+          }
+        } catch (branchError: any) {
+          console.error('Error fetching buildings by branch:', branchError);
+          // If permission error, return empty array
+          if (branchError.code === 'permission-denied') {
+            return [];
+          }
+          throw branchError;
+        }
+      }
+    }
+    
+    // If permission error, return empty array instead of throwing
+    if (error.code === 'permission-denied') {
+      console.warn('⚠️ Permission denied when fetching buildings. Returning empty array.');
+      return [];
     }
 
     throw new Error('Failed to fetch buildings by customer');
@@ -247,4 +417,183 @@ export const deleteBuilding = async (buildingId: string): Promise<void> => {
   }
 };
 
+// Find or create a building for a customer
+// This ensures all reports are linked to a building entity
+export const findOrCreateBuilding = async (
+  customerId: string,
+  address: string,
+  branchId: string,
+  roofType?: string,
+  roofSize?: number,
+  buildingType?: string,
+  createdBy?: string
+): Promise<string> => {
+  try {
+    if (!address || !address.trim()) {
+      throw new Error('Building address is required');
+    }
+
+    // First, try to find existing building by customer and address
+    const buildingsRef = collection(db, 'buildings');
+    let q = query(
+      buildingsRef,
+      where('customerId', '==', customerId),
+      where('branchId', '==', branchId)
+    );
+
+    try {
+      const snapshot = await getDocs(q);
+      const buildings = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as Building[];
+
+      // Find building with matching address (case-insensitive, normalized)
+      const normalizedAddress = address.trim().toLowerCase();
+      const existingBuilding = buildings.find(b => 
+        b.address?.trim().toLowerCase() === normalizedAddress
+      );
+
+      if (existingBuilding) {
+        console.log('✅ Found existing building:', existingBuilding.id);
+        return existingBuilding.id;
+      }
+    } catch (queryError: any) {
+      // If query fails (e.g., missing index), fall back to creating new building
+      console.warn('⚠️ Could not query buildings, will create new one:', queryError.message);
+    }
+
+    // No existing building found, create a new one
+    console.log('🔨 Creating new building for address:', address);
+    const newBuilding: Omit<Building, 'id' | 'createdAt'> = {
+      customerId: customerId,
+      address: address.trim(),
+      branchId: branchId,
+      roofType: roofType as any,
+      roofSize: roofSize,
+      buildingType: buildingType as any,
+      createdBy: createdBy,
+    };
+
+    const buildingId = await createBuilding(newBuilding);
+    console.log('✅ Created new building:', buildingId);
+    return buildingId;
+  } catch (error) {
+    console.error('Error finding or creating building:', error);
+    throw new Error('Failed to find or create building');
+  }
+};
+
+// Get combined activity timeline for a building
+export const getBuildingActivity = async (
+  buildingId: string,
+  customerId: string,
+  branchId?: string
+): Promise<BuildingActivity[]> => {
+  try {
+    const activities: BuildingActivity[] = [];
+
+    // Fetch reports, service agreements, and scheduled visits in parallel
+    const [reports, serviceAgreements, scheduledVisits] = await Promise.all([
+      // Import dynamically to avoid circular dependencies
+      import('./reportService').then(module => module.getReportsByBuildingId(buildingId, branchId).catch(() => [])),
+      import('./serviceAgreementService').then(module => module.getServiceAgreementsByBuilding(buildingId).catch(() => [])),
+      import('./scheduledVisitService').then(module => module.getScheduledVisitsByBuilding(buildingId).catch(() => [])),
+    ]) as [Report[], ServiceAgreement[], ScheduledVisit[]];
+
+    // Convert reports to activities
+    reports.forEach(report => {
+      activities.push({
+        id: report.id,
+        type: 'report',
+        title: report.isOffer
+          ? `Offer - ${report.customerName || 'Customer'}`
+          : `Inspection Report - ${report.customerName || 'Customer'}`,
+        description: report.conditionNotes || undefined,
+        date: report.inspectionDate || report.createdAt,
+        status: report.status,
+        link: `/reports/${report.id}`,
+        metadata: {
+          reportId: report.id,
+          inspectionDate: report.inspectionDate,
+          roofType: report.roofType,
+          issuesFound: report.issuesFound?.length || 0,
+          isOffer: report.isOffer,
+        },
+      });
+    });
+
+    // Convert service agreements to activities
+    serviceAgreements.forEach(agreement => {
+      activities.push({
+        id: agreement.id,
+        type: 'service_agreement',
+        title: `${agreement.agreementType.charAt(0).toUpperCase() + agreement.agreementType.slice(1)} Service Agreement`,
+        description: agreement.description || agreement.title,
+        date: agreement.createdAt,
+        status: agreement.status,
+        link: `/portal/service-agreements/${agreement.id}`,
+        metadata: {
+          agreementId: agreement.id,
+          agreementType: agreement.agreementType,
+          startDate: agreement.startDate,
+          endDate: agreement.endDate,
+          nextServiceDate: agreement.nextServiceDate,
+        },
+      });
+
+      // Add next service date as a future activity if active
+      if (agreement.status === 'active' && agreement.nextServiceDate) {
+        const nextServiceDate = new Date(agreement.nextServiceDate);
+        if (nextServiceDate >= new Date()) {
+          activities.push({
+            id: `${agreement.id}-next-service`,
+            type: 'scheduled_visit',
+            title: `Scheduled Service - ${agreement.title}`,
+            description: `Next service visit scheduled`,
+            date: agreement.nextServiceDate,
+            status: 'scheduled',
+            link: `/portal/service-agreements/${agreement.id}`,
+            metadata: {
+              agreementId: agreement.id,
+              serviceType: agreement.agreementType,
+            },
+          });
+        }
+      }
+    });
+
+    // Convert scheduled visits to activities
+    scheduledVisits.forEach(visit => {
+      activities.push({
+        id: visit.id,
+        type: 'scheduled_visit',
+        title: visit.title || `Scheduled Visit - ${visit.customerName}`,
+        description: visit.description || visit.inspectorNotes || undefined,
+        date: visit.scheduledDate,
+        status: visit.status,
+        link: `/portal/scheduled-visits/${visit.id}`,
+        metadata: {
+          visitId: visit.id,
+          scheduledTime: visit.scheduledTime,
+          visitType: visit.visitType,
+          assignedInspector: visit.assignedInspectorName,
+          customerResponse: visit.customerResponse,
+        },
+      });
+    });
+
+    // Sort by date (newest first)
+    activities.sort((a, b) => {
+      const dateA = new Date(a.date).getTime();
+      const dateB = new Date(b.date).getTime();
+      return dateB - dateA;
+    });
+
+    return activities;
+  } catch (error) {
+    console.error('Error fetching building activity:', error);
+    throw new Error('Failed to fetch building activity');
+  }
+};
 
