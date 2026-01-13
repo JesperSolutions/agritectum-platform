@@ -1,0 +1,79 @@
+{
+  "esg": {
+    "calculator": {
+      "title": "Tag For Godt",
+      "subtitle": "Design dit tag for godt",
+      "step": "Trin",
+      "of": "af",
+      "footer": "Bæredygtige byggelösninger",
+      "calculate": "Beregn påvirkning",
+      "reportSaved": "Rapport gemt!",
+      "errors": {
+        "roofSizeRequired": "Tagstørrelse er påkrævet",
+        "roleRequired": "Vælg venligst en rolle",
+        "locationRequired": "Angiv venligst en placering",
+        "calculationFailed": "Beregningen mislykkedes"
+      },
+      "roles": {
+        "homeowner": "Husejer",
+        "professional": "Professionel",
+        "investor": "Investor"
+      },
+      "step1": {
+        "title": "Vælg din rolle",
+        "subtitle": "Fortæl os om dit ekspertiseniveau"
+      },
+      "step2": {
+        "title": "Projektplacering",
+        "subtitle": "Placering hjælper os med at give nøjagtige miljødata og lokale incitamenter.",
+        "address": "Projektadresse",
+        "addressPlaceholder": "Angiv fuld adresse",
+        "useLocation": "Brug aktuel"
+      },
+      "step3": {
+        "title": "Tagkonfiguration",
+        "subtitle": "Konfigurer dine tagsegmenter og se miljøpåvirkning i realtid",
+        "totalRoofSize": "Samlet tagstørrelse",
+        "segments": "Segmenter",
+        "allocated": "Tildelt",
+        "roofAllocation": "Tagtildeling",
+        "roofSegments": "Tagsegmenter",
+        "configureAreas": "Konfigurer forskellige områder med specifikke løsninger",
+        "percentage": "Procent",
+        "solution": "Taglösning",
+        "benefits": "Fordele",
+        "totalCost": "Samlede omkostninger",
+        "allocationWarning": "Tagtildelingen skal være lig med 100%"
+      },
+      "step4": {
+        "title": "Din Tag For Godt-analyse",
+        "subtitle": "Omfattende analyse af dine 4 tagsektioner og deres miljøpåvirkning",
+        "complete": "Analyse fuldført",
+        "noMetrics": "Ingen målinger beregnet",
+        "executiveSummary": "Ledelsessammenfatning",
+        "executiveSummaryText": "Din tagkonfiguration vil give betydelige miljømæssige og økonomiske fordele",
+        "environmentalImpact": "Miljøpåvirkning",
+        "financialImpact": "Økonomisk påvirkning",
+        "paybackPeriod": "Tilbagebetalingsperiode",
+        "co2Offset": "kg CO₂/år",
+        "annualSavings": "Årlige besparelser",
+        "totalInvestment": "Samlet investering",
+        "segmentBreakdown": "Tagsegment-opdeling",
+        "environmentalImpactDetail": "Miljøpåvirkning",
+        "environmentalImpactText": "Dit tagsystems positive miljøpåvirkning udtrykt på letforståelig måde",
+        "treesEquivalent": "Træäkvivalenter",
+        "co2AbsorptionPerYear": "CO₂-absorption pr. år",
+        "kwhEnergyImpact": "kWh energipåvirkning",
+        "savingsAndGeneration": "Besparelser + produktion",
+        "noxReduction": "kg NOₓ-reduktion",
+        "airQualityImprovement": "Luftkvalitetsforbedring",
+        "viewResults": "Se resultater"
+      }
+    }
+  },
+  "common": {
+    "back": "Tilbage",
+    "next": "Næste",
+    "calculating": "Beregner..."
+  }
+}

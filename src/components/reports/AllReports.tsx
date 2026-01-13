@@ -28,6 +28,7 @@ import {
 import Tooltip from '../Tooltip';
 import ConfirmationDialog from '../common/ConfirmationDialog';
 import EmptyState from '../common/EmptyState';
+import EnhancedReportsView from './EnhancedReportsView';
 import { formatSwedishDate } from '../../utils/dateFormatter';
 import { logger } from '../../utils/logger';
 
@@ -64,6 +65,7 @@ const AllReports: React.FC<AllReportsProps> = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [reportToDelete, setReportToDelete] = useState<Report | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+  const [viewMode, setViewMode] = useState<'enhanced' | 'traditional'>('enhanced');
 
   // Save filters when they change
   useEffect(() => {
@@ -482,16 +484,16 @@ const AllReports: React.FC<AllReportsProps> = () => {
           <h2 className='text-2xl font-bold text-slate-900 mb-2'>{t('errors.access.denied')}</h2>
           <p className='text-slate-600'>{t('errors.access.deniedMessage')}</p>
           <p className='text-sm text-slate-500 mt-2'>
-            Current role: {currentUser?.role || 'No role'}
+            {t('reports.currentRole')}: {currentUser?.role || t('reports.noRole')}
           </p>
           <div className='mt-4 p-4 bg-slate-100 rounded text-left text-xs'>
             <p>
-              <strong>Debug Info:</strong>
+              <strong>{t('reports.debug.title')}</strong>
             </p>
-            <p>User: {currentUser?.email || 'No user'}</p>
-            <p>Role: {currentUser?.role || 'No role'}</p>
-            <p>Permission Level: {currentUser?.permissionLevel || 'No permission level'}</p>
-            <p>UID: {currentUser?.uid || 'No UID'}</p>
+            <p>{t('reports.debug.user')}: {currentUser?.email || t('reports.debug.noUser')}</p>
+            <p>{t('reports.debug.role')}: {currentUser?.role || t('reports.debug.noRole')}</p>
+            <p>{t('reports.debug.permission')}: {currentUser?.permissionLevel || t('reports.debug.noPermission')}</p>
+            <p>{t('reports.debug.uid')}: {currentUser?.uid || t('reports.debug.noUid')}</p>
           </div>
         </div>
       </div>
@@ -576,6 +578,30 @@ const AllReports: React.FC<AllReportsProps> = () => {
                 <User className='h-4 w-4 mr-2' />
 {showCustomerSearch ? t('customer.hideSearch') : t('customer.search')}
               </button>
+
+              {/* View Mode Toggle */}
+              <div className='flex items-center gap-2 bg-slate-100 rounded-lg p-1 border border-slate-200'>
+                <button
+                  onClick={() => setViewMode('enhanced')}
+                  className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
+                    viewMode === 'enhanced'
+                      ? 'bg-white text-slate-900 shadow-sm'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  📊 Analytics
+                </button>
+                <button
+                  onClick={() => setViewMode('traditional')}
+                  className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
+                    viewMode === 'traditional'
+                      ? 'bg-white text-slate-900 shadow-sm'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  📋 List
+                </button>
+              </div>
               <button
                 onClick={() => setShowFilters(!showFilters)}
                 className='inline-flex items-center px-3 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 shadow-sm'
@@ -853,30 +879,42 @@ const AllReports: React.FC<AllReportsProps> = () => {
           </div>
         )}
 
-        {/* Reports Table */}
+        {/* Reports View */}
         {!loading && !error && (
-          <div className='bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden'>
-            {filteredAndSortedReports.length === 0 ? (
-              <EmptyState
-                icon={FileText}
-                title={searchTerm || statusFilter !== 'all' || branchFilter !== 'all'
-                  ? t('reports.noReportsFound')
-                  : t('reports.noReports')}
-                description={searchTerm || statusFilter !== 'all' || branchFilter !== 'all'
-                  ? t('reports.tryAdjustingFilters')
-                  : t('reports.noReportsMessage')}
-                actionLabel={searchTerm || statusFilter !== 'all' || branchFilter !== 'all'
-                  ? undefined
-                  : t('reports.newReport')}
-                onAction={searchTerm || statusFilter !== 'all' || branchFilter !== 'all'
-                  ? undefined
-                  : () => navigate('/report/new')}
-              />
-            ) : (
-              <>
-                {/* Desktop Table View */}
-                <div className='hidden lg:block overflow-x-auto'>
-                  <table className='min-w-full divide-y divide-slate-200'>
+          <>
+            {viewMode === 'enhanced' && filteredAndSortedReports.length > 0 && (
+              <div className='mb-8'>
+                <EnhancedReportsView
+                  reports={filteredAndSortedReports}
+                  onReportClick={handleViewReport}
+                  formatCurrency={formatCurrencySafe}
+                />
+              </div>
+            )}
+
+            {(viewMode === 'traditional' || filteredAndSortedReports.length === 0) && (
+              <div className='bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden'>
+                {filteredAndSortedReports.length === 0 ? (
+                  <EmptyState
+                    icon={FileText}
+                    title={searchTerm || statusFilter !== 'all' || branchFilter !== 'all'
+                      ? t('reports.noReportsFound')
+                      : t('reports.noReports')}
+                    description={searchTerm || statusFilter !== 'all' || branchFilter !== 'all'
+                      ? t('reports.tryAdjustingFilters')
+                      : t('reports.noReportsMessage')}
+                    actionLabel={searchTerm || statusFilter !== 'all' || branchFilter !== 'all'
+                      ? undefined
+                      : t('reports.newReport')}
+                    onAction={searchTerm || statusFilter !== 'all' || branchFilter !== 'all'
+                      ? undefined
+                      : () => navigate('/report/new')}
+                  />
+                ) : (
+                  <>
+                    {/* Desktop Table View */}
+                    <div className='hidden lg:block overflow-x-auto'>
+                      <table className='min-w-full divide-y divide-slate-200'>
                     <thead className='bg-slate-50'>
                       <tr>
                         <th className='px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider w-12'>
@@ -1091,9 +1129,11 @@ const AllReports: React.FC<AllReportsProps> = () => {
                     </div>
                   ))}
                 </div>
-              </>
+                  </>
+                )}
+              </div>
             )}
-          </div>
+          </>
         )}
 
         {/* Delete Confirmation Dialog */}

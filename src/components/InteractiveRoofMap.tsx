@@ -41,8 +41,8 @@ const InteractiveRoofMap: React.FC<InteractiveRoofMapProps> = ({
   useEffect(() => {
     const roundedMarkers = existingMarkers.map(marker => ({
       ...marker,
-      lat: Math.round(marker.lat),
-      lon: Math.round(marker.lon),
+      lat: Math.round(marker.lat * 100) / 100,
+      lon: Math.round(marker.lon * 100) / 100,
     }));
     setMarkers(roundedMarkers);
   }, [existingMarkers]);
@@ -145,9 +145,9 @@ const InteractiveRoofMap: React.FC<InteractiveRoofMapProps> = ({
 
         // Load existing markers
         const addMarkerToMap = (markerData: MapMarker, isExisting = false) => {
-          // Round coordinates to whole numbers
-          const roundedLat = Math.round(markerData.lat);
-          const roundedLon = Math.round(markerData.lon);
+          // Round coordinates to 2 decimal places
+          const roundedLat = Math.round(markerData.lat * 100) / 100;
+          const roundedLon = Math.round(markerData.lon * 100) / 100;
           
           const customIcon = L.divIcon({
             className: 'custom-marker',
@@ -240,9 +240,9 @@ const InteractiveRoofMap: React.FC<InteractiveRoofMapProps> = ({
           // Handle drag
           marker.on('dragend', () => {
             const position = marker.getLatLng();
-            // Round coordinates to whole numbers
-            const roundedLat = Math.round(position.lat);
-            const roundedLon = Math.round(position.lng);
+            // Round coordinates to 2 decimal places
+            const roundedLat = Math.round(position.lat * 100) / 100;
+            const roundedLon = Math.round(position.lng * 100) / 100;
             const updatedMarkers = markers.map(m => 
               m.id === markerData.id 
                 ? { ...m, lat: roundedLat, lon: roundedLon }
@@ -264,9 +264,9 @@ const InteractiveRoofMap: React.FC<InteractiveRoofMapProps> = ({
         map.on('click', (e: any) => {
           const { lat: clickedLat, lng: clickedLon } = e.latlng;
           
-          // Round coordinates to whole numbers
-          const roundedLat = Math.round(clickedLat);
-          const roundedLon = Math.round(clickedLon);
+          // Round coordinates to 2 decimal places
+          const roundedLat = Math.round(clickedLat * 100) / 100;
+          const roundedLon = Math.round(clickedLon * 100) / 100;
           
           // Generate marker ID first
           const markerId = `marker_${Date.now()}`;

@@ -33,7 +33,9 @@ const BuildingsList: React.FC = () => {
     if (!currentUser) return;
     setLoading(true);
     try {
-      const data = await getBuildingsByCustomer(currentUser.uid);
+      // Use companyId (linked customer/company document) not user uid
+      const customerId = currentUser.companyId || currentUser.uid;
+      const data = await getBuildingsByCustomer(customerId);
       setBuildings(data);
     } catch (error) {
       console.error('Error loading buildings:', error);
@@ -47,8 +49,10 @@ const BuildingsList: React.FC = () => {
     if (!currentUser) return;
 
     try {
+      // Use companyId (linked customer/company document) not user uid
+      const customerId = currentUser.companyId || currentUser.uid;
       await createBuilding({
-        customerId: currentUser.uid,
+        customerId: customerId,
         address: formData.address,
         buildingType: formData.buildingType,
         roofType: formData.roofType,

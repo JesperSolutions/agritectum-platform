@@ -1,6 +1,7 @@
 {
   "projects": {
-    "default": "agritectum-app"
+    "default": "agritectum-app",
+    "agri": "agritectum-platform"
   },
   "targets": {},
   "etags": {

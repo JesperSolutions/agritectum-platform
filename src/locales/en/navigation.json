@@ -23,6 +23,11 @@
   "navigation.serviceAgreements": "Service Agreements",
   "navigation.buildings": "Buildings",
   "navigation.scheduledVisits": "Scheduled Visits",
+  "navigation.esgReports": "ESG Reports",
+  "navigation.allReports": "All Reports",
+  "navigation.operations": "Operations",
+  "navigation.esgService": "ESG Service",
+  "navigation.emailTemplates": "Email Templates",
 
   "breadcrumb.home": "Home",
   "breadcrumb.dashboard": "Dashboard",

@@ -20,6 +20,7 @@ import analytics from './analytics.json';
 import notifications from './notifications.json';
 import serviceAgreements from './serviceAgreements.json';
 import buildings from './buildings.json';
+import esg from './esg.json';
 
 // Combine all translation files into a single object
 const daMessages = {
@@ -42,6 +43,7 @@ const daMessages = {
   ...notifications,
   ...serviceAgreements,
   ...buildings,
+  ...esg,
 };
 
 export default daMessages;

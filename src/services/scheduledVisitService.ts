@@ -72,7 +72,7 @@ export const getScheduledVisits = async (user: User): Promise<ScheduledVisit[]> 
         }
       }
     } else {
-      console.warn('⚠️ Cannot query scheduled visits - missing user.uid');
+      console.warn('⚠️ Cannot query scheduled visits - missing user.uid or branchId');
       return [];
     }
 
@@ -135,10 +135,18 @@ export const getScheduledVisits = async (user: User): Promise<ScheduledVisit[]> 
     return visits;
   } catch (error: any) {
     console.error('❌ Error fetching scheduled visits:', error);
-    if (error.code === 'failed-precondition') {
+    
+    // Log detailed error for debugging
+    if (import.meta.env.DEV) {
+      console.warn('[scheduledVisitService] Full error:', error);
+      console.warn('[scheduledVisitService] User:', { uid: error.uid, branchId: error.branchId, permissionLevel: error.permissionLevel });
+    }
+    
+    // Check if it's an index issue, not a permissions issue
+    if (error.code === 'failed-precondition' || error.message?.includes('index')) {
       // Final fallback: try to fetch all and filter client-side
       try {
-        console.warn('⚠️ Attempting final fallback: fetching all visits and filtering client-side');
+        console.warn('⚠️ Missing Firestore index. Attempting final fallback: fetching all visits and filtering client-side');
         const visitsRef = collection(db, 'scheduledVisits');
         const snapshot = await getDocs(visitsRef);
         let allVisits = snapshot.docs.map(doc => ({
@@ -166,11 +174,21 @@ export const getScheduledVisits = async (user: User): Promise<ScheduledVisit[]> 
         }
 
         return allVisits;
-      } catch (fallbackError) {
+      } catch (fallbackError: any) {
         console.error('❌ Fallback also failed:', fallbackError);
+        // If the fallback fails with permissions, it's a real permissions issue
+        if (fallbackError.code === 'permission-denied') {
+          throw new Error('Missing or insufficient permissions to access scheduled visits. Please ensure your account has the correct permissions.');
+        }
         throw new Error('Firestore index required. Please create composite indexes for scheduledVisits in Firestore.');
       }
     }
+    
+    // Only throw permission error if it's actually a permission issue
+    if (error.code === 'permission-denied') {
+      throw new Error('Missing or insufficient permissions to access scheduled visits. Please ensure your account has the correct custom claims set (branchId and permissionLevel).');
+    }
+    
     throw new Error(error.message || 'Failed to fetch scheduled visits');
   }
 };

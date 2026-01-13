@@ -13,6 +13,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useReports } from '../../contexts/ReportContextSimple';
 import { useIntl } from '../../hooks/useIntl';
 import { useToast } from '../../contexts/ToastContext';
+import { getCurrencyCode, formatCurrency } from '../../utils/currency';
 import {
   Building,
   Users,
@@ -201,12 +202,23 @@ const SmartDashboard: React.FC = () => {
 
     // Load scheduled visits for this branch
     if (currentUser) {
-      const visits = await getScheduledVisits(currentUser);
-      setScheduledVisits(visits);
+      try {
+        const visits = await getScheduledVisits(currentUser);
+        setScheduledVisits(visits);
+      } catch (error: any) {
+        console.warn('⚠️ Could not load scheduled visits:', error.message);
+        // Continue with empty list if there's a permission issue
+        setScheduledVisits([]);
+      }
       
       // Load appointments for this branch
-      const apts = await getAppointments(currentUser);
-      setAppointments(apts);
+      try {
+        const apts = await getAppointments(currentUser);
+        setAppointments(apts);
+      } catch (error: any) {
+        console.warn('⚠️ Could not load appointments:', error.message);
+        setAppointments([]);
+      }
       
       // Load rejected orders for this branch
       if (currentUser.branchId) {
@@ -316,10 +328,11 @@ const SmartDashboard: React.FC = () => {
       const totalRevenue = reports.reduce((sum, r) => sum + (r.offerValue || 0), 0);
       const completionRate = totalReports > 0 ? Math.round((completedReports / totalReports) * 100) : 0;
       const activeUsers = branchStats.reduce((sum, b) => sum + b.activeUsers, 0);
+      const currencyCode = getCurrencyCode();
 
       return [
         { label: t('dashboard.totalReports'), value: totalReports, subtitle: t('dashboard.totalReportsDesc'), icon: FileText, iconColor: 'text-blue-600' },
-        { label: t('dashboard.totalRevenue'), value: `${totalRevenue.toLocaleString('sv-SE')} SEK`, subtitle: t('dashboard.offerValueDesc'), icon: DollarSign, iconColor: 'text-green-600' },
+        { label: t('dashboard.totalRevenue'), value: `${totalRevenue.toLocaleString('sv-SE')} ${currencyCode}`, subtitle: t('dashboard.offerValueDesc'), icon: DollarSign, iconColor: 'text-green-600' },
         { label: t('dashboard.completionRate'), value: `${completionRate}%`, subtitle: t('dashboard.completedReportsDesc'), icon: BarChart3, iconColor: 'text-purple-600' },
         { label: t('dashboard.activeUsers'), value: activeUsers, subtitle: t('dashboard.acrossAllBranches'), icon: Users, iconColor: 'text-orange-600' },
       ];
@@ -370,8 +383,8 @@ const SmartDashboard: React.FC = () => {
 
       return [
         { label: t('dashboard.totalReports'), value: totalReports, subtitle: '+15% ' + t('dashboard.vsLastWeek'), icon: FileText, iconColor: 'text-blue-600' },
-        { label: 'Active Service Agreements', value: activeServiceAgreements.length, subtitle: `${serviceAgreementRevenue.toLocaleString('sv-SE')} SEK/month`, icon: FileCheck, iconColor: 'text-green-600' },
-        { label: 'Upcoming Visits', value: upcomingVisits, subtitle: `${completedVisitsThisWeek} completed this week`, icon: Calendar, iconColor: 'text-purple-600' },
+        { label: t('analytics.activeServiceAgreements'), value: activeServiceAgreements.length, subtitle: `${serviceAgreementRevenue.toLocaleString('sv-SE')} ${t('dashboard.serviceAgreements.sekPerMonthRecurring')}`, icon: FileCheck, iconColor: 'text-green-600' },
+        { label: t('dashboard.scheduledVisits.title'), value: upcomingVisits, subtitle: `${completedVisitsThisWeek} ${t('dashboard.completedThisWeek')}`, icon: Calendar, iconColor: 'text-purple-600' },
         { label: t('dashboard.completionRate'), value: `${completionRate}%`, subtitle: t('dashboard.aboveTarget'), icon: CheckCircle, iconColor: 'text-orange-600' },
       ];
     }
@@ -501,7 +514,7 @@ const SmartDashboard: React.FC = () => {
                   {kpi.label}
                 </p>
                 <p className='text-3xl font-bold text-slate-900 mb-1'>{kpi.value}</p>
-                <p className='text-xs text-slate-500 font-light truncate'>
+                <p className='text-xs text-slate-500 font-light line-clamp-2 break-words'>
                   {kpi.subtitle}
                 </p>
               </div>
@@ -670,13 +683,13 @@ const SmartDashboard: React.FC = () => {
           <div className='p-6 border-b border-slate-200 flex items-center justify-between'>
             <h2 className='text-2xl font-semibold text-slate-900 flex items-center gap-2'>
               <FileCheck className='w-6 h-6 text-slate-600' />
-              Service Agreements
+              {t('dashboard.serviceAgreements.activeAgreements') || 'Service Agreements'}
             </h2>
             <button
               onClick={() => navigate('/admin/service-agreements')}
               className='px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium shadow-sm'
             >
-              View All →
+              {t('dashboard.viewAll') || 'View All'} →
             </button>
           </div>
           <div className='p-6'>
@@ -862,22 +875,24 @@ const SmartDashboard: React.FC = () => {
                 ? Math.round((serviceAgreementAnnualRevenue / totalRevenue) * 100)
                 : 0;
 
+              const currencyCode = getCurrencyCode();
+              
               return (
                 <div className='grid grid-cols-1 md:grid-cols-4 gap-6'>
                   <div className='bg-slate-50 border border-slate-200 rounded-xl p-6'>
                     <p className='text-xs text-slate-500 uppercase tracking-wide font-medium mb-2'>{t('dashboard.financialOverview.oneTimeRevenue')}</p>
                     <p className='text-2xl font-bold text-slate-900'>{oneTimeRevenue.toLocaleString('sv-SE')}</p>
-                    <p className='text-sm text-slate-600 mt-2'>{t('dashboard.financialOverview.sekReportsOffers')}</p>
+                    <p className='text-sm text-slate-600 mt-2'>{currencyCode} ({t('reports.reports')} & {t('offers.offers')})</p>
                   </div>
                   <div className='bg-slate-50 border border-slate-200 rounded-xl p-6'>
                     <p className='text-xs text-slate-500 uppercase tracking-wide font-medium mb-2'>{t('dashboard.financialOverview.recurringRevenue')}</p>
                     <p className='text-2xl font-bold text-green-600'>{serviceAgreementAnnualRevenue.toLocaleString('sv-SE')}</p>
-                    <p className='text-sm text-slate-600 mt-2'>{t('dashboard.financialOverview.sekPerYear', { monthly: serviceAgreementMonthlyRevenue.toLocaleString('sv-SE') })}</p>
+                    <p className='text-sm text-slate-600 mt-2'>{currencyCode}/år ({serviceAgreementMonthlyRevenue.toLocaleString('sv-SE')}/{t('time.month')})</p>
                   </div>
                   <div className='bg-slate-50 border border-slate-200 rounded-xl p-6'>
                     <p className='text-xs text-slate-500 uppercase tracking-wide font-medium mb-2'>{t('dashboard.totalRevenue')}</p>
                     <p className='text-2xl font-bold text-slate-900'>{totalRevenue.toLocaleString('sv-SE')}</p>
-                    <p className='text-sm text-slate-600 mt-2'>{t('dashboard.financialOverview.sekAllSources')}</p>
+                    <p className='text-sm text-slate-600 mt-2'>{currencyCode} ({t('common.allSources')})</p>
                   </div>
                   <div className='bg-slate-50 border border-slate-200 rounded-xl p-6'>
                     <p className='text-xs text-slate-500 uppercase tracking-wide font-medium mb-2'>{t('dashboard.financialOverview.recurringPercent')}</p>

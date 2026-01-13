@@ -22,6 +22,7 @@ import {
   QrCode,
   DollarSign,
   Eye,
+  Download,
 } from 'lucide-react';
 import LoadingSpinner from './common/LoadingSpinner';
 import CreateOfferModal from './offers/CreateOfferModal';
@@ -115,6 +116,53 @@ const ReportView: React.FC = () => {
   const [hasOffer, setHasOffer] = useState(false);
   const [existingOffer, setExistingOffer] = useState<Offer | null>(null);
   const [addressCoordinates, setAddressCoordinates] = useState<{ lat: number; lon: number } | null>(null);
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+
+  // PDF Generation Handler
+  const handleExportPDF = async () => {
+    if (!report) return;
+    
+    try {
+      setIsGeneratingPDF(true);
+      setToast({
+        message: t('reportView.generatingPDF') || 'Generating PDF...',
+        type: 'success',
+      });
+      
+      // Import the generateReportPDF function
+      const { generateReportPDF } = await import('../services/clientPdfService');
+      
+      // Generate PDF from public view
+      const publicUrl = `${window.location.origin}/report/public/${report.id}`;
+      const result = await generateReportPDF(report.id, {
+        format: 'A4',
+        margin: { top: '20px', bottom: '20px', left: '20px', right: '20px' }
+      });
+      
+      if (result && result.url) {
+        // Download the PDF
+        const link = document.createElement('a');
+        link.href = result.url;
+        link.download = `rapport-${report.customerName?.replace(/\s+/g, '-') || 'report'}-${new Date().toISOString().split('T')[0]}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        setToast({
+          message: t('reportView.pdfDownloaded') || 'PDF downloaded successfully',
+          type: 'success',
+        });
+      }
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      setToast({
+        message: t('reportView.pdfError') || 'Failed to generate PDF. Please try again.',
+        type: 'error',
+      });
+    } finally {
+      setIsGeneratingPDF(false);
+    }
+  };
 
   useEffect(() => {
     const loadReport = async () => {
@@ -599,6 +647,21 @@ const ReportView: React.FC = () => {
                     <QrCode className='w-4 h-4 mr-2' />
                   )}
                   {qrGenerating ? 'Generating...' : t('reportView.qrCode')}
+                </button>
+
+                <button
+                  onClick={handleExportPDF}
+                  disabled={isGeneratingPDF}
+                  className='inline-flex items-center px-3 py-2 border border-slate-300 text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed'
+                  title={t('reportView.exportPDF') || 'Export PDF'}
+                  aria-label={t('reportView.exportPDF') || 'Export PDF'}
+                >
+                  {isGeneratingPDF ? (
+                    <LoadingSpinner size='sm' />
+                  ) : (
+                    <Download className='w-4 h-4 mr-2' />
+                  )}
+                  {isGeneratingPDF ? (t('reportView.generatingPDF') || 'Generating...') : (t('reportView.exportPDF') || 'Export PDF')}
                 </button>
               </div>
             </div>

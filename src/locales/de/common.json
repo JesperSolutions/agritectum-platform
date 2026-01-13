@@ -31,6 +31,8 @@
   "common.buttons.deselectAll": "Auswahl aufheben",
   "common.buttons.clear": "Löschen",
   "common.buttons.reset": "Zurücksetzen",
+  "common.buttons.preview": "Vorschau",
+  "common.buttons.copy": "Kopieren",
   "common.buttons.loading": "Lädt...",
   "common.buttons.saving": "Speichert...",
   "common.buttons.deleting": "Löscht...",
@@ -220,5 +222,8 @@
   "common.roles.inspector": "Inspektor",
   "common.roles.branchAdmin": "Filialadministrator",
   "common.roles.superAdmin": "Superadministrator"
+  ,
+  "common.back": "Zurück",
+  "common.goBackToDashboard": "Zurück zum Dashboard"
 }
 

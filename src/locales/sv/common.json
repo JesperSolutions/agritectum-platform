@@ -16,6 +16,7 @@
   "common.buttons.next": "Nästa",
   "common.buttons.previous": "Föregående",
   "common.buttons.refresh": "Uppdatera",
+  "common.refresh": "Uppdatera",
   "common.buttons.search": "Sök",
   "common.buttons.filter": "Filtrera",
   "common.buttons.sort": "Sortera",
@@ -31,6 +32,8 @@
   "common.buttons.deselectAll": "Avmarkera alla",
   "common.buttons.clear": "Rensa",
   "common.buttons.reset": "Återställ",
+  "common.buttons.preview": "Förhandsgranska",
+  "common.buttons.copy": "Kopiera",
   "common.buttons.loading": "Laddar...",
   "common.buttons.saving": "Sparar...",
   "common.buttons.deleting": "Tar bort...",
@@ -153,6 +156,8 @@
   "common.roles.superadmin": "Superadministratör",
 
   "common.install.title": "Installera Agritectum-app",
+  "common.back": "Tillbaka",
+  "common.goBackToDashboard": "Gå tillbaka till översikten",
   "common.install.description": "Installera för offline-åtkomst och snabbare prestanda",
   "common.install.button": "Installera nu",
 

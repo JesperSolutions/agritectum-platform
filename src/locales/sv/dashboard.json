@@ -131,7 +131,6 @@
   "dashboard.serviceAgreements.activeAgreements": "Aktiva avtal",
   "dashboard.serviceAgreements.ofTotal": "av {total} totalt",
   "dashboard.serviceAgreements.monthlyRevenue": "Månadsomsättning",
-  "dashboard.serviceAgreements.sekPerMonthRecurring": "SEK/månad återkommande",
   "dashboard.serviceAgreements.expiringSoon": "Går snart ut",
   "dashboard.serviceAgreements.next30Days": "Nästa 30 dagar",
   
@@ -144,10 +143,7 @@
   "dashboard.financialOverview.title": "Ekonomisk översikt",
   "dashboard.financialOverview.viewAnalytics": "Visa analyser",
   "dashboard.financialOverview.oneTimeRevenue": "Engångsintäkter",
-  "dashboard.financialOverview.sekReportsOffers": "SEK (rapporter & offerter)",
   "dashboard.financialOverview.recurringRevenue": "Återkommande intäkter",
-  "dashboard.financialOverview.sekPerYear": "SEK/år ({monthly}/månad)",
-  "dashboard.financialOverview.sekAllSources": "SEK (alla källor)",
   "dashboard.financialOverview.recurringPercent": "Återkommande %",
   "dashboard.financialOverview.ofTotalRevenue": "av total omsättning",
   
@@ -171,5 +167,13 @@
   "dashboard.quickActions.newReport": "Ny rapport",
   "dashboard.quickActions.createReport": "Skapa rapport",
   "dashboard.quickActions.serviceAgreement": "Serviceavtal",
-  "dashboard.quickActions.createAgreement": "Skapa avtal"
+  "dashboard.quickActions.createAgreement": "Skapa avtal",
+  
+  "dashboard.completedThisWeek": "Slutförda denna vecka",
+  "dashboard.scheduledThisWeek": "Schemalagda denna vecka",
+  "dashboard.averageTime": "Genomsnittlig tid",
+  "dashboard.hours": "timmar",
+  "dashboard.allTime": "totalt",
+  "dashboard.upcoming": "kommande",
+  "dashboard.activeUsers": "Aktiva användare"
 }

@@ -30,6 +30,7 @@ export const LazyServiceAgreements = lazyWithRetry(() => import('./admin/Service
 export const LazyPublicServiceAgreementView = lazyWithRetry(() => import('./serviceAgreements/PublicServiceAgreementView'));
 export const LazyBuildingESGImprovements = lazyWithRetry(() => import('./admin/BuildingESGImprovements'));
 export const LazyESGService = lazyWithRetry(() => import('./admin/ESGService'));
+export const LazyESGReportsList = lazyWithRetry(() => import('./admin/ESGReportsList'));
 export const LazyPublicESGReportView = lazyWithRetry(() => import('./public/PublicESGReportView'));
 
 // Portal components

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test ESG Calculations</title>
+</head>
+<body>
+    <h1>ESG Calculation Test</h1>
+    <div id="output"></div>
+    
+    <script>
+        // Mock calculation function for testing
+        const ROOF_TYPE_SPECS = {
+            'Green Roof System': {
+                co2: 2.8,
+                nox: 0.08,
+                energy: 3.2,
+                water: 18.5,
+            },
+            'Photocatalytic Coating': {
+                co2: 1.6,
+                nox: 0.12,
+                energy: 0.8,
+                water: 2.1,
+            },
+            'White - Cool Roof Coating': {
+                co2: 4.2,
+                nox: 0.03,
+                energy: 12.8,
+                water: 4.5,
+            },
+            'Social Activities Area': {
+                co2: 1.2,
+                nox: 0.04,
+                energy: 0.5,
+                water: 8.3,
+            },
+        };
+
+        function testCalculation() {
+            const roofSize = 100; // 100 m²
+            const divisions = {
+                greenRoof: 25,
+                noxReduction: 25,
+                coolRoof: 25,
+                socialActivities: 25
+            };
+
+            let totalCo2PerYear = 0;
+            let totalEnergyPerYear = 0;
+            let totalWaterPerYear = 0;
+
+            // Green Roof Area
+            const greenRoofSize = (divisions.greenRoof / 100) * roofSize;
+            const greenRoofData = ROOF_TYPE_SPECS['Green Roof System'];
+            totalCo2PerYear += greenRoofData.co2 * greenRoofSize;
+            totalEnergyPerYear += greenRoofData.energy * greenRoofSize;
+            totalWaterPerYear += greenRoofData.water * greenRoofSize;
+
+            // NOx Reduction Area
+            const noxReductionSize = (divisions.noxReduction / 100) * roofSize;
+            const noxReductionData = ROOF_TYPE_SPECS['Photocatalytic Coating'];
+            totalCo2PerYear += noxReductionData.co2 * noxReductionSize;
+            totalEnergyPerYear += noxReductionData.energy * noxReductionSize;
+            totalWaterPerYear += noxReductionData.water * noxReductionSize;
+
+            // Cool Roof Area
+            const coolRoofSize = (divisions.coolRoof / 100) * roofSize;
+            const coolRoofData = ROOF_TYPE_SPECS['White - Cool Roof Coating'];
+            totalCo2PerYear += coolRoofData.co2 * coolRoofSize;
+            totalEnergyPerYear += coolRoofData.energy * coolRoofSize;
+            totalWaterPerYear += coolRoofData.water * coolRoofSize;
+
+            // Social Activities Area
+            const socialSize = (divisions.socialActivities / 100) * roofSize;
+            const socialData = ROOF_TYPE_SPECS['Social Activities Area'];
+            totalCo2PerYear += socialData.co2 * socialSize;
+            totalEnergyPerYear += socialData.energy * socialSize;
+            totalWaterPerYear += socialData.water * socialSize;
+
+            const result = {
+                roofSize: roofSize,
+                divisions: divisions,
+                co2ReductionKgPerYear: Math.round(totalCo2PerYear),
+                energySavingsKwhPerYear: Math.round(totalEnergyPerYear),
+                waterManagementLitersPerYear: Math.round(totalWaterPerYear),
+            };
+
+            document.getElementById('output').innerHTML = `
+                <h2>Test Results:</h2>
+                <p><strong>Roof Size:</strong> ${result.roofSize} m²</p>
+                <p><strong>CO2 Reduction:</strong> ${result.co2ReductionKgPerYear} kg/year</p>
+                <p><strong>Energy Savings:</strong> ${result.energySavingsKwhPerYear} kWh/year</p>
+                <p><strong>Water Management:</strong> ${result.waterManagementLitersPerYear} L/year</p>
+                <pre>${JSON.stringify(result, null, 2)}</pre>
+            `;
+        }
+
+        testCalculation();
+    </script>
+</body>
+</html>

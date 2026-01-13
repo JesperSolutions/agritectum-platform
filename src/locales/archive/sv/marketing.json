@@ -1,0 +1,18 @@
+{
+  "marketing.userRoles.title": "Användarroller & Behörigheter",
+  "marketing.userRoles.subtitle": "Tre-lagers system utformat för verksamhet med flera filialer",
+  "marketing.userRoles.superadmin.manageBranches": "Hantera alla filialer",
+  "marketing.userRoles.superadmin.viewAllReports": "Visa alla rapporter",
+  "marketing.userRoles.superadmin.createUsers": "Skapa/redigera användare",
+  "marketing.userRoles.superadmin.systemAnalytics": "Systemanalys",
+  "marketing.userRoles.superadmin.title": "Superadmin",
+  "marketing.userRoles.superadmin.permissionLevel": "Behörighetsnivå 2",
+  "marketing.brand.name": "Taklaget Service",
+  "marketing.brand.tagline": "Professionell taginspektionshantering",
+  "marketing.backToApp": "Tillbaka till appen",
+  "marketing.userRoles.branchAdmin.title": "Filialadministratör",
+  "marketing.userRoles.branchAdmin.permissionLevel": "Behörighetsnivå 1",
+  "marketing.userRoles.branchAdmin.manageBranchOnly": "Hantera endast filialen",
+  "marketing.userRoles.branchAdmin.viewBranchReports": "Visa filialrapporter",
+  "marketing.userRoles.branchAdmin.manageInspectors": "Hantera inspektörer"
+}

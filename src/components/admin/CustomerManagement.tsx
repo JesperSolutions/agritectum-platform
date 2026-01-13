@@ -20,6 +20,10 @@ import {
   AlertTriangle,
   XCircle,
   FilePlus,
+  Link2,
+  Copy,
+  Check,
+  RefreshCw,
 } from 'lucide-react';
 import Tooltip from '../Tooltip';
 import ConfirmationDialog from '../common/ConfirmationDialog';
@@ -28,6 +32,7 @@ import { logger } from '../../utils/logger';
 import { getCustomers, createCustomer, updateCustomer, deleteCustomer } from '../../services/customerService';
 import { formatCurrencyAmount } from '../../utils/currency';
 import type { SupportedLocale } from '../../utils/geolocation';
+import { createCustomerInvitation, getSignupUrl, getInvitationsForCustomer, CustomerInvitation } from '../../services/customerInvitationService';
 
 interface CustomerManagementProps {}
 
@@ -61,6 +66,14 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
   const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
 
+  // Invitation state
+  const [showInvitationModal, setShowInvitationModal] = useState(false);
+  const [invitationCustomer, setInvitationCustomer] = useState<Customer | null>(null);
+  const [generatedLink, setGeneratedLink] = useState<string | null>(null);
+  const [linkCopied, setLinkCopied] = useState(false);
+  const [generatingLink, setGeneratingLink] = useState(false);
+  const [customerInvitations, setCustomerInvitations] = useState<CustomerInvitation[]>([]);
+
   // Form state for create/edit
   const [formData, setFormData] = useState({
     name: '',
@@ -73,6 +86,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
     parentCompanyId: '' as string | undefined,
     notes: '',
   });
+
 
   // Form validation state
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
@@ -407,6 +421,62 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  };
+
+  // Handle opening invitation modal
+  const handleGenerateSignupLink = async (customer: Customer) => {
+    setInvitationCustomer(customer);
+    setGeneratedLink(null);
+    setLinkCopied(false);
+    setShowInvitationModal(true);
+    
+    // Load existing invitations for this customer
+    try {
+      const invitations = await getInvitationsForCustomer(customer.id);
+      setCustomerInvitations(invitations.filter(inv => inv.status === 'pending'));
+    } catch (error) {
+      console.error('Error loading invitations:', error);
+      setCustomerInvitations([]);
+    }
+  };
+
+  // Generate new invitation link
+  const handleCreateInvitation = async () => {
+    if (!invitationCustomer || !currentUser) return;
+    
+    setGeneratingLink(true);
+    try {
+      const invitation = await createCustomerInvitation(
+        invitationCustomer.id,
+        invitationCustomer.name,
+        currentUser.branchId || '',
+        currentUser.uid,
+        invitationCustomer.email
+      );
+      
+      const signupUrl = getSignupUrl(invitation.token);
+      setGeneratedLink(signupUrl);
+      setCustomerInvitations(prev => [invitation, ...prev]);
+      showSuccess(t('customer.invitation.created') || 'Signup link created successfully!');
+    } catch (error) {
+      console.error('Error creating invitation:', error);
+      showError(t('customer.invitation.error') || 'Failed to create signup link');
+    } finally {
+      setGeneratingLink(false);
+    }
+  };
+
+  // Copy link to clipboard
+  const handleCopyLink = async (link: string) => {
+    try {
+      await navigator.clipboard.writeText(link);
+      setLinkCopied(true);
+      showSuccess(t('customer.invitation.copied') || 'Link copied to clipboard!');
+      setTimeout(() => setLinkCopied(false), 3000);
+    } catch (error) {
+      console.error('Error copying link:', error);
+      showError(t('customer.invitation.copyError') || 'Failed to copy link');
+    }
   };
 
   // Format date (robust against invalid/Firestore Timestamp) using locale-specific format
@@ -951,6 +1021,16 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                                 </button>
                               </Tooltip>
                             )}
+                            {!isReadOnly && (
+                              <Tooltip content={t('customer.invitation.generate') || 'Generate Signup Link'}>
+                                <button
+                                  onClick={() => handleGenerateSignupLink(customer)}
+                                  className='text-blue-600 hover:text-blue-900 p-1 rounded hover:bg-blue-50'
+                                >
+                                  <Link2 className='h-4 w-4' />
+                                </button>
+                              </Tooltip>
+                            )}
                           </div>
                         </td>
                       </tr>
@@ -1084,7 +1164,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
             <div className='relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white'>
               <div className='flex justify-between items-center mb-4'>
                 <h3 className='text-lg font-medium text-slate-900'>
-                  {showCreateModal ? 'Create Customer' : 'Edit Customer'}
+                  {showCreateModal ? t('customer.createCustomer') : t('customer.editCustomer')}
                 </h3>
                 <button
                   onClick={() => {
@@ -1100,7 +1180,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
 
               <div className='space-y-4'>
                 <div>
-                  <label className='block text-sm font-medium text-gray-700 mb-1'>Name *</label>
+                  <label className='block text-sm font-medium text-gray-700 mb-1'>{t('customer.form.name')} *</label>
                   <input
                     type='text'
                     value={formData.name}
@@ -1115,6 +1195,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                         ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
                         : 'border-slate-300 focus:ring-slate-500 focus:border-slate-500'
                     }`}
+                    placeholder={t('customer.form.namePlaceholder')}
                     required
                   />
                   {formErrors.name && (
@@ -1123,7 +1204,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                 </div>
 
                 <div>
-                  <label className='block text-sm font-medium text-gray-700 mb-1'>Email</label>
+                  <label className='block text-sm font-medium text-gray-700 mb-1'>{t('customer.form.email')}</label>
                   <input
                     type='email'
                     value={formData.email}
@@ -1138,6 +1219,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                         ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
                         : 'border-slate-300 focus:ring-slate-500 focus:border-slate-500'
                     }`}
+                    placeholder={t('customer.form.emailPlaceholder')}
                   />
                   {formErrors.email && (
                     <p className='mt-1 text-sm text-red-600'>{formErrors.email}</p>
@@ -1145,7 +1227,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                 </div>
 
                 <div>
-                  <label className='block text-sm font-medium text-gray-700 mb-1'>Phone</label>
+                  <label className='block text-sm font-medium text-gray-700 mb-1'>{t('customer.form.phone')}</label>
                   <input
                     type='tel'
                     value={formData.phone}
@@ -1160,6 +1242,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                         ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
                         : 'border-slate-300 focus:ring-slate-500 focus:border-slate-500'
                     }`}
+                    placeholder={t('customer.form.phonePlaceholder')}
                   />
                   {formErrors.phone && (
                     <p className='mt-1 text-sm text-red-600'>{formErrors.phone}</p>
@@ -1167,17 +1250,18 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                 </div>
 
                 <div>
-                  <label className='block text-sm font-medium text-gray-700 mb-1'>Address</label>
+                  <label className='block text-sm font-medium text-gray-700 mb-1'>{t('customer.form.address')}</label>
                   <input
                     type='text'
                     value={formData.address}
                     onChange={e => setFormData(prev => ({ ...prev, address: e.target.value }))}
                     className='w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm'
+                    placeholder={t('customer.form.addressPlaceholder')}
                   />
                 </div>
 
                 <div>
-                  <label className='block text-sm font-medium text-gray-700 mb-1'>Kundtyp</label>
+                  <label className='block text-sm font-medium text-gray-700 mb-1'>{t('customer.form.customerType') || 'Kundtyp'}</label>
                   <select
                     value={formData.customerType}
                     onChange={e => setFormData(prev => ({ 
@@ -1187,15 +1271,15 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                     }))}
                     className='w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm'
                   >
-                    <option value='individual'>Privatperson</option>
-                    <option value='company'>Företag</option>
+                    <option value='individual'>{t('customer.form.individual') || 'Privatperson'}</option>
+                    <option value='company'>{t('customer.form.company') || 'Företag'}</option>
                   </select>
                 </div>
 
                 {formData.customerType === 'company' && (
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      Huvudföretag (valfritt)
+                      {t('customer.form.parentCompany') || 'Huvudföretag (valfritt)'}
                     </label>
                     <select
                       value={formData.parentCompanyId || ''}
@@ -1205,7 +1289,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                       }))}
                       className='w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm'
                     >
-                      <option value=''>Ingen (huvudföretag)</option>
+                      <option value=''>{t('customer.form.noParent') || 'Ingen (huvudföretag)'}</option>
                       {customers
                         .filter(c => c.customerType === 'company' && c.id !== editingCustomer?.id && !c.parentCompanyId)
                         .map(c => (
@@ -1215,26 +1299,26 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                         ))}
                     </select>
                     <p className='mt-1 text-xs text-slate-500'>
-                      Välj ett huvudföretag om detta är en dotterbolag
+                      {t('customer.form.parentCompanyHelp') || 'Välj ett huvudföretag om detta är en dotterbolag'}
                     </p>
                   </div>
                 )}
 
                 {formData.customerType === 'company' && (
                   <div>
-                    <label className='block text-sm font-medium text-gray-700 mb-1'>Byggnadsadress</label>
+                    <label className='block text-sm font-medium text-gray-700 mb-1'>{t('customer.form.buildingAddress') || 'Byggnadsadress'}</label>
                     <input
                       type='text'
                       value={formData.buildingAddress}
                       onChange={e => setFormData(prev => ({ ...prev, buildingAddress: e.target.value }))}
                       className='w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm'
-                      placeholder='Om den skiljer sig från huvudadressen'
+                      placeholder={t('customer.form.buildingAddressPlaceholder') || 'Om den skiljer sig från huvudadressen'}
                     />
                   </div>
                 )}
 
                 <div>
-                  <label className='block text-sm font-medium text-gray-700 mb-1'>Company</label>
+                  <label className='block text-sm font-medium text-gray-700 mb-1'>{t('customer.form.companyName') || 'Company'}</label>
                   <input
                     type='text'
                     value={formData.company}
@@ -1244,11 +1328,12 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                 </div>
 
                 <div>
-                  <label className='block text-sm font-medium text-gray-700 mb-1'>Notes</label>
+                  <label className='block text-sm font-medium text-gray-700 mb-1'>{t('customer.form.notes')}</label>
                   <textarea
                     value={formData.notes}
                     onChange={e => setFormData(prev => ({ ...prev, notes: e.target.value }))}
                     rows={3}
+                    placeholder={t('customer.form.notesPlaceholder')}
                     className='w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm'
                   />
                 </div>
@@ -1273,12 +1358,12 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                   {isSubmitting ? (
                     <>
                       <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2'></div>
-                      {showCreateModal ? 'Creating...' : 'Updating...'}
+                      {showCreateModal ? t('customer.form.creating') || 'Creating...' : t('customer.form.updating') || 'Updating...'}
                     </>
                   ) : showCreateModal ? (
-                    'Create'
+                    t('customer.form.create') || 'Create'
                   ) : (
-                    'Update'
+                    t('customer.form.update') || 'Update'
                   )}
                 </button>
               </div>
@@ -1305,6 +1390,121 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
           icon='trash'
           isLoading={isDeleting}
         />
+
+        {/* Invitation Link Modal */}
+        {showInvitationModal && invitationCustomer && (
+          <div className='fixed inset-0 bg-slate-600 bg-opacity-50 overflow-y-auto h-full w-full z-50'>
+            <div className='relative top-20 mx-auto p-5 border w-11/12 max-w-lg shadow-lg rounded-md bg-white'>
+              <div className='flex justify-between items-center mb-4'>
+                <h3 className='text-lg font-medium text-slate-900'>
+                  {t('customer.invitation.title') || 'Generate Signup Link'}
+                </h3>
+                <button
+                  onClick={() => {
+                    setShowInvitationModal(false);
+                    setInvitationCustomer(null);
+                    setGeneratedLink(null);
+                  }}
+                  className='text-slate-400 hover:text-slate-600'
+                >
+                  <XCircle className='h-6 w-6' />
+                </button>
+              </div>
+
+              <div className='space-y-4'>
+                <p className='text-sm text-slate-600'>
+                  {t('customer.invitation.description') || 'Generate a signup link for'}{' '}
+                  <span className='font-medium'>{invitationCustomer.name}</span>.{' '}
+                  {t('customer.invitation.expiryNote') || 'The link will be valid for 14 days.'}
+                </p>
+
+                {/* Existing active invitations */}
+                {customerInvitations.length > 0 && (
+                  <div className='border rounded-md p-3 bg-slate-50'>
+                    <p className='text-sm font-medium text-slate-700 mb-2'>
+                      {t('customer.invitation.existingLinks') || 'Existing active links:'}
+                    </p>
+                    <div className='space-y-2'>
+                      {customerInvitations.map((inv) => (
+                        <div key={inv.id} className='flex items-center justify-between text-xs'>
+                          <span className='text-slate-500'>
+                            {t('customer.invitation.expires') || 'Expires'}:{' '}
+                            {new Date(inv.expiresAt).toLocaleDateString()}
+                          </span>
+                          <button
+                            onClick={() => handleCopyLink(getSignupUrl(inv.token))}
+                            className='text-blue-600 hover:text-blue-800 flex items-center gap-1'
+                          >
+                            <Copy className='h-3 w-3' />
+                            {t('customer.invitation.copy') || 'Copy'}
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Generated link display */}
+                {generatedLink && (
+                  <div className='border rounded-md p-3 bg-green-50 border-green-200'>
+                    <p className='text-sm font-medium text-green-800 mb-2'>
+                      {t('customer.invitation.newLink') || 'New signup link created!'}
+                    </p>
+                    <div className='flex items-center gap-2'>
+                      <input
+                        type='text'
+                        value={generatedLink}
+                        readOnly
+                        className='flex-1 text-xs p-2 border rounded bg-white font-mono'
+                      />
+                      <button
+                        onClick={() => handleCopyLink(generatedLink)}
+                        className={`p-2 rounded ${
+                          linkCopied
+                            ? 'bg-green-600 text-white'
+                            : 'bg-blue-600 text-white hover:bg-blue-700'
+                        }`}
+                      >
+                        {linkCopied ? <Check className='h-4 w-4' /> : <Copy className='h-4 w-4' />}
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Generate button */}
+                <div className='flex justify-end gap-3 pt-2'>
+                  <button
+                    onClick={() => {
+                      setShowInvitationModal(false);
+                      setInvitationCustomer(null);
+                      setGeneratedLink(null);
+                    }}
+                    className='px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50'
+                  >
+                    {t('common.close') || 'Close'}
+                  </button>
+                  <button
+                    onClick={handleCreateInvitation}
+                    disabled={generatingLink}
+                    className='px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2'
+                  >
+                    {generatingLink ? (
+                      <>
+                        <RefreshCw className='h-4 w-4 animate-spin' />
+                        {t('common.generating') || 'Generating...'}
+                      </>
+                    ) : (
+                      <>
+                        <Link2 className='h-4 w-4' />
+                        {t('customer.invitation.generateNew') || 'Generate New Link'}
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

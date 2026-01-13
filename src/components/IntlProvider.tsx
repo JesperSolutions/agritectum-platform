@@ -58,7 +58,7 @@ const IntlProvider: React.FC<IntlProviderProps> = ({ children }) => {
 
   // Debug logging in development
   if (import.meta.env.DEV && isInitialized) {
-    console.log('[IntlProvider] Active locale:', activeLocale);
+    console.log('[IntlProvider] Active locale:', activeLocale, 'Type:', typeof activeLocale);
     console.log('[IntlProvider] Available locales:', Object.keys(messages));
     console.log('[IntlProvider] Messages object keys (first 10):', Object.keys(activeMessages || {}).slice(0, 10));
     console.log('[IntlProvider] Has navigation.scheduledVisits:', 'navigation.scheduledVisits' in (activeMessages || {}));

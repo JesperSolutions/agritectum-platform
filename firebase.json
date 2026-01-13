@@ -87,7 +87,10 @@
     "rules": "storage.rules"
   },
   "extensions": {
-    "firestore-send-email-tyk0": "firebase/firestore-send-email@0.2.4"
+    "firestore-send-email-tyk0": {
+      "source": "firebase/firestore-send-email@0.2.4",
+      "params": "extensions/firestore-send-email-tyk0.params.json"
+    }
   },
   "emulators": {
     "auth": {

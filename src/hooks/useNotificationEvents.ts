@@ -17,6 +17,7 @@
 
 import { useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useIntl } from './useIntl';
 import { 
   createReportNotification,
   createUserNotification,
@@ -30,6 +31,7 @@ import { Report } from '../types';
  */
 export const useReportNotifications = () => {
   const { currentUser } = useAuth();
+  const { t } = useIntl();
 
   const notifyReportCreated = useCallback(async (report: Report) => {
     if (!currentUser?.uid) return;
@@ -39,13 +41,13 @@ export const useReportNotifications = () => {
         currentUser.uid,
         report.id,
         'created',
-        report.title || 'Untitled Report',
+        report.title || t('form.defaults.untitledReport'),
         report.branchId
       );
     } catch (error) {
       console.error('Error creating report notification:', error);
     }
-  }, [currentUser?.uid]);
+  }, [currentUser?.uid, t]);
 
   const notifyReportUpdated = useCallback(async (report: Report) => {
     if (!currentUser?.uid) return;
@@ -55,13 +57,13 @@ export const useReportNotifications = () => {
         currentUser.uid,
         report.id,
         'updated',
-        report.title || 'Untitled Report',
+        report.title || t('form.defaults.untitledReport'),
         report.branchId
       );
     } catch (error) {
       console.error('Error creating report update notification:', error);
     }
-  }, [currentUser?.uid]);
+  }, [currentUser?.uid, t]);
 
   const notifyReportCompleted = useCallback(async (report: Report) => {
     if (!currentUser?.uid) return;
@@ -71,13 +73,13 @@ export const useReportNotifications = () => {
         currentUser.uid,
         report.id,
         'completed',
-        report.title || 'Untitled Report',
+        report.title || t('form.defaults.untitledReport'),
         report.branchId
       );
     } catch (error) {
       console.error('Error creating report completion notification:', error);
     }
-  }, [currentUser?.uid]);
+  }, [currentUser?.uid, t]);
 
   const notifyReportApproved = useCallback(async (report: Report) => {
     if (!currentUser?.uid) return;
@@ -87,13 +89,13 @@ export const useReportNotifications = () => {
         currentUser.uid,
         report.id,
         'approved',
-        report.title || 'Untitled Report',
+        report.title || t('form.defaults.untitledReport'),
         report.branchId
       );
     } catch (error) {
       console.error('Error creating report approval notification:', error);
     }
-  }, [currentUser?.uid]);
+  }, [currentUser?.uid, t]);
 
   const notifyReportRejected = useCallback(async (report: Report) => {
     if (!currentUser?.uid) return;
@@ -103,13 +105,13 @@ export const useReportNotifications = () => {
         currentUser.uid,
         report.id,
         'rejected',
-        report.title || 'Untitled Report',
+        report.title || t('form.defaults.untitledReport'),
         report.branchId
       );
     } catch (error) {
       console.error('Error creating report rejection notification:', error);
     }
-  }, [currentUser?.uid]);
+  }, [currentUser?.uid, t]);
 
   return {
     notifyReportCreated,

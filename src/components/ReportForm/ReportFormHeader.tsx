@@ -1,6 +1,7 @@
 import React from 'react';
 import { Save, ArrowLeft } from 'lucide-react';
 import AccessibleButton from '../AccessibleButton';
+import { useIntl } from '../../hooks/useIntl';
 
 interface ReportFormHeaderProps {
   mode: 'create' | 'edit';
@@ -19,14 +20,16 @@ const ReportFormHeader: React.FC<ReportFormHeaderProps> = ({
   loading,
   isValid,
 }) => {
+  const { t } = useIntl();
+
   return (
     <div className='bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-6'>
       <div className='flex items-center justify-between flex-wrap gap-4'>
         <div>
           <h1 className='text-2xl font-bold text-gray-900'>
-            {mode === 'create' ? 'New Inspection Report' : 'Edit Report'}
+            {mode === 'create' ? t('reportForm.header.newInspection') : t('reportForm.header.editReport')}
           </h1>
-          {autoSaving && <p className='text-sm text-blue-600 mt-1'>Auto-saving...</p>}
+          {autoSaving && <p className='text-sm text-blue-600 mt-1'>{t('reportForm.header.autoSaving')}</p>}
         </div>
 
         <div className='flex items-center space-x-3'>
@@ -34,9 +37,9 @@ const ReportFormHeader: React.FC<ReportFormHeaderProps> = ({
             variant='ghost'
             onClick={onCancel}
             leftIcon={<ArrowLeft className='w-4 h-4' />}
-            aria-label='Go back to dashboard'
+              aria-label={t('common.goBackToDashboard')}
           >
-            Back
+            {t('common.back')}
           </AccessibleButton>
 
           <AccessibleButton
@@ -45,9 +48,9 @@ const ReportFormHeader: React.FC<ReportFormHeaderProps> = ({
             disabled={loading}
             leftIcon={loading ? undefined : <Save className='w-4 h-4' />}
             loading={loading}
-            aria-label='Save as draft'
+            aria-label={t('reportForm.header.saveDraftAria')}
           >
-            Save as Draft
+            {t('reportForm.header.saveDraft')}
           </AccessibleButton>
 
           <AccessibleButton
@@ -56,9 +59,9 @@ const ReportFormHeader: React.FC<ReportFormHeaderProps> = ({
             disabled={loading || !isValid}
             leftIcon={loading ? undefined : <Save className='w-4 h-4' />}
             loading={loading}
-            aria-label='Complete report'
+            aria-label={t('reportForm.header.completeAria')}
           >
-            Complete Report
+            {t('reportForm.header.complete')}
           </AccessibleButton>
         </div>
       </div>

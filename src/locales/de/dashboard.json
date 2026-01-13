@@ -131,7 +131,6 @@
   "dashboard.serviceAgreements.activeAgreements": "Aktive Verträge",
   "dashboard.serviceAgreements.ofTotal": "von {total} insgesamt",
   "dashboard.serviceAgreements.monthlyRevenue": "Monatsumsatz",
-  "dashboard.serviceAgreements.sekPerMonthRecurring": "SEK/Monat wiederkehrend",
   "dashboard.serviceAgreements.expiringSoon": "Läuft bald ab",
   "dashboard.serviceAgreements.next30Days": "Nächste 30 Tage",
   
@@ -144,13 +143,18 @@
   "dashboard.financialOverview.title": "Finanzübersicht",
   "dashboard.financialOverview.viewAnalytics": "Analysen anzeigen",
   "dashboard.financialOverview.oneTimeRevenue": "Einmalige Einnahmen",
-  "dashboard.financialOverview.sekReportsOffers": "SEK (Berichte & Angebote)",
   "dashboard.financialOverview.recurringRevenue": "Wiederkehrende Einnahmen",
-  "dashboard.financialOverview.sekPerYear": "SEK/Jahr ({monthly}/Monat)",
-  "dashboard.financialOverview.sekAllSources": "SEK (alle Quellen)",
   "dashboard.financialOverview.recurringPercent": "Wiederkehrend %",
   "dashboard.financialOverview.ofTotalRevenue": "vom Gesamtumsatz",
   
-  "dashboard.todayTasks": "Heutige Aufgaben"
+  "dashboard.todayTasks": "Heutige Aufgaben",
+  
+  "dashboard.completedThisWeek": "Diese Woche abgeschlossen",
+  "dashboard.scheduledThisWeek": "Diese Woche geplant",
+  "dashboard.averageTime": "Durchschnittliche Zeit",
+  "dashboard.hours": "Stunden",
+  "dashboard.allTime": "insgesamt",
+  "dashboard.upcoming": "bevorstehend",
+  "dashboard.activeUsers": "Aktive Benutzer"
 }
 

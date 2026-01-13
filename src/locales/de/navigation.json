@@ -21,6 +21,7 @@
   "navigation.branchDetails": "Filialdetails",
   "navigation.offerDetails": "Angebotsdetails",
   "navigation.serviceAgreements": "Serviceverträge",
+  "navigation.esgReports": "ESG Berichte",
 
   "breadcrumb.home": "Start",
   "breadcrumb.dashboard": "Übersicht",
@@ -39,6 +40,10 @@
   "menu.open": "Menü öffnen",
 
   "navigation.buildings": "Gebäude",
-  "navigation.scheduledVisits": "Geplante Besuche"
+  "navigation.scheduledVisits": "Geplante Besuche",
+  "navigation.allReports": "Alle Berichte",
+  "navigation.operations": "Operationen",
+  "navigation.esgService": "ESG-Service",
+  "navigation.emailTemplates": "E-Mail-Vorlagen"
 }
 

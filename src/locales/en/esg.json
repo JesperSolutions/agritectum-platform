@@ -1,0 +1,79 @@
+{
+  "esg": {
+    "calculator": {
+      "title": "Roof For Good",
+      "subtitle": "Design Your Roof For Good",
+      "step": "Step",
+      "of": "of",
+      "footer": "Sustainable Building Solutions",
+      "calculate": "Calculate Impact",
+      "reportSaved": "Report saved successfully!",
+      "errors": {
+        "roofSizeRequired": "Roof size is required",
+        "roleRequired": "Please select a role",
+        "locationRequired": "Please enter a location",
+        "calculationFailed": "Calculation failed"
+      },
+      "roles": {
+        "homeowner": "Homeowner",
+        "professional": "Professional",
+        "investor": "Investor"
+      },
+      "step1": {
+        "title": "Select Your Role",
+        "subtitle": "Tell us about your expertise level"
+      },
+      "step2": {
+        "title": "Project Location",
+        "subtitle": "Location helps us provide accurate environmental data and local incentives.",
+        "address": "Project Address",
+        "addressPlaceholder": "Enter full address",
+        "useLocation": "Use Current"
+      },
+      "step3": {
+        "title": "Roof Configuration",
+        "subtitle": "Configure your roof segments and see environmental impact in real-time",
+        "totalRoofSize": "Total Roof Size",
+        "segments": "Segments",
+        "allocated": "Allocated",
+        "roofAllocation": "Roof Allocation",
+        "roofSegments": "Roof Segments",
+        "configureAreas": "Configure different areas with specific solutions",
+        "percentage": "Percentage",
+        "solution": "Roof Solution",
+        "benefits": "Benefits",
+        "totalCost": "Total Cost",
+        "allocationWarning": "Roof allocation must equal 100%"
+      },
+      "step4": {
+        "title": "Your Roof For Good Analysis",
+        "subtitle": "Comprehensive analysis of your 4 roof sections and their environmental impact",
+        "complete": "Analysis complete",
+        "noMetrics": "No metrics calculated",
+        "executiveSummary": "Executive Summary",
+        "executiveSummaryText": "Your roof configuration will deliver significant environmental and financial benefits",
+        "environmentalImpact": "Environmental Impact",
+        "financialImpact": "Financial Impact",
+        "paybackPeriod": "Payback Period",
+        "co2Offset": "kg CO₂ Offset/Year",
+        "annualSavings": "Annual Savings",
+        "totalInvestment": "Total Investment",
+        "segmentBreakdown": "Roof Segments Breakdown",
+        "environmentalImpactDetail": "Environmental Impact",
+        "environmentalImpactText": "Your roof system's positive environmental impact expressed in relatable terms",
+        "treesEquivalent": "Trees Equivalent",
+        "co2AbsorptionPerYear": "CO₂ absorption per year",
+        "kwhEnergyImpact": "kWh Energy Impact",
+        "savingsAndGeneration": "Savings + generation",
+        "noxReduction": "kg NOₓ Reduction",
+        "airQualityImprovement": "Air quality improvement",
+        "viewResults": "View Results"
+      }
+    }
+  },
+  "common": {
+    "back": "Back",
+    "next": "Next",
+    "calculating": "Calculating..."
+  }
+}

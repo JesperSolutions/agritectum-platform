@@ -123,87 +123,11 @@ export const getBuildingsByBranch = async (branchId: string): Promise<Building[]
 export const getBuildingsByCustomer = async (customerId: string, branchId?: string): Promise<Building[]> => {
   try {
     const buildingsRef = collection(db, 'buildings');
-    let q;
     
-    // Try to query with branchId if provided (for better security and performance)
-    if (branchId) {
-      try {
-        q = query(
-          buildingsRef,
-          where('customerId', '==', customerId),
-          where('branchId', '==', branchId),
-          orderBy('createdAt', 'desc')
-        );
-        
-        const querySnapshot = await getDocs(q);
-        return querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as Building[];
-      } catch (indexError: any) {
-        // If composite index doesn't exist, fall back to querying by branchId first
-        if (indexError.code === 'failed-precondition' || indexError.message?.includes('index')) {
-          console.warn('⚠️ Missing Firestore index for (customerId, branchId). Falling back to branchId query + client-side filtering.');
-          
-          // Query by branchId first (this should work with existing indexes)
-          try {
-            q = query(
-              buildingsRef,
-              where('branchId', '==', branchId),
-              orderBy('createdAt', 'desc')
-            );
-            
-            const branchSnapshot = await getDocs(q);
-            const buildings = branchSnapshot.docs.map(doc => ({
-              id: doc.id,
-              ...doc.data(),
-            })) as Building[];
-            
-            // Filter by customerId on client side
-            return buildings.filter(building => building.customerId === customerId);
-          } catch (branchError: any) {
-            // If index is still building, try without orderBy
-            if (branchError.code === 'failed-precondition' || branchError.message?.includes('index')) {
-              console.warn('⚠️ Index still building. Querying without orderBy...');
-              try {
-                q = query(
-                  buildingsRef,
-                  where('branchId', '==', branchId)
-                );
-                
-                const branchSnapshot = await getDocs(q);
-                const buildings = branchSnapshot.docs.map(doc => ({
-                  id: doc.id,
-                  ...doc.data(),
-                })) as Building[];
-                
-                // Filter by customerId on client side and sort manually
-                const filtered = buildings.filter(building => building.customerId === customerId);
-                return filtered.sort((a, b) => {
-                  const aDate = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-                  const bDate = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-                  return bDate - aDate;
-                });
-              } catch (simpleError: any) {
-                console.error('Error fetching buildings (simple query):', simpleError);
-                return [];
-              }
-            }
-            // If even branchId query fails, return empty array
-            console.error('Error fetching buildings by branch:', branchError);
-            return [];
-          }
-        } else {
-          throw indexError;
-        }
-      }
-    }
-    
-    // Fallback: Query by customerId only (or if no branchId provided)
-    q = query(
+    // Query by customerId only (no index required for simple field query)
+    const q = query(
       buildingsRef,
-      where('customerId', '==', customerId),
-      orderBy('createdAt', 'desc')
+      where('customerId', '==', customerId)
     );
 
     const querySnapshot = await getDocs(q);
@@ -213,11 +137,16 @@ export const getBuildingsByCustomer = async (customerId: string, branchId?: stri
     })) as Building[];
     
     // Filter by branchId on client side if provided
-    if (branchId) {
-      return buildings.filter(building => building.branchId === branchId);
-    }
+    const filtered = branchId 
+      ? buildings.filter(building => building.branchId === branchId)
+      : buildings;
     
-    return buildings;
+    // Sort by createdAt on client side (most recent first)
+    return filtered.sort((a, b) => {
+      const aDate = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+      const bDate = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+      return bDate - aDate;
+    });
   } catch (error: any) {
     console.error('Error fetching buildings by customer:', error);
     

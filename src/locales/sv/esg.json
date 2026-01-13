@@ -1,0 +1,79 @@
+{
+  "esg": {
+    "calculator": {
+      "title": "Tak För Gott",
+      "subtitle": "Designa ditt tak för gott",
+      "step": "Steg",
+      "of": "av",
+      "footer": "Hållbara byggnadslösningar",
+      "calculate": "Beräkna påverkan",
+      "reportSaved": "Rapport sparad!",
+      "errors": {
+        "roofSizeRequired": "Takstorlek är obligatorisk",
+        "roleRequired": "Välj en roll",
+        "locationRequired": "Ange en plats",
+        "calculationFailed": "Beräkningen misslyckades"
+      },
+      "roles": {
+        "homeowner": "Husägare",
+        "professional": "Professionell",
+        "investor": "Investerare"
+      },
+      "step1": {
+        "title": "Välj din roll",
+        "subtitle": "Berätta om din expertisenvå"
+      },
+      "step2": {
+        "title": "Projektplats",
+        "subtitle": "Plats hjälper oss att ge exakt miljödata och lokala incitament.",
+        "address": "Projektadress",
+        "addressPlaceholder": "Ange fullständig adress",
+        "useLocation": "Använd aktuell"
+      },
+      "step3": {
+        "title": "Takkonfiguration",
+        "subtitle": "Konfigurera dina taksegment och se miljöpåverkan i realtid",
+        "totalRoofSize": "Total takstorlek",
+        "segments": "Segment",
+        "allocated": "Tilldelat",
+        "roofAllocation": "Taktilldelning",
+        "roofSegments": "Taksegment",
+        "configureAreas": "Konfigurera olika områden med specifika lösningar",
+        "percentage": "Procent",
+        "solution": "Taklösning",
+        "benefits": "Fördelar",
+        "totalCost": "Total kostnad",
+        "allocationWarning": "Taktilldelningen måste motsvarar 100%"
+      },
+      "step4": {
+        "title": "Din Tak För Gott-analys",
+        "subtitle": "Omfattande analys av dina 4 taksektioner och deras miljöpåverkan",
+        "complete": "Analys slutförd",
+        "noMetrics": "Inga mått beräknade",
+        "executiveSummary": "Sammanfattning",
+        "executiveSummaryText": "Din takkonfiguration kommer att ge betydande miljömässiga och finansiella fördelar",
+        "environmentalImpact": "Miljöpåverkan",
+        "financialImpact": "Finansiell påverkan",
+        "paybackPeriod": "Återbetalningsperiod",
+        "co2Offset": "kg CO₂/år",
+        "annualSavings": "Årliga besparingar",
+        "totalInvestment": "Total investering",
+        "segmentBreakdown": "Taksegment-uppdelning",
+        "environmentalImpactDetail": "Miljöpåverkan",
+        "environmentalImpactText": "Din taksystems positiva miljöpåverkan uttryckt i lätta termer",
+        "treesEquivalent": "Trädekvivalenter",
+        "co2AbsorptionPerYear": "CO₂-absorption per år",
+        "kwhEnergyImpact": "kWh energipåverkan",
+        "savingsAndGeneration": "Besparingar + produktion",
+        "noxReduction": "kg NOₓ-reduktion",
+        "airQualityImprovement": "Luftkvalitetsförbättring",
+        "viewResults": "Visa resultat"
+      }
+    }
+  },
+  "common": {
+    "back": "Tillbaka",
+    "next": "Nästa",
+    "calculating": "Beräknar..."
+  }
+}

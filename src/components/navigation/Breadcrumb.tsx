@@ -45,6 +45,7 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({
     '/analytics': { label: t('navigation.analytics'), icon: <BarChart3 className="w-4 h-4" /> },
     '/admin/building-esg-improvements': { label: t('navigation.esgImprovements') || 'ESG Improvements', icon: <Leaf className="w-4 h-4" /> },
     '/admin/esg-service': { label: t('navigation.esgService') || 'ESG Service', icon: <Leaf className="w-4 h-4" /> },
+    '/admin/esg-reports': { label: t('navigation.esgReports') || 'ESG Reports', icon: <Leaf className="w-4 h-4" /> },
     '/admin/email-templates': { label: t('navigation.emailTemplates') || 'Email Templates', icon: <Mail className="w-4 h-4" /> },
     '/settings': { label: t('navigation.settings'), icon: <Settings className="w-4 h-4" /> },
     '/report/new': { label: t('navigation.newReport'), icon: <FileText className="w-4 h-4" /> },

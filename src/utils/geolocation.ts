@@ -77,27 +77,42 @@ export const detectCountryFromTimezone = (): string | null => {
  */
 export const detectCountryFromLanguage = (): string | null => {
   try {
-    const language = navigator.language || (navigator as any).userLanguage;
+    // Check all browser languages, not just the first one
+    const languages = navigator.languages || [navigator.language] || [(navigator as any).userLanguage];
     
-    // Extract country code from language (e.g., 'da-DK' -> 'DK')
-    if (language.includes('-')) {
-      const parts = language.split('-');
-      if (parts.length >= 2) {
-        return parts[1].toUpperCase();
+    for (const language of languages) {
+      if (!language) continue;
+      
+      // Extract country code from language (e.g., 'da-DK' -> 'DK')
+      if (language.includes('-')) {
+        const parts = language.split('-');
+        if (parts.length >= 2) {
+          const country = parts[1].toUpperCase();
+          // Validate it's a known country
+          if (['DK', 'SE', 'NO', 'DE', 'US', 'GB', 'FI'].includes(country)) {
+            return country;
+          }
+        }
+      }
+      
+      // Map language codes to countries
+      const languageToCountry: Record<string, string> = {
+        'da': 'DK', // Danish
+        'sv': 'SE', // Swedish
+        'no': 'NO', // Norwegian
+        'nb': 'NO', // Norwegian Bokmål
+        'nn': 'NO', // Norwegian Nynorsk
+        'de': 'DE', // German
+        'en': 'US', // English (default to US)
+      };
+      
+      const langCode = language.split('-')[0].toLowerCase();
+      if (languageToCountry[langCode]) {
+        return languageToCountry[langCode];
       }
     }
     
-    // Map language codes to countries
-    const languageToCountry: Record<string, string> = {
-      'da': 'DK', // Danish
-      'sv': 'SE', // Swedish
-      'no': 'NO', // Norwegian
-      'de': 'DE', // German
-      'en': 'US', // English (default to US)
-    };
-    
-    const langCode = language.split('-')[0].toLowerCase();
-    return languageToCountry[langCode] || null;
+    return null;
   } catch (error) {
     console.warn('Could not detect country from language:', error);
     return null;
@@ -131,28 +146,38 @@ export const detectCountryFromIP = async (): Promise<string | null> => {
 
 /**
  * Detect user's country using multiple methods
- * Priority: IP geolocation > Timezone > Browser language > Default
+ * Priority: Browser language > Timezone > IP geolocation > Default
  */
 export const detectUserCountry = async (): Promise<string> => {
-  // Try IP geolocation first (most accurate)
-  const ipCountry = await detectCountryFromIP();
-  if (ipCountry) {
-    return ipCountry;
+  // Try browser language first (fastest and most reliable for user preference)
+  const languageCountry = detectCountryFromLanguage();
+  if (languageCountry) {
+    console.log('[Geolocation] Detected country from browser language:', languageCountry);
+    return languageCountry;
   }
   
   // Fallback to timezone detection
   const timezoneCountry = detectCountryFromTimezone();
   if (timezoneCountry) {
+    console.log('[Geolocation] Detected country from timezone:', timezoneCountry);
     return timezoneCountry;
   }
   
-  // Fallback to browser language
-  const languageCountry = detectCountryFromLanguage();
+  // Try IP geolocation last (slowest)
+  const ipCountry = await detectCountryFromIP();
+  if (ipCountry) {
+    console.log('[Geolocation] Detected country from IP:', ipCountry);
+    return ipCountry;
+  }
+  
+  // Final fallback to browser language again
+  const languageCountry2 = detectCountryFromLanguage();
   if (languageCountry) {
     return languageCountry;
   }
   
   // Default fallback
+  console.log('[Geolocation] Using default country: SE');
   return 'SE'; // Default to Sweden
 };
 

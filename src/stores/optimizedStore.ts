@@ -17,6 +17,7 @@ interface UserPreferences {
   showTutorials: boolean;
   dateFormat: string;
   timeFormat: '12h' | '24h';
+  currency: string; // e.g., 'DKK', 'SEK', 'EUR', 'USD', 'NOK'
 }
 
 interface UIState {
@@ -139,6 +140,7 @@ const initialUserPreferences: UserPreferences = {
   showTutorials: true,
   dateFormat: 'MM/DD/YYYY',
   timeFormat: '12h',
+  currency: 'DKK', // Default currency, will be auto-detected on load
 };
 
 const initialUIState: UIState = {

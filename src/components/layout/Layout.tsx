@@ -7,24 +7,11 @@ import { usePageState, useBranchContext } from '../../hooks/usePageState';
 import Breadcrumb from '../navigation/Breadcrumb';
 import NavigationMenu, { NavigationItem } from './NavigationMenu';
 import {
-  Home,
-  FileText,
   LogOut,
-  Users,
-  Building,
   WifiOff,
   FolderSync as Sync,
   Menu,
   X,
-  BarChart3,
-  TestTube,
-  Calendar,
-  Mail,
-  User,
-  FileCheck,
-  Settings,
-  Leaf,
-  DollarSign,
 } from 'lucide-react';
 import OfflineIndicator from '../OfflineIndicator';
 import NotificationCenter from '../NotificationCenter';
@@ -90,15 +77,14 @@ const Layout: React.FC = () => {
 
     // Dashboard (always first, standalone)
     items.push({
-      label: 'Dashboard',
-      icon: Home,
+      label: t('navigation.dashboard'),
       path: '/dashboard',
     });
 
     // Reports section - Data Entry & Reports
     const reportsChildren: NavigationItem[] = [
       {
-        label: 'New Report',
+        label: t('navigation.newReport'),
         path: '/report/new',
         roles: ['inspector', 'branchAdmin', 'superadmin'],
       },
@@ -106,20 +92,19 @@ const Layout: React.FC = () => {
 
     if (role === 'inspector') {
       reportsChildren.push({
-        label: 'My Reports',
+        label: t('navigation.myReports'),
         path: '/reports',
       });
     } else if (role === 'branchAdmin' || role === 'superadmin') {
       reportsChildren.push({
-        label: 'All Reports',
+        label: t('navigation.allReports'),
         path: '/admin/reports',
       });
     }
 
     if (reportsChildren.length > 0) {
       items.push({
-        label: 'Reports',
-        icon: FileText,
+        label: t('navigation.reports'),
         children: reportsChildren.filter(child => 
           !child.roles || child.roles.includes(role)
         ),
@@ -129,17 +114,17 @@ const Layout: React.FC = () => {
     // Operations section - Day-to-day operational tasks
     const operationsChildren: NavigationItem[] = [
       {
-        label: 'Schedule',
+        label: t('navigation.schedule'),
         path: '/schedule',
         roles: ['inspector', 'branchAdmin', 'superadmin'],
       },
       {
-        label: 'Customers',
+        label: t('navigation.customers'),
         path: '/admin/customers',
         roles: ['inspector', 'branchAdmin', 'superadmin'],
       },
       {
-        label: 'Offers',
+        label: t('navigation.offers'),
         path: '/offers',
         roles: ['inspector', 'branchAdmin', 'superadmin'],
       },
@@ -147,14 +132,13 @@ const Layout: React.FC = () => {
 
     if (role === 'branchAdmin' || role === 'superadmin') {
       operationsChildren.push({
-        label: 'Service Agreements',
+        label: t('navigation.serviceAgreements'),
         path: '/admin/service-agreements',
       });
     }
 
     items.push({
-      label: 'Operations',
-      icon: Calendar,
+      label: t('navigation.operations'),
       children: operationsChildren.filter(child => 
         !child.roles || child.roles.includes(role)
       ),
@@ -164,37 +148,36 @@ const Layout: React.FC = () => {
     if (role === 'branchAdmin' || role === 'superadmin') {
       const adminChildren: NavigationItem[] = [
         {
-          label: 'Users',
+          label: t('navigation.users'),
           path: '/admin/users',
         },
         {
-          label: 'Analytics',
+          label: t('navigation.analytics'),
           path: '/admin/analytics',
         },
         {
-          label: 'ESG Service',
+          label: t('navigation.esgService'),
           path: '/admin/esg-service',
         },
         {
-          label: 'ESG Improvements',
-          path: '/admin/building-esg-improvements',
+          label: t('navigation.esgReports'),
+          path: '/admin/esg-reports',
         },
       ];
 
       if (role === 'superadmin') {
         adminChildren.splice(1, 0, {
-          label: 'Branches',
+          label: t('navigation.branches'),
           path: '/admin/branches',
         });
         adminChildren.push({
-          label: 'Email Templates',
+          label: t('navigation.emailTemplates'),
           path: '/admin/email-templates',
         });
       }
 
       items.push({
-        label: 'Administration',
-        icon: Settings,
+        label: t('navigation.admin'),
         children: adminChildren,
       });
     }
@@ -202,7 +185,7 @@ const Layout: React.FC = () => {
     // Settings section - User settings
     const settingsChildren: NavigationItem[] = [
       {
-        label: 'Profile',
+        label: t('navigation.profile'),
         path: '/profile',
       },
     ];
@@ -210,20 +193,18 @@ const Layout: React.FC = () => {
     // Add QA Testing in development mode for superadmin
     if (process.env.NODE_ENV === 'development' && role === 'superadmin') {
       settingsChildren.push({
-        label: 'QA Testing',
+        label: t('navigation.qa'),
         path: '/admin/qa',
-        icon: TestTube,
       });
     }
 
     items.push({
-      label: 'Settings',
-      icon: User,
+      label: t('navigation.settings'),
       children: settingsChildren,
     });
 
     return items;
-  }, [currentUser]);
+  }, [currentUser, t]);
 
   const SyncIndicator = () => {
     if (state.syncInProgress) {

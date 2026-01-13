@@ -1,0 +1,79 @@
+{
+  "esg": {
+    "calculator": {
+      "title": "Dach für Gutes",
+      "subtitle": "Gestalte dein Dach für Gutes",
+      "step": "Schritt",
+      "of": "von",
+      "footer": "Nachhaltige Baulösungen",
+      "calculate": "Auswirkung berechnen",
+      "reportSaved": "Bericht gespeichert!",
+      "errors": {
+        "roofSizeRequired": "Dachgröße ist erforderlich",
+        "roleRequired": "Bitte wählen Sie eine Rolle aus",
+        "locationRequired": "Bitte geben Sie einen Standort ein",
+        "calculationFailed": "Berechnung fehlgeschlagen"
+      },
+      "roles": {
+        "homeowner": "Hausbesitzer",
+        "professional": "Fachmann",
+        "investor": "Investor"
+      },
+      "step1": {
+        "title": "Wähle deine Rolle",
+        "subtitle": "Erzähle uns von deinem Fachwissen"
+      },
+      "step2": {
+        "title": "Projektstandort",
+        "subtitle": "Der Standort hilft uns, genaue Umweltdaten und lokale Anreize bereitzustellen.",
+        "address": "Projektadresse",
+        "addressPlaceholder": "Geben Sie die vollständige Adresse ein",
+        "useLocation": "Aktuelle verwenden"
+      },
+      "step3": {
+        "title": "Dachkonfiguration",
+        "subtitle": "Konfigurieren Sie Ihre Dachsegmente und sehen Sie die Umweltauswirkungen in Echtzeit",
+        "totalRoofSize": "Gesamtdachgröße",
+        "segments": "Segmente",
+        "allocated": "Zugewiesen",
+        "roofAllocation": "Dachzuteilung",
+        "roofSegments": "Dachsegmente",
+        "configureAreas": "Konfigurieren Sie verschiedene Bereiche mit spezifischen Lösungen",
+        "percentage": "Prozentsatz",
+        "solution": "Dachlösung",
+        "benefits": "Vorteile",
+        "totalCost": "Gesamtkosten",
+        "allocationWarning": "Die Dachzuteilung muss 100% entsprechen"
+      },
+      "step4": {
+        "title": "Ihre Dach-für-Gutes-Analyse",
+        "subtitle": "Umfassende Analyse Ihrer 4 Dachsegmente und deren Umweltauswirkungen",
+        "complete": "Analyse abgeschlossen",
+        "noMetrics": "Keine Kennzahlen berechnet",
+        "executiveSummary": "Zusammenfassung",
+        "executiveSummaryText": "Ihre Dachkonfiguration wird erhebliche Umwelt- und Finanzvorteile bringen",
+        "environmentalImpact": "Umweltauswirkung",
+        "financialImpact": "Finanzielle Auswirkung",
+        "paybackPeriod": "Amortisationszeit",
+        "co2Offset": "kg CO₂/Jahr",
+        "annualSavings": "Jährliche Einsparungen",
+        "totalInvestment": "Gesamtinvestition",
+        "segmentBreakdown": "Dachsegment-Aufschlüsselung",
+        "environmentalImpactDetail": "Umweltauswirkung",
+        "environmentalImpactText": "Die positive Umweltauswirkung Ihres Dachsystems in verständlichen Begriffen",
+        "treesEquivalent": "Baum-Äquivalente",
+        "co2AbsorptionPerYear": "CO₂-Aufnahme pro Jahr",
+        "kwhEnergyImpact": "kWh Energieauswirkung",
+        "savingsAndGeneration": "Einsparungen + Erzeugung",
+        "noxReduction": "kg NOₓ-Reduktion",
+        "airQualityImprovement": "Verbesserung der Luftqualität",
+        "viewResults": "Ergebnisse anzeigen"
+      }
+    }
+  },
+  "common": {
+    "back": "Zurück",
+    "next": "Weiter",
+    "calculating": "Wird berechnet..."
+  }
+}

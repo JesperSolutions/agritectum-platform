@@ -1,0 +1,19 @@
+{
+  "marketing.userRoles.title": "User Roles & Permissions",
+  "marketing.userRoles.subtitle": "Three-tier system designed for multi-branch operations",
+  "marketing.userRoles.superadmin.manageBranches": "Manage all branches",
+  "marketing.userRoles.superadmin.viewAllReports": "View all reports",
+  "marketing.userRoles.superadmin.createUsers": "Create/edit users",
+  "marketing.userRoles.superadmin.systemAnalytics": "System analytics"
+  ,
+  "marketing.userRoles.superadmin.title": "Superadmin",
+  "marketing.userRoles.superadmin.permissionLevel": "Permission Level 2",
+  "marketing.brand.name": "Taklaget Service",
+  "marketing.brand.tagline": "Professional Roof Inspection Management",
+  "marketing.backToApp": "Back to App",
+  "marketing.userRoles.branchAdmin.title": "Branch Admin",
+  "marketing.userRoles.branchAdmin.permissionLevel": "Permission Level 1",
+  "marketing.userRoles.branchAdmin.manageBranchOnly": "Manage branch only",
+  "marketing.userRoles.branchAdmin.viewBranchReports": "View branch reports",
+  "marketing.userRoles.branchAdmin.manageInspectors": "Manage inspectors"
+}

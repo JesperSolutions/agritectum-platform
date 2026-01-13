@@ -156,12 +156,12 @@ const BuildingDetail: React.FC = () => {
   if (!building) {
     return (
       <div className='text-center py-12'>
-        <p className='text-gray-600'>{t('buildings.notFound') || 'Building not found'}</p>
+        <p className='text-gray-600'>{t('buildings.notFound') || t('buildings.notFoundFallback') || 'Building not found'}</p>
         <Link
           to='/portal/buildings'
           className='text-green-600 hover:text-green-700 mt-4 inline-block'
         >
-          {t('buildings.backToBuildings') || 'Back to Buildings'}
+          {t('buildings.backToBuildings') || t('dashboard.viewAll') || 'Back to Buildings'}
         </Link>
       </div>
     );
@@ -176,7 +176,7 @@ const BuildingDetail: React.FC = () => {
           className='inline-flex items-center text-gray-600 hover:text-gray-900'
         >
           <ArrowLeft className='w-4 h-4 mr-2' />
-          {t('buildings.backToBuildings') || 'Back to Buildings'}
+          {t('buildings.backToBuildings') || t('dashboard.viewAll') || 'Back to Buildings'}
         </Link>
         <button
           onClick={() => setEditing(!editing)}

@@ -123,10 +123,10 @@ const ValidatedInput = forwardRef<HTMLInputElement, ValidatedInputProps>(
     };
 
     return (
-      <div className={`space-y-1 ${className}`}>
-        <label htmlFor={fieldId} className='block text-sm font-medium text-gray-700'>
+      <div className={`space-y-1.5 ${className}`}>
+        <label htmlFor={fieldId} className='block text-sm font-medium text-gray-700 truncate-smart'>
           {label}
-          {required && <span className='text-red-500 ml-1'>*</span>}
+          {required && <span className='text-red-500 ml-1 flex-shrink-0' aria-hidden='true'>*</span>}
         </label>
 
         <div className='relative'>
@@ -145,20 +145,20 @@ const ValidatedInput = forwardRef<HTMLInputElement, ValidatedInputProps>(
           />
 
           {showValidationIcon && (
-            <div className='absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none'>
+            <div className='absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none flex-shrink-0'>
               {getValidationIcon()}
             </div>
           )}
         </div>
 
         {hasError && (
-          <p id={errorId} className='text-sm text-red-600' role='alert'>
+          <p id={errorId} className='text-xs sm:text-sm text-red-600 break-words' role='alert'>
             {error}
           </p>
         )}
 
         {hasHelp && (
-          <p id={helpId} className='text-sm text-gray-500'>
+          <p id={helpId} className='text-xs sm:text-sm text-gray-500 break-words'>
             {helpText}
           </p>
         )}

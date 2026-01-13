@@ -131,7 +131,6 @@
   "dashboard.serviceAgreements.activeAgreements": "Active Agreements",
   "dashboard.serviceAgreements.ofTotal": "of {total} total",
   "dashboard.serviceAgreements.monthlyRevenue": "Monthly Revenue",
-  "dashboard.serviceAgreements.sekPerMonthRecurring": "SEK/month recurring",
   "dashboard.serviceAgreements.expiringSoon": "Expiring Soon",
   "dashboard.serviceAgreements.next30Days": "Next 30 days",
   
@@ -144,10 +143,7 @@
   "dashboard.financialOverview.title": "Financial Overview",
   "dashboard.financialOverview.viewAnalytics": "View Analytics",
   "dashboard.financialOverview.oneTimeRevenue": "One-Time Revenue",
-  "dashboard.financialOverview.sekReportsOffers": "SEK (reports & offers)",
   "dashboard.financialOverview.recurringRevenue": "Recurring Revenue",
-  "dashboard.financialOverview.sekPerYear": "SEK/year ({monthly}/month)",
-  "dashboard.financialOverview.sekAllSources": "SEK (all sources)",
   "dashboard.financialOverview.recurringPercent": "Recurring %",
   "dashboard.financialOverview.ofTotalRevenue": "of total revenue",
   
@@ -171,5 +167,13 @@
   "dashboard.quickActions.newReport": "New Report",
   "dashboard.quickActions.createReport": "Create report",
   "dashboard.quickActions.serviceAgreement": "Service Agreement",
-  "dashboard.quickActions.createAgreement": "Create agreement"
+  "dashboard.quickActions.createAgreement": "Create agreement",
+  
+  "dashboard.completedThisWeek": "Completed This Week",
+  "dashboard.scheduledThisWeek": "Scheduled This Week",
+  "dashboard.averageTime": "Average Time",
+  "dashboard.hours": "hours",
+  "dashboard.allTime": "all time",
+  "dashboard.upcoming": "upcoming",
+  "dashboard.activeUsers": "Active Users"
 }

@@ -368,14 +368,22 @@ export async function getESGServiceReportsByBranch(branchId: string): Promise<ES
  * @param buildingId - Building ID
  * @returns Array of reports
  */
-export async function getESGServiceReportsByBuilding(buildingId: string): Promise<ESGServiceReport[]> {
+export async function getESGServiceReportsByBuilding(buildingId: string, branchId?: string): Promise<ESGServiceReport[]> {
   try {
     const reportsRef = collection(db, 'esgServiceReports');
-    const q = query(
-      reportsRef,
+    
+    // Include branchId in query to satisfy Firestore security rules
+    const constraints = [
       where('buildingId', '==', buildingId),
       orderBy('createdAt', 'desc')
-    );
+    ];
+    
+    // If branchId provided, add it to the query for security rule compliance
+    if (branchId) {
+      constraints.unshift(where('branchId', '==', branchId));
+    }
+    
+    const q = query(reportsRef, ...constraints);
 
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map((doc) => ({

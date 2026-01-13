@@ -22,6 +22,7 @@ import {
   LazyServiceAgreements,
   LazyBuildingESGImprovements,
   LazyESGService,
+  LazyESGReportsList,
   LoadingFallback,
 } from '../../components/LazyComponents';
 import AdminTestingPage from '../../components/admin/AdminTestingPage';
@@ -180,16 +181,7 @@ export const mainRoutes: RouteObject[] = [
       },
       {
         path: 'admin/building-esg-improvements',
-        element: (
-          <ProtectedRoute allowedRoles={['superadmin', 'branchAdmin']}>
-            <EnhancedErrorBoundary context='Building ESG Improvements'>
-              <Suspense fallback={<LoadingFallback />}>
-                <LazyBuildingESGImprovements />
-              </Suspense>
-            </EnhancedErrorBoundary>
-          </ProtectedRoute>
-        ),
-        errorElement: <RouteErrorBoundary />,
+        element: <Navigate to="/admin/esg-service" replace />,
       },
       {
         path: 'admin/esg-service',
@@ -198,6 +190,19 @@ export const mainRoutes: RouteObject[] = [
             <EnhancedErrorBoundary context='ESG Service'>
               <Suspense fallback={<LoadingFallback />}>
                 <LazyESGService />
+              </Suspense>
+            </EnhancedErrorBoundary>
+          </ProtectedRoute>
+        ),
+        errorElement: <RouteErrorBoundary />,
+      },
+      {
+        path: 'admin/esg-reports',
+        element: (
+          <ProtectedRoute allowedRoles={['superadmin', 'branchAdmin']}>
+            <EnhancedErrorBoundary context='ESG Reports'>
+              <Suspense fallback={<LoadingFallback />}>
+                <LazyESGReportsList />
               </Suspense>
             </EnhancedErrorBoundary>
           </ProtectedRoute>

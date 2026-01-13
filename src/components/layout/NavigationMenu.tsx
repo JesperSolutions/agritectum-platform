@@ -8,19 +8,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
-  Home,
-  FileText,
-  Calendar,
-  Users,
-  Settings,
-  User,
-  BarChart3,
-  Building,
-  FileCheck,
-  Mail,
   ChevronDown,
   ChevronRight,
-  Leaf,
 } from 'lucide-react';
 
 export interface NavigationItem {
@@ -103,7 +92,6 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({
     const isExpanded = expandedItems.has(item.label);
     const isActive = item.path ? isActiveRoute(item.path) : false;
     const hasActive = hasActiveChild(item);
-    const Icon = item.icon || FileText;
 
     if (hasChildren) {
       return (
@@ -112,19 +100,16 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({
             onClick={() => toggleExpanded(item.label)}
             className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg transition-all text-left ${
               hasActive
-                ? 'bg-slate-200 text-slate-900 shadow-sm font-semibold'
-                : 'text-slate-700 hover:bg-slate-100 hover:shadow-sm'
+                ? 'bg-slate-100 text-slate-900 font-semibold'
+                : 'text-slate-700 hover:bg-slate-50'
             }`}
             style={{ paddingLeft: `${0.75 + level * 1}rem` }}
           >
-            <div className="flex items-center space-x-3 flex-1 min-w-0">
-              <Icon className={`w-5 h-5 flex-shrink-0 ${hasActive ? 'text-slate-900' : 'text-slate-600'}`} />
-              <span className="truncate">{item.label}</span>
-            </div>
+            <span className="truncate">{item.label}</span>
             {isExpanded ? (
-              <ChevronDown className="w-4 h-4 flex-shrink-0 text-slate-500" />
+              <ChevronDown className="w-4 h-4 flex-shrink-0 text-slate-400" />
             ) : (
-              <ChevronRight className="w-4 h-4 flex-shrink-0 text-slate-500" />
+              <ChevronRight className="w-4 h-4 flex-shrink-0 text-slate-400" />
             )}
           </button>
           {isExpanded && filteredChildren && (
@@ -141,14 +126,13 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({
         key={item.path || item.label}
         to={item.path || '#'}
         onClick={onItemClick}
-        className={`flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-all ${
+        className={`block px-3 py-2.5 rounded-lg transition-all ${
           isActive
-            ? 'bg-slate-200 text-slate-900 shadow-sm font-semibold'
-            : 'text-slate-700 hover:bg-slate-100 hover:shadow-sm'
+            ? 'bg-slate-100 text-slate-900 font-semibold'
+            : 'text-slate-700 hover:bg-slate-50'
         }`}
         style={{ paddingLeft: `${0.75 + level * 1}rem` }}
       >
-        <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-slate-900' : 'text-slate-600'}`} />
         <span className="truncate">{item.label}</span>
       </Link>
     );

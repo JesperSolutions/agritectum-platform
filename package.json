@@ -1,7 +1,7 @@
 {
   "name": "agritectum-platform",
   "private": true,
-  "version": "1.0.2b",
+  "version": "1.0.3",
   "type": "module",
   "description": "Agritectum Platform - Professional roof inspection management system with customer portal and real-time notifications",
   "scripts": {

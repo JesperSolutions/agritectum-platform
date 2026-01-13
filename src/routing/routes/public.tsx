@@ -11,6 +11,9 @@ import {
 } from '../../components/LazyComponents';
 import PublicReportView from '../../components/reports/PublicReportView';
 import UnsubscribePage from '../../components/UnsubscribePage';
+import PrivacyPolicy from '../../components/legal/PrivacyPolicy';
+import TermsOfService from '../../components/legal/TermsOfService';
+import CustomerSignup from '../../components/portal/CustomerSignup';
 
 /**
  * Public routes - accessible without authentication
@@ -72,6 +75,25 @@ export const publicRoutes: RouteObject[] = [
         <Suspense fallback={<LoadingFallback />}>
           <LazyOfferThankYou />
         </Suspense>
+      </ErrorBoundary>
+    ),
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
+    path: '/privacy-policy',
+    element: <PrivacyPolicy />,
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
+    path: '/terms-of-service',
+    element: <TermsOfService />,
+    errorElement: <RouteErrorBoundary />,
+  },
+  {
+    path: '/portal/signup/:token',
+    element: (
+      <ErrorBoundary>
+        <CustomerSignup />
       </ErrorBoundary>
     ),
     errorElement: <RouteErrorBoundary />,

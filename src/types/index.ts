@@ -443,6 +443,10 @@ export interface ESGMetrics {
   sdgScore: number; // 0-100
   rating: string; // Sustainability rating
   lastCalculated?: string; // ISO date
+  // Additional calculated metrics for ESG reporting
+  co2ReductionKgPerYear?: number; // kg CO₂/year reduction
+  energySavingsKwhPerYear?: number; // kWh/year energy savings
+  waterManagementLitersPerYear?: number; // L/year water management
 }
 
 export interface Building {

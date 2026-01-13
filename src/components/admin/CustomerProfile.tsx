@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useIntl } from '../../hooks/useIntl';
-import { Customer, Building, Report, ServiceAgreement } from '../../types';
+import { Customer, Building, Report, ServiceAgreement, ESGServiceReport } from '../../types';
 import {
   ArrowLeft,
   Building as BuildingIcon,
@@ -18,6 +18,8 @@ import {
   CheckCircle,
   XCircle,
   AlertCircle,
+  Leaf,
+  ExternalLink,
 } from 'lucide-react';
 import LoadingSpinner from '../common/LoadingSpinner';
 import EmptyState from '../common/EmptyState';
@@ -28,6 +30,7 @@ import { getCustomerById } from '../../services/customerService';
 import { getBuildingsByCustomer } from '../../services/buildingService';
 import { getReportsByCustomerId } from '../../services/reportService';
 import { getServiceAgreementsByCustomer, getServiceAgreementsByBuilding } from '../../services/serviceAgreementService';
+import { getESGServiceReportsByBuilding } from '../../services/esgService';
 import StatusBadge from '../shared/badges/StatusBadge';
 
 // Helper function to map report status to StatusBadge-compatible status
@@ -73,6 +76,7 @@ const CustomerProfile: React.FC = () => {
   const [buildings, setBuildings] = useState<Building[]>([]);
   const [reports, setReports] = useState<Report[]>([]);
   const [serviceAgreements, setServiceAgreements] = useState<ServiceAgreement[]>([]);
+  const [esgReports, setEsgReports] = useState<Record<string, ESGServiceReport[]>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'overview' | 'buildings' | 'reports' | 'agreements'>('overview');
@@ -130,6 +134,23 @@ const CustomerProfile: React.FC = () => {
       );
       
       setServiceAgreements(uniqueAgreements);
+
+      // Load ESG reports for each building
+      const esgReportsByBuilding: Record<string, ESGServiceReport[]> = {};
+      await Promise.all(
+        buildingsData.map(async (building) => {
+          try {
+            const buildingEsgReports = await getESGServiceReportsByBuilding(building.id, currentUser.branchId);
+            if (buildingEsgReports.length > 0) {
+              esgReportsByBuilding[building.id] = buildingEsgReports;
+            }
+          } catch (err) {
+            // Ignore errors for individual buildings
+            console.error(`Error loading ESG reports for building ${building.id}:`, err);
+          }
+        })
+      );
+      setEsgReports(esgReportsByBuilding);
     } catch (err) {
       console.error('Error loading customer data:', err);
       setError(t('customerProfile.loadError') || 'Failed to load customer data');
@@ -412,13 +433,61 @@ const CustomerProfile: React.FC = () => {
                                   {formatDate(building.createdAt)}
                                 </div>
                               </div>
-                              <div className='mt-3 flex gap-4 text-sm'>
+                              <div className='mt-3 flex flex-wrap gap-4 text-sm'>
                                 <span className='text-slate-600'>
                                   {buildingReports.length} {t('customerProfile.reports') || 'reports'}
                                 </span>
                                 <span className='text-slate-600'>
                                   {buildingAgreements.length} {t('customerProfile.agreements') || 'agreements'}
                                 </span>
+                                {/* ESG Reports count and link */}
+                                {esgReports[building.id]?.length > 0 ? (
+                                  <span className='text-green-600 flex items-center gap-1'>
+                                    <Leaf className='w-4 h-4' />
+                                    {esgReports[building.id].length} {t('customerProfile.esgReports') || 'ESG report(s)'}
+                                  </span>
+                                ) : null}
+                              </div>
+                              
+                              {/* ESG Report Actions */}
+                              <div className='mt-3 flex flex-wrap gap-2'>
+                                {esgReports[building.id]?.length > 0 ? (
+                                  <>
+                                    {esgReports[building.id][0].isPublic && esgReports[building.id][0].publicLinkId && (
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          window.open(`/esg-report/public/${esgReports[building.id][0].publicLinkId}`, '_blank');
+                                        }}
+                                        className='flex items-center gap-1 px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full hover:bg-green-200 transition-colors'
+                                      >
+                                        <ExternalLink className='w-3 h-3' />
+                                        {t('customerProfile.viewEsgReport') || 'View ESG Report'}
+                                      </button>
+                                    )}
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        navigate(`/admin/esg-service?buildingId=${building.id}`);
+                                      }}
+                                      className='flex items-center gap-1 px-2 py-1 text-xs bg-slate-100 text-slate-700 rounded-full hover:bg-slate-200 transition-colors'
+                                    >
+                                      <Leaf className='w-3 h-3' />
+                                      {t('customerProfile.editEsgReport') || 'Edit ESG Report'}
+                                    </button>
+                                  </>
+                                ) : (
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      navigate(`/admin/esg-service?buildingId=${building.id}`);
+                                    }}
+                                    className='flex items-center gap-1 px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full hover:bg-green-200 transition-colors'
+                                  >
+                                    <Leaf className='w-3 h-3' />
+                                    {t('customerProfile.createEsgReport') || 'Create ESG Report'}
+                                  </button>
+                                )}
                               </div>
                             </div>
                           </div>

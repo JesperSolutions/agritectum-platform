@@ -131,7 +131,6 @@
   "dashboard.serviceAgreements.activeAgreements": "Aktive aftaler",
   "dashboard.serviceAgreements.ofTotal": "af {total} totalt",
   "dashboard.serviceAgreements.monthlyRevenue": "Månedsomsætning",
-  "dashboard.serviceAgreements.sekPerMonthRecurring": "SEK/måned tilbagevendende",
   "dashboard.serviceAgreements.expiringSoon": "Udløber snart",
   "dashboard.serviceAgreements.next30Days": "Næste 30 dage",
   
@@ -144,10 +143,7 @@
   "dashboard.financialOverview.title": "Økonomisk oversigt",
   "dashboard.financialOverview.viewAnalytics": "Vis analyser",
   "dashboard.financialOverview.oneTimeRevenue": "Engangsindtægter",
-  "dashboard.financialOverview.sekReportsOffers": "SEK (rapporter & tilbud)",
   "dashboard.financialOverview.recurringRevenue": "Tilbagevendende indtægter",
-  "dashboard.financialOverview.sekPerYear": "SEK/år ({monthly}/måned)",
-  "dashboard.financialOverview.sekAllSources": "SEK (alle kilder)",
   "dashboard.financialOverview.recurringPercent": "Tilbagevendende %",
   "dashboard.financialOverview.ofTotalRevenue": "af samlet omsætning",
   
@@ -171,6 +167,14 @@
   "dashboard.quickActions.newReport": "Ny rapport",
   "dashboard.quickActions.createReport": "Opret rapport",
   "dashboard.quickActions.serviceAgreement": "Serviceaftale",
-  "dashboard.quickActions.createAgreement": "Opret aftale"
+  "dashboard.quickActions.createAgreement": "Opret aftale",
+  
+  "dashboard.completedThisWeek": "Afsluttet denne uge",
+  "dashboard.scheduledThisWeek": "Planlagt denne uge",
+  "dashboard.averageTime": "Gennemsnitlig tid",
+  "dashboard.hours": "timer",
+  "dashboard.allTime": "i alt",
+  "dashboard.upcoming": "kommende",
+  "dashboard.activeUsers": "Aktive brugere"
 }
 

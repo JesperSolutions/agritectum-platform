@@ -8,6 +8,7 @@ import { notifyBranchManagersOnReportCreation } from '../services/notificationSe
 import FormErrorBoundary from './FormErrorBoundary';
 import { useIntl } from '../hooks/useIntl';
 import { logger } from '../utils/logger';
+import { getCurrencyCode, getPhoneCountryCode } from '../utils/currency';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from '../config/firebase';
 import {
@@ -36,12 +37,18 @@ import {
   AlertTriangle,
   Ruler,
   DollarSign,
+  Camera,
+  X,
+  MapPin,
+  CheckCircle,
 } from 'lucide-react';
 import LoadingSpinner from './common/LoadingSpinner';
 import NotificationToast from './common/NotificationToast';
 import IssueImageUpload from './IssueImageUpload';
 import IssueTemplateSelector from './IssueTemplateSelector';
 import RoofSizeMeasurer from './RoofSizeMeasurer';
+import DefectCameraCapture from './DefectCameraCapture';
+import DefectQuickDescription from './DefectQuickDescription';
 import { IssueTemplate } from '../constants/issueTemplates';
 import { PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
@@ -87,7 +94,7 @@ interface ReportFormProps {
 const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
   const { reportId } = useParams<{ reportId: string }>();
   const { currentUser } = useAuth();
-  const { t } = useIntl();
+  const { t, locale, formatCurrency } = useIntl();
   const location = useLocation();
   const [searchParams] = useSearchParams();
 
@@ -315,15 +322,29 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
   const [customerBuildings, setCustomerBuildings] = useState<Building[]>([]);
   const [selectedBuildingId, setSelectedBuildingId] = useState<string | null>(null);
   const [loadingBuildings, setLoadingBuildings] = useState(false);
+  const [customerIdForBuildings, setCustomerIdForBuildings] = useState<string | null>(null);
   const [formResetKey, setFormResetKey] = useState(0);
   const totalSteps = FORM_CONSTANTS.TOTAL_STEPS;
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
   const [showRoofSizeMeasurer, setShowRoofSizeMeasurer] = useState(false);
+  const [roofSnapshot, setRoofSnapshot] = useState<string | undefined>(undefined);
+  const [roofPolygonPoints, setRoofPolygonPoints] = useState<any[] | undefined>(undefined);
   const [notification, setNotification] = useState<{
     message: string;
     type: 'success' | 'error' | 'warning';
   } | null>(null);
   const lastNotificationTimeRef = useRef<number>(0);
+
+  // Defect flow state for camera capture and description
+  const [defectFlowStep, setDefectFlowStep] = useState<'idle' | 'camera' | 'describe'>('idle');
+  const [draftDefect, setDraftDefect] = useState<{
+    image?: string;
+    title?: string;
+    description?: string;
+    severity?: IssueSeverity;
+    type?: IssueType;
+  } | null>(null);
+  const [showRepeatOption, setShowRepeatOption] = useState(false);
 
   // Refs for focus management between steps
   const stepRefs = {
@@ -970,7 +991,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
       oneYearAgo.setFullYear(today.getFullYear() - 1);
       
       if (inspectionDateStart < oneYearAgo) {
-        errors.inspectionDate = t('form.validation.inspectionDateTooOld') || t('form.validation.inspectionDatePast') || 'Inspektionsdatumet er for langt tilbage i tiden';
+        errors.inspectionDate = t('form.validation.inspectionDateTooOld');
       }
     }
 
@@ -1029,17 +1050,17 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
     }
 
     if (!currentUser) {
-      setError('User not authenticated. Please log in again.');
+      setError(t('form.errors.userNotAuthenticated'));
       return;
     }
 
     if (!currentUser.branchId && currentUser.role !== 'superadmin') {
-      setError('User must be assigned to a branch. Please contact an administrator.');
+      setError(t('form.errors.userNoBranch'));
       return;
     }
 
     if (!validateForm()) {
-      setError('Please fix the validation errors below.');
+      setError(t('form.errors.fixValidation'));
       return;
     }
 
@@ -1072,7 +1093,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
           await notifyBranchManagersOnReportCreation(
             createdReport.branchId,
             newReportId,
-            createdReport.customerName || 'Untitled Report',
+            createdReport.customerName || t('form.defaults.untitledReport'),
             'created'
           );
         } catch (notificationError) {
@@ -1139,7 +1160,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
               await notifyBranchManagersOnReportCreation(
                 updatedReport.branchId,
                 reportId,
-                updatedReport.customerName || 'Untitled Report',
+                updatedReport.customerName || t('form.defaults.untitledReport'),
                 'completed'
               );
               
@@ -1215,7 +1236,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
               await notifyBranchManagersOnReportCreation(
                 updatedReport.branchId,
                 reportId,
-                updatedReport.customerName || 'Untitled Report',
+                updatedReport.customerName || t('form.defaults.untitledReport'),
                 'updated'
               );
             }
@@ -1385,6 +1406,59 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
     }));
   };
 
+  const saveDraftDefect = async (defectData: {
+    title: string;
+    description: string;
+    type: IssueType;
+    severity: IssueSeverity;
+  }) => {
+    try {
+      // Upload image first if it exists
+      let imageUrl: string | undefined;
+      if (draftDefect?.image) {
+        try {
+          const response = await fetch(draftDefect.image);
+          const blob = await response.blob();
+          const fileName = `defect_${Date.now()}.${blob.type.split('/')[1] || 'jpg'}`;
+          const storageRef = ref(storage, `reports/${tempReportId}/issues/${fileName}`);
+          await uploadBytes(storageRef, blob);
+          imageUrl = await getDownloadURL(storageRef);
+        } catch (error) {
+          console.error('Error uploading image:', error);
+          // Continue without image URL
+        }
+      }
+
+      // Create issue from draft
+      const existingIssuesCount = formData.issuesFound?.length || 0;
+      const issueTitle = defectData.title || `${t('reports.public.problem') || 'Problem'} ${existingIssuesCount + 1}`;
+      const newIssue: Issue = {
+        id: `issue_${Date.now()}`,
+        title: issueTitle,
+        type: defectData.type,
+        severity: defectData.severity,
+        description: defectData.description || '',
+        location: '',
+        images: imageUrl ? [imageUrl] : [],
+      };
+      setFormData(prev => ({
+        ...prev,
+        issuesFound: [...(prev.issuesFound || []), newIssue],
+      }));
+
+      setDefectFlowStep('idle');
+      setDraftDefect(null);
+      setShowRepeatOption(true);
+    } catch (error) {
+      console.error('Error saving defect:', error);
+      setNotification({
+        message: t('form.messages.errorSavingDefect') || 'Error saving defect',
+        type: 'error',
+      });
+      setTimeout(() => setNotification(null), 5000);
+    }
+  };
+
   const handleCancel = () => {
     try {
       // Check if there are any changes
@@ -1515,7 +1589,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
       }));
       
       setNotification({
-        message: `Customer information imported from latest report (${foundReport.createdAt ? new Date(foundReport.createdAt).toLocaleDateString() : 'Unknown date'})`,
+        message: t('form.messages.customerImported', { date: foundReport.createdAt ? new Date(foundReport.createdAt).toLocaleDateString() : t('form.labels.unknownDate') }),
         type: 'success'
       });
     }
@@ -1557,9 +1631,9 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
 
   return (
     <FormErrorBoundary>
-      <div className='max-w-4xl mx-auto bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen py-8'>
+      <div className='max-w-4xl mx-auto bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen py-8 px-4 sm:px-6 lg:px-8'>
         {/* Header */}
-        <div className='bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-6'>
+        <div className='bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-6 overflow-hidden'>
           <div className='flex items-center justify-between flex-wrap gap-4'>
             <div>
               <h1 className='text-2xl font-bold text-slate-900'>
@@ -1661,13 +1735,13 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
         <form onSubmit={handleSubmit} className='space-y-8'>
           {/* Step 1: Customer Information */}
           {currentStep === 1 && (
-            <div className='bg-white p-6 rounded-xl shadow-sm border border-slate-200'>
-              <h2 className='text-xl font-semibold text-slate-900 mb-6 flex items-center'>
-                <User className='w-6 h-6 mr-3 text-slate-600' />
-                {t('form.sections.customerInfo')}
+            <div className='bg-white p-6 rounded-xl shadow-sm border border-slate-200 overflow-hidden'>
+              <h2 className='text-lg sm:text-xl font-semibold text-slate-900 mb-6 flex items-center truncate-smart'>
+                <User className='w-6 h-6 mr-3 text-slate-600 flex-shrink-0' />
+                <span className='truncate'>{t('form.sections.customerInfo')}</span>
               </h2>
 
-              <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+              <div className='grid grid-cols-1 sm:grid-cols-2 gap-5'>
                 <MaterialFormField
                   label={t('form.fields.customerName')}
                   error={validationErrors.customerName}
@@ -1728,25 +1802,28 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                   error={validationErrors.customerPhone}
                   touched={!!validationErrors.customerPhone}
                 >
-                  <PhoneInput
-                    className='w-full'
-                    defaultCountry='se'
-                    preferredCountries={['se','no','dk','fi','gb','us']}
-                    value={formData.customerPhone || ''}
-                    onChange={value => {
-                      setFormData(prev => ({ ...prev, customerPhone: value }));
-                      clearFieldError('customerPhone');
-                    }}
-                    inputClassName={`w-full h-10 leading-10 py-0 rounded-lg border focus:ring-2 focus:ring-slate-600 focus:border-slate-600 ${
-                      validationErrors.customerPhone ? 'border-red-500' : 'border-slate-300'
-                    }`}
-                    countrySelectorStyleProps={{
-                      buttonClassName:
-                        'h-10 rounded-l-md border border-slate-300 bg-white hover:bg-slate-50 focus:ring-2 focus:ring-slate-600 focus:border-slate-600',
-                      dropdownArrowClassName: 'text-slate-600',
-                    }}
-                    placeholder='+46 70 123 45 67'
-                  />
+                  <div className='relative z-10'>
+                    <PhoneInput
+                      className='w-full'
+                      defaultCountry={getPhoneCountryCode(locale as any)}
+                      preferredCountries={['se','no','dk','de','fi','gb','us']}
+                      value={formData.customerPhone || ''}
+                      onChange={value => {
+                        setFormData(prev => ({ ...prev, customerPhone: value }));
+                        clearFieldError('customerPhone');
+                      }}
+                      inputClassName={`w-full h-10 leading-10 py-0 rounded-lg border focus:ring-2 focus:ring-slate-600 focus:border-slate-600 ${
+                        validationErrors.customerPhone ? 'border-red-500' : 'border-slate-300'
+                      }`}
+                      countrySelectorStyleProps={{
+                        buttonClassName:
+                          'h-10 rounded-l-md border border-slate-300 bg-white hover:bg-slate-50 focus:ring-2 focus:ring-slate-600 focus:border-slate-600',
+                        dropdownClassName: 'z-50',
+                        dropdownArrowClassName: 'text-slate-600',
+                      }}
+                      placeholder={`+${getPhoneCountryCode(locale as any).toUpperCase()} 70 123 45 67`}
+                    />
+                  </div>
                 </MaterialFormField>
 
                 <div className='md:col-span-2'>
@@ -1775,38 +1852,38 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                 {customerBuildings.length > 0 && (
                   <div className='md:col-span-2'>
                     <MaterialFormField
-                      label={t('form.fields.selectBuilding') || 'Vælg bygning'}
+                      label={t('form.fields.selectBuilding')}
                       error={validationErrors.buildingId}
                       touched={!!validationErrors.buildingId}
                     >
                       {loadingBuildings ? (
-                        <div className='text-sm text-slate-500'>Indlæser bygninger...</div>
+                        <div className='text-sm text-slate-500'>{t('form.messages.loadingBuildings')}</div>
                       ) : (
                         <MaterialSelect
-                          id='buildingId'
-                          value={selectedBuildingId || ''}
-                          onChange={e => {
-                            const buildingId = e.target.value;
-                            if (buildingId) {
-                              handleBuildingSelect(buildingId);
-                            } else {
-                              setSelectedBuildingId(null);
-                            }
-                            clearFieldError('buildingId');
-                          }}
-                          options={[
-                            { value: '', label: t('form.fields.selectBuildingPlaceholder') || 'Vælg en bygning eller opret ny...' },
-                            ...customerBuildings.map(building => ({
-                              value: building.id,
-                              label: `${building.address}${building.roofType ? ` (${building.roofType})` : ''}${building.roofSize ? ` - ${building.roofSize} m²` : ''}`,
-                            })),
-                          ]}
-                        />
+                            id='buildingId'
+                            value={selectedBuildingId || ''}
+                            onChange={e => {
+                              const buildingId = e.target.value;
+                              if (buildingId) {
+                                handleBuildingSelect(buildingId);
+                              } else {
+                                setSelectedBuildingId(null);
+                              }
+                              clearFieldError('buildingId');
+                            }}
+                            options={[
+                              { value: '', label: t('form.fields.selectBuildingPlaceholder') },
+                              ...customerBuildings.map(building => ({
+                                value: building.id,
+                                label: `${building.address}${building.roofType ? ` (${building.roofType})` : ''}${building.roofSize ? ` - ${building.roofSize} m²` : ''}`,
+                              })),
+                            ]}
+                          />
                       )}
                     </MaterialFormField>
                     {selectedBuildingId && (
                       <div className='mt-2 text-sm text-slate-600'>
-                        {t('form.messages.buildingDataUsed') || 'Bygningsdata bruges som kilde til tagtype og størrelse'}
+                        {t('form.messages.buildingDataUsed')}
                       </div>
                     )}
                   </div>
@@ -1815,7 +1892,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                 {formData.customerType === 'company' && !selectedBuildingId && (
                   <div className='md:col-span-2'>
                     <MaterialFormField
-                      label={t('form.fields.buildingAddress') || 'Bygningsadresse (for firma)'}
+                      label={t('form.fields.buildingAddress')}
                       error={validationErrors.buildingAddress}
                       touched={!!validationErrors.buildingAddress}
                     >
@@ -1827,7 +1904,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                           setFormData(prev => ({ ...prev, buildingAddress: e.target.value }));
                           clearFieldError('buildingAddress');
                         }}
-                        placeholder={t('form.fields.buildingAddressPlaceholder') || 'Angiv specifik bygningsadresse hvis den afviger fra hovedadressen'}
+                        placeholder={t('form.fields.buildingAddressPlaceholder')}
                         autoComplete='street-address'
                       />
                     </MaterialFormField>
@@ -2060,42 +2137,335 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
             <>
               {/* Issues Found */}
               <div className='bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-slate-200'>
-                <div className='flex items-center justify-between mb-4'>
-                  <h2 className='text-lg font-semibold text-slate-900 flex items-center'>
-                    <AlertTriangle className='w-5 h-5 mr-2' />
+                <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-4'>
+                  <h2 className='text-lg sm:text-xl font-semibold text-slate-900 flex items-center'>
+                    <AlertTriangle className='w-5 h-5 sm:w-6 sm:h-6 mr-2' />
                     {t('form.sections.issuesFound')}
                   </h2>
-                  <div className='flex items-center space-x-2'>
-                    <button
-                      type='button'
-                      onClick={() => setShowTemplateSelector(true)}
-                      className='inline-flex items-center px-3 py-2 border border-slate-300 text-sm leading-4 font-medium rounded-lg text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 shadow-sm'
-                    >
-                      <FileText className='w-4 h-4 mr-1' />
-                      {t('form.buttons.templates')}
-                    </button>
-                    <button
-                      type='button'
-                      onClick={addIssue}
-                      className='inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-lg text-slate-700 bg-slate-100 hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 shadow-sm'
-                    >
-                      <Plus className='w-4 h-4 mr-1' />
-                      {t('form.buttons.addIssue')}
-                    </button>
+                  <div className='flex items-center justify-end'>
+                    {defectFlowStep === 'idle' ? (
+                      <button
+                        type='button'
+                        onClick={() => {
+                          setDefectFlowStep('camera');
+                          setDraftDefect({});
+                        }}
+                        className='inline-flex items-center justify-center px-6 sm:px-8 py-4 sm:py-3 border border-transparent text-lg sm:text-base font-semibold rounded-xl text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 min-h-[56px] sm:min-h-[52px]'
+                      >
+                        <Camera className='w-6 h-6 sm:w-5 sm:h-5 mr-3 sm:mr-2 flex-shrink-0' />
+                        <span className='whitespace-nowrap'>{t('form.buttons.takeDefectPhoto') || 'Take Photo of Defect'}</span>
+                      </button>
+                    ) : (
+                      <button
+                        type='button'
+                        onClick={() => {
+                          setDefectFlowStep('idle');
+                          setDraftDefect(null);
+                        }}
+                        className='inline-flex items-center justify-center px-4 sm:px-3 py-3 sm:py-2 border border-slate-300 text-base sm:text-sm font-medium rounded-lg text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 shadow-sm min-h-[44px] sm:min-h-0 transition-colors'
+                      >
+                        <X className='w-5 h-5 sm:w-4 sm:h-4 mr-2 sm:mr-1 flex-shrink-0' />
+                        <span className='whitespace-nowrap'>{t('form.buttons.cancel') || 'Cancel'}</span>
+                      </button>
+                    )}
                   </div>
                 </div>
 
+                {/* Progress Indicator for Defect Flow */}
+                {defectFlowStep !== 'idle' && (
+                  <div className='mb-6'>
+                    <div className='flex items-center justify-center gap-2 sm:gap-4'>
+                      {/* Step 1: Camera */}
+                      <div className='flex items-center gap-2'>
+                        <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all ${
+                          defectFlowStep === 'camera'
+                            ? 'bg-blue-600 border-blue-600 text-white'
+                            : defectFlowStep === 'describe'
+                            ? 'bg-green-500 border-green-500 text-white'
+                            : 'bg-slate-100 border-slate-300 text-slate-400'
+                        }`}>
+                          {defectFlowStep === 'camera' ? (
+                            <Camera className='w-5 h-5' />
+                          ) : defectFlowStep === 'describe' ? (
+                            <CheckCircle className='w-5 h-5' />
+                          ) : (
+                            <Camera className='w-5 h-5' />
+                          )}
+                        </div>
+                        <span className={`hidden sm:block text-sm font-medium ${
+                          defectFlowStep === 'camera' ? 'text-blue-600' : 'text-slate-600'
+                        }`}>
+                          {t('form.defectFlow.step.camera') || 'Take Photo'}
+                        </span>
+                      </div>
+
+                      {/* Connector Line */}
+                      <div className={`h-0.5 w-8 sm:w-16 transition-all ${
+                        defectFlowStep === 'describe'
+                          ? 'bg-green-500'
+                          : 'bg-slate-300'
+                      }`} />
+
+                      {/* Step 2: Describe */}
+                      <div className='flex items-center gap-2'>
+                        <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all ${
+                          defectFlowStep === 'describe'
+                            ? 'bg-blue-600 border-blue-600 text-white'
+                            : 'bg-slate-100 border-slate-300 text-slate-400'
+                        }`}>
+                          {defectFlowStep === 'describe' ? (
+                            <FileText className='w-5 h-5' />
+                          ) : (
+                            <FileText className='w-5 h-5 opacity-50' />
+                          )}
+                        </div>
+                        <span className={`hidden sm:block text-sm font-medium ${
+                          defectFlowStep === 'describe' ? 'text-blue-600' : 'text-slate-600'
+                        }`}>
+                          {t('form.defectFlow.step.describe') || 'Describe'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Defect Flow: Camera Step */}
+                {defectFlowStep === 'camera' && (
+                  <DefectCameraCapture
+                    onImageCapture={(imageDataUrl) => {
+                      setDraftDefect(prev => ({ ...prev, image: imageDataUrl }));
+                      setDefectFlowStep('describe');
+                    }}
+                    onCancel={() => {
+                      setDefectFlowStep('idle');
+                      setDraftDefect(null);
+                    }}
+                  />
+                )}
+
+                {/* Defect Flow: Map Step - Pin Placement */}
+                {defectFlowStep === 'map' && draftDefect?.image && (
+                  <div className='mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4'>
+                    <p className='text-sm text-blue-800 mb-4 text-center'>
+                      {t('form.instructions.pinPlacement') || 'Click on the roof where the problem is'}
+                    </p>
+
+                    {/* Show map or roof image annotation based on what exists */}
+                    {!formData.roofImageUrl && addressCoordinates ? (
+                      <Suspense fallback={<LoadingSpinner size="sm" />}>
+                        <InteractiveRoofMap
+                          key="roof-map-defect-pin"
+                          lat={addressCoordinates.lat}
+                          lon={addressCoordinates.lon}
+                          availableIssues={[]}
+                          existingMarkers={mapMarkers}
+                          onMarkersChange={setMapMarkers}
+                          pinMode={true}
+                          draftImageUrl={draftDefect.image}
+                          onPinPlace={(position) => {
+                            setDraftDefect(prev => ({ ...prev, pinPosition: position }));
+                            setDefectFlowStep('describe');
+                          }}
+                          onImageCapture={async () => {}}
+                        />
+                      </Suspense>
+                    ) : formData.roofImageUrl ? (
+                      <Suspense fallback={<LoadingSpinner size="sm" />}>
+                        <RoofImageAnnotation
+                          roofImageUrl={formData.roofImageUrl}
+                          pins={formData.roofImagePins || []}
+                          availableIssues={formData.issuesFound || []}
+                          reportId={tempReportId}
+                          onImageChange={(url) => setFormData(prev => ({ ...prev, roofImageUrl: url || undefined }))}
+                          onPinsChange={(pins) => setFormData(prev => ({ ...prev, roofImagePins: pins }))}
+                          disabled={false}
+                          pinMode={true}
+                          draftImageUrl={draftDefect.image}
+                          onPinPlace={(position) => {
+                            setDraftDefect(prev => ({ ...prev, pinPosition: position }));
+                            setDefectFlowStep('describe');
+                          }}
+                        />
+                      </Suspense>
+                    ) : null}
+
+                    {/* Action buttons for map step */}
+                    <div className='mt-4 flex flex-col sm:flex-row gap-3'>
+                      <button
+                        type='button'
+                        onClick={() => {
+                          // Skip pin placement and proceed to describe step
+                          setDefectFlowStep('describe');
+                        }}
+                        className='px-4 py-3 border border-slate-300 text-slate-700 bg-white rounded-lg hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 font-medium min-h-[44px] transition-colors'
+                      >
+                        {t('form.buttons.skip') || 'Skip'}
+                      </button>
+                      {draftDefect.pinPosition && (
+                        <button
+                          type='button'
+                          onClick={() => {
+                            setDraftDefect(prev => {
+                              const { pinPosition, ...rest } = prev || {};
+                              return rest;
+                            });
+                          }}
+                          className='px-4 py-3 border border-slate-300 text-slate-700 bg-white rounded-lg hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 font-medium min-h-[44px] transition-colors'
+                        >
+                          {t('form.buttons.removePin') || 'Remove Pin'}
+                        </button>
+                      )}
+                      <button
+                        type='button'
+                        onClick={() => {
+                          setDraftDefect(prev => {
+                            const { image, ...rest } = prev || {};
+                            return rest;
+                          });
+                          setDefectFlowStep('camera');
+                        }}
+                        className='px-4 py-3 border border-slate-300 text-slate-700 bg-white rounded-lg hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 font-medium min-h-[44px] transition-colors'
+                      >
+                        {t('form.buttons.deleteImage') || 'Delete Image'}
+                      </button>
+                      <button
+                        type='button'
+                        onClick={() => {
+                          setDefectFlowStep('idle');
+                          setDraftDefect(null);
+                        }}
+                        className='px-4 py-3 border border-slate-300 text-slate-700 bg-white rounded-lg hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 font-medium min-h-[44px] transition-colors'
+                      >
+                        {t('form.buttons.cancel') || 'Cancel'}
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Defect Flow: Description Step */}
+                {defectFlowStep === 'describe' && draftDefect && (
+                  <DefectQuickDescription
+                    draftDefect={draftDefect}
+                    onSave={(defectData) => {
+                      saveDraftDefect(defectData);
+                    }}
+                    onMoreDetails={async () => {
+                      // Upload image first if it exists
+                      let imageUrl: string | undefined;
+                      if (draftDefect?.image) {
+                        try {
+                          const response = await fetch(draftDefect.image);
+                          const blob = await response.blob();
+                          const fileName = `defect_${Date.now()}.${blob.type.split('/')[1] || 'jpg'}`;
+                          const storageRef = ref(storage, `reports/${tempReportId}/issues/${fileName}`);
+                          await uploadBytes(storageRef, blob);
+                          imageUrl = await getDownloadURL(storageRef);
+                        } catch (error) {
+                          console.error('Error uploading image:', error);
+                          // Continue without image URL
+                        }
+                      }
+
+                      // Create issue from draft and open in full form with automatic title
+                      const existingIssuesCount = formData.issuesFound?.length || 0;
+                      const issueTitle = (draftDefect?.title?.trim() || '') || `${t('reports.public.problem') || 'Problem'} ${existingIssuesCount + 1}`;
+                      const newIssue: Issue = {
+                        id: `issue_${Date.now()}`,
+                        title: issueTitle,
+                        type: draftDefect?.type || 'other',
+                        severity: draftDefect?.severity || 'medium',
+                        description: draftDefect?.description || '',
+                        location: draftDefect?.pinPosition ? t('reportView.location') : '',
+                        images: imageUrl ? [imageUrl] : [],
+                      };
+                      setFormData(prev => ({
+                        ...prev,
+                        issuesFound: [...(prev.issuesFound || []), newIssue],
+                      }));
+
+                      // Update pins if position exists
+                      if (draftDefect?.pinPosition) {
+                        if ('lat' in draftDefect.pinPosition) {
+                          const newMarker: MapMarker = {
+                            id: `marker_${Date.now()}`,
+                            lat: draftDefect.pinPosition.lat,
+                            lon: draftDefect.pinPosition.lon,
+                            severity: newIssue.severity,
+                            issueId: newIssue.id,
+                          };
+                          setMapMarkers(prev => [...prev, newMarker]);
+                        } else if ('x' in draftDefect.pinPosition) {
+                          const newPin: RoofPinMarker = {
+                            id: `pin_${Date.now()}`,
+                            x: draftDefect.pinPosition.x,
+                            y: draftDefect.pinPosition.y,
+                            severity: newIssue.severity,
+                            issueId: newIssue.id,
+                          };
+                          setFormData(prev => ({
+                            ...prev,
+                            roofImagePins: [...(prev.roofImagePins || []), newPin],
+                          }));
+                        }
+                      }
+
+                      setDefectFlowStep('idle');
+                      setDraftDefect(null);
+                    }}
+                    onCancel={() => {
+                      setDefectFlowStep('idle');
+                      setDraftDefect(null);
+                    }}
+                  />
+                )}
+
+                {/* Repeat loop: Show "Take Next Photo" after successful save */}
+                {defectFlowStep === 'idle' && showRepeatOption && (
+                  <div className='mb-6 bg-green-50 border border-green-200 rounded-lg p-4'>
+                    <div className='flex items-center justify-between'>
+                      <p className='text-sm text-green-800'>
+                        {t('form.messages.defectSaved') || 'Defect saved'}
+                      </p>
+                      <button
+                        type='button'
+                        onClick={() => {
+                          setDefectFlowStep('camera');
+                          setDraftDefect({});
+                          setShowRepeatOption(false);
+                        }}
+                        className='inline-flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 font-semibold min-h-[52px]'
+                      >
+                        <Camera className='w-5 h-5' />
+                        {t('form.buttons.takeNextPhoto') || 'Take Next Photo'}
+                      </button>
+                    </div>
+                  </div>
+                )}
+
                 {/* Interactive Roof Map - Only show if we have coordinates but no image yet */}
-                {!formData.roofImageUrl && addressCoordinates && (
-                  <div className="mb-6" style={{ position: 'relative', zIndex: 1 }}>
+                {defectFlowStep === 'idle' && !formData.roofImageUrl && addressCoordinates && (
+                  <div
+                    className="mb-6"
+                    style={{ position: 'relative', zIndex: 1 }}
+                    onClick={(e) => {
+                      // Stop event propagation to prevent form submission
+                      e.stopPropagation();
+                    }}
+                    onMouseDown={(e) => {
+                      // Stop event propagation to prevent form submission
+                      e.stopPropagation();
+                    }}
+                  >
                     <Suspense fallback={<LoadingSpinner size="sm" />}>
                       <InteractiveRoofMap
                         key="roof-map-interactive"
                         lat={addressCoordinates.lat}
                         lon={addressCoordinates.lon}
-                        availableIssues={(formData.issuesFound || []).map(issue => ({
+                        availableIssues={(formData.issuesFound || []).map((issue, index) => ({
                           id: issue.id,
-                          title: issue.type + ' - ' + (issue.title || 'Untitled'),
+                          title: issue.title
+                            ? `${issue.type} - ${issue.title}`
+                            : `${t(`issueTypes.${issue.type}`) || issue.type} - ${t('reportView.issueNumber')} #${index + 1}`,
                         }))}
                         existingMarkers={mapMarkers}
                         onMarkersChange={setMapMarkers}
@@ -2107,11 +2477,11 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                           const storageRef = ref(storage, `roof-images/${tempReportId}/${Date.now()}.png`);
                           await uploadBytes(storageRef, blob);
                           const url = await getDownloadURL(storageRef);
-                          
+
                           setFormData(prev => ({ ...prev, roofImageUrl: url }));
-                          setNotification({ 
-                            message: t('address.map.captureSuccess'), 
-                            type: 'success' 
+                          setNotification({
+                            message: t('address.map.captureSuccess'),
+                            type: 'success'
                           });
                         } catch (error) {
                           console.error('Error uploading roof image:', error);
@@ -2126,8 +2496,8 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                   </div>
                 )}
 
-                {/* Roof Image Annotation - Show if roof image exists */}
-                {formData.roofImageUrl && (
+                {/* Roof Image Annotation - Show if roof image exists (only when not in defect flow) */}
+                {defectFlowStep === 'idle' && formData.roofImageUrl && (
                   <div className="mb-6">
                     <Suspense fallback={<LoadingSpinner size="sm" />}>
                       <RoofImageAnnotation
@@ -2264,7 +2634,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                   </div>
                 ))}
 
-                {(!formData.issuesFound || formData.issuesFound.length === 0) && (
+                {(!formData.issuesFound || formData.issuesFound.length === 0) && defectFlowStep === 'idle' && (
                   <div className='text-center py-8 text-slate-500'>
                     <AlertTriangle className='w-8 h-8 text-slate-400 mx-auto mb-2' />
                     <p>{t('form.labels.noIssuesYet')}</p>
@@ -2365,17 +2735,17 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                           className='block w-full text-sm border-slate-300 rounded-lg shadow-sm focus:ring-slate-500 focus:border-slate-500'
                         >
                           <option value=''>Välj intervall</option>
-                          <option value='250'>0-500 SEK</option>
-                          <option value='750'>500-1000 SEK</option>
-                          <option value='1250'>1000-1500 SEK</option>
-                          <option value='1750'>1500-2000 SEK</option>
-                          <option value='2250'>2000-2500 SEK</option>
-                          <option value='2750'>2500-3000 SEK</option>
-                          <option value='3250'>3000-3500 SEK</option>
-                          <option value='3750'>3500-4000 SEK</option>
-                          <option value='4250'>4000-4500 SEK</option>
-                          <option value='4750'>4500-5000 SEK</option>
-                          <option value='5500'>5000+ SEK</option>
+                          <option value='250'>0-500 {getCurrencyCode(locale)}</option>
+                          <option value='750'>500-1000 {getCurrencyCode(locale)}</option>
+                          <option value='1250'>1000-1500 {getCurrencyCode(locale)}</option>
+                          <option value='1750'>1500-2000 {getCurrencyCode(locale)}</option>
+                          <option value='2250'>2000-2500 {getCurrencyCode(locale)}</option>
+                          <option value='2750'>2500-3000 {getCurrencyCode(locale)}</option>
+                          <option value='3250'>3000-3500 {getCurrencyCode(locale)}</option>
+                          <option value='3750'>3500-4000 {getCurrencyCode(locale)}</option>
+                          <option value='4250'>4000-4500 {getCurrencyCode(locale)}</option>
+                          <option value='4750'>4500-5000 {getCurrencyCode(locale)}</option>
+                          <option value='5500'>5000+ {getCurrencyCode(locale)}</option>
                         </select>
                       </div>
                     </div>
@@ -2421,7 +2791,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      {t('costEstimate.labor') || 'Arbetskostnad'} (SEK)
+                      {t('costEstimate.labor') || 'Arbetskostnad'} ({getCurrencyCode(locale)})
                     </label>
                     <input
                       type='number'
@@ -2439,7 +2809,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
 
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      {t('costEstimate.material') || 'Materialkostnad'} (SEK)
+                      {t('costEstimate.material') || 'Materialkostnad'} ({getCurrencyCode(locale)})
                     </label>
                     <input
                       type='number'
@@ -2457,7 +2827,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
 
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      {t('costEstimate.travel') || 'Resekostnad'} (SEK)
+                      {t('costEstimate.travel') || 'Resekostnad'} ({getCurrencyCode(locale)})
                     </label>
                     <input
                       type='number'
@@ -2475,7 +2845,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
 
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-1'>
-                      {t('costEstimate.overhead') || 'Omkostnader'} (SEK)
+                      {t('costEstimate.overhead') || 'Omkostnader'} ({getCurrencyCode(locale)})
                     </label>
                     <input
                       type='number'
@@ -2506,7 +2876,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                         (formData.materialCost || 0) + 
                         (formData.travelCost || 0) + 
                         (formData.overheadCost || 0);
-                      return `${total.toLocaleString('sv-SE')} SEK`;
+                      return formatCurrency(total);
                     })()}
                   </div>
                 </div>
@@ -2779,8 +3149,10 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
           <RoofSizeMeasurer
             lat={addressCoordinates.lat}
             lon={addressCoordinates.lon}
-            onAreaCalculated={(area) => {
+            onAreaCalculated={(area, snapshotDataUrl, polygonPoints) => {
               setFormData(prev => ({ ...prev, roofSize: area }));
+              setRoofSnapshot(snapshotDataUrl);
+              setRoofPolygonPoints(polygonPoints);
               setShowRoofSizeMeasurer(false);
               setNotification({
                 message: `Roof size set to ${area.toFixed(2)} m²`,
@@ -2789,6 +3161,8 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
             }}
             onClose={() => setShowRoofSizeMeasurer(false)}
             initialArea={formData.roofSize}
+            initialSnapshot={roofSnapshot}
+            initialPolygonPoints={roofPolygonPoints}
           />
         )}
 

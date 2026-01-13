@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, ExternalLink, Building2, Users, BarChart3, Shield, Zap, CheckCircle, Calendar, Camera, TrendingUp, Clock, MapPin, FileText, DollarSign, Settings, Eye, Star, ArrowRight, Play, CheckCircle2, ArrowDown } from 'lucide-react';
+import { useIntl } from '../hooks/useIntl';
 
 const MarketingPage: React.FC = () => {
+  const { t } = useIntl();
   const [activeSection, setActiveSection] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -44,8 +46,8 @@ const MarketingPage: React.FC = () => {
             <div className="flex items-center space-x-3">
               <Building2 className="h-8 w-8 text-blue-600" />
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Taklaget Service</h1>
-                <p className="text-sm text-gray-600">Professional Roof Inspection Management</p>
+                <h1 className="text-2xl font-bold text-gray-900">{t('marketing.brand.name')}</h1>
+                <p className="text-sm text-gray-600">{t('marketing.brand.tagline')}</p>
               </div>
             </div>
             <Link
@@ -53,7 +55,7 @@ const MarketingPage: React.FC = () => {
               className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to App
+              {t('marketing.backToApp')}
             </Link>
           </div>
         </div>
@@ -618,40 +620,36 @@ const MarketingPage: React.FC = () => {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-5xl font-bold text-gray-900 mb-6">
-              User Roles & Permissions
-            </h2>
-            <p className="text-xl text-gray-600">
-              Three-tier system designed for multi-branch operations
-            </p>
+            <h2 className="text-5xl font-bold text-gray-900 mb-6">{t('marketing.userRoles.title')}</h2>
+            <p className="text-xl text-gray-600">{t('marketing.userRoles.subtitle')}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Superadmin */}
             <div className="bg-gradient-to-br from-red-50 to-red-100 p-8 rounded-3xl shadow-lg transform hover:scale-105 transition-all duration-300">
-              <div className="text-center mb-6">
+                <div className="text-center mb-6">
                 <div className="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Settings className="h-10 w-10 text-white" />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900">Superadmin</h3>
-                <p className="text-sm text-gray-600">Permission Level 2</p>
+                <h3 className="text-2xl font-bold text-gray-900">{t('marketing.userRoles.superadmin.title') || 'Superadmin'}</h3>
+                <p className="text-sm text-gray-600">{t('marketing.userRoles.superadmin.permissionLevel') || 'Permission Level 2'}</p>
               </div>
               <div className="space-y-3">
                 <div className="flex items-center">
                   <CheckCircle className="h-5 w-5 text-green-500 mr-3" />
-                  <span className="text-gray-700">Manage all branches</span>
+                  <span className="text-gray-700">{t('marketing.userRoles.superadmin.manageBranches')}</span>
                 </div>
                 <div className="flex items-center">
                   <CheckCircle className="h-5 w-5 text-green-500 mr-3" />
-                  <span className="text-gray-700">View all reports</span>
+                  <span className="text-gray-700">{t('marketing.userRoles.superadmin.viewAllReports')}</span>
                 </div>
                 <div className="flex items-center">
                   <CheckCircle className="h-5 w-5 text-green-500 mr-3" />
-                  <span className="text-gray-700">Create/edit users</span>
+                  <span className="text-gray-700">{t('marketing.userRoles.superadmin.createUsers')}</span>
                 </div>
                 <div className="flex items-center">
                   <CheckCircle className="h-5 w-5 text-green-500 mr-3" />
-                  <span className="text-gray-700">System analytics</span>
+                  <span className="text-gray-700">{t('marketing.userRoles.superadmin.systemAnalytics')}</span>
                 </div>
               </div>
             </div>
@@ -662,21 +660,21 @@ const MarketingPage: React.FC = () => {
                 <div className="w-20 h-20 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Users className="h-10 w-10 text-white" />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900">Branch Admin</h3>
-                <p className="text-sm text-gray-600">Permission Level 1</p>
+                <h3 className="text-2xl font-bold text-gray-900">{t('marketing.userRoles.branchAdmin.title') || 'Branch Admin'}</h3>
+                <p className="text-sm text-gray-600">{t('marketing.userRoles.branchAdmin.permissionLevel') || 'Permission Level 1'}</p>
               </div>
               <div className="space-y-3">
                 <div className="flex items-center">
                   <CheckCircle className="h-5 w-5 text-green-500 mr-3" />
-                  <span className="text-gray-700">Manage branch only</span>
+                  <span className="text-gray-700">{t('marketing.userRoles.branchAdmin.manageBranchOnly')}</span>
                 </div>
                 <div className="flex items-center">
                   <CheckCircle className="h-5 w-5 text-green-500 mr-3" />
-                  <span className="text-gray-700">View branch reports</span>
+                  <span className="text-gray-700">{t('marketing.userRoles.branchAdmin.viewBranchReports')}</span>
                 </div>
                 <div className="flex items-center">
                   <CheckCircle className="h-5 w-5 text-green-500 mr-3" />
-                  <span className="text-gray-700">Manage inspectors</span>
+                  <span className="text-gray-700">{t('marketing.userRoles.branchAdmin.manageInspectors')}</span>
                 </div>
                 <div className="flex items-center">
                   <CheckCircle className="h-5 w-5 text-green-500 mr-3" />

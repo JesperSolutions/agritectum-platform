@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth Token Debug - Agritectum</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #f97316;
+            margin-bottom: 20px;
+        }
+        .info-box {
+            background: #f0f9ff;
+            border-left: 4px solid #3b82f6;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .warning-box {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .error-box {
+            background: #fee2e2;
+            border-left: 4px solid #ef4444;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .success-box {
+            background: #d1fae5;
+            border-left: 4px solid #10b981;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        pre {
+            background: #1f2937;
+            color: #f3f4f6;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+        }
+        button {
+            background: #f97316;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #ea580c;
+        }
+        button.secondary {
+            background: #6b7280;
+        }
+        button.secondary:hover {
+            background: #4b5563;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .status.good {
+            background: #d1fae5;
+            color: #047857;
+        }
+        .status.bad {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Auth Token Debugger</h1>
+        <p>This page helps diagnose authentication issues by showing your current auth token and custom claims.</p>
+
+        <div id="auth-status" class="info-box">
+            <strong>Status:</strong> Checking authentication...
+        </div>
+
+        <div id="token-info" style="display:none;">
+            <h2>Current User</h2>
+            <pre id="user-data"></pre>
+
+            <h2>Custom Claims</h2>
+            <pre id="claims-data"></pre>
+
+            <h2>Token Issued Time</h2>
+            <pre id="token-time"></pre>
+        </div>
+
+        <div class="warning-box" style="display:none;" id="old-token-warning">
+            <strong>⚠️ Your token is old!</strong>
+            <p>Your authentication token was issued before the claims fix. Please log out and log back in to get updated permissions.</p>
+        </div>
+
+        <div style="margin-top: 30px;">
+            <button onclick="refreshToken()">🔄 Refresh Token</button>
+            <button onclick="clearAndReload()" class="secondary">🗑️ Clear Cache & Reload</button>
+            <button onclick="goToDashboard()" class="secondary">📊 Go to Dashboard</button>
+        </div>
+
+        <div class="info-box" style="margin-top: 30px;">
+            <h3>Fix Steps:</h3>
+            <ol>
+                <li>Click "Clear Cache & Reload" button above</li>
+                <li>Log out completely from the app</li>
+                <li>Close all browser tabs</li>
+                <li>Open a new tab and log in again</li>
+            </ol>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDzTGHdaQPXCmwrBqyYy6Fv7pjSUVk3v_8",
+            authDomain: "agritectum-platform.firebaseapp.com",
+            projectId: "agritectum-platform",
+            storageBucket: "agritectum-platform.firebasestorage.app",
+            messagingSenderId: "389644777878",
+            appId: "1:389644777878:web:b0e5d5e5b7f9a8a1c3e5e5"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        const CLAIMS_FIX_TIME = new Date('2026-01-12T14:20:00Z'); // When we ran fix-user-claims.cjs
+
+        onAuthStateChanged(auth, async (user) => {
+            const statusDiv = document.getElementById('auth-status');
+            
+            if (user) {
+                // Get ID token result with claims
+                const tokenResult = await user.getIdTokenResult();
+                
+                const userData = {
+                    uid: user.uid,
+                    email: user.email,
+                    displayName: user.displayName
+                };
+
+                const claims = tokenResult.claims;
+                const tokenIssuedAt = new Date(tokenResult.issuedAtTime);
+                
+                statusDiv.innerHTML = `<strong>Status:</strong> <span class="status good">Logged In</span> as ${user.email}`;
+                statusDiv.className = 'success-box';
+                
+                document.getElementById('user-data').textContent = JSON.stringify(userData, null, 2);
+                document.getElementById('claims-data').textContent = JSON.stringify(claims, null, 2);
+                document.getElementById('token-time').textContent = `Issued: ${tokenIssuedAt.toLocaleString()}\nClaims Fix: ${CLAIMS_FIX_TIME.toLocaleString()}\n\nToken Age: ${tokenIssuedAt < CLAIMS_FIX_TIME ? '❌ OLD (Before fix)' : '✅ NEW (After fix)'}`;
+                
+                document.getElementById('token-info').style.display = 'block';
+
+                // Check if token is old
+                if (tokenIssuedAt < CLAIMS_FIX_TIME) {
+                    document.getElementById('old-token-warning').style.display = 'block';
+                }
+
+                // Check for missing claims
+                if (!claims.permissionLevel && claims.permissionLevel !== 0) {
+                    statusDiv.innerHTML = `<strong>⚠️ Warning:</strong> Missing permissionLevel claim. You need to log out and log back in!`;
+                    statusDiv.className = 'error-box';
+                }
+                if (!claims.branchId) {
+                    statusDiv.innerHTML += `<br><strong>⚠️ Warning:</strong> Missing branchId claim. You need to log out and log back in!`;
+                    statusDiv.className = 'error-box';
+                }
+            } else {
+                statusDiv.innerHTML = `<strong>Status:</strong> <span class="status bad">Not Logged In</span>`;
+                statusDiv.className = 'warning-box';
+                statusDiv.innerHTML += '<br><p>Please log in to the app first, then return to this page.</p>';
+            }
+        });
+
+        window.refreshToken = async () => {
+            const user = auth.currentUser;
+            if (user) {
+                try {
+                    await user.getIdToken(true); // Force refresh
+                    alert('✅ Token refreshed! The page will reload.');
+                    window.location.reload();
+                } catch (error) {
+                    alert('❌ Error refreshing token: ' + error.message);
+                }
+            }
+        };
+
+        window.clearAndReload = () => {
+            if (confirm('This will clear your browser cache and reload. Continue?')) {
+                localStorage.clear();
+                sessionStorage.clear();
+                window.location.reload(true);
+            }
+        };
+
+        window.goToDashboard = () => {
+            window.location.href = '/dashboard';
+        };
+    </script>
+</body>
+</html>

@@ -21,6 +21,7 @@
   "navigation.branchDetails": "Filialdetaljer",
   "navigation.offerDetails": "Tilbudsdetaljer",
   "navigation.serviceAgreements": "Serviceaftaler",
+  "navigation.esgReports": "ESG Rapporter",
 
   "breadcrumb.home": "Start",
   "breadcrumb.dashboard": "Oversigt",
@@ -39,6 +40,10 @@
   "menu.open": "Åbn menu",
 
   "navigation.buildings": "Bygninger",
-  "navigation.scheduledVisits": "Planlagte besøg"
+  "navigation.scheduledVisits": "Planlagte besøg",
+  "navigation.allReports": "Alle rapporter",
+  "navigation.operations": "Operationer",
+  "navigation.esgService": "ESG-service",
+  "navigation.emailTemplates": "E-mailskabeloner"
 }
 

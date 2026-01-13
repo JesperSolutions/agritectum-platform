@@ -1,0 +1,20 @@
+{
+  "marketing.userRoles.title": "Brugerroller & Rettigheder",
+  "marketing.userRoles.subtitle": "Tre-laget system designet til drift med flere filialer",
+  "marketing.userRoles.superadmin.manageBranches": "Administrer alle filialer",
+  "marketing.userRoles.superadmin.viewAllReports": "Se alle rapporter",
+  "marketing.userRoles.superadmin.createUsers": "Opret/rediger brugere",
+  "marketing.userRoles.superadmin.systemAnalytics": "Systemanalyse"
+  ,
+  "marketing.userRoles.superadmin.title": "Superadmin",
+  "marketing.userRoles.superadmin.permissionLevel": "Rettighedsniveau 2"
+  ,
+  "marketing.brand.name": "Taklaget Service",
+  "marketing.brand.tagline": "Professionel taginspektionsstyring",
+  "marketing.backToApp": "Tilbage til app",
+  "marketing.userRoles.branchAdmin.title": "Filialadministrator",
+  "marketing.userRoles.branchAdmin.permissionLevel": "Rettighedsniveau 1",
+  "marketing.userRoles.branchAdmin.manageBranchOnly": "Administrer kun filialen",
+  "marketing.userRoles.branchAdmin.viewBranchReports": "Se filialrapporter",
+  "marketing.userRoles.branchAdmin.manageInspectors": "Administrer inspektører"
+}

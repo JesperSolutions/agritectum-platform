@@ -13,6 +13,7 @@ import OfflineIndicator from './components/common/OfflineIndicator';
 import InstallPrompt from './components/common/InstallPrompt';
 import { ToastContainer } from './components/common/ToastContainer';
 import { useFavicon } from './hooks/useFavicon';
+import './utils/seedFirebase'; // Make seedTestData() available in browser console
 
 function App() {
   useFavicon();

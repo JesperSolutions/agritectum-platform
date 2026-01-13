@@ -208,7 +208,7 @@ const OfferDetail: React.FC<OfferDetailProps> = ({ offer, onSendReminder, onExte
 
           {/* Status History */}
           <div className="bg-white rounded-lg shadow-lg p-6">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Status History</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-4">{t('offers.detail.statusHistory') || 'Status History'}</h3>
             <div className="space-y-4">
               {offer.statusHistory.map((history: OfferStatusHistory, index: number) => (
                 <div key={index} className="flex items-start gap-4">
@@ -235,14 +235,14 @@ const OfferDetail: React.FC<OfferDetailProps> = ({ offer, onSendReminder, onExte
         <div className="space-y-6">
           {/* Quick Actions */}
           <div className="bg-white rounded-lg shadow-lg p-6">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Quick Actions</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-4">{t('offers.detail.quickActions') || 'Quick Actions'}</h3>
             <div className="space-y-2">
               <button
                 onClick={() => window.open(`/offer/public/${offer.id}`, '_blank')}
                 className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
                 <ExternalLink className="w-4 h-4" />
-                View Public Link
+                {t('offers.actions.viewPublicLink') || 'View Public Link'}
               </button>
               {offer.status === 'pending' && onSendReminder && (
                 <button
@@ -250,7 +250,7 @@ const OfferDetail: React.FC<OfferDetailProps> = ({ offer, onSendReminder, onExte
                   className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
                 >
                   <Send className="w-4 h-4" />
-                  Send Reminder
+                  {t('offers.actions.sendReminder') || 'Send Reminder'}
                 </button>
               )}
               {offer.status === 'pending' && onExtendValidity && (

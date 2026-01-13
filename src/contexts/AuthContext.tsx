@@ -43,6 +43,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const tokenResult = await getIdTokenResult(firebaseUser);
     const claims = tokenResult.claims as CustomClaims;
 
+    // Try to get user document from Firestore as fallback if claims are missing
+    let userDocData: any = {};
+    try {
+      const { doc, getDoc } = await import('firebase/firestore');
+      const { db } = await import('../config/firebase');
+      const userDocRef = doc(db, 'users', firebaseUser.uid);
+      const userDocSnap = await getDoc(userDocRef);
+      if (userDocSnap.exists()) {
+        userDocData = userDocSnap.data();
+      }
+    } catch (error) {
+      // Ignore errors fetching user doc
+      console.warn('Could not fetch user document:', error);
+    }
+
     // Map role to permission level if not provided
     const getPermissionLevel = (role: string, permissionLevel?: number, userType?: string): number => {
       if (permissionLevel !== undefined) return permissionLevel;
@@ -64,19 +79,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
     };
 
-    const userType = claims.userType || (claims.role === 'customer' ? 'customer' : 'internal');
-    const permissionLevel = getPermissionLevel(claims.role || 'inspector', claims.permissionLevel, userType);
+    // Use claims first, then fallback to user document
+    const userType = claims.userType || userDocData.userType || (claims.role === 'customer' ? 'customer' : 'internal');
+    const permissionLevel = getPermissionLevel(
+      claims.role || userDocData.role || 'inspector',
+      claims.permissionLevel ?? userDocData.permissionLevel,
+      userType
+    );
+    const branchId = claims.branchId || userDocData.branchId;
+    const branchIds = claims.branchIds || userDocData.branchIds;
+    const companyId = claims.companyId || userDocData.companyId;
 
     return {
       uid: firebaseUser.uid,
       email: firebaseUser.email!,
       displayName: firebaseUser.displayName || '',
-      role: (claims.role || (userType === 'customer' ? 'customer' : 'inspector')) as UserRole,
+      role: (claims.role || userDocData.role || (userType === 'customer' ? 'customer' : 'inspector')) as UserRole,
       permissionLevel: permissionLevel,
-      branchId: claims.branchId,
-      branchIds: claims.branchIds,
+      branchId: branchId,
+      branchIds: branchIds,
       userType: userType as 'internal' | 'customer',
-      companyId: claims.companyId,
+      companyId: companyId,
       createdAt: firebaseUser.metadata.creationTime || new Date().toISOString(),
       lastLogin: firebaseUser.metadata.lastSignInTime || new Date().toISOString(),
     };
@@ -163,6 +186,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         try {
           // Force refresh the token to get updated claims
           await firebaseUser.getIdToken(true);
+          const tokenResult = await getIdTokenResult(firebaseUser);
+          const claims = tokenResult.claims as CustomClaims;
+          
+          // Check if claims are missing - force logout if so
+          const hasPermissionLevel = claims.permissionLevel !== undefined && claims.permissionLevel !== null;
+          const hasBranchId = claims.branchId !== undefined || claims.permissionLevel === 2; // Superadmin doesn't need branchId
+          
+          if (!hasPermissionLevel) {
+            console.error('⚠️ Missing permissionLevel claim. Forcing logout...');
+            alert('Your account permissions need to be updated. Please log out and log back in.');
+            await signOut(auth);
+            setCurrentUser(null);
+            setFirebaseUser(null);
+            setLoading(false);
+            return;
+          }
+          
           const user = await parseUserFromFirebase(firebaseUser);
           setCurrentUser(user);
           setFirebaseUser(firebaseUser);

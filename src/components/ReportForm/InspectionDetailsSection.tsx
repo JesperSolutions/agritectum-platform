@@ -3,6 +3,7 @@ import { Calendar, Home, Clock } from 'lucide-react';
 import ValidatedInput, { ValidatedTextarea } from '../ValidatedInput';
 import { validators } from '../../utils/validation';
 import { RoofType } from '../types';
+import { useTranslation } from 'react-i18next';
 
 interface InspectionDetailsSectionProps {
   inspectionDate: string;
@@ -15,13 +16,14 @@ interface InspectionDetailsSectionProps {
   touched: Record<string, boolean>;
 }
 
+// Roof type options - labels will be translated dynamically
 const roofTypeOptions = [
-  { value: 'tile', label: 'Tile' },
-  { value: 'metal', label: 'Metal' },
-  { value: 'shingle', label: 'Shingle' },
-  { value: 'slate', label: 'Slate' },
-  { value: 'flat', label: 'Flat' },
-  { value: 'other', label: 'Other' },
+  { value: 'tile' },
+  { value: 'metal' },
+  { value: 'shingle' },
+  { value: 'slate' },
+  { value: 'flat' },
+  { value: 'other' },
 ];
 
 const InspectionDetailsSection: React.FC<InspectionDetailsSectionProps> = ({
@@ -34,28 +36,30 @@ const InspectionDetailsSection: React.FC<InspectionDetailsSectionProps> = ({
   errors,
   touched,
 }) => {
+  const { t } = useTranslation();
+  
   return (
     <div className='bg-white p-6 rounded-lg shadow-sm border border-gray-200'>
       <div className='flex items-center mb-4'>
         <Home className='w-5 h-5 text-blue-600 mr-2' />
-        <h3 className='text-lg font-semibold text-gray-900'>Inspection Details</h3>
+        <h3 className='text-lg font-semibold text-gray-900'>{t('form.sections.inspectionDetails')}</h3>
       </div>
 
       <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
         <ValidatedInput
-          label='Inspection Date'
+          label={t('form.fields.inspectionDate')}
           type='date'
           value={inspectionDate}
           onChange={onFieldChange.bind(null, 'inspectionDate')}
           rules={[
             {
               field: 'inspectionDate',
-              message: 'Inspection date is required',
+              message: t('form.validation.inspectionDateRequired'),
               validator: validators.required,
             },
             {
               field: 'inspectionDate',
-              message: 'Please enter a valid date',
+              message: t('form.validation.dateInvalid'),
               validator: validators.date,
             },
           ]}
@@ -64,17 +68,17 @@ const InspectionDetailsSection: React.FC<InspectionDetailsSectionProps> = ({
 
         <div className='space-y-1'>
           <label className='block text-sm font-medium text-gray-700'>
-            Roof Type <span className='text-red-500'>*</span>
+            {t('form.fields.roofType')} <span className='text-red-500'>*</span>
           </label>
           <select
             value={roofType}
             onChange={e => onFieldChange('roofType', e.target.value)}
             className='block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
           >
-            <option value=''>Select roof type</option>
+            <option value=''>{t('form.fields.roofTypePlaceholder')}</option>
             {roofTypeOptions.map(option => (
               <option key={option.value} value={option.value}>
-                {option.label}
+                {t(`roofTypes.${option.value}`)}
               </option>
             ))}
           </select>
@@ -84,50 +88,49 @@ const InspectionDetailsSection: React.FC<InspectionDetailsSectionProps> = ({
         </div>
 
         <ValidatedInput
-          label='Roof Age (years)'
+          label={t('form.fields.roofAge')}
           type='number'
           value={roofAge?.toString() || ''}
           onChange={value => onFieldChange('roofAge', parseInt(value) || 0)}
           rules={[
             {
               field: 'roofAge',
-              message: 'Roof age must be a positive number',
+              message: t('form.validation.roofAgePositive'),
               validator: value => !value || validators.positiveNumber(value),
             },
           ]}
-          helpText='Optional - estimated age of the roof'
+          helpText={t('form.fields.roofAgeHelp')}
         />
 
 
         <ValidatedInput
-          label='Inspection Duration (minutes)'
+          label={t('form.fields.inspectionDuration')}
           type='number'
-          value={inspectionDuration?.toString() || ''}
-          onChange={value => onFieldChange('inspectionDuration', parseInt(value) || 0)}
-          helpText='Optional - how long the inspection took'
+          value={inspectionDuration?.toString() || ''  onChange={value => onFieldChange('inspectionDuration', parseInt(value) || 0)}
+          helpText={t('form.fields.inspectionDurationHelp')}
         />
       </div>
 
       <div className='mt-4'>
         <ValidatedTextarea
-          label='Condition Notes'
+          label={t('form.fields.conditionNotes')}
           value={conditionNotes}
           onChange={onFieldChange.bind(null, 'conditionNotes')}
           rules={[
             {
               field: 'conditionNotes',
-              message: 'Condition notes are required',
+              message: t('form.validation.conditionNotesRequired'),
               validator: validators.required,
             },
             {
               field: 'conditionNotes',
-              message: 'Notes must be at least 10 characters',
+              message: t('form.validation.conditionNotesMinLength'),
               validator: validators.minLength(10),
             },
           ]}
           rows={4}
           required
-          helpText='Describe the overall condition of the roof'
+          helpText={t('form.fields.conditionNotesHelp')}
         />
       </div>
     </div>

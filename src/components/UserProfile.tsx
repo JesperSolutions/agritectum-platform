@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useIntl } from '../hooks/useIntl';
 import {
@@ -11,13 +11,18 @@ import {
   Save,
   Eye,
   EyeOff,
+  Globe,
+  DollarSign,
 } from 'lucide-react';
 import { updateUserPassword, reauthenticateUser } from '../services/authService';
+import { storeLocale } from '../utils/geolocation';
+import { storeCurrency, getCurrencyCode } from '../utils/currency';
+import type { SupportedLocale } from '../utils/geolocation';
 import ChangelogModal from './ChangelogModal';
 
 const UserProfile: React.FC = () => {
   const { currentUser } = useAuth();
-  const { t } = useIntl();
+  const { t, locale } = useIntl();
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -28,6 +33,32 @@ const UserProfile: React.FC = () => {
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const [isChangelogOpen, setIsChangelogOpen] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState<SupportedLocale>(locale as SupportedLocale);
+  const [languageSaved, setLanguageSaved] = useState(false);
+  const [selectedCurrency, setSelectedCurrency] = useState<string>('DKK');
+  const [currencySaved, setCurrencySaved] = useState(false);
+
+  // Initialize currency on component mount
+  useEffect(() => {
+    const currentCurrency = getCurrencyCode(locale as SupportedLocale);
+    setSelectedCurrency(currentCurrency);
+  }, [locale]);
+
+  const currencies = [
+    { code: 'DKK', name: 'Danish Krone', symbol: 'kr', country: '🇩🇰' },
+    { code: 'SEK', name: 'Swedish Krona', symbol: 'kr', country: '🇸🇪' },
+    { code: 'EUR', name: 'Euro', symbol: '€', country: '🇪🇺' },
+    { code: 'NOK', name: 'Norwegian Krone', symbol: 'kr', country: '🇳🇴' },
+    { code: 'USD', name: 'US Dollar', symbol: '$', country: '🇺🇸' },
+  ];
+
+  const languages: { code: SupportedLocale; name: string; flag: string }[] = [
+    { code: 'sv-SE', name: 'Svenska (Sweden)', flag: '🇸🇪' },
+    { code: 'da-DK', name: 'Dansk (Denmark)', flag: '🇩🇰' },
+    { code: 'en-US', name: 'English (US)', flag: '🇺🇸' },
+    { code: 'de-DE', name: 'Deutsch (Germany)', flag: '🇩🇪' },
+    { code: 'no-NO', name: 'Norsk (Norway)', flag: '🇳🇴' },
+  ];
 
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,8 +108,118 @@ const UserProfile: React.FC = () => {
     }
   };
 
+  const handleLanguageChange = (newLanguage: SupportedLocale) => {
+    setSelectedLanguage(newLanguage);
+    storeLocale(newLanguage, true); // true = manual selection
+    setLanguageSaved(true);
+    setTimeout(() => setLanguageSaved(false), 3000);
+    // Update currency based on new language if not manually set
+    const newCurrency = getCurrencyCode(newLanguage);
+    setSelectedCurrency(newCurrency);
+    // Optionally reload the page to apply language changes
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
+  };
+
+  const handleCurrencyChange = (newCurrency: string) => {
+    setSelectedCurrency(newCurrency);
+    storeCurrency(newCurrency);
+    setCurrencySaved(true);
+    setTimeout(() => setCurrencySaved(false), 3000);
+    // Reload to apply currency changes
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
+  };
+
   return (
     <div className='max-w-4xl mx-auto space-y-6'>
+      {/* Language Settings */}
+      <div className='bg-white rounded-xl shadow-sm border border-slate-200 p-6'>
+        <h2 className='text-2xl font-bold text-slate-900 mb-6 flex items-center'>
+          <Globe className='w-6 h-6 mr-2 text-slate-600' />
+          {t('profile.languageSettings') || 'Language Settings'}
+        </h2>
+
+        <div className='space-y-4'>
+          <div>
+            <p className='text-sm text-slate-600 mb-4'>
+              {t('profile.currentLanguage') || 'Currently Selected Language'}: <span className='font-semibold text-slate-900'>{languages.find(l => l.code === selectedLanguage)?.name}</span>
+            </p>
+          </div>
+
+          {languageSaved && (
+            <div className='p-4 bg-green-50 border border-green-200 rounded-lg text-green-800 text-sm'>
+              ✓ {t('profile.languageSaved') || 'Language preference saved'}
+            </div>
+          )}
+
+          <div className='grid grid-cols-2 md:grid-cols-3 gap-3'>
+            {languages.map((lang) => (
+              <button
+                key={lang.code}
+                onClick={() => handleLanguageChange(lang.code)}
+                className={`p-4 rounded-lg border-2 transition-all text-left ${
+                  selectedLanguage === lang.code
+                    ? 'border-blue-500 bg-blue-50'
+                    : 'border-slate-200 bg-white hover:border-slate-300'
+                }`}
+              >
+                <p className='text-xl mb-2'>{lang.flag}</p>
+                <p className={`text-sm font-medium ${selectedLanguage === lang.code ? 'text-blue-900' : 'text-slate-900'}`}>
+                  {lang.name}
+                </p>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Currency Settings */}
+      <div className='bg-white rounded-xl shadow-sm border border-slate-200 p-6'>
+        <h2 className='text-2xl font-bold text-slate-900 mb-6 flex items-center'>
+          <DollarSign className='w-6 h-6 mr-2 text-slate-600' />
+          {t('profile.currencySettings') || 'Currency Settings'}
+        </h2>
+
+        <div className='space-y-4'>
+          <div>
+            <p className='text-sm text-slate-600 mb-4'>
+              {t('profile.currentCurrency') || 'Currently Selected Currency'}: <span className='font-semibold text-slate-900'>{currencies.find(c => c.code === selectedCurrency)?.name} ({selectedCurrency})</span>
+            </p>
+          </div>
+
+          {currencySaved && (
+            <div className='p-4 bg-green-50 border border-green-200 rounded-lg text-green-800 text-sm'>
+              ✓ {t('profile.currencySaved') || 'Currency preference saved'}
+            </div>
+          )}
+
+          <div className='grid grid-cols-2 md:grid-cols-3 gap-3'>
+            {currencies.map((currency) => (
+              <button
+                key={currency.code}
+                onClick={() => handleCurrencyChange(currency.code)}
+                className={`p-4 rounded-lg border-2 transition-all text-left ${
+                  selectedCurrency === currency.code
+                    ? 'border-blue-500 bg-blue-50'
+                    : 'border-slate-200 bg-white hover:border-slate-300'
+                }`}
+              >
+                <p className='text-xl mb-2'>{currency.country}</p>
+                <p className={`text-sm font-medium ${selectedCurrency === currency.code ? 'text-blue-900' : 'text-slate-900'}`}>
+                  {currency.code}
+                </p>
+                <p className={`text-xs ${selectedCurrency === currency.code ? 'text-blue-700' : 'text-slate-600'}`}>
+                  {currency.symbol}
+                </p>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* Account Information */}
       <div className='bg-white rounded-xl shadow-sm border border-slate-200 p-6'>
         <h2 className='text-2xl font-bold text-slate-900 mb-6 flex items-center'>

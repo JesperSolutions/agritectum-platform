@@ -23,6 +23,11 @@
   "navigation.serviceAgreements": "Serviceavtal",
   "navigation.buildings": "Byggnader",
   "navigation.scheduledVisits": "Schemalagda besök",
+  "navigation.esgReports": "ESG Rapporter",
+  "navigation.allReports": "Alla rapporter",
+  "navigation.operations": "Operationer",
+  "navigation.esgService": "ESG-tjänst",
+  "navigation.emailTemplates": "E-postmallar",
 
   "breadcrumb.home": "Start",
   "breadcrumb.dashboard": "Översikt",
