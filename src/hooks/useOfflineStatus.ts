@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { logger } from '../utils/logger';
 
 interface OfflineStatus {
   isOnline: boolean;
@@ -54,7 +55,7 @@ export const useOfflineStatus = (): OfflineStatus & OfflineActions => {
     if ('indexedDB' in window) {
       const request = indexedDB.deleteDatabase('offline-reports');
       request.onsuccess = () => {
-        console.log('Offline data cleared');
+        logger.log('Offline data cleared');
       };
     }
   }, []);
@@ -114,7 +115,7 @@ const syncChange = async (change: any): Promise<void> => {
   // For now, we'll just simulate it
   return new Promise(resolve => {
     setTimeout(() => {
-      console.log('Syncing change:', change);
+      logger.log('Syncing change:', change);
       resolve();
     }, 1000);
   });

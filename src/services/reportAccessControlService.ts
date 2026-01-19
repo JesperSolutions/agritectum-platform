@@ -1,6 +1,7 @@
 import { db } from '../config/firebase';
 import { doc, updateDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { Report } from '../types';
+import { logger } from '../utils/logger';
 
 export interface AccessControlSettings {
   isPublic: boolean;
@@ -42,7 +43,7 @@ export const setReportAccessControls = async (
     };
 
     await updateDoc(reportRef, updateData);
-    console.log(`Access controls set for report ${reportId}`);
+    logger.log(`Access controls set for report ${reportId}`);
   } catch (error) {
     console.error('Error setting access controls:', error);
     throw new Error('Failed to set access controls');
@@ -183,7 +184,7 @@ export const removeReportAccessControls = async (reportId: string): Promise<void
     await updateDoc(reportRef, {
       accessControls: null,
     });
-    console.log(`Access controls removed for report ${reportId}`);
+    logger.log(`Access controls removed for report ${reportId}`);
   } catch (error) {
     console.error('Error removing access controls:', error);
     throw new Error('Failed to remove access controls');

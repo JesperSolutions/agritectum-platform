@@ -1,4 +1,5 @@
 import { db } from '../config/firebase';
+import { logger } from '../utils/logger';
 import {
   collection,
   addDoc,
@@ -546,7 +547,7 @@ const generateCriticalIssues = (report: Report): string => {
 // Initialize email templates in Firestore
 export const initializeEmailTemplates = async (): Promise<void> => {
   try {
-    console.log('🔄 Initializing email templates...');
+    logger.log('🔄 Initializing email templates...');
 
     for (const template of defaultTemplates) {
       // Check if template already exists
@@ -566,13 +567,13 @@ export const initializeEmailTemplates = async (): Promise<void> => {
             updatedAt: serverTimestamp(),
           });
         });
-        console.log(`✅ Created template: ${template.name}`);
+        logger.log(`✅ Created template: ${template.name}`);
       } else {
-        console.log(`⚠️ Template already exists: ${template.name}`);
+        logger.log(`⚠️ Template already exists: ${template.name}`);
       }
     }
 
-    console.log('✅ Email templates initialization completed');
+    logger.log('✅ Email templates initialization completed');
   } catch (error) {
     console.error('❌ Error initializing email templates:', error);
     throw error;
@@ -627,7 +628,7 @@ export const sendEmail = async (
   emailRequest: EmailRequest
 ): Promise<{ success: boolean; messageId?: string; error?: string }> => {
   try {
-    console.log('📧 Sending email via Trigger Email extension:', {
+    logger.log('📧 Sending email via Trigger Email extension:', {
       to: emailRequest.to,
       template: emailRequest.template.name,
       reportId: emailRequest.reportId,
@@ -646,7 +647,7 @@ export const sendEmail = async (
         status: 'pending',
       });
     } catch (logError) {
-      console.warn('⚠️ Email logging failed, continuing with email send:', logError);
+      logger.warn('⚠️ Email logging failed, continuing with email send:', logError);
     }
 
     // Create email document for Trigger Email extension
@@ -678,7 +679,7 @@ export const sendEmail = async (
     // Add document to mail collection to trigger email
     const mailRef = await addDoc(collection(db, MAIL_COLLECTION), mailDoc);
 
-    console.log('✅ Email request created:', mailRef.id);
+    logger.log('✅ Email request created:', mailRef.id);
 
     return {
       success: true,
@@ -703,7 +704,7 @@ export const sendReportEmail = async (
   sentBy: string
 ): Promise<{ success: boolean; messageId?: string; error?: string }> => {
   try {
-    console.log('📧 Sending report email:', {
+    logger.log('📧 Sending report email:', {
       reportId: report.id,
       customerEmail,
       templateId,
@@ -730,7 +731,7 @@ export const sendReportEmail = async (
     const result = await sendEmail(emailRequest);
 
     if (result.success) {
-      console.log('✅ Email sent successfully:', result.messageId);
+      logger.log('✅ Email sent successfully:', result.messageId);
       
       // Create notification for successful email
       try {
@@ -742,7 +743,7 @@ export const sendReportEmail = async (
           branchInfo.id
         );
       } catch (notificationError) {
-        console.warn('Failed to create email notification:', notificationError);
+        logger.warn('Failed to create email notification:', notificationError);
       }
     } else {
       console.error('❌ Email sending failed:', result.error);
@@ -757,7 +758,7 @@ export const sendReportEmail = async (
           branchInfo.id
         );
       } catch (notificationError) {
-        console.warn('Failed to create email failure notification:', notificationError);
+        logger.warn('Failed to create email failure notification:', notificationError);
       }
     }
 
@@ -780,7 +781,7 @@ export const sendTestEmail = async (
   error?: string;
 }> => {
   try {
-    console.log('📧 Sending test email to:', testEmail);
+    logger.log('📧 Sending test email to:', testEmail);
 
     // Create a sample report for testing
     const sampleReport: Report = {
@@ -855,7 +856,7 @@ export const sendTestEmail = async (
     );
 
     if (result.success) {
-      console.log('✅ Test email sent successfully:', result.messageId);
+      logger.log('✅ Test email sent successfully:', result.messageId);
       return {
         success: true,
         messageId: result.messageId,
@@ -883,7 +884,7 @@ export const testEmailSetup = async (): Promise<{
   error?: string;
 }> => {
   try {
-    console.log('🧪 Testing Trigger Email extension setup...');
+    logger.log('🧪 Testing Trigger Email extension setup...');
 
     // Check if mail collection exists and is accessible
     const testDoc = await addDoc(collection(db, MAIL_COLLECTION), {
@@ -897,7 +898,7 @@ export const testEmailSetup = async (): Promise<{
       cleaned: true,
     });
 
-    console.log('✅ Trigger Email extension setup test passed');
+    logger.log('✅ Trigger Email extension setup test passed');
     return {
       success: true,
       message: 'Trigger Email extension is properly configured and ready to use!',

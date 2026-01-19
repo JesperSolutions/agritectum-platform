@@ -5,6 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import FormErrorBoundary from './FormErrorBoundary';
 import { Report, Offer } from '../types';
 import { useIntl } from '../hooks/useIntl';
+import { getCurrencyCode } from '../utils/currency';
 import QRCode from 'qrcode';
 import {
   Calendar,
@@ -30,6 +31,7 @@ import { reportHasOffer, getOfferByReportId, createOffer as createOfferService }
 import NotificationToast from './common/NotificationToast';
 import { lazy, Suspense } from 'react';
 import AgritectumLogo from './AgritectumLogo';
+import { logger } from '../utils/logger';
 import CostSummaryCard from './ReportView/CostSummaryCard';
 
 // Lazy load map component
@@ -39,15 +41,17 @@ const ReportView: React.FC = () => {
   const { reportId } = useParams<{ reportId: string }>();
   const { currentUser } = useAuth();
   const { getReport, updateReport } = useReports();
-  const { t, formatCurrency } = useIntl();
+  const { t, formatCurrency, locale } = useIntl();
   const navigate = useNavigate();
+  const currencyCode = getCurrencyCode(locale);
 
   // Fallback for currency formatting
   const formatCurrencySafe = (value: number) => {
     try {
-      return formatCurrency ? formatCurrency(value) : `${value} SEK`;
+      return formatCurrency(value);
     } catch (error) {
-      return `${value} SEK`;
+      console.error('Error formatting currency:', error);
+      return value.toString();
     }
   };
 
@@ -191,7 +195,7 @@ const ReportView: React.FC = () => {
                 setPriorReport(priorReportData);
               }
             } catch (error) {
-              console.warn('Could not load prior report:', error);
+              logger.warn('Could not load prior report:', error);
             }
           }
 
@@ -205,7 +209,7 @@ const ReportView: React.FC = () => {
                 setExistingOffer(offer);
               }
             } catch (error) {
-              console.warn('Could not check for offer:', error);
+              logger.warn('Could not check for offer:', error);
             }
           }
 
@@ -225,7 +229,7 @@ const ReportView: React.FC = () => {
                 }
               }
             } catch (error) {
-              console.warn('Could not geocode address for map:', error);
+              logger.warn('Could not geocode address for map:', error);
             }
           }
 
@@ -241,7 +245,7 @@ const ReportView: React.FC = () => {
                 });
               }
             } catch (error) {
-              console.warn('Could not load branch information:', error);
+              logger.warn('Could not load branch information:', error);
             }
           }
         } else {
@@ -320,7 +324,7 @@ const ReportView: React.FC = () => {
         customerEmail: report.customerEmail || '',
         customerPhone: report.customerPhone,
         customerAddress: report.customerAddress,
-        currency: 'SEK',
+        currency: currencyCode,
         totalAmount: (() => {
           // Calculate sum of estimated costs from recommended actions (solutions)
           const recommendedActionsCost = (report.recommendedActions || []).reduce(
@@ -778,7 +782,7 @@ const ReportView: React.FC = () => {
                   <div className='flex items-center'>
                     <DollarSign className='w-4 h-4 text-gray-400 mr-3' />
                     <span className='text-gray-900'>
-                      {priorReport.offerValue.toLocaleString('sv-SE')} SEK
+                      {formatCurrency(priorReport.offerValue)}
                     </span>
                   </div>
                 )}
@@ -1052,7 +1056,7 @@ const ReportView: React.FC = () => {
                       <div>
                         <span className='text-sm font-medium text-gray-500'>Estimated Cost:</span>
                         <span className='ml-2 text-gray-900 font-medium'>
-                          {action.estimatedCost.toLocaleString('sv-SE')} SEK
+                          {formatCurrency(action.estimatedCost)}
                         </span>
                       </div>
                     )}

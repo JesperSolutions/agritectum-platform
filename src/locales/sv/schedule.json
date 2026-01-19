@@ -56,6 +56,10 @@
   "schedule.status.completed": "Slutförd",
   "schedule.status.cancelled": "Inställd",
   "schedule.status.rescheduled": "Ombokad",
+  "schedule.status.accepted": "Accepterad",
+  "schedule.status.rejected": "Avvisad",
+  "schedule.status.awaitingResponse": "Väntar på svar",
+  "schedule.status.noShow": "Uteblev",
 
   "schedule.actions.edit": "Redigera",
   "schedule.actions.delete": "Ta bort",

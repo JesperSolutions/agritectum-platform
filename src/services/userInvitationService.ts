@@ -1,6 +1,7 @@
 import { addDoc, collection, doc, updateDoc, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { Employee } from '../types';
+import { logger } from '../utils/logger';
 
 // Generate a secure temporary password (16+ characters for "strong" rating)
 export const generateTemporaryPassword = (): string => {
@@ -35,7 +36,7 @@ export const sendUserInvitation = async (
   invitedBy: string
 ): Promise<{ success: boolean; error?: string }> => {
   try {
-    console.log('📧 Sending user invitation:', {
+    logger.log('📧 Sending user invitation:', {
       email: employee.email,
       displayName: employee.displayName,
       invitedBy,
@@ -69,7 +70,7 @@ export const sendUserInvitation = async (
     // Add document to mail collection to trigger email
     const mailRef = await addDoc(collection(db, 'mail'), mailDoc);
 
-    console.log('✅ User invitation email created:', mailRef.id);
+    logger.log('✅ User invitation email created:', mailRef.id);
     
     return { success: true };
   } catch (error) {
@@ -98,7 +99,7 @@ export const updateUserWithInvitation = async (
       updatedAt: new Date().toISOString(),
     });
 
-    console.log('✅ User updated with invitation details:', userId);
+    logger.log('✅ User updated with invitation details:', userId);
   } catch (error) {
     console.error('❌ Error updating user with invitation:', error);
     throw new Error('Failed to update user with invitation details');
@@ -128,7 +129,7 @@ export const inviteUser = async (
     // Update user with invitation details
     await updateUserWithInvitation(employee.id, temporaryPassword, invitedBy);
     
-    console.log('✅ User invitation completed successfully:', {
+    logger.log('✅ User invitation completed successfully:', {
       userId: employee.id,
       email: employee.email,
     });

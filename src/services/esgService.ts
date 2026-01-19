@@ -24,6 +24,7 @@ import { Building, Report, ESGMetrics, ESGServiceReport, RoofDivisionAreas } fro
 import { calculateBuildingESG, calculateESGFromDivisions } from '../utils/esgCalculations';
 import { getReportsByBuildingId } from './reportService';
 import { getBuildingImprovements } from './buildingImprovementService';
+import { logger } from '../utils/logger';
 
 const removeUndefinedFields = <T extends Record<string, unknown>>(data: T): T => {
   const cleanedEntries = Object.entries(data).reduce<Record<string, unknown>>((acc, [key, value]) => {
@@ -53,7 +54,7 @@ export async function calculateBuildingESGMetrics(
     try {
       reports = await getReportsByBuildingId(building.id, branchId);
     } catch (error) {
-      console.warn('Could not fetch reports for ESG calculation:', error);
+      logger.warn('Could not fetch reports for ESG calculation:', error);
       // Continue without reports - calculations will use defaults
     }
 
@@ -62,7 +63,7 @@ export async function calculateBuildingESGMetrics(
     try {
       savedImprovements = await getBuildingImprovements(building.id);
     } catch (error) {
-      console.warn('Could not fetch improvements for ESG calculation:', error);
+      logger.warn('Could not fetch improvements for ESG calculation:', error);
       // Continue without improvements
     }
 

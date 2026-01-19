@@ -15,6 +15,7 @@ import {
 } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { ServiceAgreement } from '../types';
+import { logger } from '../utils/logger';
 
 const removeUndefinedFields = <T extends Record<string, unknown>>(data: T): T => {
   const cleanedEntries = Object.entries(data).reduce<Record<string, unknown>>((acc, [key, value]) => {
@@ -139,7 +140,7 @@ export const getServiceAgreements = async (branchId?: string): Promise<ServiceAg
       (typeof errorMessage === 'string' && errorMessage.includes('requires an index'));
 
     if (isIndexError) {
-      console.warn('⚠️ Missing Firestore index detected. Falling back to client-side filtering.');
+      logger.warn('⚠️ Missing Firestore index detected. Falling back to client-side filtering.');
       const agreementsRef = collection(db, 'serviceAgreements');
       const snapshot = await getDocs(agreementsRef);
       const agreements = snapshot.docs.map(doc => ({
@@ -450,7 +451,7 @@ export const getServiceAgreementsByCustomer = async (
     console.error('Error fetching service agreements by customer:', error);
     
     if (error.code === 'failed-precondition' || error.message?.includes('index')) {
-      console.warn('⚠️ Missing Firestore index detected. Falling back to client-side filtering.');
+      logger.warn('⚠️ Missing Firestore index detected. Falling back to client-side filtering.');
       const agreementsRef = collection(db, 'serviceAgreements');
       const snapshot = await getDocs(agreementsRef);
       const agreements = snapshot.docs.map(doc => ({
@@ -493,7 +494,7 @@ export const getServiceAgreementsByBuilding = async (buildingId: string): Promis
     console.error('Error fetching service agreements by building:', error);
     
     if (error.code === 'failed-precondition' || error.message?.includes('index')) {
-      console.warn('⚠️ Missing Firestore index detected. Falling back to client-side filtering.');
+      logger.warn('⚠️ Missing Firestore index detected. Falling back to client-side filtering.');
       const agreementsRef = collection(db, 'serviceAgreements');
       const snapshot = await getDocs(agreementsRef);
       const agreements = snapshot.docs.map(doc => ({
@@ -527,7 +528,7 @@ export const getServiceAgreementsByCompany = async (companyId: string): Promise<
     console.error('Error fetching service agreements by company:', error);
     
     if (error.code === 'failed-precondition' || error.message?.includes('index')) {
-      console.warn('⚠️ Missing Firestore index detected. Falling back to client-side filtering.');
+      logger.warn('⚠️ Missing Firestore index detected. Falling back to client-side filtering.');
       const agreementsRef = collection(db, 'serviceAgreements');
       const snapshot = await getDocs(agreementsRef);
       const agreements = snapshot.docs.map(doc => ({

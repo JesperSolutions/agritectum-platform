@@ -1,4 +1,5 @@
 import { Report } from '../types';
+import { logger } from '../utils/logger';
 
 /**
  * Simplified PDF Service
@@ -31,7 +32,7 @@ export const generateReportPDF = async (
   options: PDFGenerationOptions = {}
 ): Promise<{ success: boolean; blob?: Blob; error?: string }> => {
   try {
-    console.log(`🖨️ Generating PDF for report: ${reportId}`);
+    logger.log(`🖨️ Generating PDF for report: ${reportId}`);
 
     // Call the Cloud Function directly
     const functionUrl = 'https://generatereportpdf-yitis2ljlq-ew.a.run.app';
@@ -60,7 +61,7 @@ export const generateReportPDF = async (
     // Get the PDF blob
     const pdfBlob = await response.blob();
     
-    console.log(`✅ PDF generated successfully: ${pdfBlob.size} bytes`);
+    logger.log(`✅ PDF generated successfully: ${pdfBlob.size} bytes`);
 
     return {
       success: true,

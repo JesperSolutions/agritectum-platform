@@ -11,6 +11,7 @@
 
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../config/firebase';
+import { logger } from '../utils/logger';
 
 /**
  * Get branch manager user IDs for a given branch
@@ -37,7 +38,7 @@ export const getBranchManagersForNotification = async (branchId: string): Promis
       return data.uid || doc.id;
     }).filter((uid): uid is string => !!uid); // Filter out undefined/null values
 
-    console.log(`✅ Found ${userIds.length} branch manager(s) for branch ${branchId}`, userIds);
+    logger.log(`✅ Found ${userIds.length} branch manager(s) for branch ${branchId}`, userIds);
     return userIds;
   } catch (error) {
     console.error('❌ Error getting branch managers for notification:', error);

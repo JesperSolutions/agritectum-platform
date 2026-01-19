@@ -3,6 +3,7 @@ import { getAuth, connectAuthEmulator } from 'firebase/auth';
 import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 import { getStorage, connectStorageEmulator } from 'firebase/storage';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
+import { logger } from '../utils/logger';
 
 // Firebase configuration from environment variables
 // Supports: development (emulators), test (test Firebase project), production (prod Firebase project)
@@ -81,15 +82,15 @@ export const functions = getFunctions(app, 'europe-west1');
 // Connect to emulators in development
 if (import.meta.env.DEV) {
   try {
-    console.log('🔥 Connecting to Firebase Emulators...');
+    logger.log('🔥 Connecting to Firebase Emulators...');
     
     connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true });
     connectFirestoreEmulator(db, '127.0.0.1', 8080);
     connectStorageEmulator(storage, '127.0.0.1', 9199);
     connectFunctionsEmulator(functions, '127.0.0.1', 5001);
     
-    console.log('✅ Connected to Firebase Emulators');
-    console.log('📊 Emulator UI: http://localhost:4000');
+    logger.log('✅ Connected to Firebase Emulators');
+    logger.log('📊 Emulator UI: http://localhost:4000');
   } catch (error) {
     console.warn('⚠️ Could not connect to emulators. Make sure they are running!');
     console.warn('Run: npm run emulators');

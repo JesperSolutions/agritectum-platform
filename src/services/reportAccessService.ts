@@ -9,6 +9,7 @@ import {
   orderBy,
   limit,
 } from 'firebase/firestore';
+import { logger } from '../utils/logger';
 
 export interface ReportAccessLog {
   id?: string;
@@ -47,7 +48,7 @@ export const logReportAccess = async (
     };
 
     await addDoc(collection(db, 'reportAccessLogs'), accessLog);
-    console.log(`📊 Logged ${accessType} access to report ${reportId}`);
+    logger.log(`📊 Logged ${accessType} access to report ${reportId}`);
   } catch (error) {
     console.error('Error logging report access:', error);
     // Don't throw error to avoid breaking the user experience

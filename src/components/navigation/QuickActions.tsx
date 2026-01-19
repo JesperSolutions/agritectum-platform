@@ -16,6 +16,7 @@ import {
   Eye
 } from 'lucide-react';
 import { useIntl } from '../../hooks/useIntl';
+import { logger } from '../../utils/logger';
 
 interface QuickAction {
   id: string;
@@ -56,7 +57,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({
         setIsDismissed(true);
       }
     } catch (error) {
-      console.warn('Unable to read quick action preferences', error);
+      logger.warn('Unable to read quick action preferences', error);
     }
   }, []);
 
@@ -85,7 +86,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({
     try {
       localStorage.setItem('agritectum:quickActions:hidden', 'true');
     } catch (error) {
-      console.warn('Unable to persist quick action preference', error);
+      logger.warn('Unable to persist quick action preference', error);
     }
   };
 
@@ -94,7 +95,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({
     try {
       localStorage.removeItem('agritectum:quickActions:hidden');
     } catch (error) {
-      console.warn('Unable to clear quick action preference', error);
+      logger.warn('Unable to clear quick action preference', error);
     }
   };
 
@@ -147,7 +148,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({
             icon: <Download className="w-5 h-5" />,
             onClick: () => {
               // Implement bulk export functionality
-              console.log('Export reports functionality');
+              logger.log('Export reports functionality');
             },
             color: 'secondary',
             requiresAuth: true,
@@ -183,7 +184,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({
               icon: <Share2 className="w-5 h-5" />,
               onClick: () => {
                 // Implement share functionality
-                console.log('Share report functionality');
+                logger.log('Share report functionality');
               },
               color: 'secondary',
             },
@@ -193,7 +194,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({
               icon: <Download className="w-5 h-5" />,
               onClick: () => {
                 // Implement PDF download
-                console.log('Download PDF functionality');
+                logger.log('Download PDF functionality');
               },
               color: 'secondary',
             }

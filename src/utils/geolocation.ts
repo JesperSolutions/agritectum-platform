@@ -2,6 +2,8 @@
  * Geolocation utility for detecting user's country and setting locale
  */
 
+import { logger } from './logger';
+
 export type SupportedLocale = 'sv-SE' | 'da-DK' | 'en-US' | 'de-DE' | 'no-NO';
 
 export interface CountryLocaleMap {
@@ -67,7 +69,7 @@ export const detectCountryFromTimezone = (): string | null => {
     
     return timezoneToCountry[timezone] || null;
   } catch (error) {
-    console.warn('Could not detect country from timezone:', error);
+    logger.warn('Could not detect country from timezone:', error);
     return null;
   }
 };
@@ -114,7 +116,7 @@ export const detectCountryFromLanguage = (): string | null => {
     
     return null;
   } catch (error) {
-    console.warn('Could not detect country from language:', error);
+    logger.warn('Could not detect country from language:', error);
     return null;
   }
 };
@@ -138,7 +140,7 @@ export const detectCountryFromIP = async (): Promise<string | null> => {
       return data.country_code || null;
     }
   } catch (error) {
-    console.warn('Could not detect country from IP:', error);
+    logger.warn('Could not detect country from IP:', error);
   }
   
   return null;
@@ -152,21 +154,21 @@ export const detectUserCountry = async (): Promise<string> => {
   // Try browser language first (fastest and most reliable for user preference)
   const languageCountry = detectCountryFromLanguage();
   if (languageCountry) {
-    console.log('[Geolocation] Detected country from browser language:', languageCountry);
+    logger.log('[Geolocation] Detected country from browser language:', languageCountry);
     return languageCountry;
   }
   
   // Fallback to timezone detection
   const timezoneCountry = detectCountryFromTimezone();
   if (timezoneCountry) {
-    console.log('[Geolocation] Detected country from timezone:', timezoneCountry);
+    logger.log('[Geolocation] Detected country from timezone:', timezoneCountry);
     return timezoneCountry;
   }
   
   // Try IP geolocation last (slowest)
   const ipCountry = await detectCountryFromIP();
   if (ipCountry) {
-    console.log('[Geolocation] Detected country from IP:', ipCountry);
+    logger.log('[Geolocation] Detected country from IP:', ipCountry);
     return ipCountry;
   }
   
@@ -177,7 +179,7 @@ export const detectUserCountry = async (): Promise<string> => {
   }
   
   // Default fallback
-  console.log('[Geolocation] Using default country: SE');
+  logger.log('[Geolocation] Using default country: SE');
   return 'SE'; // Default to Sweden
 };
 
@@ -227,7 +229,7 @@ export const getStoredLocale = (): { locale: SupportedLocale; isManual: boolean 
     
     return { locale: stored as SupportedLocale, isManual };
   } catch (error) {
-    console.warn('Could not read stored locale:', error);
+    logger.warn('Could not read stored locale:', error);
   }
   return null;
 };
@@ -242,7 +244,7 @@ export const storeLocale = (locale: SupportedLocale, isManual: boolean = false):
     localStorage.setItem('userLocale', locale);
     localStorage.setItem('userLocaleManual', isManual ? 'true' : 'false');
   } catch (error) {
-    console.warn('Could not store locale:', error);
+    logger.warn('Could not store locale:', error);
   }
 };
 
@@ -254,7 +256,7 @@ export const clearStoredLocale = (): void => {
     localStorage.removeItem('userLocale');
     localStorage.removeItem('userLocaleManual');
   } catch (error) {
-    console.warn('Could not clear stored locale:', error);
+    logger.warn('Could not clear stored locale:', error);
   }
 };
 

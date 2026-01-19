@@ -26,6 +26,7 @@ import { Bell, X, AlertTriangle, CheckCircle, Info, Download, Settings, Trash2 }
 import { useIntl } from '../hooks/useIntl';
 import { useNotifications } from '../contexts/NotificationContext';
 import NotificationSettings from './NotificationSettings';
+import { logger } from '../utils/logger';
 
 const NotificationCenter: React.FC = () => {
   const { t } = useIntl();
@@ -82,7 +83,7 @@ const NotificationCenter: React.FC = () => {
       window.location.href = notification.action.onClick;
     } else if (notification.action?.onClick) {
       // Handle other action types
-      console.log('Action clicked:', notification.action.onClick);
+      logger.log('Action clicked:', notification.action.onClick);
     }
   };
 

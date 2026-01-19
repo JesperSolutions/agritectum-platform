@@ -12,6 +12,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { RejectedOrder } from '../types';
+import { logger } from '../utils/logger';
 
 /**
  * Create a rejected order record
@@ -58,12 +59,12 @@ export const getRejectedOrdersByBranch = async (branchId: string): Promise<Rejec
   } catch (error: any) {
     // Handle permission errors gracefully - return empty array instead of throwing
     if (error.code === 'permission-denied' || error.message?.includes('permission')) {
-      console.warn('⚠️ Permission denied for rejected orders. User may not have access to this collection.');
+      logger.warn('⚠️ Permission denied for rejected orders. User may not have access to this collection.');
       return [];
     }
     
     if (error.code === 'failed-precondition' || error.message?.includes('index')) {
-      console.warn('⚠️ Missing Firestore index detected. Falling back to client-side filtering.');
+      logger.warn('⚠️ Missing Firestore index detected. Falling back to client-side filtering.');
       try {
         const rejectedOrdersRef = collection(db, 'rejectedOrders');
         const snapshot = await getDocs(rejectedOrdersRef);
@@ -78,7 +79,7 @@ export const getRejectedOrdersByBranch = async (branchId: string): Promise<Rejec
       } catch (fallbackError: any) {
         // If fallback also fails due to permissions, return empty array
         if (fallbackError.code === 'permission-denied') {
-          console.warn('⚠️ Permission denied for rejected orders fallback query.');
+          logger.warn('⚠️ Permission denied for rejected orders fallback query.');
           return [];
         }
         console.error('Error in fallback query:', fallbackError);
@@ -113,7 +114,7 @@ export const getRejectedOrdersByCustomer = async (customerId: string): Promise<R
     console.error('Error fetching rejected orders by customer:', error);
     
     if (error.code === 'failed-precondition' || error.message?.includes('index')) {
-      console.warn('⚠️ Missing Firestore index detected. Falling back to client-side filtering.');
+      logger.warn('⚠️ Missing Firestore index detected. Falling back to client-side filtering.');
       const rejectedOrdersRef = collection(db, 'rejectedOrders');
       const snapshot = await getDocs(rejectedOrdersRef);
       const orders = snapshot.docs.map(doc => ({

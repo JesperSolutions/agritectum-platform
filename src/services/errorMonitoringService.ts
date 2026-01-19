@@ -1,5 +1,6 @@
 import { db } from '../config/firebase';
 import { collection, addDoc, getDocs, query, where, orderBy, limit, serverTimestamp } from 'firebase/firestore';
+import { logger } from '../utils/logger';
 
 export interface ErrorLog {
   id?: string;
@@ -96,7 +97,7 @@ const sendCriticalErrorAlert = async (error: ErrorLog): Promise<void> => {
     });
 
     // TODO: Implement actual email sending for critical errors
-    console.warn('CRITICAL ERROR ALERT:', error);
+    logger.warn('CRITICAL ERROR ALERT:', error);
   } catch (alertError) {
     console.error('Failed to send critical error alert:', alertError);
   }
@@ -288,7 +289,7 @@ export const cleanupOldErrorLogs = async (): Promise<void> => {
     });
 
     await batch.commit();
-    console.log(`Cleaned up ${snapshot.size} old error logs`);
+    logger.log(`Cleaned up ${snapshot.size} old error logs`);
   } catch (error) {
     console.error('Error cleaning up old error logs:', error);
   }

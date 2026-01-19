@@ -3,6 +3,8 @@
  * Provides utilities for optimizing memory usage and preventing memory leaks
  */
 
+import { logger } from '../utils/logger';
+
 interface MemoryStats {
   used: number;
   total: number;
@@ -109,7 +111,7 @@ class MemoryManagementService {
    * Trigger memory cleanup
    */
   private triggerCleanup(level: 'warning' | 'critical'): void {
-    console.log(`Triggering memory cleanup (${level} level)`);
+    logger.log(`Triggering memory cleanup (${level} level)`);
 
     // Run cleanup tasks
     this.cleanupTasks.forEach(task => {
@@ -398,7 +400,7 @@ export const leakDetection = {
     // Track object in memory manager
     memoryManager.addCleanupTask(() => {
       if (!memoryUtils.isReferenced(weakRef)) {
-        console.log(`Object ${name} was garbage collected`);
+        logger.log(`Object ${name} was garbage collected`);
       }
     });
 

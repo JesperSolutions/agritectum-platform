@@ -57,18 +57,7 @@ const CostSummaryCard: React.FC<CostSummaryCardProps> = ({
     }
   }, [costs, report, isEditing]);
 
-  const formatCurrencySafe = (value: number) => {
-    try {
-      // Format number with US/English style (comma as thousand separator, period as decimal)
-      const formatted = value.toLocaleString('en-US', { 
-        minimumFractionDigits: 2, 
-        maximumFractionDigits: 2 
-      });
-      return `${formatted} SEK`;
-    } catch (error) {
-      return `${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} SEK`;
-    }
-  };
+  const formatCurrencySafe = (value: number) => formatCurrency(value);
 
   // Calculate recommended actions total
   const recommendedActionsTotal = (report.recommendedActions || []).reduce(

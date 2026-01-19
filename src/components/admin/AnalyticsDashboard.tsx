@@ -47,6 +47,7 @@ import { getOffers } from '../../services/offerService';
 import { ServiceAgreement, Offer } from '../../types';
 import { formatCurrencyAmount, getCurrencyCode } from '../../utils/currency';
 import type { SupportedLocale } from '../../utils/geolocation';
+import { logger } from '../../utils/logger';
 
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
 
@@ -540,9 +541,9 @@ const AnalyticsDashboard: React.FC = () => {
         setLoadingMessage('Processing data...');
 
         // Debug: Log reports data
-        console.log('🔍 Analytics Debug - Reports received:', reports.length);
-        console.log('🔍 Analytics Debug - Reports data:', reports);
-        console.log(
+        logger.log('🔍 Analytics Debug - Reports received:', reports.length);
+        logger.log('🔍 Analytics Debug - Reports data:', reports);
+        logger.log(
           '🔍 Analytics Debug - Current user:',
           currentUser?.email,
           'Permission Level:',
@@ -557,7 +558,7 @@ const AnalyticsDashboard: React.FC = () => {
         const data = calculateAnalytics(reports, serviceAgreements, offers, selectedTimeframe, selectedBranch);
 
         // Debug: Log calculated data
-        console.log('🔍 Analytics Debug - Calculated data:', data);
+        logger.log('🔍 Analytics Debug - Calculated data:', data);
 
         // Step 3: Finalize
         setLoadingProgress(80);
@@ -621,7 +622,7 @@ const AnalyticsDashboard: React.FC = () => {
 
   const exportData = (format: 'csv' | 'excel') => {
     // Placeholder for export functionality
-    console.log(`Exporting data as ${format}`);
+    logger.log(`Exporting data as ${format}`);
   };
 
   const Tooltip: React.FC<{ content: string; children: React.ReactNode; id: string }> = ({

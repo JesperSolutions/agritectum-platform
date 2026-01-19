@@ -14,6 +14,7 @@ import {
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../config/firebase';
+import { logger } from '../utils/logger';
 import { serverTimestamp } from 'firebase/firestore';
 import { Report, User, canAccessAllBranches, canAccessBranch } from '../types';
 import { generateReportPDF } from './simplePdfService';
@@ -169,7 +170,7 @@ export const getReportsByBuildingId = async (
     } catch (indexError: any) {
       // If index doesn't exist, fall back to client-side filtering
       if (indexError.code === 'failed-precondition' || indexError.message?.includes('index')) {
-        console.warn('⚠️ Missing Firestore index for buildingId. Falling back to client-side filtering.');
+        logger.warn('⚠️ Missing Firestore index for buildingId. Falling back to client-side filtering.');
         
         // Fetch all reports (with branch filter if provided)
         let allReportsQuery = reportsRef;
@@ -236,7 +237,7 @@ export const getReportsByCustomerId = async (
     } catch (indexError: any) {
       // If index doesn't exist, fall back to client-side filtering
       if (indexError.code === 'failed-precondition' || indexError.message?.includes('index')) {
-        console.warn('⚠️ Missing Firestore index for customerId. Falling back to client-side filtering.');
+        logger.warn('⚠️ Missing Firestore index for customerId. Falling back to client-side filtering.');
       }
     }
 
@@ -292,14 +293,14 @@ export const createReport = async (
   branchId?: string
 ): Promise<string> => {
   try {
-    console.log('🔍 ReportService Debug - Creating report with:', { branchId, reportData });
+    logger.log('🔍 ReportService Debug - Creating report with:', { branchId, reportData });
 
     if (!branchId) {
       throw new Error('Branch ID is required to create a report');
     }
 
     // Find or create customer
-    console.log('🔍 ReportService Debug - Finding/creating customer...');
+    logger.log('🔍 ReportService Debug - Finding/creating customer...');
     const { findOrCreateCustomer, updateCustomerStats } = await import('./customerService');
     const customerId = await findOrCreateCustomer({
       customerName: reportData.customerName,
@@ -309,10 +310,10 @@ export const createReport = async (
       createdBy: reportData.createdBy,
       branchId: branchId,
     });
-    console.log('🔍 ReportService Debug - Customer ID:', customerId);
+    logger.log('🔍 ReportService Debug - Customer ID:', customerId);
 
     // Find or create building - all reports must be linked to a building
-    console.log('🔍 ReportService Debug - Finding/creating building...');
+    logger.log('🔍 ReportService Debug - Finding/creating building...');
     const { findOrCreateBuilding, getBuildingById } = await import('./buildingService');
     
     let buildingId: string;
@@ -320,7 +321,7 @@ export const createReport = async (
     // If buildingId is provided, use it (user selected existing building)
     if (reportData.buildingId) {
       buildingId = reportData.buildingId;
-      console.log('🔍 ReportService Debug - Using provided building ID:', buildingId);
+      logger.log('🔍 ReportService Debug - Using provided building ID:', buildingId);
     } else {
       // Otherwise, find or create building based on address
       const buildingAddress = reportData.buildingAddress || reportData.customerAddress;
@@ -338,14 +339,14 @@ export const createReport = async (
         undefined, // buildingType - can be inferred later
         reportData.createdBy
       );
-      console.log('🔍 ReportService Debug - Created/found building ID:', buildingId);
+      logger.log('🔍 ReportService Debug - Created/found building ID:', buildingId);
     }
 
     // Get building details to use as source of truth
     const building = await getBuildingById(buildingId);
     
     // Create the report document
-    console.log('🔍 ReportService Debug - Creating report document...');
+    logger.log('🔍 ReportService Debug - Creating report document...');
     const reportsRef = collection(db, 'reports');
     
     // Use building data as source of truth for roof information
@@ -369,12 +370,12 @@ export const createReport = async (
       createdAt: serverTimestamp(),
       lastEdited: serverTimestamp(),
     });
-    console.log('🔍 ReportService Debug - Report created with ID:', docRef.id);
+    logger.log('🔍 ReportService Debug - Report created with ID:', docRef.id);
 
     // Update customer stats
-    console.log('🔍 ReportService Debug - Updating customer stats...');
+    logger.log('🔍 ReportService Debug - Updating customer stats...');
     await updateCustomerStats(customerId, reportData.estimatedCost || 0, false);
-    console.log('🔍 ReportService Debug - Customer stats updated');
+    logger.log('🔍 ReportService Debug - Customer stats updated');
 
     return docRef.id;
   } catch (error) {
@@ -464,7 +465,7 @@ export const generatePDF = async (reportId: string, branchId?: string): Promise<
           };
         }
       } catch (error) {
-        console.warn('Could not load branch information for PDF:', error);
+        logger.warn('Could not load branch information for PDF:', error);
       }
     }
 

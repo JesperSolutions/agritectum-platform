@@ -184,7 +184,7 @@ const ESGService: React.FC = () => {
   };
 
   const handleBuildingSelect = async (buildingId: string) => {
-    console.log('🏢 Selecting building:', buildingId);
+    logger.log('🏢 Selecting building:', buildingId);
     setLoadingBuilding(true);
     setCalculatedMetrics(null);
     setExistingReportId(null);
@@ -193,7 +193,7 @@ const ESGService: React.FC = () => {
     
     try {
       const building = await getBuildingById(buildingId);
-      console.log('🏢 Building loaded:', building);
+      logger.log('🏢 Building loaded:', building);
       
       if (building) {
         setSelectedBuilding(building);
@@ -201,13 +201,13 @@ const ESGService: React.FC = () => {
         
         // Check if report already exists for this building
         try {
-          console.log('🔍 Checking for existing ESG reports...');
+          logger.log('🔍 Checking for existing ESG reports...');
           const existingReports = await getESGServiceReportsByBuilding(buildingId, currentUser?.branchId);
-          console.log('📊 Existing reports found:', existingReports.length);
+          logger.log('📊 Existing reports found:', existingReports.length);
           
           if (existingReports.length > 0) {
             const latestReport = existingReports[0];
-            console.log('📋 Loading existing report:', latestReport.id);
+            logger.log('📋 Loading existing report:', latestReport.id);
             setExistingReportId(latestReport.id);
             setRoofSize(latestReport.roofSize.toString());
             setDivisions(latestReport.divisions);
@@ -215,11 +215,11 @@ const ESGService: React.FC = () => {
             setPublicLink(latestReport.publicLinkId ? `/esg-report/public/${latestReport.publicLinkId}` : null);
             showSuccess('Existing ESG report loaded');
           } else {
-            console.log('🆕 No existing report found, starting fresh');
+            logger.log('🆕 No existing report found, starting fresh');
           }
         } catch (error) {
           // No existing report, continue with defaults
-          console.log('✅ No existing report found for this building, creating new');
+          logger.log('✅ No existing report found for this building, creating new');
           console.error('Report check error:', error);
         }
       } else {
@@ -232,7 +232,7 @@ const ESGService: React.FC = () => {
       showError(t('admin.esgService.errorLoadingBuilding') || 'Failed to load building');
     } finally {
       setLoadingBuilding(false);
-      console.log('🏁 Building selection completed');
+      logger.log('🏁 Building selection completed');
     }
   };
 
@@ -279,9 +279,9 @@ const ESGService: React.FC = () => {
 
     setLoadingCalculation(true);
     try {
-      console.log('Calculating ESG metrics with:', { roofSizeNum, divisions });
+      logger.log('Calculating ESG metrics with:', { roofSizeNum, divisions });
       const metrics = calculateESGFromDivisions(roofSizeNum, divisions);
-      console.log('Calculated metrics:', metrics);
+      logger.log('Calculated metrics:', metrics);
       setCalculatedMetrics(metrics);
     } catch (error) {
       console.error('Error calculating metrics:', error);
@@ -379,7 +379,7 @@ const ESGService: React.FC = () => {
         showSuccess(t('admin.esgService.linkCopied') || 'Public link copied to clipboard');
       } catch (clipboardError) {
         // Clipboard copy failed, but link was generated
-        console.warn('Failed to copy to clipboard:', clipboardError);
+        logger.warn('Failed to copy to clipboard:', clipboardError);
       }
     } catch (error) {
       console.error('Error generating public link:', error);

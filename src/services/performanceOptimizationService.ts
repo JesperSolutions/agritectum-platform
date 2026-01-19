@@ -1,5 +1,6 @@
 import { db } from '../config/firebase';
 import { collection, addDoc, getDocs, query, where, orderBy, limit, serverTimestamp } from 'firebase/firestore';
+import { logger } from '../utils/logger';
 
 export interface PerformanceMetric {
   id?: string;
@@ -48,7 +49,7 @@ export const recordPerformanceMetric = async (metric: Omit<PerformanceMetric, 'i
 
     // Check for performance issues
     if (metric.duration > getPerformanceThreshold(metric.type)) {
-      console.warn(`Slow ${metric.type}: ${metric.name} took ${metric.duration}ms`);
+      logger.warn(`Slow ${metric.type}: ${metric.name} took ${metric.duration}ms`);
     }
   } catch (error) {
     console.error('Failed to record performance metric:', error);
@@ -250,7 +251,7 @@ export const cleanupOldPerformanceMetrics = async (): Promise<void> => {
     });
 
     await batch.commit();
-    console.log(`Cleaned up ${snapshot.size} old performance metrics`);
+    logger.log(`Cleaned up ${snapshot.size} old performance metrics`);
   } catch (error) {
     console.error('Error cleaning up old performance metrics:', error);
   }

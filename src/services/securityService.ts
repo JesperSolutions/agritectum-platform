@@ -1,5 +1,6 @@
 import { db } from '../config/firebase';
 import { collection, addDoc, getDocs, query, where, orderBy, limit, serverTimestamp } from 'firebase/firestore';
+import { logger } from '../utils/logger';
 
 export interface SecurityEvent {
   id?: string;
@@ -82,7 +83,7 @@ const sendSecurityAlert = async (event: SecurityEvent): Promise<void> => {
       sentAt: serverTimestamp(),
     });
 
-    console.warn('SECURITY ALERT:', event);
+    logger.warn('SECURITY ALERT:', event);
   } catch (alertError) {
     console.error('Failed to send security alert:', alertError);
   }
@@ -356,7 +357,7 @@ export const cleanupOldSecurityLogs = async (): Promise<void> => {
     });
 
     await batch.commit();
-    console.log(`Cleaned up ${snapshot.size} old security logs`);
+    logger.log(`Cleaned up ${snapshot.size} old security logs`);
   } catch (error) {
     console.error('Error cleaning up old security logs:', error);
   }

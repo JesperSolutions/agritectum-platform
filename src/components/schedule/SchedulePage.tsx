@@ -7,6 +7,7 @@ import * as appointmentService from '../../services/appointmentService';
 import AppointmentForm from './AppointmentForm';
 import AppointmentList from './AppointmentList';
 import LoadingSpinner from '../common/LoadingSpinner';
+import { logger } from '../../utils/logger';
 import { Button } from '../ui/button';
 import { Plus, RefreshCw, AlertTriangle, Calendar, CheckCircle, FileText, Filter, ChevronUp, ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -54,14 +55,14 @@ const SchedulePage: React.FC = () => {
     setError(null);
 
     try {
-      console.log('📅 Loading appointments for user:', {
+      logger.log('📅 Loading appointments for user:', {
         uid: currentUser.uid,
         role: currentUser.role,
         permissionLevel: currentUser.permissionLevel,
         branchId: currentUser.branchId,
       });
       const data = await appointmentService.getAppointments(currentUser);
-      console.log('📅 Appointments loaded:', data.length, 'appointments');
+      logger.log('📅 Appointments loaded:', data.length, 'appointments');
       setAppointments(data);
     } catch (err: any) {
       console.error('📅 Error loading appointments:', err);
@@ -118,7 +119,7 @@ const SchedulePage: React.FC = () => {
       }
 
       // Log the start action for debugging
-      console.log('🔍 Start Inspection - Appointing data:', {
+      logger.log('🔍 Start Inspection - Appointing data:', {
         appointmentId: appointment.id,
         status: appointment.status,
         customerName: appointment.customerName,
@@ -129,7 +130,7 @@ const SchedulePage: React.FC = () => {
       if (appointment.status === 'scheduled') {
         try {
           await appointmentService.startAppointment(appointment.id);
-          console.log('✅ Appointment marked as in_progress');
+          logger.log('✅ Appointment marked as in_progress');
         } catch (err: any) {
           console.error('⚠️ Failed to update appointment status:', err);
           // Continue anyway - the navigation should still work
@@ -213,7 +214,7 @@ const SchedulePage: React.FC = () => {
     
     // Debug logging for inspectors
     if (isInspector && appointments.length > 0) {
-      console.log('🔍 Inspector appointments filter debug:', {
+      logger.log('🔍 Inspector appointments filter debug:', {
         totalAppointments: appointments.length,
         filterStatus,
         dateFilter,
@@ -274,7 +275,7 @@ const SchedulePage: React.FC = () => {
     
     // Debug logging for filtered result
     if (isInspector && appointments.length > 0) {
-      console.log('✅ Filtered appointments count:', filtered.length);
+      logger.log('✅ Filtered appointments count:', filtered.length);
     }
     
     return filtered;

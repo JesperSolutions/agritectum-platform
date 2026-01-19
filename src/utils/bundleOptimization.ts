@@ -1,5 +1,7 @@
 // Bundle optimization utilities and configuration
 
+import { logger } from './logger';
+
 // Dynamic imports for better code splitting
 export const dynamicImports = {
   // Lazy load heavy components
@@ -89,7 +91,7 @@ export const performanceMonitoring = {
       end: () => {
         const endTime = performance.now();
         const loadTime = endTime - startTime;
-        console.log(`Bundle ${chunkName} loaded in ${loadTime.toFixed(2)}ms`);
+        logger.log(`Bundle ${chunkName} loaded in ${loadTime.toFixed(2)}ms`);
         return loadTime;
       },
     };
@@ -98,7 +100,7 @@ export const performanceMonitoring = {
   // Monitor chunk sizes
   monitorChunkSizes: () => {
     if (process.env.NODE_ENV === 'development') {
-      console.log('Chunk sizes monitoring enabled in development');
+      logger.log('Chunk sizes monitoring enabled in development');
       // In production, this would integrate with webpack-bundle-analyzer
     }
   },
@@ -109,8 +111,8 @@ export const performanceMonitoring = {
       const navigation = performance.getEntriesByType(
         'navigation'
       )[0] as PerformanceNavigationTiming;
-      console.log('Page load time:', navigation.loadEventEnd - navigation.loadEventStart);
-      console.log(
+      logger.log('Page load time:', navigation.loadEventEnd - navigation.loadEventStart);
+      logger.log(
         'DOM content loaded:',
         navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart
       );
@@ -189,8 +191,8 @@ export const bundleAnalysis = {
   // Analyze bundle composition
   analyzeBundle: () => {
     if (process.env.NODE_ENV === 'development') {
-      console.log('Bundle analysis available in development mode');
-      console.log('Run: npm run build && npx webpack-bundle-analyzer dist/assets/*.js');
+      logger.log('Bundle analysis available in development mode');
+      logger.log('Run: npm run build && npx webpack-bundle-analyzer dist/assets/*.js');
     }
   },
 

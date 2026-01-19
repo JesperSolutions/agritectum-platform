@@ -18,6 +18,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useReports } from '../../contexts/ReportContextSimple';
+import { logger } from '../../utils/logger';
 import {
   FileText,
   Plus,
@@ -322,11 +323,11 @@ const OptimizedDashboard: React.FC = () => {
         break;
       case 'resend':
         // Implement resend logic
-        console.log('Resend report:', reportId);
+        logger.log('Resend report:', reportId);
         break;
       case 'export':
         // Implement export logic
-        console.log('Export report:', reportId);
+        logger.log('Export report:', reportId);
         break;
     }
   };

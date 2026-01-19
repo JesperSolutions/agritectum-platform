@@ -3,7 +3,7 @@
  * Use this to seed a test user account with buildings and reports
  */
 
-import { User, Building, Report, Customer } from '../types';
+import { Building, Report, Customer } from '../types';
 
 // Test Customer
 export const testCustomerDK: Customer = {
@@ -17,7 +17,10 @@ export const testCustomerDK: Customer = {
   country: 'Danmark',
   branchId: 'agritectum-danmark',
   status: 'active',
-  createdAt: new Date('2025-06-15'),
+  createdAt: '2025-06-15',
+  createdBy: 'system',
+  totalReports: 2,
+  totalRevenue: 53500,
   contactPerson: 'Henrik Andersen',
 };
 
@@ -25,33 +28,23 @@ export const testCustomerDK: Customer = {
 export const testBuildingDK1: Building = {
   id: 'building-test-dk-001',
   customerId: 'customer-test-dk-001',
-  name: 'Kontorhotel København',
   address: 'Nørregade 15, 1165 København K',
   buildingType: 'commercial',
-  constructionYear: 2010,
-  squareMeters: 2500,
-  stories: 6,
   roofType: 'slate',
-  status: 'active',
   branchId: 'agritectum-danmark',
-  createdAt: new Date('2025-06-15'),
-  lastInspection: new Date('2025-12-01'),
+  createdAt: '2025-06-15',
+  createdBy: 'test-user-dk-001',
 };
 
 export const testBuildingDK2: Building = {
   id: 'building-test-dk-002',
   customerId: 'customer-test-dk-001',
-  name: 'Lager og Logistik',
   address: 'Banemarksvej 45, 2100 København Ø',
   buildingType: 'industrial',
-  constructionYear: 2005,
-  squareMeters: 4200,
-  stories: 2,
   roofType: 'flat',
-  status: 'active',
   branchId: 'agritectum-danmark',
-  createdAt: new Date('2025-07-20'),
-  lastInspection: new Date('2025-11-15'),
+  createdAt: '2025-07-20',
+  createdBy: 'test-user-dk-001',
 };
 
 // Test Reports
@@ -59,42 +52,40 @@ export const testReportDK1: Report = {
   id: 'report-test-dk-001',
   customerId: 'customer-test-dk-001',
   buildingId: 'building-test-dk-001',
-  inspectorId: 'test-user-dk-001',
+  createdBy: 'test-user-dk-001',
+  createdByName: 'Test Bruger',
   branchId: 'agritectum-danmark',
-  reportType: 'standard',
-  inspectionDate: new Date('2025-12-01'),
-  createdAt: new Date('2025-12-02'),
-  updatedAt: new Date('2025-12-02'),
+  roofType: 'slate',
+  inspectionDate: '2025-12-01',
+  createdAt: '2025-12-02',
+  lastEdited: '2025-12-02',
   status: 'completed',
-  title: 'Rutinekontrol - Kontorhotel København',
-  description: 'Grundig inspektion af tag, facader og indvendige systemer',
+  customerName: 'Test Kunde A/S',
+  customerAddress: 'Nørregade 15, 1165 København K',
+  conditionNotes: 'Grundig inspektion af tag, facader og indvendige systemer',
   issuesFound: [
     {
       id: 'issue-1',
       title: 'Mindre revner i tagbeklædning',
       description: 'Observeret 3 mindre revner i slatstakket på nordsiden',
       severity: 'medium',
-      type: 'crack',
+      type: 'damage',
       location: 'Roof - north side',
       images: [],
-      coordinates: { lat: 55.6761, lon: 12.5683 },
     },
   ],
   recommendedActions: [
     {
       id: 'action-1',
-      title: 'Lokale reparationer af revner',
       description: 'Reparér de identificerede revner før vinteren',
       priority: 'high',
-      urgency: 'medium',
+      urgency: 'short_term',
       estimatedCost: 8500,
-      relatedIssueId: 'issue-1',
     },
   ],
   images: [],
   offerValue: 8500,
-  offerValidUntil: new Date('2026-01-13'),
-  status: 'completed',
+  offerValidUntil: '2026-01-13',
   isOffer: true,
   isShared: false,
 };
@@ -103,15 +94,17 @@ export const testReportDK2: Report = {
   id: 'report-test-dk-002',
   customerId: 'customer-test-dk-001',
   buildingId: 'building-test-dk-002',
-  inspectorId: 'test-user-dk-001',
+  createdBy: 'test-user-dk-001',
+  createdByName: 'Test Bruger',
   branchId: 'agritectum-danmark',
-  reportType: 'standard',
-  inspectionDate: new Date('2025-11-15'),
-  createdAt: new Date('2025-11-18'),
-  updatedAt: new Date('2025-11-18'),
+  roofType: 'flat',
+  inspectionDate: '2025-11-15',
+  createdAt: '2025-11-18',
+  lastEdited: '2025-11-18',
   status: 'completed',
-  title: 'Inspektion - Lager og Logistik',
-  description: 'Omfattende inspektion af industriel lagerbygning',
+  customerName: 'Test Kunde A/S',
+  customerAddress: 'Banemarksvej 45, 2100 København Ø',
+  conditionNotes: 'Omfattende inspektion af industriel lagerbygning',
   issuesFound: [
     {
       id: 'issue-2',
@@ -121,24 +114,20 @@ export const testReportDK2: Report = {
       type: 'wear',
       location: 'Warehouse floor - area B',
       images: [],
-      coordinates: { lat: 55.7088, lon: 12.5919 },
     },
   ],
   recommendedActions: [
     {
       id: 'action-2',
-      title: 'Gulvbelægning - punktvis reparation',
       description: 'Reparér eller forny gulvbelægningen inden 6 måneder',
       priority: 'medium',
-      urgency: 'low',
+      urgency: 'long_term',
       estimatedCost: 45000,
-      relatedIssueId: 'issue-2',
     },
   ],
   images: [],
   offerValue: 45000,
-  offerValidUntil: new Date('2026-02-18'),
-  status: 'completed',
+  offerValidUntil: '2026-02-18',
   isOffer: true,
   isShared: false,
 };
@@ -152,8 +141,8 @@ export const testUserDK = {
   photoURL: null,
   branchId: 'agritectum-danmark',
   role: 'inspector',
-  createdAt: new Date('2025-06-01'),
-  lastLogin: new Date(),
+  createdAt: '2025-06-01',
+  lastLogin: new Date().toISOString(),
   preferences: {
     language: 'da',
     currency: 'DKK',

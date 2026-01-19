@@ -1,6 +1,7 @@
 import { collection, doc, addDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { Appointment, ScheduledVisit } from '../types';
+import { logger } from '../utils/logger';
 
 /**
  * Generate a unique public token for customer access
@@ -60,7 +61,7 @@ export const notifyCustomerOfAppointment = async (
       });
     }
 
-    console.log('✅ Customer notification sent for appointment:', appointment.id);
+    logger.log('✅ Customer notification sent for appointment:', appointment.id);
   } catch (error) {
     console.error('❌ Error notifying customer:', error);
     // Don't throw - notification failure should not block appointment creation
@@ -132,7 +133,7 @@ export const notifyCustomerOfAcceptance = async (
       createdAt: serverTimestamp(),
     });
 
-    console.log('✅ Acceptance notifications sent');
+    logger.log('✅ Acceptance notifications sent');
   } catch (error) {
     console.error('❌ Error sending acceptance notifications:', error);
   }
@@ -188,7 +189,7 @@ export const notifyOfRejection = async (
       console.error('Error sending rejection email:', emailError);
     }
 
-    console.log('✅ Rejection notifications sent');
+    logger.log('✅ Rejection notifications sent');
   } catch (error) {
     console.error('❌ Error sending rejection notifications:', error);
   }
@@ -257,7 +258,7 @@ export const sendAppointmentReminders = async (
       createdAt: serverTimestamp(),
     });
 
-    console.log('✅ Reminder notifications sent');
+    logger.log('✅ Reminder notifications sent');
   } catch (error) {
     console.error('❌ Error sending reminders:', error);
   }

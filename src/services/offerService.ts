@@ -13,6 +13,7 @@ import {
   Timestamp,
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
+import { logger } from '../utils/logger';
 import { Offer, OfferStatus, OfferStatusHistory, User } from '../types';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 
@@ -41,7 +42,7 @@ export const createOffer = async (
     // If branchId doesn't match and user isn't "main" branch, log a warning but proceed
     // Firestore rules will block if unauthorized
     if (userBranchId && userBranchId !== 'main' && report.branchId && report.branchId !== userBranchId) {
-      console.warn(`Warning: Attempting to create offer for report in different branch. User branch: ${userBranchId}, Report branch: ${report.branchId}`);
+      logger.warn(`Warning: Attempting to create offer for report in different branch. User branch: ${userBranchId}, Report branch: ${report.branchId}`);
     }
     
     // Generate unique public link
@@ -716,7 +717,7 @@ export const deleteOffer = async (offerId: string, user: User): Promise<void> =>
         }
       } catch (error) {
         // Log but don't fail if report update fails
-        console.warn('Failed to remove offer reference from report:', error);
+        logger.warn('Failed to remove offer reference from report:', error);
       }
     }
   } catch (error: any) {

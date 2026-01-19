@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { IntlProvider as ReactIntlProvider } from 'react-intl';
 import { defaultLocale, messages, updateLocale } from '../i18n';
 import { detectUserLocale, getStoredLocale, storeLocale, type SupportedLocale } from '../utils/geolocation';
+import { logger } from '../utils/logger';
 
 interface IntlProviderProps {
   children: React.ReactNode;
@@ -37,11 +38,11 @@ const IntlProvider: React.FC<IntlProviderProps> = ({ children }) => {
           // We use storeLocale directly instead of updateLocale to avoid marking as manual
         } else {
           // Fallback to default if detected locale not available
-          console.warn(`Locale ${detectedLocale} not available, using default ${defaultLocale}`);
+          logger.warn(`Locale ${detectedLocale} not available, using default ${defaultLocale}`);
           setCurrentLocale(defaultLocale);
         }
       } catch (error) {
-        console.warn('Could not detect locale, using default:', error);
+        logger.warn('Could not detect locale, using default:', error);
         // Fallback to default
         setCurrentLocale(defaultLocale);
       } finally {
@@ -58,12 +59,12 @@ const IntlProvider: React.FC<IntlProviderProps> = ({ children }) => {
 
   // Debug logging in development
   if (import.meta.env.DEV && isInitialized) {
-    console.log('[IntlProvider] Active locale:', activeLocale, 'Type:', typeof activeLocale);
-    console.log('[IntlProvider] Available locales:', Object.keys(messages));
-    console.log('[IntlProvider] Messages object keys (first 10):', Object.keys(activeMessages || {}).slice(0, 10));
-    console.log('[IntlProvider] Has navigation.scheduledVisits:', 'navigation.scheduledVisits' in (activeMessages || {}));
+    logger.log('[IntlProvider] Active locale:', activeLocale, 'Type:', typeof activeLocale);
+    logger.log('[IntlProvider] Available locales:', Object.keys(messages));
+    logger.log('[IntlProvider] Messages object keys (first 10):', Object.keys(activeMessages || {}).slice(0, 10));
+    logger.log('[IntlProvider] Has navigation.scheduledVisits:', 'navigation.scheduledVisits' in (activeMessages || {}));
     if (activeMessages && activeMessages['navigation.scheduledVisits']) {
-      console.log('[IntlProvider] navigation.scheduledVisits value:', activeMessages['navigation.scheduledVisits']);
+      logger.log('[IntlProvider] navigation.scheduledVisits value:', activeMessages['navigation.scheduledVisits']);
     }
   }
 

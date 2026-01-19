@@ -56,6 +56,10 @@
   "schedule.status.completed": "Completed",
   "schedule.status.cancelled": "Cancelled",
   "schedule.status.rescheduled": "Rescheduled",
+  "schedule.status.accepted": "Accepted",
+  "schedule.status.rejected": "Rejected",
+  "schedule.status.awaitingResponse": "Awaiting Response",
+  "schedule.status.noShow": "No Show",
 
   "schedule.actions.edit": "Edit",
   "schedule.actions.delete": "Delete",

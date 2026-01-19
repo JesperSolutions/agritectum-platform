@@ -1,12 +1,14 @@
 import React from 'react';
 import { CheckCircle, Clock, DollarSign } from 'lucide-react';
 import { RecommendedAction } from '../types';
+import { useIntl } from '../../hooks/useIntl';
 
 interface RecommendedActionsListProps {
   actions: RecommendedAction[];
 }
 
 const RecommendedActionsList: React.FC<RecommendedActionsListProps> = ({ actions }) => {
+  const { formatCurrency } = useIntl();
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'high':
@@ -75,7 +77,7 @@ const RecommendedActionsList: React.FC<RecommendedActionsListProps> = ({ actions
         {totalCost > 0 && (
           <div className='flex items-center text-sm text-gray-600'>
             <DollarSign className='w-4 h-4 mr-1' />
-            <span className='font-medium'>Total: {totalCost.toLocaleString('sv-SE')} SEK</span>
+            <span className='font-medium'>Total: {formatCurrency(totalCost)}</span>
           </div>
         )}
       </div>
@@ -104,7 +106,7 @@ const RecommendedActionsList: React.FC<RecommendedActionsListProps> = ({ actions
                 {action.estimatedCost && action.estimatedCost > 0 && (
                   <div className='flex items-center text-xs text-gray-600'>
                     <DollarSign className='w-3 h-3 mr-1' />
-                    <span>Estimated cost: {action.estimatedCost.toLocaleString('sv-SE')} SEK</span>
+                    <span>Estimated cost: {formatCurrency(action.estimatedCost)}</span>
                   </div>
                 )}
               </div>

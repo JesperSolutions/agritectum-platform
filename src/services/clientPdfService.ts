@@ -1,6 +1,7 @@
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import { Report } from '../types';
+import { logger } from '../utils/logger';
 
 /**
  * Client-side PDF Generation Service
@@ -34,7 +35,7 @@ const renderElementToPDF = async (
   const elementWidth = element.offsetWidth || element.scrollWidth;
   const elementHeight = element.scrollHeight;
 
-  console.log('Element dimensions:', { elementWidth, elementHeight });
+  logger.log('Element dimensions:', { elementWidth, elementHeight });
 
   // Capture the element with a fixed high-quality scale
   const canvas = await html2canvas(element, {
@@ -46,7 +47,7 @@ const renderElementToPDF = async (
     height: elementHeight,
   });
 
-  console.log('Canvas dimensions:', { width: canvas.width, height: canvas.height });
+  logger.log('Canvas dimensions:', { width: canvas.width, height: canvas.height });
 
   // Create PDF with A4 dimensions
   const pdf = new jsPDF({
@@ -105,7 +106,7 @@ export const generateReportPDF = async (
   _options: PDFGenerationOptions = {}
 ): Promise<{ success: boolean; blob?: Blob; error?: string }> => {
   try {
-    console.log(`🖨️ Generating PDF for report: ${report.id}`);
+    logger.log(`🖨️ Generating PDF for report: ${report.id}`);
 
     // Find the report root element which includes header and content
     const reportRoot = document.getElementById('report-root');
@@ -115,7 +116,7 @@ export const generateReportPDF = async (
     }
 
     const pdfBlob = await renderElementToPDF(reportRoot);
-    console.log(`✅ PDF generated successfully: ${pdfBlob.size} bytes`);
+    logger.log(`✅ PDF generated successfully: ${pdfBlob.size} bytes`);
 
     return {
       success: true,

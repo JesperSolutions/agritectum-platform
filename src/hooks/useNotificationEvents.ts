@@ -25,6 +25,7 @@ import {
   createEmailNotification
 } from '../services/notificationService';
 import { Report } from '../types';
+import { logger } from '../utils/logger';
 
 /**
  * Hook to handle report-related notifications

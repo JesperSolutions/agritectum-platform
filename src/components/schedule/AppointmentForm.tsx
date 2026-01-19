@@ -11,6 +11,7 @@ import * as appointmentService from '../../services/appointmentService';
 import * as userService from '../../services/userService';
 import * as customerService from '../../services/customerService';
 import { Calendar, User, AlertTriangle, Loader2 } from 'lucide-react';
+import { logger } from '../../utils/logger';
 
 interface AppointmentFormProps {
   isOpen: boolean;
@@ -109,17 +110,17 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({ isOpen, onClose, onSu
       const branchId = canAccessAllBranches(currentUser.permissionLevel) ? undefined : currentUser.branchId;
       const allUsers = await userService.getUsers(branchId);
       
-      console.log('🔍 Schedule Debug - All users loaded:', allUsers.length);
-      console.log('🔍 Schedule Debug - Users data:', allUsers);
+      logger.log('🔍 Schedule Debug - All users loaded:', allUsers.length);
+      logger.log('🔍 Schedule Debug - Users data:', allUsers);
       
       const inspectors = allUsers.filter((user: any) => {
         const isInspector = user.permissionLevel === 0 || user.role === 'inspector';
         const isActive = user.isActive !== false; // Default to true if not set
-        console.log(`🔍 Schedule Debug - User ${user.displayName}: permissionLevel=${user.permissionLevel}, role=${user.role}, isActive=${user.isActive}, isInspector=${isInspector}, isActive=${isActive}`);
+        logger.log(`🔍 Schedule Debug - User ${user.displayName}: permissionLevel=${user.permissionLevel}, role=${user.role}, isActive=${user.isActive}, isInspector=${isInspector}, isActive=${isActive}`);
         return isInspector && isActive;
       });
       
-      console.log('🔍 Schedule Debug - Filtered inspectors:', inspectors.length, inspectors);
+      logger.log('🔍 Schedule Debug - Filtered inspectors:', inspectors.length, inspectors);
       setInspectors(inspectors);
     } catch (error) {
       console.error('Error loading inspectors:', error);

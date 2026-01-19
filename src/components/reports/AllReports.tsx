@@ -972,7 +972,7 @@ const AllReports: React.FC<AllReportsProps> = () => {
                                   <span>{report.customerName || 'Unknown Customer'}</span>
                                   {report.customerType === 'company' && (
                                     <span className="px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded-full">
-                                      Företag
+                                      {t('form.fields.customerTypeCompany') || 'Company'}
                                     </span>
                                   )}
                                 </div>

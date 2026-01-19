@@ -1,13 +1,14 @@
 import { useIntl as useReactIntl } from 'react-intl';
 import { formatCurrency as formatCurrencyUtil, getCurrencyCode } from '../utils/currency';
 import type { SupportedLocale } from '../utils/geolocation';
+import { logger } from '../utils/logger';
 
 export const useIntl = () => {
   const intl = useReactIntl();
   const locale = intl.locale as SupportedLocale;
 
   if (import.meta.env.DEV) {
-    console.log('[useIntl] intl.locale:', intl.locale, 'Type:', typeof intl.locale);
+    logger.log('[useIntl] intl.locale:', intl.locale, 'Type:', typeof intl.locale);
   }
 
   return {

@@ -1,4 +1,5 @@
 import { db } from '../config/firebase';
+import { logger } from '../utils/logger';
 import {
   collection,
   doc,
@@ -124,11 +125,35 @@ export const getBuildingsByCustomer = async (customerId: string, branchId?: stri
   try {
     const buildingsRef = collection(db, 'buildings');
     
-    // Query by customerId only (no index required for simple field query)
-    const q = query(
-      buildingsRef,
-      where('customerId', '==', customerId)
-    );
+    // Get current user's branch if not provided
+    let userBranchId = branchId;
+    if (!userBranchId) {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (user) {
+        const userRef = doc(db, 'users', user.uid);
+        const userDoc = await getDoc(userRef);
+        if (userDoc.exists()) {
+          userBranchId = userDoc.data().branchId;
+        }
+      }
+    }
+    
+    // Query by customerId and branchId for security rules compliance
+    let q;
+    if (userBranchId) {
+      q = query(
+        buildingsRef,
+        where('customerId', '==', customerId),
+        where('branchId', '==', userBranchId)
+      );
+    } else {
+      // Fallback to just customerId if no branch
+      q = query(
+        buildingsRef,
+        where('customerId', '==', customerId)
+      );
+    }
 
     const querySnapshot = await getDocs(q);
     const buildings = querySnapshot.docs.map(doc => ({
@@ -136,7 +161,8 @@ export const getBuildingsByCustomer = async (customerId: string, branchId?: stri
       ...doc.data(),
     })) as Building[];
     
-    // Filter by branchId on client side if provided
+    // Filter by branchId on client side if provided differently
+
     const filtered = branchId 
       ? buildings.filter(building => building.branchId === branchId)
       : buildings;
@@ -153,7 +179,7 @@ export const getBuildingsByCustomer = async (customerId: string, branchId?: stri
     // Handle missing index error - fallback to querying by branchId if available
     if (error.code === 'failed-precondition' || error.message?.includes('index')) {
       if (branchId) {
-        console.warn('⚠️ Missing Firestore index detected. Falling back to branchId query + client-side filtering.');
+        logger.warn('⚠️ Missing Firestore index detected. Falling back to branchId query + client-side filtering.');
         try {
           const buildingsRef = collection(db, 'buildings');
           let q = query(
@@ -174,7 +200,7 @@ export const getBuildingsByCustomer = async (customerId: string, branchId?: stri
           } catch (indexError: any) {
             // If index is still building, try without orderBy
             if (indexError.code === 'failed-precondition' || indexError.message?.includes('index')) {
-              console.warn('⚠️ Index still building. Querying without orderBy...');
+              logger.warn('⚠️ Index still building. Querying without orderBy...');
               q = query(
                 buildingsRef,
                 where('branchId', '==', branchId)
@@ -209,7 +235,7 @@ export const getBuildingsByCustomer = async (customerId: string, branchId?: stri
     
     // If permission error, return empty array instead of throwing
     if (error.code === 'permission-denied') {
-      console.warn('⚠️ Permission denied when fetching buildings. Returning empty array.');
+      logger.warn('⚠️ Permission denied when fetching buildings. Returning empty array.');
       return [];
     }
 
@@ -237,7 +263,7 @@ export const getBuildingsByCompany = async (companyId: string): Promise<Building
     
     // Handle missing index error
     if (error.code === 'failed-precondition' || error.message?.includes('index')) {
-      console.warn('⚠️ Missing Firestore index detected. Falling back to client-side filtering.');
+      logger.warn('⚠️ Missing Firestore index detected. Falling back to client-side filtering.');
       const buildingsRef = collection(db, 'buildings');
       const snapshot = await getDocs(buildingsRef);
       const buildings = snapshot.docs.map(doc => ({
@@ -384,16 +410,16 @@ export const findOrCreateBuilding = async (
       );
 
       if (existingBuilding) {
-        console.log('✅ Found existing building:', existingBuilding.id);
+        logger.log('✅ Found existing building:', existingBuilding.id);
         return existingBuilding.id;
       }
     } catch (queryError: any) {
       // If query fails (e.g., missing index), fall back to creating new building
-      console.warn('⚠️ Could not query buildings, will create new one:', queryError.message);
+      logger.warn('⚠️ Could not query buildings, will create new one:', queryError.message);
     }
 
     // No existing building found, create a new one
-    console.log('🔨 Creating new building for address:', address);
+    logger.log('🔨 Creating new building for address:', address);
     const newBuilding: Omit<Building, 'id' | 'createdAt'> = {
       customerId: customerId,
       address: address.trim(),
@@ -405,7 +431,7 @@ export const findOrCreateBuilding = async (
     };
 
     const buildingId = await createBuilding(newBuilding);
-    console.log('✅ Created new building:', buildingId);
+    logger.log('✅ Created new building:', buildingId);
     return buildingId;
   } catch (error) {
     console.error('Error finding or creating building:', error);

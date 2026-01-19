@@ -16,6 +16,7 @@ import {
   db, 
   auth 
 } from '../config/firebase';
+import { logger } from '../utils/logger';
 import { 
   collection, 
   doc, 
@@ -122,7 +123,7 @@ export const createNotification = async (
     };
 
     const docRef = await addDoc(collection(db, 'notifications'), notificationData);
-    console.log('✅ Notification created:', docRef.id);
+    logger.log('✅ Notification created:', docRef.id);
     return docRef.id;
   } catch (error) {
     console.error('❌ Error creating notification:', error);
@@ -167,7 +168,7 @@ export const createBatchNotifications = async (
     });
 
     await batch.commit();
-    console.log('✅ Batch notifications created:', notificationIds.length);
+    logger.log('✅ Batch notifications created:', notificationIds.length);
     return notificationIds;
   } catch (error) {
     console.error('❌ Error creating batch notifications:', error);
@@ -234,7 +235,7 @@ export const getNotifications = async (
       return b.timestamp.getTime() - a.timestamp.getTime();
     });
 
-    console.log(`✅ Retrieved ${notifications.length} notifications for user ${userId}`);
+    logger.log(`✅ Retrieved ${notifications.length} notifications for user ${userId}`);
     return notifications;
   } catch (error) {
     console.error('❌ Error getting notifications:', error);
@@ -301,7 +302,7 @@ export const subscribeToNotifications = (
         return b.timestamp.getTime() - a.timestamp.getTime();
       });
 
-      console.log(`📡 Real-time update: ${notifications.length} notifications for user ${userId}`);
+      logger.log(`📡 Real-time update: ${notifications.length} notifications for user ${userId}`);
       callback(notifications);
     });
 
@@ -321,7 +322,7 @@ export const markNotificationAsRead = async (notificationId: string): Promise<vo
       read: true,
       updatedAt: serverTimestamp(),
     });
-    console.log('✅ Notification marked as read:', notificationId);
+    logger.log('✅ Notification marked as read:', notificationId);
   } catch (error) {
     console.error('❌ Error marking notification as read:', error);
     throw error;
@@ -344,7 +345,7 @@ export const markNotificationsAsRead = async (notificationIds: string[]): Promis
     });
 
     await batch.commit();
-    console.log('✅ Marked notifications as read:', notificationIds.length);
+    logger.log('✅ Marked notifications as read:', notificationIds.length);
   } catch (error) {
     console.error('❌ Error marking notifications as read:', error);
     throw error;
@@ -363,7 +364,7 @@ export const markAllNotificationsAsRead = async (userId: string): Promise<void> 
       await markNotificationsAsRead(notificationIds);
     }
     
-    console.log('✅ All notifications marked as read for user:', userId);
+    logger.log('✅ All notifications marked as read for user:', userId);
   } catch (error) {
     console.error('❌ Error marking all notifications as read:', error);
     throw error;
@@ -376,7 +377,7 @@ export const markAllNotificationsAsRead = async (userId: string): Promise<void> 
 export const deleteNotification = async (notificationId: string): Promise<void> => {
   try {
     await deleteDoc(doc(db, 'notifications', notificationId));
-    console.log('✅ Notification deleted:', notificationId);
+    logger.log('✅ Notification deleted:', notificationId);
   } catch (error) {
     console.error('❌ Error deleting notification:', error);
     throw error;
@@ -396,7 +397,7 @@ export const deleteNotifications = async (notificationIds: string[]): Promise<vo
     });
 
     await batch.commit();
-    console.log('✅ Deleted notifications:', notificationIds.length);
+    logger.log('✅ Deleted notifications:', notificationIds.length);
   } catch (error) {
     console.error('❌ Error deleting notifications:', error);
     throw error;
@@ -425,9 +426,9 @@ export const deleteOldNotifications = async (olderThanDays: number = 30): Promis
 
     if (notificationIds.length > 0) {
       await deleteNotifications(notificationIds);
-      console.log(`✅ Deleted ${notificationIds.length} old notifications`);
+      logger.log(`✅ Deleted ${notificationIds.length} old notifications`);
     } else {
-      console.log('✅ No old notifications to delete');
+      logger.log('✅ No old notifications to delete');
     }
   } catch (error) {
     console.error('❌ Error deleting old notifications:', error);
@@ -460,7 +461,7 @@ export const getNotificationStats = async (userId: string): Promise<Notification
       }
     });
 
-    console.log('✅ Notification stats retrieved for user:', userId);
+    logger.log('✅ Notification stats retrieved for user:', userId);
     return stats;
   } catch (error) {
     console.error('❌ Error getting notification stats:', error);
@@ -524,7 +525,7 @@ export const notifyBranchManagersOnReportCreation = async (
 ): Promise<void> => {
   try {
     if (!branchId) {
-      console.warn('⚠️ No branchId provided, skipping branch manager notifications');
+      logger.warn('⚠️ No branchId provided, skipping branch manager notifications');
       return;
     }
 
@@ -533,7 +534,7 @@ export const notifyBranchManagersOnReportCreation = async (
     const branchManagerIds = await getBranchManagersForNotification(branchId);
 
     if (branchManagerIds.length === 0) {
-      console.log(`ℹ️ No branch managers found for branch ${branchId}`);
+      logger.log(`ℹ️ No branch managers found for branch ${branchId}`);
       return;
     }
 
@@ -560,7 +561,7 @@ export const notifyBranchManagersOnReportCreation = async (
     }));
 
     await createBatchNotifications(notifications);
-    console.log(`✅ Notified ${branchManagerIds.length} branch manager(s) about report ${reportId}`);
+    logger.log(`✅ Notified ${branchManagerIds.length} branch manager(s) about report ${reportId}`);
   } catch (error) {
     console.error('❌ Error notifying branch managers:', error);
     // Don't throw - notification failure should not block report creation

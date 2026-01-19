@@ -23,6 +23,7 @@ import { createUserWithAuth } from '../../services/userAuthService';
 import { generateTemporaryPassword } from '../../services/userInvitationService';
 import { Employee, UserRole, Branch } from '../../types';
 import LoadingSpinner from '../common/LoadingSpinner';
+import { logger } from '../../utils/logger';
 import Tooltip from '../Tooltip';
 import ConfirmationDialog from '../common/ConfirmationDialog';
 
@@ -232,11 +233,11 @@ const UserManagement: React.FC = () => {
     try {
       setLoading(true);
       setError(''); // Clear any previous errors
-      console.log('🔍 UserManagement: Loading all users for superadmin...');
+      logger.log('🔍 UserManagement: Loading all users for superadmin...');
       const usersData = await userService.getUsers();
-      console.log('🔍 UserManagement: Received users data:', usersData);
+      logger.log('🔍 UserManagement: Received users data:', usersData);
       setUsers(usersData);
-      console.log('✅ UserManagement: Successfully loaded', usersData.length, 'users');
+      logger.log('✅ UserManagement: Successfully loaded', usersData.length, 'users');
     } catch (error) {
       console.error('❌ UserManagement: Error loading users:', error);
       setError(t('admin.errors.failedToLoadUsers'));
@@ -249,11 +250,11 @@ const UserManagement: React.FC = () => {
     try {
       setLoading(true);
       setError(''); // Clear any previous errors
-      console.log('🔍 UserManagement: Loading users for branch:', branchId);
+      logger.log('🔍 UserManagement: Loading users for branch:', branchId);
       const usersData = await userService.getUsers(branchId);
-      console.log('🔍 UserManagement: Received branch users data:', usersData);
+      logger.log('🔍 UserManagement: Received branch users data:', usersData);
       setUsers(usersData);
-      console.log('✅ UserManagement: Successfully loaded', usersData.length, 'users for branch', branchId);
+      logger.log('✅ UserManagement: Successfully loaded', usersData.length, 'users for branch', branchId);
     } catch (error) {
       console.error('❌ UserManagement: Error loading branch users:', error);
       setError(t('admin.errors.failedToLoadUsers'));
@@ -340,7 +341,7 @@ const UserManagement: React.FC = () => {
           return;
         }
 
-        console.log('✅ User created with Firebase Auth:', authResult.userId);
+        logger.log('✅ User created with Firebase Auth:', authResult.userId);
 
         const employee = { 
           id: authResult.userId!, 

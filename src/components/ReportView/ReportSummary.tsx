@@ -1,12 +1,14 @@
 import React from 'react';
 import { FileText, Calendar, User, MapPin } from 'lucide-react';
 import { Report } from '../types';
+import { useIntl } from '../../hooks/useIntl';
 
 interface ReportSummaryProps {
   report: Report;
 }
 
 const ReportSummary: React.FC<ReportSummaryProps> = ({ report }) => {
+  const { formatCurrency } = useIntl();
   const criticalIssues =
     report.issuesFound?.filter(issue => issue.severity === 'critical').length || 0;
   const highPriorityActions =
@@ -42,7 +44,7 @@ const ReportSummary: React.FC<ReportSummaryProps> = ({ report }) => {
 
         <div className='bg-gray-50 p-4 rounded-lg'>
           <div className='text-2xl font-bold text-gray-900'>
-            {totalCost > 0 ? `${totalCost.toLocaleString('sv-SE')} SEK` : 'N/A'}
+            {totalCost > 0 ? formatCurrency(totalCost) : 'N/A'}
           </div>
           <div className='text-sm text-gray-600'>Estimated Cost</div>
         </div>

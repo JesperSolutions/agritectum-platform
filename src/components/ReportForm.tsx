@@ -49,6 +49,7 @@ import IssueTemplateSelector from './IssueTemplateSelector';
 import RoofSizeMeasurer from './RoofSizeMeasurer';
 import DefectCameraCapture from './DefectCameraCapture';
 import DefectQuickDescription from './DefectQuickDescription';
+import CustomerSearchInline from './CustomerSearchInline';
 import { IssueTemplate } from '../constants/issueTemplates';
 import { PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
@@ -135,7 +136,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
         dateStr = date.toISOString().split('T')[0];
       } else {
         // Try to convert any object to string first
-        console.warn('Unknown date object format:', dateString);
+        logger.warn('Unknown date object format:', dateString);
         dateStr = String(dateString);
       }
     } else if (typeof dateString === 'string') {
@@ -151,7 +152,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
     
     // Validate the date string format
     if (!dateStr || typeof dateStr !== 'string' || !dateStr.includes('-')) {
-      console.warn('Invalid date string provided to parseLocalDate:', dateString);
+      logger.warn('Invalid date string provided to parseLocalDate:', dateString);
       return new Date();
     }
     
@@ -173,7 +174,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
       } | null;
 
       if (state) {
-        console.log('🔍 ReportForm - Appointment data received:', {
+        logger.log('🔍 ReportForm - Appointment data received:', {
           appointmentId: state.appointmentId,
           customerName: state.customerName,
           hasAddress: !!state.customerAddress,
@@ -323,6 +324,8 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
   const [selectedBuildingId, setSelectedBuildingId] = useState<string | null>(null);
   const [loadingBuildings, setLoadingBuildings] = useState(false);
   const [customerIdForBuildings, setCustomerIdForBuildings] = useState<string | null>(null);
+  const [isCreatingNewBuilding, setIsCreatingNewBuilding] = useState(false);
+  const [creatingBuildingLoading, setCreatingBuildingLoading] = useState(false);
   const [formResetKey, setFormResetKey] = useState(0);
   const totalSteps = FORM_CONSTANTS.TOTAL_STEPS;
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
@@ -527,9 +530,9 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
     }
   }, [mode, formData.customerName, checkForExistingCustomer]);
 
-  // Load buildings when customerId is available
+  // Load buildings when customerId is available (works in both create and edit modes)
   useEffect(() => {
-    if (customerIdForBuildings && currentUser && mode === 'create') {
+    if (customerIdForBuildings && currentUser) {
       const loadBuildings = async () => {
         setLoadingBuildings(true);
         try {
@@ -537,13 +540,14 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
           const buildings = await getBuildingsByCustomer(customerIdForBuildings, currentUser.branchId);
           setCustomerBuildings(buildings);
           
-          // If there's only one building, auto-select it
-          if (buildings.length === 1) {
+          // If there's only one building and no building is selected, auto-select it
+          if (buildings.length === 1 && !selectedBuildingId) {
             const building = buildings[0];
             setSelectedBuildingId(building.id);
             setFormData(prev => ({
               ...prev,
               buildingAddress: building.address,
+              buildingId: building.id,
               roofType: building.roofType || prev.roofType,
               roofSize: building.roofSize || prev.roofSize,
             }));
@@ -557,7 +561,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
       
       loadBuildings();
     }
-  }, [customerIdForBuildings, currentUser, mode]);
+  }, [customerIdForBuildings, currentUser, selectedBuildingId]);
 
   // Handle building selection - use building data as source of truth
   const handleBuildingSelect = useCallback((buildingId: string) => {
@@ -567,11 +571,65 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
       setFormData(prev => ({
         ...prev,
         buildingAddress: building.address,
+        buildingId: building.id,
         roofType: building.roofType || prev.roofType,
         roofSize: building.roofSize || prev.roofSize,
       }));
     }
   }, [customerBuildings]);
+
+  // Handle creating a new building
+  const handleCreateNewBuilding = useCallback(async () => {
+    if (!formData.buildingAddress?.trim()) {
+      setValidationErrors(prev => ({
+        ...prev,
+        buildingAddress: t('form.validation.buildingAddressRequired') || 'Building address is required'
+      }));
+      return;
+    }
+
+    if (!customerIdForBuildings) {
+      setError(t('form.errors.customerNotSelected') || 'Please select a customer first');
+      return;
+    }
+
+    setCreatingBuildingLoading(true);
+    try {
+      const { createBuilding } = await import('../services/buildingService');
+      
+      const newBuildingId = await createBuilding({
+        customerId: customerIdForBuildings,
+        branchId: currentUser?.branchId || '',
+        address: formData.buildingAddress,
+        roofType: formData.roofType as RoofType,
+        roofSize: formData.roofSize,
+        roofAge: formData.roofAge,
+      });
+
+      // Refresh buildings list
+      const { getBuildingsByCustomer } = await import('../services/buildingService');
+      const updatedBuildings = await getBuildingsByCustomer(customerIdForBuildings);
+      setCustomerBuildings(updatedBuildings);
+
+      // Select the newly created building
+      setSelectedBuildingId(newBuildingId);
+      setIsCreatingNewBuilding(false);
+      setFormData(prev => ({
+        ...prev,
+        buildingId: newBuildingId,
+      }));
+
+      setNotification({
+        message: t('form.messages.buildingCreatedSuccess') || 'Building created successfully!',
+        type: 'success'
+      });
+    } catch (err) {
+      console.error('Error creating building:', err);
+      setError(t('form.errors.buildingCreationFailed') || 'Failed to create building. Please try again.');
+    } finally {
+      setCreatingBuildingLoading(false);
+    }
+  }, [formData.buildingAddress, formData.roofType, formData.roofSize, formData.roofAge, customerIdForBuildings, currentUser?.branchId, t]);
 
   // Update form data when URL customer params are provided (for customer-to-report flow)
   useEffect(() => {
@@ -663,6 +721,16 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
             const validatedInspectionDate = validateDateString(report.inspectionDate);
             const validatedOfferValidUntil = validateDateString(report.offerValidUntil);
             
+            // If report has a customerId, set it for building loading
+            if (report.customerId) {
+              setCustomerIdForBuildings(report.customerId);
+            }
+            
+            // If report has a buildingId, set it as selected
+            if (report.buildingId) {
+              setSelectedBuildingId(report.buildingId);
+            }
+            
             setFormData({
               customerName: report.customerName || '',
               customerAddress: report.customerAddress || '',
@@ -699,6 +767,9 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                 ...pin,
                 severity: (pin.severity || 'medium') as IssueSeverity,
               })) as RoofPinMarker[],
+              // Store customerId and buildingId for tracking
+              customerId: report.customerId,
+              buildingId: report.buildingId,
             });
             // Load map markers if they exist
             if (report.roofMapMarkers) {
@@ -722,7 +793,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                 }
                 }
               } catch (error) {
-                console.warn('Could not geocode address for map:', error);
+                logger.warn('Could not geocode address for map:', error);
               }
             }
           } else {
@@ -867,7 +938,8 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
         errors.customerName = t('form.validation.customerNameRequired');
       }
 
-      if (!formData.customerAddress?.trim()) {
+      // For individual customers, address is required. For companies, building address is used instead.
+      if (formData.customerType === 'individual' && !formData.customerAddress?.trim()) {
         errors.customerAddress = t('form.validation.customerAddressRequired');
       }
 
@@ -1105,7 +1177,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
         if (appointmentData?.appointmentId) {
           try {
             await appointmentService.completeAppointment(appointmentData.appointmentId, newReportId);
-            console.log('✅ Report linked to appointment successfully', {
+            logger.log('✅ Report linked to appointment successfully', {
               appointmentId: appointmentData.appointmentId,
               reportId: newReportId,
             });
@@ -1306,7 +1378,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
 
     setFormData(prev => {
       const updatedIssues = [...(prev.issuesFound || []), newIssue];
-      console.log('🔍 ReportForm - Adding issue:', { 
+      logger.log('🔍 ReportForm - Adding issue:', { 
         newIssueId: newIssue.id, 
         currentIssuesCount: prev.issuesFound?.length || 0,
         updatedIssuesCount: updatedIssues.length 
@@ -1692,6 +1764,14 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
               {currentStep === 3 && t('form.sections.issues')}
               {currentStep === 4 && t('form.sections.recommendedActions')}
             </div>
+            {/* Step-specific help text */}
+            <div className='mt-2 text-xs text-slate-500 bg-blue-50 p-2 rounded-md border border-blue-100'>
+              <span className='font-medium text-blue-700'>💡 </span>
+              {currentStep === 1 && t('form.help.step1')}
+              {currentStep === 2 && t('form.help.step2')}
+              {currentStep === 3 && t('form.help.step3')}
+              {currentStep === 4 && t('form.help.step4')}
+            </div>
           </div>
         </div>
 
@@ -1699,9 +1779,20 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
         {error && (
           <div className='mb-6 bg-red-50 border border-red-200 rounded-lg p-4'>
             <div className='flex'>
-              <AlertTriangle className='w-5 h-5 text-red-400' />
+              <AlertTriangle className='w-5 h-5 text-red-400 flex-shrink-0' />
               <div className='ml-3'>
                 <h3 className='text-sm font-medium text-red-800'>{error}</h3>
+                {/* Add contextual guidance based on error type */}
+                {error.includes(t('form.validation.permissionDeniedDetailed')?.substring(0, 20) || 'permission') && (
+                  <p className='text-xs text-red-600 mt-1'>
+                    {t('form.errors.sessionExpired') || 'Try logging out and back in, or contact your administrator.'}
+                  </p>
+                )}
+                {error.includes(t('form.validation.networkErrorDetailed')?.substring(0, 20) || 'network') && (
+                  <p className='text-xs text-red-600 mt-1'>
+                    {t('form.errors.connectionLost') || 'Check your internet connection and try again.'}
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -1711,21 +1802,33 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
         {Object.keys(validationErrors).length > 0 && (
           <div className='mb-6 bg-red-50 border border-red-200 rounded-lg p-4'>
             <div className='flex'>
-              <AlertTriangle className='w-5 h-5 text-red-400' />
-              <div className='ml-3'>
+              <AlertTriangle className='w-5 h-5 text-red-400 flex-shrink-0' />
+              <div className='ml-3 flex-1'>
                 <h3 className='text-sm font-medium text-red-800'>
                   {t('form.validation.summaryTitle')}
                 </h3>
                 <p className='text-sm text-red-700 mt-1'>
-                  {t('form.validation.summaryDescription')}
+                  {t('form.validation.summaryGuidance') || t('form.validation.summaryDescription')}
                 </p>
-                <ul className='mt-3 text-sm text-red-700 space-y-1'>
-                  {Object.entries(validationErrors).map(([field, message]) => (
-                    <li key={field} className='flex items-start'>
-                      <span className='text-red-500 mr-2'>•</span>
-                      <span>{message}</span>
-                    </li>
-                  ))}
+                <ul className='mt-3 text-sm text-red-700 space-y-2'>
+                  {Object.entries(validationErrors).map(([field, message]) => {
+                    // Get field-specific guidance
+                    const guidanceKey = `form.validation.${field}Guidance`;
+                    const guidance = t(guidanceKey);
+                    const hasGuidance = guidance && guidance !== guidanceKey;
+                    
+                    return (
+                      <li key={field} className='flex items-start'>
+                        <span className='text-red-500 mr-2 mt-0.5'>•</span>
+                        <div>
+                          <span className='font-medium'>{message}</span>
+                          {hasGuidance && (
+                            <p className='text-xs text-red-600 mt-0.5 italic'>{guidance}</p>
+                          )}
+                        </div>
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             </div>
@@ -1740,6 +1843,84 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                 <User className='w-6 h-6 mr-3 text-slate-600 flex-shrink-0' />
                 <span className='truncate'>{t('form.sections.customerInfo')}</span>
               </h2>
+
+              {/* Customer Search Section - for finding existing customers */}
+              {/* Show in create mode, or in edit mode when report has no customerId */}
+              {(mode === 'create' || (mode === 'edit' && !formData.customerId)) && !customerIdForBuildings && (
+                <div className='mb-6 p-4 bg-slate-50 rounded-lg border border-slate-200'>
+                  <label className='block text-sm font-medium text-slate-700 mb-2'>
+                    {mode === 'edit' 
+                      ? (t('form.customerSearch.attachCustomer') || 'Tilknyt eksisterende kunde')
+                      : (t('form.customerSearch.title') || 'Søg efter eksisterende kunde')
+                    }
+                  </label>
+                  {mode === 'edit' && (
+                    <p className='text-xs text-amber-600 mb-2 flex items-center gap-1'>
+                      <svg className='w-4 h-4' fill='currentColor' viewBox='0 0 20 20'>
+                        <path fillRule='evenodd' d='M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z' clipRule='evenodd' />
+                      </svg>
+                      {t('form.customerSearch.noCustomerAttached') || 'Denne rapport har ingen kunde tilknyttet'}
+                    </p>
+                  )}
+                  <CustomerSearchInline
+                    onCustomerSelect={(customer) => {
+                      // Set customer data including customerId
+                      setFormData(prev => ({
+                        ...prev,
+                        customerName: customer.name,
+                        customerAddress: customer.address,
+                        customerPhone: customer.phone || '',
+                        customerEmail: customer.email || '',
+                        customerType: customer.customerType || 'company',
+                        customerId: customer.id,
+                      }));
+                      // Set customer ID to load buildings
+                      setCustomerIdForBuildings(customer.id);
+                      // Clear any existing building selection (new customer = new building options)
+                      setSelectedBuildingId(null);
+                      setCustomerBuildings([]);
+                      // Show notification
+                      setNotification({
+                        message: mode === 'edit'
+                          ? (t('form.customerSearch.customerAttached') || 'Kunde tilknyttet rapporten')
+                          : (t('form.customerSearch.customerSelected') || 'Kunde valgt'),
+                        type: 'success'
+                      });
+                      setTimeout(() => setNotification(null), 2000);
+                    }}
+                    placeholder={t('form.customerSearch.placeholder') || 'Søg kunde (navn, email, telefon...)'}
+                  />
+                  <p className='text-xs text-slate-500 mt-2'>
+                    {t('form.customerSearch.hint') || 'Vælg en eksisterende kunde, eller udfyld felterne nedenfor for at oprette ny'}
+                  </p>
+                </div>
+              )}
+
+              {/* Selected Customer Info Banner */}
+              {customerIdForBuildings && (
+                <div className='mb-6 p-4 bg-green-50 rounded-lg border border-green-200'>
+                  <div className='flex items-center justify-between'>
+                    <div className='flex items-center'>
+                      <CheckCircle className='w-5 h-5 text-green-600 mr-2' />
+                      <span className='text-sm font-medium text-green-800'>
+                        {t('form.customerSearch.existingCustomer') || 'Eksisterende kunde valgt'}: {formData.customerName}
+                      </span>
+                    </div>
+                    <button
+                      type='button'
+                      onClick={() => {
+                        setCustomerIdForBuildings(null);
+                        setCustomerBuildings([]);
+                        setSelectedBuildingId(null);
+                        resetFormToInitial();
+                      }}
+                      className='text-sm text-green-700 hover:text-green-900 underline'
+                    >
+                      {t('form.customerSearch.clearSelection') || 'Ryd valg'}
+                    </button>
+                  </div>
+                </div>
+              )}
 
               <div className='grid grid-cols-1 sm:grid-cols-2 gap-5'>
                 <MaterialFormField
@@ -1827,85 +2008,175 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                 </MaterialFormField>
 
                 <div className='md:col-span-2'>
-                  <AddressInput
-                    ref={addressInputRef}
-                    value={formData.customerAddress || ''}
-                    onChange={(address, coordinates) => {
-                      setFormData(prev => ({ ...prev, customerAddress: address }));
-                      if (coordinates) {
-                        setAddressCoordinates(coordinates);
-                        // If user was waiting to measure, open measurer now
-                        if (pendingRoofSizeMeasure) {
-                          setPendingRoofSizeMeasure(false);
-                          setTimeout(() => setShowRoofSizeMeasurer(true), 100);
+                  {/* Only show customer address field for individual customers. Companies use building address instead. */}
+                  {formData.customerType === 'individual' && (
+                    <AddressInput
+                      ref={addressInputRef}
+                      value={formData.customerAddress || ''}
+                      onChange={(address, coordinates) => {
+                        setFormData(prev => ({ ...prev, customerAddress: address }));
+                        if (coordinates) {
+                          setAddressCoordinates(coordinates);
+                          // If user was waiting to measure, open measurer now
+                          if (pendingRoofSizeMeasure) {
+                            setPendingRoofSizeMeasure(false);
+                            setTimeout(() => setShowRoofSizeMeasurer(true), 100);
+                          }
                         }
-                      }
-                      clearFieldError('customerAddress');
-                    }}
-                    placeholder={t('form.fields.customerAddressPlaceholder')}
-                    error={validationErrors.customerAddress}
-                    required
-                  />
+                        clearFieldError('customerAddress');
+                      }}
+                      placeholder={t('form.fields.customerAddressPlaceholder')}
+                      error={validationErrors.customerAddress}
+                      required
+                    />
+                  )}
                 </div>
 
-                {/* Building Selection - Use building inventory as source of truth */}
-                {customerBuildings.length > 0 && (
-                  <div className='md:col-span-2'>
-                    <MaterialFormField
-                      label={t('form.fields.selectBuilding')}
-                      error={validationErrors.buildingId}
-                      touched={!!validationErrors.buildingId}
-                    >
-                      {loadingBuildings ? (
-                        <div className='text-sm text-slate-500'>{t('form.messages.loadingBuildings')}</div>
-                      ) : (
-                        <MaterialSelect
-                            id='buildingId'
-                            value={selectedBuildingId || ''}
-                            onChange={e => {
-                              const buildingId = e.target.value;
-                              if (buildingId) {
-                                handleBuildingSelect(buildingId);
-                              } else {
-                                setSelectedBuildingId(null);
-                              }
+                {/* Building Selection Section - Gallery View */}
+                {customerIdForBuildings && (
+                  <div className='md:col-span-2 space-y-4'>
+                    <h3 className='text-sm font-semibold text-slate-900'>
+                      {t('form.fields.selectExistingBuilding') || 'Select Building'}
+                    </h3>
+                    
+                    {loadingBuildings ? (
+                      <div className='flex items-center justify-center py-8'>
+                        <div className='w-6 h-6 border-2 border-slate-300 border-t-slate-700 rounded-full animate-spin' />
+                        <span className='ml-2 text-sm text-slate-500'>{t('form.messages.loadingBuildings')}</span>
+                      </div>
+                    ) : (
+                      <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
+                        {/* Building Cards */}
+                        {customerBuildings.map(building => (
+                          <button
+                            key={building.id}
+                            type='button'
+                            onClick={() => {
+                              handleBuildingSelect(building.id);
+                              setIsCreatingNewBuilding(false);
                               clearFieldError('buildingId');
                             }}
-                            options={[
-                              { value: '', label: t('form.fields.selectBuildingPlaceholder') },
-                              ...customerBuildings.map(building => ({
-                                value: building.id,
-                                label: `${building.address}${building.roofType ? ` (${building.roofType})` : ''}${building.roofSize ? ` - ${building.roofSize} m²` : ''}`,
-                              })),
-                            ]}
+                            className={`p-4 rounded-lg border-2 transition-all text-left ${
+                              selectedBuildingId === building.id && !isCreatingNewBuilding
+                                ? 'border-green-500 bg-green-50 shadow-lg'
+                                : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-md'
+                            }`}
+                          >
+                            <div className='flex justify-between items-start'>
+                              <div className='flex-1 min-w-0'>
+                                <p className='text-sm font-medium text-slate-900 truncate'>
+                                  {building.address}
+                                </p>
+                                <div className='mt-2 flex flex-wrap gap-2'>
+                                  {building.roofType && (
+                                    <span className='inline-block px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded'>
+                                      {building.roofType}
+                                    </span>
+                                  )}
+                                  {building.roofSize && (
+                                    <span className='inline-block px-2 py-1 text-xs bg-purple-100 text-purple-700 rounded'>
+                                      {building.roofSize} m²
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                              {selectedBuildingId === building.id && !isCreatingNewBuilding && (
+                                <div className='ml-2 flex-shrink-0'>
+                                  <div className='flex items-center justify-center w-5 h-5 rounded-full bg-green-500 text-white'>
+                                    <svg className='w-3 h-3' fill='currentColor' viewBox='0 0 20 20'>
+                                      <path fillRule='evenodd' d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z' clipRule='evenodd' />
+                                    </svg>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </button>
+                        ))}
+
+                        {/* Add New Building Card */}
+                        <button
+                          type='button'
+                          onClick={() => {
+                            setIsCreatingNewBuilding(true);
+                            setSelectedBuildingId(null);
+                          }}
+                          className={`p-4 rounded-lg border-2 transition-all flex flex-col items-center justify-center min-h-[120px] ${
+                            isCreatingNewBuilding
+                              ? 'border-blue-500 bg-blue-50 shadow-lg'
+                              : 'border-dashed border-slate-300 bg-slate-50 hover:border-slate-400 hover:bg-slate-100'
+                          }`}
+                        >
+                          <Plus className={`w-6 h-6 mb-2 ${isCreatingNewBuilding ? 'text-blue-600' : 'text-slate-500'}`} />
+                          <span className={`text-sm font-medium ${isCreatingNewBuilding ? 'text-blue-700' : 'text-slate-700'}`}>
+                            {t('form.fields.createNewBuildingSection') || 'Add New Building'}
+                          </span>
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Create New Building Form - Shows when user clicks Add New Building card */}
+                    {isCreatingNewBuilding && (
+                      <div className='mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200 space-y-3'>
+                        <div>
+                          <label className='block text-sm font-medium text-slate-700 mb-2'>
+                            {t('form.fields.buildingAddress')} *
+                          </label>
+                          <AddressInput
+                            value={formData.buildingAddress || ''}
+                            onChange={(address, coordinates) => {
+                              setFormData(prev => ({ ...prev, buildingAddress: address }));
+                              clearFieldError('buildingAddress');
+                            }}
+                            placeholder={t('form.fields.buildingAddressPlaceholder') || 'Enter building address'}
+                            error={validationErrors.buildingAddress}
                           />
-                      )}
-                    </MaterialFormField>
-                    {selectedBuildingId && (
-                      <div className='mt-2 text-sm text-slate-600'>
-                        {t('form.messages.buildingDataUsed')}
+                        </div>
+
+                        <button
+                          type='button'
+                          onClick={handleCreateNewBuilding}
+                          disabled={creatingBuildingLoading || !formData.buildingAddress?.trim()}
+                          className='w-full px-4 py-2 bg-slate-700 text-white rounded-lg font-medium hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2'
+                        >
+                          {creatingBuildingLoading ? (
+                            <>
+                              <div className='w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin' />
+                              {t('form.messages.creatingBuilding') || 'Creating...'}
+                            </>
+                          ) : (
+                            <>
+                              <Plus className='w-4 h-4' />
+                              {t('buildings.createBuilding') || 'Create Building'}
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    )}
+
+                    {customerBuildings.length === 0 && !loadingBuildings && (
+                      <div className='text-sm text-amber-700 bg-amber-50 p-3 rounded-lg'>
+                        {t('form.messages.noBuildingsFound') || 'No buildings found for this customer. Create one to get started.'}
                       </div>
                     )}
                   </div>
                 )}
 
-                {formData.customerType === 'company' && !selectedBuildingId && (
+                {/* Fallback: Building Address for companies without customer records or individuals */}
+                {!customerIdForBuildings && formData.customerType === 'company' && (
                   <div className='md:col-span-2'>
                     <MaterialFormField
                       label={t('form.fields.buildingAddress')}
                       error={validationErrors.buildingAddress}
                       touched={!!validationErrors.buildingAddress}
                     >
-                      <MaterialInput
-                        type='text'
-                        id='buildingAddress'
+                      <AddressInput
                         value={formData.buildingAddress || ''}
-                        onChange={e => {
-                          setFormData(prev => ({ ...prev, buildingAddress: e.target.value }));
+                        onChange={(address, coordinates) => {
+                          setFormData(prev => ({ ...prev, buildingAddress: address }));
                           clearFieldError('buildingAddress');
                         }}
                         placeholder={t('form.fields.buildingAddressPlaceholder')}
-                        autoComplete='street-address'
+                        error={validationErrors.buildingAddress}
                       />
                     </MaterialFormField>
                   </div>

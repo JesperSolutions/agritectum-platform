@@ -1,4 +1,5 @@
 import { Employee, UserRole } from '../types';
+import { logger } from '../utils/logger';
 
 interface CreateUserWithAuthRequest {
   email: string;
@@ -31,7 +32,7 @@ interface CreateUserWithAuthResponse {
 // Call the Cloud Function to create a user with Firebase Auth
 export const createUserWithAuth = async (userData: CreateUserWithAuthRequest): Promise<CreateUserWithAuthResponse> => {
   try {
-    console.log('🔍 Creating user with Firebase Auth:', userData.email);
+    logger.log('🔍 Creating user with Firebase Auth:', userData.email);
 
     // Get the current Firebase project ID
     const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID || 'agritectum-platform';
@@ -53,7 +54,7 @@ export const createUserWithAuth = async (userData: CreateUserWithAuthRequest): P
       throw new Error(result.error || 'Failed to create user');
     }
 
-    console.log('✅ User created with Firebase Auth:', result);
+    logger.log('✅ User created with Firebase Auth:', result);
     return result;
 
   } catch (error) {
@@ -68,7 +69,7 @@ export const createUserWithAuth = async (userData: CreateUserWithAuthRequest): P
 // Create customer user account
 export const createCustomerUser = async (customerData: CreateCustomerUserRequest): Promise<{ success: boolean; userId?: string; error?: string }> => {
   try {
-    console.log('🔍 Creating customer user:', customerData.email);
+    logger.log('🔍 Creating customer user:', customerData.email);
 
     // Get the current Firebase project ID
     const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID || 'agritectum-platform';
@@ -91,7 +92,7 @@ export const createCustomerUser = async (customerData: CreateCustomerUserRequest
       throw new Error(result.error || 'Failed to create customer user');
     }
 
-    console.log('✅ Customer user created:', result);
+    logger.log('✅ Customer user created:', result);
     return result;
 
   } catch (error) {
@@ -135,7 +136,7 @@ export const sendUserInvitation = async (
   invitedBy: string
 ): Promise<{ success: boolean; error?: string }> => {
   try {
-    console.log('📧 Sending user invitation:', {
+    logger.log('📧 Sending user invitation:', {
       email: employee.email,
       displayName: employee.displayName,
       invitedBy,
@@ -165,7 +166,7 @@ export const sendUserInvitation = async (
       throw new Error(result.error || 'Failed to send invitation');
     }
 
-    console.log('✅ User invitation sent:', result);
+    logger.log('✅ User invitation sent:', result);
     return result;
 
   } catch (error) {

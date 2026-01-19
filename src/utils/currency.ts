@@ -4,6 +4,7 @@
  */
 
 import { SupportedLocale } from './geolocation';
+import { logger } from './logger';
 
 /**
  * Get stored user currency preference from localStorage
@@ -35,7 +36,7 @@ export const getCurrencyCode = (locale?: SupportedLocale, overrideStoredCurrency
   const storedCurrency = overrideStoredCurrency || getStoredCurrency();
   if (storedCurrency) {
     if (import.meta.env.DEV) {
-      console.log('[getCurrencyCode] Using stored currency:', storedCurrency);
+      logger.log('[getCurrencyCode] Using stored currency:', storedCurrency);
     }
     return storedCurrency;
   }
@@ -54,7 +55,7 @@ export const getCurrencyCode = (locale?: SupportedLocale, overrideStoredCurrency
 
   // Debug logging
   if (import.meta.env.DEV) {
-    console.log('[getCurrencyCode] Input locale:', locale, 'Type:', typeof locale);
+    logger.log('[getCurrencyCode] Input locale:', locale, 'Type:', typeof locale);
   }
 
   // Map locale to currency
@@ -79,7 +80,7 @@ export const getCurrencyCode = (locale?: SupportedLocale, overrideStoredCurrency
   })();
 
   if (import.meta.env.DEV) {
-    console.log('[getCurrencyCode] Returning currency:', currency);
+    logger.log('[getCurrencyCode] Returning currency:', currency);
   }
 
   return currency;

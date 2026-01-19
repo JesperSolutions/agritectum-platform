@@ -10,6 +10,7 @@
  */
 
 import { Building, RoofType, Report, RoofDivisionAreas, ESGMetrics } from '../types';
+import { logger } from './logger';
 
 /**
  * Climate zone factors for CO2 calculations
@@ -433,7 +434,7 @@ export function calculateESGFromDivisions(
   // Annual CO2 offset is the total CO2 reduction
   const annualCO2Offset = Math.round(totalCo2PerYear);
   
-  console.log('ESG Calculation Debug:', {
+  logger.log('ESG Calculation Debug:', {
     roofSize,
     divisions,
     totalCo2PerYear,

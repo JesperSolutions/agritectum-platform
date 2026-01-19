@@ -177,6 +177,13 @@
   "reportView.makeShareable": "Make Shareable",
   "reportView.markAsCompleted": "Mark as Completed",
   "reportView.createOffer": "Create Offer",
+  "reportView.exportPDF": "Export PDF",
+  "reportView.generatingPDF": "Generating PDF...",
+  "reportView.pdfDownloaded": "PDF downloaded successfully",
+  "reportView.pdfError": "Could not generate PDF. Please try again.",
+  "reportView.linkCopied": "Link copied to clipboard",
+  "reportView.copyLink": "Copy Link",
+  "reportView.qrCode": "Show QR Code",
 
   "costEstimate.title": "Cost Estimate",
   "costEstimate.total": "Total Estimate",

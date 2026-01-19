@@ -1,5 +1,6 @@
 import React, { lazy, ComponentType } from 'react';
 import LoadingSpinner from '../components/LoadingSpinner';
+import { logger } from './logger';
 
 // Higher-order component for lazy loading with loading fallback
 export const withLazyLoading = <P extends object>(
@@ -141,7 +142,7 @@ export const importWithRetry = <T,>(
 export const analyzeBundle = () => {
   if (process.env.NODE_ENV === 'development') {
     // This would typically be used with webpack-bundle-analyzer
-    console.log('Bundle analysis available in development mode');
-    console.log('Run: npm run build && npx webpack-bundle-analyzer dist/assets/*.js');
+    logger.log('Bundle analysis available in development mode');
+    logger.log('Run: npm run build && npx webpack-bundle-analyzer dist/assets/*.js');
   }
 };

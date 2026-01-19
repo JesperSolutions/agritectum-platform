@@ -11,6 +11,7 @@ import {
   orderBy,
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
+import { logger } from '../utils/logger';
 import { Appointment, User, canAccessAllBranches } from '../types';
 
 /**
@@ -34,7 +35,7 @@ export const getAppointments = async (user: User): Promise<Appointment[]> => {
     } else if (user.uid) {
       // Inspector: see only their own appointments
       // Note: This query requires a Firestore composite index on (assignedInspectorId, scheduledDate)
-      console.log('🔍 Inspector query - UID:', user.uid, 'BranchId:', user.branchId);
+      logger.log('🔍 Inspector query - UID:', user.uid, 'BranchId:', user.branchId);
       try {
         q = query(
           appointmentsRef,
@@ -44,7 +45,7 @@ export const getAppointments = async (user: User): Promise<Appointment[]> => {
       } catch (queryError: any) {
         // If composite index error, try without orderBy
         if (queryError.code === 'failed-precondition' || queryError.message?.includes('index')) {
-          console.warn('⚠️ Composite index missing, querying without orderBy:', queryError);
+          logger.warn('⚠️ Composite index missing, querying without orderBy:', queryError);
           q = query(
             appointmentsRef,
             where('assignedInspectorId', '==', user.uid)
@@ -54,7 +55,7 @@ export const getAppointments = async (user: User): Promise<Appointment[]> => {
         }
       }
     } else {
-      console.warn('⚠️ Cannot query appointments - missing user.uid');
+      logger.warn('⚠️ Cannot query appointments - missing user.uid');
       return [];
     }
 
@@ -73,7 +74,7 @@ export const getAppointments = async (user: User): Promise<Appointment[]> => {
       });
     }
     
-    console.log(`✅ Loaded ${appointments.length} appointments for user ${user.uid}`);
+    logger.log(`✅ Loaded ${appointments.length} appointments for user ${user.uid}`);
     return appointments;
   } catch (error: any) {
     console.error('❌ Error fetching appointments:', error);
@@ -284,7 +285,7 @@ export const createAppointment = async (
           scheduledVisitId: scheduledVisitId,
         });
 
-        console.log('✅ Created scheduledVisit for appointment:', {
+        logger.log('✅ Created scheduledVisit for appointment:', {
           appointmentId,
           scheduledVisitId,
         });

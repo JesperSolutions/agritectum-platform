@@ -27,7 +27,7 @@ function App() {
 
     // PWA Update available
     const handleAppInstalled = () => {
-      console.log('PWA was installed');
+      logger.log('PWA was installed');
     };
 
     // Register service worker (only once)
@@ -38,7 +38,7 @@ function App() {
           navigator.serviceWorker
             .register('/sw.js', { updateViaCache: 'none' })
             .then(registration => {
-              console.log('SW registered: ', registration);
+              logger.log('SW registered: ', registration);
               
               // Force update check
               registration.update();

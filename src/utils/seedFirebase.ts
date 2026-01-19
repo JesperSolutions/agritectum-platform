@@ -4,7 +4,7 @@
  */
 
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
-import { getFirestore, setDoc, doc, writeBatch } from 'firebase/firestore';
+import { getFirestore, doc, writeBatch } from 'firebase/firestore';
 import { 
   testUserDK, 
   testCustomerDK, 
@@ -31,8 +31,9 @@ export async function seedTestDataBrowser() {
         testUserDK.password
       );
       console.log('✅ User created:', testUserDK.email);
-    } catch (error) {
-      if (error.code === 'auth/email-already-in-use') {
+    } catch (error: unknown) {
+      const firebaseError = error as { code?: string };
+      if (firebaseError.code === 'auth/email-already-in-use') {
         console.log('⚠️  User already exists:', testUserDK.email);
         console.log('   Proceeding to update data...\n');
         // Try to get the user ID from the test data
@@ -64,32 +65,30 @@ export async function seedTestDataBrowser() {
     console.log('🏭 Creating test buildings...');
     batch.set(doc(db, 'buildings', testBuildingDK1.id), {
       ...testBuildingDK1,
-      createdAt: new Date(testBuildingDK1.createdAt),
-      lastInspection: new Date(testBuildingDK1.lastInspection),
+      createdAt: testBuildingDK1.createdAt,
     });
 
     batch.set(doc(db, 'buildings', testBuildingDK2.id), {
       ...testBuildingDK2,
-      createdAt: new Date(testBuildingDK2.createdAt),
-      lastInspection: new Date(testBuildingDK2.lastInspection),
+      createdAt: testBuildingDK2.createdAt,
     });
 
     // Store reports
     console.log('📊 Creating test reports...');
     batch.set(doc(db, 'reports', testReportDK1.id), {
       ...testReportDK1,
-      inspectionDate: new Date(testReportDK1.inspectionDate),
-      createdAt: new Date(testReportDK1.createdAt),
-      updatedAt: new Date(testReportDK1.updatedAt),
-      offerValidUntil: new Date(testReportDK1.offerValidUntil),
+      inspectionDate: testReportDK1.inspectionDate,
+      createdAt: testReportDK1.createdAt,
+      lastEdited: testReportDK1.lastEdited,
+      offerValidUntil: testReportDK1.offerValidUntil,
     });
 
     batch.set(doc(db, 'reports', testReportDK2.id), {
       ...testReportDK2,
-      inspectionDate: new Date(testReportDK2.inspectionDate),
-      createdAt: new Date(testReportDK2.createdAt),
-      updatedAt: new Date(testReportDK2.updatedAt),
-      offerValidUntil: new Date(testReportDK2.offerValidUntil),
+      inspectionDate: testReportDK2.inspectionDate,
+      createdAt: testReportDK2.createdAt,
+      lastEdited: testReportDK2.lastEdited,
+      offerValidUntil: testReportDK2.offerValidUntil,
     });
 
     // Commit batch

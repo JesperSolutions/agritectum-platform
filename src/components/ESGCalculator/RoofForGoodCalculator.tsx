@@ -10,23 +10,18 @@
  * Adapted from Taklaget Roof For Good calculator
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   ChevronLeft,
   ChevronRight,
   Leaf,
-  Sun,
   Wind,
   Droplets,
   Users,
   MapPin,
-  Building2,
-  TrendingUp,
   AlertCircle,
   CheckCircle2,
-  Globe,
-  Calculator,
-  Info,
+  Loader2,
 } from 'lucide-react';
 import { useIntl } from '../../hooks/useIntl';
 import { useToast } from '../../contexts/ToastContext';
@@ -34,6 +29,7 @@ import LoadingSpinner from '../common/LoadingSpinner';
 import { Building, RoofDivisionAreas, ESGMetrics } from '../../types';
 import { calculateESGFromDivisions } from '../../utils/esgCalculations';
 import { getCurrencyCode, formatCurrency } from '../../utils/currency';
+import type { SupportedLocale } from '../../utils/geolocation';
 
 interface RoofSegment {
   id: number;
@@ -123,7 +119,7 @@ const DEFAULT_SEGMENTS: RoofSegment[] = [
 const RoofForGoodCalculator: React.FC<{ building?: Building }> = ({ building }) => {
   const { t, locale } = useIntl();
   const { showSuccess, showError } = useToast();
-  const currencyCode = getCurrencyCode(locale);
+  const currencyCode = getCurrencyCode(locale as SupportedLocale);
 
   const [state, setState] = useState<CalculatorState>({
     step: 1,
@@ -167,7 +163,6 @@ const RoofForGoodCalculator: React.FC<{ building?: Building }> = ({ building }) 
     );
 
     // Auto-adjust other segments to maintain 100%
-    const selectedSeg = newSegments.find((s) => s.id === id);
     const otherSegments = newSegments.filter((s) => s.id !== id);
     const totalOtherPercentage = otherSegments.reduce((sum, s) => sum + s.percentage, 0);
     const remainingPercentage = 100 - percentage;
@@ -366,7 +361,6 @@ const RoofForGoodCalculator: React.FC<{ building?: Building }> = ({ building }) 
 
   const renderStep3 = () => {
     const totalAllocation = getTotalAllocation();
-    const totalCost = getTotalCost();
 
     return (
       <div className="space-y-8">
@@ -465,7 +459,7 @@ const RoofForGoodCalculator: React.FC<{ building?: Building }> = ({ building }) 
                 </div>
                 <span className="text-right">
                   <p className="font-bold text-lg text-slate-900">
-                    {formatCurrency(segment.area * segment.costPerSqm, currencyCode)}
+                    {formatCurrency(segment.area * segment.costPerSqm, locale as SupportedLocale)}
                   </p>
                   <p className="text-xs text-slate-600">{t('esg.calculator.step3.totalCost') || 'Total Cost'}</p>
                 </span>
@@ -574,7 +568,8 @@ const RoofForGoodCalculator: React.FC<{ building?: Building }> = ({ building }) 
     const metrics = state.metrics;
     const totalCost = getTotalCost();
     const totalCO2 = getTotalCO2();
-    const annualSavings = metrics.estimatedAnnualSavings || 625;
+    // Calculate annual savings from energy savings (using average electricity price)
+    const annualSavings = (metrics.energySavingsKwhPerYear || 0) * 0.25 || 625;
     const paybackYears = totalCost > 0 ? Math.round((totalCost / annualSavings) * 10) / 10 : 0;
     const totalAllocation = getTotalAllocation();
 
@@ -607,7 +602,7 @@ const RoofForGoodCalculator: React.FC<{ building?: Building }> = ({ building }) 
           </div>
           <div className="bg-white border border-slate-200 rounded-lg p-4 text-center">
             <p className="text-2xl font-bold text-green-600">
-              {formatCurrency(annualSavings, currencyCode)}
+              {formatCurrency(annualSavings, locale as SupportedLocale)}
             </p>
             <p className="text-xs text-slate-600 font-medium mt-1">
               {t('esg.calculator.step4.annualSavings') || 'Annual Savings'}
@@ -621,7 +616,7 @@ const RoofForGoodCalculator: React.FC<{ building?: Building }> = ({ building }) 
           </div>
           <div className="bg-white border border-slate-200 rounded-lg p-4 text-center">
             <p className="text-2xl font-bold text-slate-900">
-              {formatCurrency(totalCost, currencyCode)}
+              {formatCurrency(totalCost, locale as SupportedLocale)}
             </p>
             <p className="text-xs text-slate-600 font-medium mt-1">
               {t('esg.calculator.step4.totalInvestment') || 'Total Investment'}
@@ -649,7 +644,7 @@ const RoofForGoodCalculator: React.FC<{ building?: Building }> = ({ building }) 
             </div>
             <div>
               <p className="text-3xl font-bold text-slate-900">
-                {formatCurrency(annualSavings, currencyCode)}
+                {formatCurrency(annualSavings, locale as SupportedLocale)}
               </p>
               <p className="text-sm text-slate-600 mt-1">
                 {t('esg.calculator.step4.financialImpact') || 'Financial Impact'}
@@ -688,7 +683,7 @@ const RoofForGoodCalculator: React.FC<{ building?: Building }> = ({ building }) 
                 </div>
                 <span className="text-right">
                   <p className="font-bold text-slate-900">
-                    {formatCurrency(segment.area * segment.costPerSqm, currencyCode)}
+                    {formatCurrency(segment.area * segment.costPerSqm, locale as SupportedLocale)}
                   </p>
                   <p className="text-xs text-slate-600">{t('esg.calculator.step4.totalCost') || 'Total Cost'}</p>
                 </span>

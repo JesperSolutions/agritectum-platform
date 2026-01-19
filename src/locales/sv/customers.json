@@ -98,6 +98,12 @@
   "customer.emptyState.title": "Inga kunder",
   "customer.emptyState.description": "Det finns inga kunder att visa för tillfället.",
   "customer.emptyState.action": "Lägg till din första kund",
+  "customer.emptyState.noCustomersFound": "Inga kunder hittades",
+  "customer.emptyState.noCustomersYet": "Inga kunder ännu",
+  "customer.emptyState.tryAdjustingSearch": "Försök att justera dina söktermer.",
+  "customer.emptyState.noCustomersCreatedYet": "Inga kunder har skapats ännu.",
+  "customer.emptyState.createFirstCustomer": "Skapa din första kund för att komma igång.",
+  "customer.emptyState.createNewCustomer": "Skapa ny kund",
 
   "customer.errorState.title": "Kunde inte ladda kunder",
   "customer.errorState.description": "Ett fel uppstod vid hämtning av kunddata.",
