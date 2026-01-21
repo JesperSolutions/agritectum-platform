@@ -37,6 +37,7 @@ This audit identifies inconsistencies across UI components, colors, typography, 
    - Status: ⚠️ Partially aligned - needs Material Design updates
 
 ### Issues:
+
 - 4 different button styling systems
 - Inconsistent border radius (rounded-md, rounded-lg, rounded-material)
 - Mixed color schemes (blue, gray, slate, brand colors)
@@ -66,9 +67,10 @@ This audit identifies inconsistencies across UI components, colors, typography, 
    - Status: ⚠️ Inconsistent with Material Design
 
 ### Issues:
+
 - 3+ different card styles
 - Inconsistent border radius (rounded-lg, rounded-xl, rounded-material)
-- Mixed shadow systems (shadow-sm, shadow-md, shadow-material-*)
+- Mixed shadow systems (shadow-sm, shadow-md, shadow-material-\*)
 
 ## 3. Input/Form Field Inconsistencies
 
@@ -97,6 +99,7 @@ This audit identifies inconsistencies across UI components, colors, typography, 
    - Status: ❌ Legacy - needs migration
 
 ### Issues:
+
 - 4+ input implementations
 - Inconsistent border radius
 - Mixed color schemes (gray, blue, slate)
@@ -112,8 +115,9 @@ This audit identifies inconsistencies across UI components, colors, typography, 
 - **Brand colors:** Orange/blue/yellow in Tailwind config - ⚠️ Reserved for marketing only
 
 ### Specific Issues:
+
 - Buttons use blue-600/blue-700 instead of slate-700
-- Form fields use gray-* instead of slate-*
+- Form fields use gray-_ instead of slate-_
 - Focus rings use blue-500 instead of slate-500
 - Inconsistent semantic color usage
 
@@ -128,6 +132,7 @@ This audit identifies inconsistencies across UI components, colors, typography, 
 - **`rounded-full`**: Badges - ✅ Acceptable
 
 ### Issues:
+
 - No single standard for interactive elements
 - Cards use different radius than buttons/inputs
 - Legacy components use rounded-md
@@ -140,6 +145,7 @@ This audit identifies inconsistencies across UI components, colors, typography, 
 - **Tailwind shadows:** `shadow-sm`, `shadow-md`, `shadow-lg` - ❌ Needs migration
 
 ### Issues:
+
 - Mixed usage without clear hierarchy
 - No semantic naming (e.g., "card", "modal", "dropdown")
 - Inconsistent elevation levels
@@ -165,6 +171,7 @@ This audit identifies inconsistencies across UI components, colors, typography, 
 - Mixed font weight usage
 
 ### Issues:
+
 - Two font families in use
 - No standardized typography scale
 - Inconsistent font weight usage
@@ -178,6 +185,7 @@ This audit identifies inconsistencies across UI components, colors, typography, 
 - **Custom spacing:** Various padding/margin values
 
 ### Issues:
+
 - No consistent spacing scale
 - Mixed use of rem, px, and Tailwind spacing
 - Inconsistent padding/margin values
@@ -185,14 +193,17 @@ This audit identifies inconsistencies across UI components, colors, typography, 
 ## 9. Component Pattern Inconsistencies
 
 ### Status Badges:
+
 - Multiple implementations with different colors
 - Inconsistent sizing and border radius
 
 ### Tables:
+
 - Mixed styling approaches
 - Inconsistent header/cell styling
 
 ### Modals/Dialogs:
+
 - Material Design implementation exists
 - Some legacy modal patterns still in use
 
@@ -208,19 +219,22 @@ This audit identifies inconsistencies across UI components, colors, typography, 
 ## Recommendations
 
 ### Priority 1 (Critical):
+
 1. Unify button implementations → Single Material Design button
 2. Unify card implementations → Single Material Design card
 3. Unify input implementations → Single Material Design input
-4. Migrate all gray-* to slate-* colors
+4. Migrate all gray-_ to slate-_ colors
 5. Standardize border radius to rounded-material (4px)
 
 ### Priority 2 (High):
+
 6. Migrate all shadows to Material elevation system
 7. Standardize typography scale (Roboto only)
 8. Implement 8dp grid system
 9. Create comprehensive design token system
 
 ### Priority 3 (Medium):
+
 10. Enhance accessibility utilities
 11. Create ESLint rules for design system compliance
 12. Comprehensive documentation
@@ -228,7 +242,7 @@ This audit identifies inconsistencies across UI components, colors, typography, 
 ## Migration Impact
 
 - **Files affected:** 200+ component files
-- **Color migrations:** 1063 instances of gray-* colors
+- **Color migrations:** 1063 instances of gray-\* colors
 - **Border radius migrations:** 986 instances
 - **Component consolidations:** 10+ component types
 - **Estimated effort:** 4-5 weeks

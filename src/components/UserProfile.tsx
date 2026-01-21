@@ -33,7 +33,9 @@ const UserProfile: React.FC = () => {
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const [isChangelogOpen, setIsChangelogOpen] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState<SupportedLocale>(locale as SupportedLocale);
+  const [selectedLanguage, setSelectedLanguage] = useState<SupportedLocale>(
+    locale as SupportedLocale
+  );
   const [languageSaved, setLanguageSaved] = useState(false);
   const [selectedCurrency, setSelectedCurrency] = useState<string>('DKK');
   const [currencySaved, setCurrencySaved] = useState(false);
@@ -145,7 +147,10 @@ const UserProfile: React.FC = () => {
         <div className='space-y-4'>
           <div>
             <p className='text-sm text-slate-600 mb-4'>
-              {t('profile.currentLanguage') || 'Currently Selected Language'}: <span className='font-semibold text-slate-900'>{languages.find(l => l.code === selectedLanguage)?.name}</span>
+              {t('profile.currentLanguage') || 'Currently Selected Language'}:{' '}
+              <span className='font-semibold text-slate-900'>
+                {languages.find(l => l.code === selectedLanguage)?.name}
+              </span>
             </p>
           </div>
 
@@ -156,7 +161,7 @@ const UserProfile: React.FC = () => {
           )}
 
           <div className='grid grid-cols-2 md:grid-cols-3 gap-3'>
-            {languages.map((lang) => (
+            {languages.map(lang => (
               <button
                 key={lang.code}
                 onClick={() => handleLanguageChange(lang.code)}
@@ -167,7 +172,9 @@ const UserProfile: React.FC = () => {
                 }`}
               >
                 <p className='text-xl mb-2'>{lang.flag}</p>
-                <p className={`text-sm font-medium ${selectedLanguage === lang.code ? 'text-blue-900' : 'text-slate-900'}`}>
+                <p
+                  className={`text-sm font-medium ${selectedLanguage === lang.code ? 'text-blue-900' : 'text-slate-900'}`}
+                >
                   {lang.name}
                 </p>
               </button>
@@ -186,7 +193,10 @@ const UserProfile: React.FC = () => {
         <div className='space-y-4'>
           <div>
             <p className='text-sm text-slate-600 mb-4'>
-              {t('profile.currentCurrency') || 'Currently Selected Currency'}: <span className='font-semibold text-slate-900'>{currencies.find(c => c.code === selectedCurrency)?.name} ({selectedCurrency})</span>
+              {t('profile.currentCurrency') || 'Currently Selected Currency'}:{' '}
+              <span className='font-semibold text-slate-900'>
+                {currencies.find(c => c.code === selectedCurrency)?.name} ({selectedCurrency})
+              </span>
             </p>
           </div>
 
@@ -197,7 +207,7 @@ const UserProfile: React.FC = () => {
           )}
 
           <div className='grid grid-cols-2 md:grid-cols-3 gap-3'>
-            {currencies.map((currency) => (
+            {currencies.map(currency => (
               <button
                 key={currency.code}
                 onClick={() => handleCurrencyChange(currency.code)}
@@ -208,10 +218,14 @@ const UserProfile: React.FC = () => {
                 }`}
               >
                 <p className='text-xl mb-2'>{currency.country}</p>
-                <p className={`text-sm font-medium ${selectedCurrency === currency.code ? 'text-blue-900' : 'text-slate-900'}`}>
+                <p
+                  className={`text-sm font-medium ${selectedCurrency === currency.code ? 'text-blue-900' : 'text-slate-900'}`}
+                >
                   {currency.code}
                 </p>
-                <p className={`text-xs ${selectedCurrency === currency.code ? 'text-blue-700' : 'text-slate-600'}`}>
+                <p
+                  className={`text-xs ${selectedCurrency === currency.code ? 'text-blue-700' : 'text-slate-600'}`}
+                >
                   {currency.symbol}
                 </p>
               </button>
@@ -226,7 +240,7 @@ const UserProfile: React.FC = () => {
           <User className='w-6 h-6 mr-2 text-slate-600' />
           {t('profile.accountInformation')}
         </h2>
-        
+
         <div className='space-y-4'>
           <div className='flex items-center p-4 bg-slate-50 rounded-lg border border-slate-200'>
             <Mail className='w-5 h-5 mr-3 text-slate-600' />
@@ -240,7 +254,9 @@ const UserProfile: React.FC = () => {
             <User className='w-5 h-5 mr-3 text-slate-600' />
             <div>
               <p className='text-sm text-slate-600'>{t('profile.displayName')}</p>
-              <p className='font-semibold text-slate-900'>{currentUser?.displayName || t('profile.notSet')}</p>
+              <p className='font-semibold text-slate-900'>
+                {currentUser?.displayName || t('profile.notSet')}
+              </p>
             </div>
           </div>
 
@@ -256,7 +272,9 @@ const UserProfile: React.FC = () => {
             <Building className='w-5 h-5 mr-3 text-slate-600' />
             <div>
               <p className='text-sm text-slate-600'>{t('profile.branch')}</p>
-              <p className='font-semibold text-slate-900'>{currentUser?.branchId || t('profile.notAssigned')}</p>
+              <p className='font-semibold text-slate-900'>
+                {currentUser?.branchId || t('profile.notAssigned')}
+              </p>
             </div>
           </div>
 
@@ -265,8 +283,8 @@ const UserProfile: React.FC = () => {
             <div>
               <p className='text-sm text-slate-600'>{t('profile.lastLogin')}</p>
               <p className='font-semibold text-slate-900'>
-                {currentUser?.lastLogin 
-                  ? new Date(currentUser.lastLogin).toLocaleString('sv-SE') 
+                {currentUser?.lastLogin
+                  ? new Date(currentUser.lastLogin).toLocaleString('sv-SE')
                   : t('profile.never')}
               </p>
             </div>
@@ -291,7 +309,7 @@ const UserProfile: React.FC = () => {
               <input
                 type={showCurrentPassword ? 'text' : 'password'}
                 value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
+                onChange={e => setCurrentPassword(e.target.value)}
                 required
                 className='w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 pr-10 shadow-sm'
               />
@@ -314,7 +332,7 @@ const UserProfile: React.FC = () => {
               <input
                 type={showNewPassword ? 'text' : 'password'}
                 value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
+                onChange={e => setNewPassword(e.target.value)}
                 required
                 className='w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 pr-10 shadow-sm'
               />
@@ -337,7 +355,7 @@ const UserProfile: React.FC = () => {
               <input
                 type={showConfirmPassword ? 'text' : 'password'}
                 value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                onChange={e => setConfirmPassword(e.target.value)}
                 required
                 className='w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 pr-10 shadow-sm'
               />
@@ -353,7 +371,9 @@ const UserProfile: React.FC = () => {
 
           {/* Password Requirements */}
           <div className='bg-slate-50 border border-slate-200 rounded-lg p-4'>
-            <p className='text-sm text-slate-900 font-semibold mb-2'>{t('profile.passwordRequirementsTitle')}</p>
+            <p className='text-sm text-slate-900 font-semibold mb-2'>
+              {t('profile.passwordRequirementsTitle')}
+            </p>
             <ul className='text-sm text-slate-700 space-y-1'>
               <li>• {t('profile.passwordRequirement1')}</li>
               <li>• {t('profile.passwordRequirement2')}</li>

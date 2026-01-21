@@ -1,6 +1,6 @@
 /**
  * Building Improvement Calculation Utilities
- * 
+ *
  * Adapted from Agri_API/utils/calculations.js
  * Provides functions to calculate ESG impact of building improvements
  */
@@ -62,10 +62,7 @@ export const IMPROVEMENT_WATER_SAVINGS: Record<ImprovementType, number> = {
  * @param roofArea - Total roof area in m²
  * @returns Total cost in EUR
  */
-export function calculateTotalCost(
-  improvements: RoofImprovement[],
-  roofArea: number
-): number {
+export function calculateTotalCost(improvements: RoofImprovement[], roofArea: number): number {
   let totalCost = 0;
 
   for (const improvement of improvements) {
@@ -172,10 +169,7 @@ export function calculateAnnualEconomicBenefit(
  * @param annualBenefit - Annual economic benefit
  * @returns Payback period in years
  */
-export function calculatePaybackPeriod(
-  totalCost: number,
-  annualBenefit: number
-): number {
+export function calculatePaybackPeriod(totalCost: number, annualBenefit: number): number {
   if (annualBenefit <= 0) return Infinity;
   return Math.round((totalCost / annualBenefit) * 10) / 10;
 }
@@ -211,11 +205,7 @@ export function calculateNPV(
  * @param years - Number of years (default: 10)
  * @returns IRR as percentage
  */
-export function calculateIRR(
-  totalCost: number,
-  annualBenefit: number,
-  years: number = 10
-): number {
+export function calculateIRR(totalCost: number, annualBenefit: number, years: number = 10): number {
   if (annualBenefit <= 0) return 0;
 
   // Simple approximation: (annual benefit / total cost) * 100
@@ -235,11 +225,7 @@ export function calculateIRR(
  * @param years - Number of years (default: 10)
  * @returns ROI as percentage
  */
-export function calculateROI(
-  totalCost: number,
-  annualBenefit: number,
-  years: number = 10
-): number {
+export function calculateROI(totalCost: number, annualBenefit: number, years: number = 10): number {
   if (totalCost <= 0) return 0;
   const totalBenefit = annualBenefit * years;
   const roi = ((totalBenefit - totalCost) / totalCost) * 100;
@@ -278,9 +264,7 @@ export function calculateFinancialMetrics(
  * @param baseMetrics - Base financial metrics
  * @returns Scenario analysis with adjusted metrics
  */
-export function calculateScenarioAnalysis(
-  baseMetrics: ImprovementMetrics
-): {
+export function calculateScenarioAnalysis(baseMetrics: ImprovementMetrics): {
   optimistic: ImprovementMetrics;
   realistic: ImprovementMetrics;
   pessimistic: ImprovementMetrics;
@@ -293,10 +277,7 @@ export function calculateScenarioAnalysis(
       baseMetrics.totalCost * 0.9,
       baseMetrics.annualSavings * 1.2
     ),
-    npv: calculateNPV(
-      baseMetrics.totalCost * 0.9,
-      baseMetrics.annualSavings * 1.2
-    ),
+    npv: calculateNPV(baseMetrics.totalCost * 0.9, baseMetrics.annualSavings * 1.2),
     irr: calculateIRR(baseMetrics.totalCost * 0.9, baseMetrics.annualSavings * 1.2),
     roi: calculateROI(baseMetrics.totalCost * 0.9, baseMetrics.annualSavings * 1.2),
   };
@@ -312,10 +293,7 @@ export function calculateScenarioAnalysis(
       baseMetrics.totalCost * 1.1,
       baseMetrics.annualSavings * 0.8
     ),
-    npv: calculateNPV(
-      baseMetrics.totalCost * 1.1,
-      baseMetrics.annualSavings * 0.8
-    ),
+    npv: calculateNPV(baseMetrics.totalCost * 1.1, baseMetrics.annualSavings * 0.8),
     irr: calculateIRR(baseMetrics.totalCost * 1.1, baseMetrics.annualSavings * 0.8),
     roi: calculateROI(baseMetrics.totalCost * 1.1, baseMetrics.annualSavings * 0.8),
   };
@@ -343,10 +321,7 @@ export function calculateSustainabilityScore(
 
   // Calculate improvement impact score
   let improvementScore = 0;
-  const totalPercentage = improvements.reduce(
-    (sum, imp) => sum + imp.percentage,
-    0
-  );
+  const totalPercentage = improvements.reduce((sum, imp) => sum + imp.percentage, 0);
 
   // Weight improvements by type and percentage
   const improvementWeights: Record<ImprovementType, number> = {
@@ -479,18 +454,12 @@ export function calculateImprovementImpact(
 
   // Calculate base sustainability score from building
   const baseScore = building.esgMetrics?.sustainabilityScore || 50;
-  const sustainabilityScore = calculateSustainabilityScore(
-    improvements,
-    roofArea,
-    baseScore
-  );
+  const sustainabilityScore = calculateSustainabilityScore(improvements, roofArea, baseScore);
 
   // Calculate neutrality timeline
   const initialCO2 = building.esgMetrics?.carbonFootprint || 0;
   const neutralityTimeline =
-    initialCO2 > 0
-      ? calculateNeutralityTimeline(initialCO2, annualCO2Reduction)
-      : null;
+    initialCO2 > 0 ? calculateNeutralityTimeline(initialCO2, annualCO2Reduction) : null;
 
   return {
     totalCost,

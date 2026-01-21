@@ -44,7 +44,9 @@ const IssueTemplateSelector: React.FC<IssueTemplateSelectorProps> = ({
       <div className='bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[80vh] flex flex-col'>
         {/* Header */}
         <div className='flex items-center justify-between p-6 border-b border-gray-200'>
-          <h2 className='text-xl font-semibold text-gray-900'>{t('issueTemplates.title') || 'Välj mall för problem'}</h2>
+          <h2 className='text-xl font-semibold text-gray-900'>
+            {t('issueTemplates.title') || 'Välj mall för problem'}
+          </h2>
           <button onClick={onClose} className='text-gray-400 hover:text-gray-600 transition-colors'>
             <X className='w-6 h-6' />
           </button>
@@ -101,30 +103,33 @@ const IssueTemplateSelector: React.FC<IssueTemplateSelectorProps> = ({
         <div className='flex-1 overflow-y-auto p-6'>
           {filteredTemplates.length === 0 ? (
             <div className='text-center py-8 text-gray-500'>
-              <p>{t('issueTemplates.noTemplatesFound') || 'Inga mallar hittades som matchar dina kriterier.'}</p>
+              <p>
+                {t('issueTemplates.noTemplatesFound') ||
+                  'Inga mallar hittades som matchar dina kriterier.'}
+              </p>
             </div>
           ) : (
             <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
               {filteredTemplates.map(template => {
                 // Map template IDs to translation keys
                 const templateKeyMap: Record<string, string> = {
-                  'leak_roof_edge': 'roofEdgeLeak',
-                  'leak_chimney': 'chimneyLeak',
-                  'damage_missing_tiles': 'missingTiles',
-                  'damage_cracked_tiles': 'crackedTiles',
-                  'wear_general': 'generalWear',
-                  'structural_sagging': 'roofSagging',
-                  'ventilation_blocked': 'blockedVentilation',
-                  'gutters_clogged': 'cloggedGutters',
-                  'flashing_damaged': 'damagedFlashing',
-                  'moss_growth': 'mossGrowth',
+                  leak_roof_edge: 'roofEdgeLeak',
+                  leak_chimney: 'chimneyLeak',
+                  damage_missing_tiles: 'missingTiles',
+                  damage_cracked_tiles: 'crackedTiles',
+                  wear_general: 'generalWear',
+                  structural_sagging: 'roofSagging',
+                  ventilation_blocked: 'blockedVentilation',
+                  gutters_clogged: 'cloggedGutters',
+                  flashing_damaged: 'damagedFlashing',
+                  moss_growth: 'mossGrowth',
                 };
-                
+
                 const templateKey = templateKeyMap[template.id] || template.id.replace(/_/g, '');
                 const titleKey = `issueTemplates.${templateKey}.title`;
                 const descKey = `issueTemplates.${templateKey}.description`;
                 const locationKey = `issueTemplates.${templateKey}.location`;
-                
+
                 return (
                   <div
                     key={template.id}
@@ -153,7 +158,8 @@ const IssueTemplateSelector: React.FC<IssueTemplateSelectorProps> = ({
 
                     <div className='flex items-center justify-between text-xs text-gray-500'>
                       <span className='flex items-center'>
-                        {getTypeIcon(template.type)} {t(`issueTypes.${template.type}`) || template.type}
+                        {getTypeIcon(template.type)}{' '}
+                        {t(`issueTypes.${template.type}`) || template.type}
                       </span>
                       <span>📍 {t(locationKey) || template.location}</span>
                     </div>
@@ -168,10 +174,11 @@ const IssueTemplateSelector: React.FC<IssueTemplateSelectorProps> = ({
         <div className='p-6 border-t border-gray-200'>
           <div className='flex items-center justify-between'>
             <p className='text-sm text-gray-500'>
-              {filteredTemplates.length === 1 
-                ? t('issueTemplates.templatesFound.one', { count: filteredTemplates.length }) || `${filteredTemplates.length} mall hittades`
-                : t('issueTemplates.templatesFound.other', { count: filteredTemplates.length }) || `${filteredTemplates.length} mallar hittades`
-              }
+              {filteredTemplates.length === 1
+                ? t('issueTemplates.templatesFound.one', { count: filteredTemplates.length }) ||
+                  `${filteredTemplates.length} mall hittades`
+                : t('issueTemplates.templatesFound.other', { count: filteredTemplates.length }) ||
+                  `${filteredTemplates.length} mallar hittades`}
             </p>
             <button
               onClick={onClose}

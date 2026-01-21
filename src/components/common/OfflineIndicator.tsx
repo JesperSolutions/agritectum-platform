@@ -41,14 +41,15 @@ const OfflineIndicator: React.FC = () => {
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         justWentOffline ? 'animate-slide-down' : ''
       }`}
-      role="alert"
-      aria-live="polite"
+      role='alert'
+      aria-live='polite'
     >
-      <div className="bg-amber-500 text-white px-4 py-2 shadow-lg">
-        <div className="max-w-7xl mx-auto flex items-center justify-center gap-2">
-          <WifiOff className="h-4 w-4" aria-hidden="true" />
-          <span className="text-sm font-medium">
-            {t('common.offlineMode') || 'You\'re offline. Changes will sync when connection is restored.'}
+      <div className='bg-amber-500 text-white px-4 py-2 shadow-lg'>
+        <div className='max-w-7xl mx-auto flex items-center justify-center gap-2'>
+          <WifiOff className='h-4 w-4' aria-hidden='true' />
+          <span className='text-sm font-medium'>
+            {t('common.offlineMode') ||
+              "You're offline. Changes will sync when connection is restored."}
           </span>
         </div>
       </div>

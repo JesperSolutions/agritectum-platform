@@ -5,7 +5,9 @@ This directory contains Quality Assurance documentation including testing guides
 ## Contents
 
 ### `QA_FIXES_IMPLEMENTED.md`
+
 Comprehensive list of QA fixes and improvements:
+
 - Bug fixes and resolutions
 - Testing procedures
 - Quality improvements
@@ -13,7 +15,9 @@ Comprehensive list of QA fixes and improvements:
 - Known issues and workarounds
 
 ### `ISSUES_FOUND_DURING_FIX.md`
+
 Documentation of issues discovered during development:
+
 - Issue descriptions
 - Root cause analysis
 - Resolution steps
@@ -47,6 +51,7 @@ Documentation of issues discovered during development:
 ## Reporting Issues
 
 When reporting QA issues, include:
+
 1. **Description** - What's the problem?
 2. **Steps to reproduce** - How can we see it?
 3. **Expected behavior** - What should happen?
@@ -56,5 +61,4 @@ When reporting QA issues, include:
 
 ---
 
-*For QA questions, contact the QA team.*
-
+_For QA questions, contact the QA team._

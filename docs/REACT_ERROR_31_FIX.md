@@ -1,23 +1,28 @@
 # React Error #31 Fix Summary
 
 ## Problem
+
 Minified React error #31: "Objects are not valid as a React child". This occurs when React tries to render a component object (with keys `{$$typeof, render, displayName}`) instead of a React element.
 
 ## Root Causes Addressed
 
 ### 1. Service Worker Caching
+
 **Issue**: Service worker was caching old JavaScript bundles, causing users to run outdated code even after deployments.
 
 **Fix Applied**:
+
 - Updated service worker to use "network first" strategy for all assets
 - Added proper cache versioning (`agritectum-v4.0.0-REACT-FIX`)
 - Implemented `skipWaiting()` and `clients.claim()` for immediate updates
 - Only cache essential HTML files, not JS/CSS bundles
 
 ### 2. Duplicate Service Worker Registration
+
 **Issue**: Service worker was being registered in both `main.tsx` and `App.tsx`, causing multiple registrations.
 
 **Fix Applied**:
+
 - Removed registration from `main.tsx`
 - Enhanced registration in `App.tsx` with:
   - Duplicate registration check
@@ -25,16 +30,20 @@ Minified React error #31: "Objects are not valid as a React child". This occurs 
   - Better error handling
 
 ### 3. Production Source Maps
+
 **Issue**: No source maps in production made debugging impossible.
 
 **Fix Applied**:
+
 - Added `sourcemap: true` to `vite.config.ts` build configuration
 - Stack traces will now point to actual source code locations
 
 ### 4. VirtualList Component Reference
+
 **Issue**: Potential type mismatch with react-window's component reference pattern.
 
 **Fix Applied**:
+
 - Verified proper component reference usage for react-window
 - Component reference pattern is correct for this library
 
@@ -49,12 +58,14 @@ Minified React error #31: "Objects are not valid as a React child". This occurs 
 ## Immediate Actions Required
 
 ### For Development Testing:
+
 1. **Clear browser cache completely**:
    - Chrome DevTools → Application → Storage → "Clear site data"
    - Unregister service worker: Application → Service Workers → Unregister
    - Hard reload (Ctrl+Shift+R / Cmd+Shift+R)
 
 2. **Rebuild and test**:
+
    ```bash
    npm run build
    npm run preview
@@ -66,7 +77,9 @@ Minified React error #31: "Objects are not valid as a React child". This occurs 
    - Check Network tab - JS files should load from network, not cache
 
 ### For Production Deployment:
+
 1. **Update service worker version** in `public/sw.js`:
+
    ```javascript
    const CACHE_NAME = 'agritectum-v4.1.0'; // Increment for each deploy
    ```
@@ -93,10 +106,11 @@ If React #31 still occurs after these fixes:
    - `{ComponentName}` in JSX where component should be rendered
 
 4. **Common patterns to check**:
+
    ```javascript
    // WRONG - component object
    { path: "/x", element: SomeComponent }
-   
+
    // RIGHT - JSX element
    { path: "/x", element: <SomeComponent /> }
    ```
@@ -104,6 +118,7 @@ If React #31 still occurs after these fixes:
 ## Service Worker Update Strategy
 
 The new service worker uses:
+
 - **Network-first**: Always tries network first for fresh code
 - **Cache fallback**: Only for HTML navigation (offline support)
 - **Immediate activation**: `skipWaiting()` + `clients.claim()` for instant updates

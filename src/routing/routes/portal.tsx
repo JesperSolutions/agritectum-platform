@@ -11,6 +11,7 @@ import {
   LazyScheduledVisitsList,
   LazyAcceptAppointmentView,
   LazyPortalCustomerProfile,
+  LazyReportView,
   LoadingFallback,
 } from '../../components/LazyComponents';
 
@@ -55,6 +56,15 @@ export const portalRoutes: RouteObject[] = [
         element: (
           <Suspense fallback={<LoadingFallback />}>
             <LazyBuildingDetail />
+          </Suspense>
+        ),
+        errorElement: <RouteErrorBoundary />,
+      },
+      {
+        path: 'reports/:reportId',
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <LazyReportView />
           </Suspense>
         ),
         errorElement: <RouteErrorBoundary />,

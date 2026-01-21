@@ -1,5 +1,14 @@
 import { db } from '../config/firebase';
-import { collection, addDoc, getDocs, query, where, orderBy, limit, serverTimestamp } from 'firebase/firestore';
+import {
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  where,
+  orderBy,
+  limit,
+  serverTimestamp,
+} from 'firebase/firestore';
 import { logger } from '../utils/logger';
 
 export interface PerformanceMetric {
@@ -30,10 +39,15 @@ export interface PerformanceReport {
 /**
  * Record a performance metric
  */
-export const recordPerformanceMetric = async (metric: Omit<PerformanceMetric, 'id' | 'timestamp'>): Promise<void> => {
+export const recordPerformanceMetric = async (
+  metric: Omit<PerformanceMetric, 'id' | 'timestamp'>
+): Promise<void> => {
   try {
     // Only record metrics in production or when explicitly enabled
-    if (process.env.NODE_ENV === 'development' && !localStorage.getItem('enablePerformanceTracking')) {
+    if (
+      process.env.NODE_ENV === 'development' &&
+      !localStorage.getItem('enablePerformanceTracking')
+    ) {
       return;
     }
 
@@ -96,14 +110,15 @@ export const getPerformanceReport = async (days: number = 7): Promise<Performanc
     const dbQueries = metrics.filter(m => m.type === 'database_query');
     const componentRenders = metrics.filter(m => m.type === 'component_render');
 
-    const averageLoadTime = pageLoads.length > 0 
-      ? pageLoads.reduce((sum, m) => sum + m.duration, 0) / pageLoads.length 
-      : 0;
+    const averageLoadTime =
+      pageLoads.length > 0
+        ? pageLoads.reduce((sum, m) => sum + m.duration, 0) / pageLoads.length
+        : 0;
 
     // Group by name and calculate averages
     const groupByAverage = (metrics: PerformanceMetric[]) => {
       const groups: Record<string, { total: number; count: number }> = {};
-      
+
       metrics.forEach(metric => {
         if (!groups[metric.name]) {
           groups[metric.name] = { total: 0, count: 0 };
@@ -128,19 +143,19 @@ export const getPerformanceReport = async (days: number = 7): Promise<Performanc
 
     // Generate recommendations
     const recommendations: string[] = [];
-    
+
     if (averageLoadTime > 3000) {
       recommendations.push('Consider implementing code splitting to reduce initial page load time');
     }
-    
+
     if (apiPerformance.some(api => api.averageTime > 2000)) {
       recommendations.push('Optimize slow API endpoints or implement caching');
     }
-    
+
     if (databasePerformance.some(db => db.averageTime > 1000)) {
       recommendations.push('Review database queries and consider adding indexes');
     }
-    
+
     if (componentPerformance.some(comp => comp.averageTime > 100)) {
       recommendations.push('Optimize slow-rendering components with React.memo or useMemo');
     }
@@ -175,7 +190,11 @@ export class PerformanceMonitor {
   private metricType: PerformanceMetric['type'];
   private metadata?: PerformanceMetric['metadata'];
 
-  constructor(name: string, type: PerformanceMetric['type'], metadata?: PerformanceMetric['metadata']) {
+  constructor(
+    name: string,
+    type: PerformanceMetric['type'],
+    metadata?: PerformanceMetric['metadata']
+  ) {
     this.metricName = name;
     this.metricType = type;
     this.metadata = metadata;
@@ -238,10 +257,7 @@ export const cleanupOldPerformanceMetrics = async (): Promise<void> => {
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - 30);
 
-    const q = query(
-      collection(db, 'performanceMetrics'),
-      where('timestamp', '<', cutoffDate)
-    );
+    const q = query(collection(db, 'performanceMetrics'), where('timestamp', '<', cutoffDate));
 
     const snapshot = await getDocs(q);
     const batch = db.batch();

@@ -1,6 +1,19 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  ReactNode,
+} from 'react';
 import { useAuth } from './AuthContext';
-import { getOffers, getOffer, createOffer, updateOfferStatus, sendOfferToCustomer } from '../services/offerService';
+import {
+  getOffers,
+  getOffer,
+  createOffer,
+  updateOfferStatus,
+  sendOfferToCustomer,
+} from '../services/offerService';
 import { Offer, OfferStatus } from '../types';
 
 interface OfferContextType {
@@ -53,9 +66,7 @@ export const OfferProvider: React.FC<OfferProviderProps> = ({ children }) => {
       const offer = await getOffer(offerId);
       if (offer) {
         // Update the offer in the list if it exists
-        setOffers((prevOffers) =>
-          prevOffers.map((o) => (o.id === offerId ? offer : o))
-        );
+        setOffers(prevOffers => prevOffers.map(o => (o.id === offerId ? offer : o)));
       }
       return offer;
     } catch (err: any) {
@@ -161,4 +172,3 @@ export const useOffers = (): OfferContextType => {
   }
   return context;
 };
-

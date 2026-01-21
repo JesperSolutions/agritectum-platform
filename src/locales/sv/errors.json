@@ -160,7 +160,7 @@
   "errors.branch.notSelected": "Ingen filial vald",
   "errors.branch.notAssigned": "Ingen filial tilldelad användaren",
   "errors.permissionDenied": "Du har inte behörighet att utföra denna åtgärd. Kontakta din administratör.",
-  
+
   "errors.display.encounteredIssue": "Vi stötte på ett problem",
   "errors.display.suggestedActions": "Föreslagna åtgärder:",
   "errors.display.stillHavingTrouble": "Har du fortfarande problem?",

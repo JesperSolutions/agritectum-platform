@@ -25,8 +25,8 @@ const IconLabel: React.FC<IconLabelProps> = ({
     <div className={cn('flex items-center space-x-2', className)}>
       <Icon className={iconClassName} />
       <div>
-        <p className="text-sm font-medium text-gray-600">{label}</p>
-        <p className="text-gray-900">{value}</p>
+        <p className='text-sm font-medium text-gray-600'>{label}</p>
+        <p className='text-gray-900'>{value}</p>
       </div>
     </div>
   );

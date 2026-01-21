@@ -56,10 +56,12 @@ const reportReducer = (state: ReportState, action: ReportAction): ReportState =>
       return {
         ...state,
         reports: state.reports.map(report =>
-          report.id === action.payload.id ? action.payload : report
+          report.id === action.payload.id ? { ...report, ...action.payload } : report
         ),
         currentReport:
-          state.currentReport?.id === action.payload.id ? action.payload : state.currentReport,
+          state.currentReport?.id === action.payload.id
+            ? { ...state.currentReport, ...action.payload }
+            : state.currentReport,
       };
     case 'DELETE_REPORT':
       return {
@@ -250,7 +252,9 @@ export const ReportProvider: React.FC<ReportProviderProps> = ({ children }) => {
       branchId = reportData.branchId;
     }
     if (!branchId) {
-      throw new Error('Branch ID is required to create a report. Superadmins must specify a branchId in the report data.');
+      throw new Error(
+        'Branch ID is required to create a report. Superadmins must specify a branchId in the report data.'
+      );
     }
 
     const newReport: Omit<Report, 'id'> = {
@@ -284,8 +288,8 @@ export const ReportProvider: React.FC<ReportProviderProps> = ({ children }) => {
         stack: error?.stack,
         branchId: branchId,
       });
-      const errorMessage = error?.message?.includes('Branch ID') 
-        ? error.message 
+      const errorMessage = error?.message?.includes('Branch ID')
+        ? error.message
         : 'Failed to create report. Please try again.';
       showToastError(errorMessage);
       throw new Error(errorMessage);
@@ -339,7 +343,7 @@ export const ReportProvider: React.FC<ReportProviderProps> = ({ children }) => {
     try {
       // Import the enhanced PDF service directly
       const { generateReportPDF } = await import('../services/simplePdfService');
-      
+
       // Get the report data
       const report = await getReport(id);
       if (!report) {
@@ -375,8 +379,8 @@ export const ReportProvider: React.FC<ReportProviderProps> = ({ children }) => {
           top: '20px',
           bottom: '20px',
           left: '20px',
-          right: '20px'
-        }
+          right: '20px',
+        },
       });
 
       if (!result.success) {

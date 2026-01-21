@@ -26,11 +26,13 @@ const CompanyBuildings: React.FC<CompanyBuildingsProps> = ({ customer, onBuildin
     // Initialize buildings from customer data
     // For now, if customer has buildingAddress, use that as the first building
     if (customer.buildingAddress) {
-      setBuildings([{
-        id: 'building_1',
-        address: customer.buildingAddress,
-        description: '',
-      }]);
+      setBuildings([
+        {
+          id: 'building_1',
+          address: customer.buildingAddress,
+          description: '',
+        },
+      ]);
     }
   }, [customer]);
 
@@ -67,11 +69,17 @@ const CompanyBuildings: React.FC<CompanyBuildingsProps> = ({ customer, onBuildin
 
   const handleUpdateBuilding = () => {
     if (editingBuilding && newBuildingAddress.trim()) {
-      setBuildings(buildings.map(b => 
-        b.id === editingBuilding.id 
-          ? { ...b, address: newBuildingAddress.trim(), description: newBuildingDescription.trim() || undefined }
-          : b
-      ));
+      setBuildings(
+        buildings.map(b =>
+          b.id === editingBuilding.id
+            ? {
+                ...b,
+                address: newBuildingAddress.trim(),
+                description: newBuildingDescription.trim() || undefined,
+              }
+            : b
+        )
+      );
       setEditingBuilding(null);
       setNewBuildingAddress('');
       setNewBuildingDescription('');
@@ -84,10 +92,10 @@ const CompanyBuildings: React.FC<CompanyBuildingsProps> = ({ customer, onBuildin
   }
 
   return (
-    <div className="bg-white p-4 rounded-lg border border-gray-200">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-medium text-gray-900 flex items-center">
-          <Building className="w-5 h-5 mr-2" />
+    <div className='bg-white p-4 rounded-lg border border-gray-200'>
+      <div className='flex items-center justify-between mb-4'>
+        <h3 className='text-lg font-medium text-gray-900 flex items-center'>
+          <Building className='w-5 h-5 mr-2' />
           Byggnader
         </h3>
         {!showAddForm && (
@@ -98,45 +106,45 @@ const CompanyBuildings: React.FC<CompanyBuildingsProps> = ({ customer, onBuildin
               setNewBuildingDescription('');
               setShowAddForm(true);
             }}
-            className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+            className='inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700'
           >
-            <Plus className="w-4 h-4 mr-1" />
+            <Plus className='w-4 h-4 mr-1' />
             Lägg till byggnad
           </button>
         )}
       </div>
 
       {showAddForm && (
-        <div className="mb-4 p-4 bg-gray-50 rounded-lg">
-          <div className="space-y-3">
+        <div className='mb-4 p-4 bg-gray-50 rounded-lg'>
+          <div className='space-y-3'>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className='block text-sm font-medium text-gray-700 mb-1'>
                 Byggnadsadress *
               </label>
               <input
-                type="text"
+                type='text'
                 value={newBuildingAddress}
-                onChange={(e) => setNewBuildingAddress(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Ange byggnadsadress"
+                onChange={e => setNewBuildingAddress(e.target.value)}
+                className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500'
+                placeholder='Ange byggnadsadress'
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className='block text-sm font-medium text-gray-700 mb-1'>
                 Beskrivning (valfritt)
               </label>
               <input
-                type="text"
+                type='text'
                 value={newBuildingDescription}
-                onChange={(e) => setNewBuildingDescription(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                placeholder="T.ex. Huvudbyggnad, Lager, etc."
+                onChange={e => setNewBuildingDescription(e.target.value)}
+                className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500'
+                placeholder='T.ex. Huvudbyggnad, Lager, etc.'
               />
             </div>
-            <div className="flex gap-2">
+            <div className='flex gap-2'>
               <button
                 onClick={editingBuilding ? handleUpdateBuilding : handleAddBuilding}
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                className='px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700'
               >
                 {editingBuilding ? 'Uppdatera' : 'Lägg till'}
               </button>
@@ -147,7 +155,7 @@ const CompanyBuildings: React.FC<CompanyBuildingsProps> = ({ customer, onBuildin
                   setNewBuildingAddress('');
                   setNewBuildingDescription('');
                 }}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                className='px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50'
               >
                 Avbryt
               </button>
@@ -157,39 +165,39 @@ const CompanyBuildings: React.FC<CompanyBuildingsProps> = ({ customer, onBuildin
       )}
 
       {buildings.length === 0 && !showAddForm ? (
-        <p className="text-sm text-gray-500 text-center py-4">
+        <p className='text-sm text-gray-500 text-center py-4'>
           Inga byggnader tillagda ännu. Klicka på "Lägg till byggnad" för att börja.
         </p>
       ) : (
-        <div className="space-y-2">
-          {buildings.map((building) => (
+        <div className='space-y-2'>
+          {buildings.map(building => (
             <div
               key={building.id}
-              className="flex items-start justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100"
+              className='flex items-start justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100'
             >
-              <div className="flex-1">
-                <div className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-gray-400" />
-                  <span className="font-medium text-gray-900">{building.address}</span>
+              <div className='flex-1'>
+                <div className='flex items-center gap-2'>
+                  <MapPin className='w-4 h-4 text-gray-400' />
+                  <span className='font-medium text-gray-900'>{building.address}</span>
                 </div>
                 {building.description && (
-                  <p className="text-sm text-gray-600 mt-1 ml-6">{building.description}</p>
+                  <p className='text-sm text-gray-600 mt-1 ml-6'>{building.description}</p>
                 )}
               </div>
-              <div className="flex gap-2">
+              <div className='flex gap-2'>
                 <button
                   onClick={() => handleEditBuilding(building)}
-                  className="p-1.5 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded"
-                  title="Redigera"
+                  className='p-1.5 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded'
+                  title='Redigera'
                 >
-                  <Edit className="w-4 h-4" />
+                  <Edit className='w-4 h-4' />
                 </button>
                 <button
                   onClick={() => handleRemoveBuilding(building.id)}
-                  className="p-1.5 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded"
-                  title="Ta bort"
+                  className='p-1.5 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded'
+                  title='Ta bort'
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <Trash2 className='w-4 h-4' />
                 </button>
               </div>
             </div>
@@ -201,4 +209,3 @@ const CompanyBuildings: React.FC<CompanyBuildingsProps> = ({ customer, onBuildin
 };
 
 export default CompanyBuildings;
-

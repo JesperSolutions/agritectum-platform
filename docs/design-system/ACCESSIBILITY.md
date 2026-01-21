@@ -16,6 +16,7 @@ This document outlines accessibility standards and best practices for the unifie
 - **UI Components:** Minimum 3:1 contrast ratio
 
 **Examples:**
+
 - ✅ `text-slate-900` on `bg-white` = 15.8:1 (pass)
 - ✅ `text-slate-700` on `bg-white` = 10.2:1 (pass)
 - ✅ `text-white` on `bg-slate-700` = 10.2:1 (pass)
@@ -30,6 +31,7 @@ All interactive elements must have visible focus indicators:
 - **Style:** Ring or outline
 
 **Implementation:**
+
 ```typescript
 import { getFocusRing } from '@/design-system/utilities/accessibility';
 
@@ -58,11 +60,13 @@ All interactive elements must be keyboard accessible:
 ### Button
 
 **Requirements:**
+
 - Visible focus indicator
 - Proper ARIA labels for icon-only buttons
 - Disabled state clearly indicated
 
 **Example:**
+
 ```typescript
 <Button aria-label="Close dialog">
   <XIcon />
@@ -72,11 +76,13 @@ All interactive elements must be keyboard accessible:
 ### Input
 
 **Requirements:**
+
 - Associated label (visible or via `aria-label`)
 - Error messages linked via `aria-describedby`
 - `aria-invalid` for error states
 
 **Example:**
+
 ```typescript
 <Input
   id="email"
@@ -94,10 +100,12 @@ All interactive elements must be keyboard accessible:
 ### Card
 
 **Requirements:**
+
 - Proper heading hierarchy
 - Semantic HTML structure
 
 **Example:**
+
 ```typescript
 <Card>
   <CardHeader>
@@ -113,10 +121,12 @@ All interactive elements must be keyboard accessible:
 ### Status Badge
 
 **Requirements:**
+
 - Color not the only indicator (use text/icon)
 - Proper contrast ratios
 
 **Example:**
+
 ```typescript
 <StatusBadge status="completed" label="Completed" icon={CheckIcon} />
 ```
@@ -129,10 +139,10 @@ All interactive elements must be keyboard accessible:
 import { getFocusRing } from '@/design-system/utilities/accessibility';
 
 // Default (slate)
-getFocusRing('slate')  // 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:ring-offset-2'
+getFocusRing('slate'); // 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:ring-offset-2'
 
 // Error state
-getFocusRing('red')    // 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2'
+getFocusRing('red'); // 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2'
 ```
 
 ### Form Field Attributes
@@ -157,11 +167,13 @@ import { srOnly } from '@/design-system/utilities/accessibility';
 ### Automated Testing
 
 **Tools:**
+
 - [axe-core](https://github.com/dequelabs/axe-core) - Automated accessibility testing
 - [WAVE](https://wave.webaim.org/) - Web accessibility evaluation
 - [Lighthouse](https://developers.google.com/web/tools/lighthouse) - Accessibility audits
 
 **Example:**
+
 ```typescript
 import { axe, toHaveNoViolations } from 'jest-axe';
 
@@ -177,6 +189,7 @@ test('component has no accessibility violations', async () => {
 ### Manual Testing
 
 **Keyboard Navigation:**
+
 1. Tab through all interactive elements
 2. Verify focus indicators are visible
 3. Test Enter/Space on buttons
@@ -184,12 +197,14 @@ test('component has no accessibility violations', async () => {
 5. Test arrow keys in menus
 
 **Screen Reader Testing:**
+
 1. Test with NVDA (Windows) or VoiceOver (Mac)
 2. Verify all content is announced
 3. Verify form labels are read
 4. Verify error messages are announced
 
 **Color Contrast:**
+
 1. Use browser DevTools to check contrast ratios
 2. Test with color blindness simulators
 3. Verify text is readable on all backgrounds

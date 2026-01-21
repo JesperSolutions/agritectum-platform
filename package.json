@@ -1,7 +1,7 @@
 {
   "name": "agritectum-platform",
   "private": true,
-  "version": "1.0.3",
+  "version": "1.0.4",
   "type": "module",
   "description": "Agritectum Platform - Professional roof inspection management system with customer portal and real-time notifications",
   "scripts": {
@@ -25,8 +25,10 @@
     "deploy:test": "npm run build:test && firebase deploy --only hosting,functions,firestore:rules,storage --project agritectum-platform-test",
     "build:test": "vite build --mode test",
     "deploy:rules": "firebase deploy --only firestore:rules,storage",
-    "deploy:rules:test": "firebase deploy --only firestore:rules,storage --project taklaget-service-app-test",
-    "generate:translations": "node scripts/generate-translation-inventory.cjs"
+    "deploy:rules:test": "firebase deploy --only firestore:rules,storage --project agritectum-platform-test",
+    "generate:translations": "node scripts/generate-translation-inventory.cjs",
+    "validate:data": "node scripts/validate-and-fix-data.cjs",
+    "fix:building-ids": "node scripts/fix-building-customer-ids.cjs"
   },
   "dependencies": {
     "@fontsource/noto-sans": "^5.2.9",

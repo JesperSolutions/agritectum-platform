@@ -1,7 +1,17 @@
 import React from 'react';
 import { Appointment, AppointmentStatus } from '../../types';
 import { useIntl } from '../../hooks/useIntl';
-import { Calendar, Clock, MapPin, User, Edit, Trash2, Ban, CheckCircle, FileText } from 'lucide-react';
+import {
+  Calendar,
+  Clock,
+  MapPin,
+  User,
+  Edit,
+  Trash2,
+  Ban,
+  CheckCircle,
+  FileText,
+} from 'lucide-react';
 import { Button } from '../ui/button';
 import { Link } from 'react-router-dom';
 import EmptyState from '../common/EmptyState';
@@ -44,7 +54,9 @@ const AppointmentList: React.FC<AppointmentListProps> = ({
   };
 
   const getStatusLabel = (status: AppointmentStatus): string => {
-    return t(`schedule.status.${status === 'in_progress' ? 'inProgress' : status === 'no_show' ? 'noShow' : status}`);
+    return t(
+      `schedule.status.${status === 'in_progress' ? 'inProgress' : status === 'no_show' ? 'noShow' : status}`
+    );
   };
 
   // Use centralized date formatter
@@ -66,7 +78,10 @@ const AppointmentList: React.FC<AppointmentListProps> = ({
     const [hour, minute] = appointment.scheduledTime.split(':').map(Number);
     // Create date in local timezone
     const appointmentDate = new Date(year, month - 1, day, hour, minute);
-    return appointmentDate > now && (appointment.status === 'scheduled' || appointment.status === 'in_progress');
+    return (
+      appointmentDate > now &&
+      (appointment.status === 'scheduled' || appointment.status === 'in_progress')
+    );
   };
 
   if (appointments.length === 0) {
@@ -107,7 +122,7 @@ const AppointmentList: React.FC<AppointmentListProps> = ({
             </tr>
           </thead>
           <tbody>
-            {appointments.map((appointment) => (
+            {appointments.map(appointment => (
               <tr
                 key={appointment.id}
                 className='border-b border-gray-100 hover:bg-gray-50 transition-colors'
@@ -116,7 +131,9 @@ const AppointmentList: React.FC<AppointmentListProps> = ({
                   <div className='flex items-center gap-2'>
                     <Calendar className='w-4 h-4 text-gray-400' />
                     <div>
-                      <div className='font-medium text-gray-900'>{formatDate(appointment.scheduledDate)}</div>
+                      <div className='font-medium text-gray-900'>
+                        {formatDate(appointment.scheduledDate)}
+                      </div>
                       <div className='text-sm text-gray-500 flex items-center gap-1'>
                         <Clock className='w-3 h-3' />
                         {appointment.scheduledTime} ({appointment.duration} min)
@@ -143,7 +160,9 @@ const AppointmentList: React.FC<AppointmentListProps> = ({
                   </div>
                 </td>
                 <td className='py-4 px-4'>
-                  <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(appointment.status)}`}>
+                  <span
+                    className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(appointment.status)}`}
+                  >
                     {getStatusLabel(appointment.status)}
                   </span>
                 </td>
@@ -151,22 +170,28 @@ const AppointmentList: React.FC<AppointmentListProps> = ({
                   <div className='flex items-center justify-end gap-2'>
                     {appointment.reportId && (
                       <Link to={`/report/view/${appointment.reportId}`}>
-                        <Button variant='ghost' size='sm' title={t('schedule.list.viewReport') || 'View Report'}>
+                        <Button
+                          variant='ghost'
+                          size='sm'
+                          title={t('schedule.list.viewReport') || 'View Report'}
+                        >
                           <FileText className='w-4 h-4' />
                         </Button>
                       </Link>
                     )}
-                    
-                    {!appointment.reportId && isUpcoming(appointment) && appointment.status === 'scheduled' && (
-                      <Button
-                        variant='ghost'
-                        size='sm'
-                        onClick={() => onStart(appointment)}
-                        title={t('schedule.appointment.start')}
-                      >
-                        <CheckCircle className='w-4 h-4 text-green-600' />
-                      </Button>
-                    )}
+
+                    {!appointment.reportId &&
+                      isUpcoming(appointment) &&
+                      appointment.status === 'scheduled' && (
+                        <Button
+                          variant='ghost'
+                          size='sm'
+                          onClick={() => onStart(appointment)}
+                          title={t('schedule.appointment.start')}
+                        >
+                          <CheckCircle className='w-4 h-4 text-green-600' />
+                        </Button>
+                      )}
 
                     {!appointment.reportId && appointment.status === 'in_progress' && (
                       <Button
@@ -179,36 +204,39 @@ const AppointmentList: React.FC<AppointmentListProps> = ({
                       </Button>
                     )}
 
-                    {userCanManage && (appointment.status === 'scheduled' || appointment.status === 'in_progress' || appointment.status === 'no_show') && (
-                      <>
-                        <Button
-                          variant='ghost'
-                          size='sm'
-                          onClick={() => onEdit(appointment)}
-                          title={t('schedule.appointment.edit')}
-                        >
-                          <Edit className='w-4 h-4' />
-                        </Button>
-                        
-                        <Button
-                          variant='ghost'
-                          size='sm'
-                          onClick={() => onCancel(appointment)}
-                          title={t('schedule.appointment.cancel')}
-                        >
-                          <Ban className='w-4 h-4 text-orange-600' />
-                        </Button>
+                    {userCanManage &&
+                      (appointment.status === 'scheduled' ||
+                        appointment.status === 'in_progress' ||
+                        appointment.status === 'no_show') && (
+                        <>
+                          <Button
+                            variant='ghost'
+                            size='sm'
+                            onClick={() => onEdit(appointment)}
+                            title={t('schedule.appointment.edit')}
+                          >
+                            <Edit className='w-4 h-4' />
+                          </Button>
 
-                        <Button
-                          variant='ghost'
-                          size='sm'
-                          onClick={() => onDelete(appointment)}
-                          title={t('schedule.appointment.delete')}
-                        >
-                          <Trash2 className='w-4 h-4 text-red-600' />
-                        </Button>
-                      </>
-                    )}
+                          <Button
+                            variant='ghost'
+                            size='sm'
+                            onClick={() => onCancel(appointment)}
+                            title={t('schedule.appointment.cancel')}
+                          >
+                            <Ban className='w-4 h-4 text-orange-600' />
+                          </Button>
+
+                          <Button
+                            variant='ghost'
+                            size='sm'
+                            onClick={() => onDelete(appointment)}
+                            title={t('schedule.appointment.delete')}
+                          >
+                            <Trash2 className='w-4 h-4 text-red-600' />
+                          </Button>
+                        </>
+                      )}
                   </div>
                 </td>
               </tr>
@@ -219,7 +247,7 @@ const AppointmentList: React.FC<AppointmentListProps> = ({
 
       {/* Mobile Card View */}
       <div className='lg:hidden space-y-4'>
-        {appointments.map((appointment) => (
+        {appointments.map(appointment => (
           <div
             key={appointment.id}
             className='bg-white rounded-material shadow-material-2 p-4 space-y-3'
@@ -238,7 +266,9 @@ const AppointmentList: React.FC<AppointmentListProps> = ({
                   {appointment.scheduledTime}
                 </div>
               </div>
-              <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${getStatusColor(appointment.status)}`}>
+              <span
+                className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${getStatusColor(appointment.status)}`}
+              >
                 {getStatusLabel(appointment.status)}
               </span>
             </div>
@@ -266,17 +296,19 @@ const AppointmentList: React.FC<AppointmentListProps> = ({
                 </Link>
               )}
 
-              {!appointment.reportId && isUpcoming(appointment) && appointment.status === 'scheduled' && (
-                <Button
-                  variant='default'
-                  size='sm'
-                  onClick={() => onStart(appointment)}
-                  className='flex-1'
-                >
-                  <CheckCircle className='w-4 h-4' />
-                  {t('schedule.appointment.start')}
-                </Button>
-              )}
+              {!appointment.reportId &&
+                isUpcoming(appointment) &&
+                appointment.status === 'scheduled' && (
+                  <Button
+                    variant='default'
+                    size='sm'
+                    onClick={() => onStart(appointment)}
+                    className='flex-1'
+                  >
+                    <CheckCircle className='w-4 h-4' />
+                    {t('schedule.appointment.start')}
+                  </Button>
+                )}
 
               {!appointment.reportId && appointment.status === 'in_progress' && (
                 <Button
@@ -290,33 +322,24 @@ const AppointmentList: React.FC<AppointmentListProps> = ({
                 </Button>
               )}
 
-              {userCanManage && (appointment.status === 'scheduled' || appointment.status === 'in_progress' || appointment.status === 'no_show') && (
-                <>
-                  <Button
-                    variant='outline'
-                    size='sm'
-                    onClick={() => onEdit(appointment)}
-                  >
-                    <Edit className='w-4 h-4' />
-                  </Button>
+              {userCanManage &&
+                (appointment.status === 'scheduled' ||
+                  appointment.status === 'in_progress' ||
+                  appointment.status === 'no_show') && (
+                  <>
+                    <Button variant='outline' size='sm' onClick={() => onEdit(appointment)}>
+                      <Edit className='w-4 h-4' />
+                    </Button>
 
-                  <Button
-                    variant='outline'
-                    size='sm'
-                    onClick={() => onCancel(appointment)}
-                  >
-                    <Ban className='w-4 h-4' />
-                  </Button>
+                    <Button variant='outline' size='sm' onClick={() => onCancel(appointment)}>
+                      <Ban className='w-4 h-4' />
+                    </Button>
 
-                  <Button
-                    variant='ghost'
-                    size='sm'
-                    onClick={() => onDelete(appointment)}
-                  >
-                    <Trash2 className='w-4 h-4 text-red-600' />
-                  </Button>
-                </>
-              )}
+                    <Button variant='ghost' size='sm' onClick={() => onDelete(appointment)}>
+                      <Trash2 className='w-4 h-4 text-red-600' />
+                    </Button>
+                  </>
+                )}
             </div>
           </div>
         ))}
@@ -326,4 +349,3 @@ const AppointmentList: React.FC<AppointmentListProps> = ({
 };
 
 export default AppointmentList;
-

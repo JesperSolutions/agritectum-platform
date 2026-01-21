@@ -1,5 +1,14 @@
 import React from 'react';
-import { AlertTriangle, CheckCircle, XCircle, Trash2, Edit, UserX, UserCheck, X } from 'lucide-react';
+import {
+  AlertTriangle,
+  CheckCircle,
+  XCircle,
+  Trash2,
+  Edit,
+  UserX,
+  UserCheck,
+  X,
+} from 'lucide-react';
 import { getButtonClasses } from '../../../design-system/components';
 import { colors } from '../../../design-system/tokens';
 
@@ -99,7 +108,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
         >
           <X className='h-5 w-5' />
         </button>
-        
+
         <div className='text-center'>
           <div
             className={`mx-auto flex items-center justify-center h-12 w-12 rounded-full ${typeClasses.container} mb-4`}

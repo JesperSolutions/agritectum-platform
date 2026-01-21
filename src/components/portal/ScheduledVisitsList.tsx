@@ -41,9 +41,8 @@ const ScheduledVisitsList: React.FC = () => {
     }
   };
 
-
   const now = new Date();
-  const filteredVisits = visits.filter((visit) => {
+  const filteredVisits = visits.filter(visit => {
     const visitDate = new Date(visit.scheduledDate);
     if (filter === 'upcoming') return visitDate >= now && visit.status === 'scheduled';
     if (filter === 'past') return visitDate < now || visit.status !== 'scheduled';
@@ -75,23 +74,27 @@ const ScheduledVisitsList: React.FC = () => {
     <div className='space-y-6'>
       <PageHeader
         title={t('navigation.scheduledVisits') || 'Scheduled Visits'}
-        subtitle={t('schedule.visits.subtitle') || 'View scheduled roofer visits for your buildings'}
+        subtitle={
+          t('schedule.visits.subtitle') || 'View scheduled roofer visits for your buildings'
+        }
       />
 
       <FilterTabs
         tabs={filterTabs}
         activeTab={filter}
-        onTabChange={(value) => setFilter(value as 'all' | 'upcoming' | 'past')}
+        onTabChange={value => setFilter(value as 'all' | 'upcoming' | 'past')}
       />
 
       {sortedVisits.length === 0 ? (
         <div className='bg-white rounded-lg shadow p-12 text-center border border-slate-200'>
           <Calendar className='w-16 h-16 text-gray-400 mx-auto mb-4' />
-          <p className='text-gray-600'>{t('schedule.visits.noVisits') || 'No scheduled visits found'}</p>
+          <p className='text-gray-600'>
+            {t('schedule.visits.noVisits') || 'No scheduled visits found'}
+          </p>
         </div>
       ) : (
         <div className='space-y-4'>
-          {sortedVisits.map((visit) => (
+          {sortedVisits.map(visit => (
             <ListCard key={visit.id}>
               <div className='flex items-start justify-between mb-4'>
                 <div>
@@ -127,14 +130,22 @@ const ScheduledVisitsList: React.FC = () => {
               {visit.customerResponse === 'pending' && visit.status === 'scheduled' && (
                 <div className='mt-6 pt-4 border-t border-slate-200 flex gap-3'>
                   <Button
-                    onClick={() => navigate(`/portal/appointment/${visit.id}/respond?token=${visit.publicToken || ''}`)}
+                    onClick={() =>
+                      navigate(
+                        `/portal/appointment/${visit.id}/respond?token=${visit.publicToken || ''}`
+                      )
+                    }
                     className='flex-1 bg-green-600 hover:bg-green-700'
                   >
                     <CheckCircle className='w-4 h-4 mr-2' />
                     {t('schedule.visits.accept') || 'Accept'}
                   </Button>
                   <Button
-                    onClick={() => navigate(`/portal/appointment/${visit.id}/respond?token=${visit.publicToken || ''}`)}
+                    onClick={() =>
+                      navigate(
+                        `/portal/appointment/${visit.id}/respond?token=${visit.publicToken || ''}`
+                      )
+                    }
                     variant='outline'
                     className='flex-1 border-red-300 text-red-700 hover:bg-red-50'
                   >
@@ -166,5 +177,3 @@ const ScheduledVisitsList: React.FC = () => {
 };
 
 export default ScheduledVisitsList;
-
-

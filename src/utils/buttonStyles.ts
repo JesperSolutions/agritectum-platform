@@ -1,6 +1,6 @@
 /**
  * Centralized Button Styles
- * 
+ *
  * Provides consistent button styles across the application
  * including hover and disabled states
  */
@@ -60,9 +60,8 @@ export const buttonStyles = {
 /**
  * Get button classes by variant
  */
-export const getButtonClasses = (variant: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' = 'primary'): string => {
+export const getButtonClasses = (
+  variant: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' = 'primary'
+): string => {
   return buttonStyles[variant].full;
 };
-
-
-

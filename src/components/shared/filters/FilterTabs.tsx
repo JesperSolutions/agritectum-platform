@@ -26,7 +26,7 @@ const FilterTabs: React.FC<FilterTabsProps> = ({
 }) => {
   return (
     <div className={cn('flex space-x-2', className)}>
-      {tabs.map((tab) => (
+      {tabs.map(tab => (
         <button
           key={tab.value}
           onClick={() => onTabChange(tab.value)}

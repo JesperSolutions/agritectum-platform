@@ -1,10 +1,10 @@
-import { 
-  updatePassword, 
-  reauthenticateWithCredential, 
+import {
+  updatePassword,
+  reauthenticateWithCredential,
   EmailAuthProvider,
   sendPasswordResetEmail,
   confirmPasswordReset as firebaseConfirmPasswordReset,
-  verifyPasswordResetCode
+  verifyPasswordResetCode,
 } from 'firebase/auth';
 import { auth } from '../config/firebase';
 
@@ -12,10 +12,7 @@ import { auth } from '../config/firebase';
  * Re-authenticate user with current password (required before password change)
  * Firebase security best practice
  */
-export const reauthenticateUser = async (
-  email: string, 
-  currentPassword: string
-): Promise<void> => {
+export const reauthenticateUser = async (email: string, currentPassword: string): Promise<void> => {
   const user = auth.currentUser;
   if (!user) {
     throw new Error('No authenticated user');
@@ -70,10 +67,7 @@ export const verifyResetCode = async (code: string): Promise<string> => {
  * @param code - The action code from the email link
  * @param newPassword - The new password to set
  */
-export const confirmPasswordReset = async (
-  code: string,
-  newPassword: string
-): Promise<void> => {
+export const confirmPasswordReset = async (code: string, newPassword: string): Promise<void> => {
   if (!newPassword || newPassword.length < 8) {
     throw new Error('Password must be at least 8 characters long');
   }

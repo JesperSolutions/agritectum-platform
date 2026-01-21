@@ -64,7 +64,7 @@
   "form.fields.actionUrgencyPlaceholder": "Select urgency",
   "form.fields.estimatedCost": "Estimated Cost",
   "form.fields.estimatedCostPlaceholder": "Enter estimated cost",
-  
+
   "form.labels.actionPriority": "Priority",
   "form.labels.actionUrgency": "Urgency",
   "form.labels.estimatedCost": "Estimated Cost",
@@ -110,6 +110,7 @@
   "form.messages.uploadingImages": "Uploading Images",
   "form.messages.noImagesUploaded": "No images uploaded yet",
   "form.messages.clickButtonsToAddImages": "Click the buttons above to add images",
+  "form.messages.pasteImageHint": "You can also paste images using Ctrl+V (Cmd+V on Mac)",
   "form.messages.reportNotFound": "Report not found",
   "form.messages.failedToLoadReport": "Could not load report",
   "form.messages.failedToSaveReport": "Could not save report",
@@ -253,8 +254,7 @@
   "reportForm.customerInfo.phoneHelp": "Optional - for customer contact",
   "reportForm.customerInfo.email": "Email Address",
   "reportForm.customerInfo.emailInvalid": "Please enter a valid email address",
-  "reportForm.customerInfo.emailHelp": "Optional - for sending reports"
-  ,
+  "reportForm.customerInfo.emailHelp": "Optional - for sending reports",
   "reportForm.roofMeasurer.title": "Measure Roof Size",
   "reportForm.roofMeasurer.instructions.start": "Click \"Start Drawing\" to begin measuring. Then click on the map to mark the corners of the roof.",
   "reportForm.roofMeasurer.instructions.drawing": "Drawing mode: Click on the map to add points around the roof perimeter. You need at least 3 points to form a polygon. The area will be calculated automatically.",
@@ -264,8 +264,7 @@
   "reportForm.roofMeasurer.minimumReached": "Minimum reached",
   "reportForm.roofMeasurer.calculatedArea": "Calculated Area",
   "reportForm.roofMeasurer.sqft": "sq ft",
-  "reportForm.roofMeasurer.useThisArea": "Use This Area"
-  ,
+  "reportForm.roofMeasurer.useThisArea": "Use This Area",
   "form.errors.userNotAuthenticated": "User not authenticated. Please log in again.",
   "form.errors.userNoBranch": "User must be assigned to a branch. Please contact an administrator.",
   "form.errors.fixValidation": "Please fix the validation errors below.",
@@ -286,7 +285,7 @@
   "form.fields.customerType": "Customer Type",
   "form.fields.customerTypeIndividual": "Individual",
   "form.fields.customerTypeCompany": "Company",
-  
+
   "form.defectFlow.step.camera": "Take Photo",
   "form.defectFlow.step.map": "Place Pin",
   "form.defectFlow.step.describe": "Describe",
@@ -322,12 +321,12 @@
   "form.customerSearch.clearSelection": "Clear selection",
   "form.customerSearch.noResults": "No customers found",
   "common.buttons.close": "Close",
-  
+
   "form.messages.errorSavingDefect": "Could not save defect. Please try again.",
   "form.messages.errorUploadingImage": "Could not upload image. Please check your connection and try again.",
   "form.messages.reportSaveSuccess": "Report saved successfully!",
   "form.messages.reportCompletedSuccess": "Report completed and submitted successfully!",
-  
+
   "form.validation.summaryGuidance": "Review the highlighted fields and correct the issues before proceeding.",
   "form.validation.customerNameGuidance": "Enter the full name of the customer (at least 2 characters).",
   "form.validation.customerAddressGuidance": "Enter the complete address where the inspection was performed.",
@@ -338,12 +337,12 @@
   "form.validation.phoneGuidance": "Enter a valid phone number with country code.",
   "form.validation.issueGuidance": "Each issue needs a title, description, and severity level.",
   "form.validation.offerGuidance": "Enter a positive value for the offer amount.",
-  
+
   "form.help.step1": "Start by entering the customer's contact information. You can search for existing customers or create a new one.",
   "form.help.step2": "Describe the roof condition including type, age, and overall observations.",
   "form.help.step3": "Document any issues found during the inspection. You can add photos and pin locations on the roof image.",
   "form.help.step4": "Add recommended actions and create an offer based on the issues found.",
-  
+
   "form.errors.saveFailed": "Failed to save the report. Please check your connection and try again.",
   "form.errors.imageUploadFailed": "Failed to upload image. The file may be too large or your connection may be unstable.",
   "form.errors.connectionLost": "Connection lost. Your changes will be saved automatically when the connection is restored.",

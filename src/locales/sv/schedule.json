@@ -105,7 +105,7 @@
   "schedule.filters.inProgress": "Pågående",
   "schedule.filters.completed": "Slutförda",
   "schedule.filters.cancelled": "Inställda",
-  
+
   "SCHEDULE.ADDAPPOINTMENT": "Ny bokning",
   "schedule.addAppointment": "Ny bokning",
   "schedule.form.conflictWarning": "Konflikt: {inspector} har redan en inspektion denna tid.",
@@ -114,7 +114,7 @@
   "schedule.todaysAppointments": "Dagens inspektioner",
   "schedule.appointment.start": "Starta",
   "schedule.errorMessage": "Ett fel uppstod",
-  
+
   "schedule.visits.subtitle": "Visa schemalagda takläggarbesök för dina byggnader",
   "schedule.visits.noVisits": "Inga schemalagda besök hittades",
   "schedule.visits.dateTime": "Datum & Tid",
@@ -142,7 +142,7 @@
   "schedule.visits.rejectReasonLabel": "Anledning för avvisning (Valfritt)",
   "schedule.visits.rejectReasonPlaceholder": "Vänligen berätta varför du avvisar detta besök...",
   "schedule.visits.confirmReject": "Bekräfta avvisning",
-  
+
   "schedule.list.date": "Datum",
   "schedule.list.customer": "Kund",
   "schedule.list.address": "Adress",
@@ -150,7 +150,7 @@
   "schedule.list.status": "Status",
   "schedule.list.actions": "Åtgärder",
   "schedule.list.viewReport": "Visa rapport",
-  
+
   "schedule.appointment.edit": "Redigera",
   "schedule.appointment.cancel": "Inställ",
   "schedule.appointment.delete": "Ta bort",

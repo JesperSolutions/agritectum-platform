@@ -69,5 +69,13 @@
   "buildings.esg.recommendation.solar": "Denna byggnad har betydande solpotential. Överväg att installera solpaneler för att minska koldioxidavtrycket.",
   "buildings.esg.recommendation.recycling": "Ditt takmaterial har hög återvinningspotential. Säkerställ korrekt återvinning vid slutet av livslängden.",
   "buildings.esg.recommendation.neutrality": "CO₂-neutralitet projiceras om {years} år. Överväg ytterligare förbättringar för att påskynda denna tidslinje.",
-  "buildings.esg.lastCalculated": "Senast beräknad"
+  "buildings.esg.lastCalculated": "Senast beräknad",
+  "buildings.esgReports.title": "ESG-rapporter",
+  "buildings.esgReports.report": "ESG-servicerapport",
+  "buildings.esgReports.roofSize": "Takstorlek",
+  "buildings.esgReports.greenRoof": "Grönt tak",
+  "buildings.esgReports.coolRoof": "Svalt tak",
+  "buildings.esgReports.noxReduction": "NOₓ-reduktion",
+  "buildings.esgReports.private": "ESG-rapport (Privat)",
+  "buildings.esgReports.privateDesc": "Denna rapport är inte offentligt tillgänglig ännu"
 }

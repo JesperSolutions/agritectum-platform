@@ -2,6 +2,22 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useIntl } from '../../hooks/useIntl';
+
+// Dynamic logger import
+let logger: any = {
+  log: console.log,
+  warn: console.warn,
+  error: console.error,
+};
+
+(async () => {
+  try {
+    const loggerModule = await import('../../utils/logger');
+    logger = loggerModule.logger;
+  } catch (error) {
+    console.warn('Failed to load logger module');
+  }
+})();
 import {
   getBuildingById,
   updateBuilding,
@@ -10,7 +26,8 @@ import {
 } from '../../services/buildingService';
 import { getReportsByBuildingId } from '../../services/reportService';
 import { getServiceAgreementsByBuilding } from '../../services/serviceAgreementService';
-import { Building, Report, ServiceAgreement } from '../../types';
+import { getESGServiceReportsByBuilding } from '../../services/esgService';
+import { Building, Report, ServiceAgreement, ESGServiceReport } from '../../types';
 import {
   Building as BuildingIcon,
   MapPin,
@@ -28,6 +45,7 @@ import {
   Home,
   ExternalLink,
   AlertCircle,
+  Leaf,
 } from 'lucide-react';
 import LoadingSpinner from '../common/LoadingSpinner';
 import BuildingMap from './BuildingMap';
@@ -44,10 +62,12 @@ const BuildingDetail: React.FC = () => {
   const [building, setBuilding] = useState<Building | null>(null);
   const [reports, setReports] = useState<Report[]>([]);
   const [serviceAgreements, setServiceAgreements] = useState<ServiceAgreement[]>([]);
+  const [esgReports, setEsgReports] = useState<ESGServiceReport[]>([]);
   const [activities, setActivities] = useState<BuildingActivity[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingRelated, setLoadingRelated] = useState(true);
   const [editing, setEditing] = useState(false);
+  const [errors, setErrors] = useState<string[]>([]);
   const [formData, setFormData] = useState({
     address: '',
     buildingType: 'residential' as Building['buildingType'],
@@ -59,55 +79,95 @@ const BuildingDetail: React.FC = () => {
     if (buildingId && currentUser) {
       loadBuilding();
       loadRelatedData();
+    } else {
+      setErrors([
+        `Missing: ${!buildingId ? 'buildingId' : ''} ${!currentUser ? 'currentUser' : ''}`,
+      ]);
     }
   }, [buildingId, currentUser]);
 
   const loadBuilding = async () => {
-    if (!buildingId) return;
+    if (!buildingId) {
+      return;
+    }
+
     setLoading(true);
+
     try {
       const data = await getBuildingById(buildingId);
-      if (data) {
-        setBuilding(data);
-        setFormData({
-          address: data.address,
-          buildingType: data.buildingType || 'residential',
-          roofType: data.roofType || 'tile',
-          roofSize: data.roofSize?.toString() || '',
-        });
+
+      if (!data) {
+        setErrors(prev => [...prev, 'Building data is null or undefined']);
+        setLoading(false);
+        return;
       }
-    } catch (error) {
-      console.error('Error loading building:', error);
-    } finally {
+
+      setBuilding(data);
+      setFormData({
+        address: data.address,
+        buildingType: data.buildingType || 'residential',
+        roofType: data.roofType || 'tile',
+        roofSize: data.roofSize?.toString() || '',
+      });
+      setLoading(false);
+    } catch (error: any) {
+      logger.error('[BuildingDetail] Building load failed:', error);
+      setErrors(prev => [...prev, `Failed to load building: ${error?.message || 'Unknown error'}`]);
       setLoading(false);
     }
   };
 
   const loadRelatedData = async () => {
-    if (!buildingId || !currentUser) return;
+    if (!buildingId || !currentUser) {
+      return;
+    }
+
     setLoadingRelated(true);
     try {
-      // Load all related data in parallel
-      const [reportsData, agreementsData, activitiesData] = await Promise.all([
-        getReportsByBuildingId(buildingId, currentUser.branchId).catch(() => []),
-        getServiceAgreementsByBuilding(buildingId).catch(() => []),
-        getBuildingActivity(
-          buildingId,
-          currentUser.uid,
-          currentUser.branchId
-        ).catch(() => []),
+      const branchIdForQuery = currentUser.role === 'customer' ? undefined : currentUser.branchId;
+      const companyIdForQuery = currentUser.role === 'customer' ? currentUser.companyId : undefined;
+
+      const [reportsData, agreementsData, esgReportsData, activitiesData] = await Promise.all([
+        getReportsByBuildingId(buildingId, branchIdForQuery, companyIdForQuery)
+          .then(data => data || [])
+          .catch(error => {
+            logger.error('[BuildingDetail] Reports load failed:', error);
+            setErrors(prev => [...prev, `Reports error: ${error?.message}`]);
+            return [];
+          }),
+        getServiceAgreementsByBuilding(buildingId)
+          .then(data => data || [])
+          .catch(error => {
+            logger.error('[BuildingDetail] Agreements load failed:', error);
+            setErrors(prev => [...prev, `Agreements error: ${error?.message}`]);
+            return [];
+          }),
+        getESGServiceReportsByBuilding(buildingId)
+          .then(data => data || [])
+          .catch(error => {
+            logger.error('[BuildingDetail] ESG reports load failed:', error);
+            setErrors(prev => [...prev, `ESG reports error: ${error?.message}`]);
+            return [];
+          }),
+        getBuildingActivity(buildingId, currentUser.uid, currentUser.branchId)
+          .then(data => data || [])
+          .catch(error => {
+            logger.error('[BuildingDetail] Activities load failed:', error);
+            setErrors(prev => [...prev, `Activities error: ${error?.message}`]);
+            return [];
+          }),
       ]);
 
       setReports(reportsData);
       setServiceAgreements(agreementsData);
+      setEsgReports(esgReportsData);
       setActivities(activitiesData);
-    } catch (error) {
-      console.error('Error loading related data:', error);
+    } catch (error: any) {
+      logger.error('[BuildingDetail] Unexpected error loading related data:', error);
     } finally {
       setLoadingRelated(false);
     }
   };
-
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -146,6 +206,7 @@ const BuildingDetail: React.FC = () => {
   const pastAgreements = serviceAgreements.filter(a => a.status !== 'active');
 
   if (loading) {
+    logger.log('⏳ [BuildingDetail] Rendering loading state');
     return (
       <div className='flex items-center justify-center h-64'>
         <LoadingSpinner size='lg' />
@@ -154,9 +215,12 @@ const BuildingDetail: React.FC = () => {
   }
 
   if (!building) {
+    logger.warn('⚠️ [BuildingDetail] Building is null, rendering not found');
     return (
       <div className='text-center py-12'>
-        <p className='text-gray-600'>{t('buildings.notFound') || t('buildings.notFoundFallback') || 'Building not found'}</p>
+        <p className='text-gray-600'>
+          {t('buildings.notFound') || t('buildings.notFoundFallback') || 'Building not found'}
+        </p>
         <Link
           to='/portal/buildings'
           className='text-green-600 hover:text-green-700 mt-4 inline-block'
@@ -166,6 +230,15 @@ const BuildingDetail: React.FC = () => {
       </div>
     );
   }
+
+  logger.log('✅ [BuildingDetail] Rendering page:', {
+    buildingId: building.id,
+    address: building.address,
+    reportsCount: reports.length,
+    agreementsCount: serviceAgreements.length,
+    activitiesCount: activities.length,
+    loadingRelated,
+  });
 
   return (
     <div className='space-y-6'>
@@ -178,29 +251,15 @@ const BuildingDetail: React.FC = () => {
           <ArrowLeft className='w-4 h-4 mr-2' />
           {t('buildings.backToBuildings') || t('dashboard.viewAll') || 'Back to Buildings'}
         </Link>
-        <button
-          onClick={() => setEditing(!editing)}
-          className='flex items-center space-x-2 px-4 py-2 bg-slate-700 text-white rounded-md hover:bg-slate-800 transition-colors'
-        >
-          {editing ? (
-            <>
-              <X className='w-4 h-4' />
-              <span>{t('buildings.cancel') || 'Cancel'}</span>
-            </>
-          ) : (
-            <>
-              <Edit className='w-4 h-4' />
-              <span>{t('buildings.edit') || 'Edit'}</span>
-            </>
-          )}
-        </button>
       </div>
 
       {/* Page Header with Stats */}
       <div className='bg-white rounded-lg shadow p-6 border border-slate-200'>
         <PageHeader
-          title={building.address}
-          subtitle={t('buildings.buildingDetails') || 'Building Details'}
+          title={building.name || building.address}
+          subtitle={
+            building.name ? building.address : t('buildings.buildingDetails') || 'Building Details'
+          }
         />
         <div className='mt-6 grid grid-cols-1 md:grid-cols-3 gap-4'>
           <div className='bg-slate-50 rounded-lg p-4 border border-slate-200'>
@@ -208,7 +267,9 @@ const BuildingDetail: React.FC = () => {
               <FileText className='w-8 h-8 text-slate-600' />
               <div>
                 <p className='text-2xl font-bold text-slate-900'>{reports.length}</p>
-                <p className='text-sm text-slate-600'>{t('buildings.reports.total') || 'Reports'}</p>
+                <p className='text-sm text-slate-600'>
+                  {t('buildings.reports.total') || 'Reports'}
+                </p>
               </div>
             </div>
           </div>
@@ -240,7 +301,9 @@ const BuildingDetail: React.FC = () => {
       {/* Edit Form */}
       {editing && (
         <div className='bg-white rounded-lg shadow p-6 border border-slate-200'>
-          <h2 className='text-xl font-semibold mb-4'>{t('buildings.editBuilding') || 'Edit Building'}</h2>
+          <h2 className='text-xl font-semibold mb-4'>
+            {t('buildings.editBuilding') || 'Edit Building'}
+          </h2>
           <form onSubmit={handleSubmit} className='space-y-4'>
             <div>
               <label className='block text-sm font-medium text-gray-700 mb-2'>
@@ -249,7 +312,7 @@ const BuildingDetail: React.FC = () => {
               <input
                 type='text'
                 value={formData.address}
-                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                onChange={e => setFormData({ ...formData, address: e.target.value })}
                 required
                 className='w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500'
               />
@@ -261,7 +324,7 @@ const BuildingDetail: React.FC = () => {
                 </label>
                 <select
                   value={formData.buildingType}
-                  onChange={(e) =>
+                  onChange={e =>
                     setFormData({
                       ...formData,
                       buildingType: e.target.value as Building['buildingType'],
@@ -280,7 +343,7 @@ const BuildingDetail: React.FC = () => {
                 </label>
                 <select
                   value={formData.roofType}
-                  onChange={(e) =>
+                  onChange={e =>
                     setFormData({ ...formData, roofType: e.target.value as Building['roofType'] })
                   }
                   className='w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500'
@@ -290,6 +353,12 @@ const BuildingDetail: React.FC = () => {
                   <option value='shingle'>{t('roofTypes.shingle')}</option>
                   <option value='slate'>{t('roofTypes.slate')}</option>
                   <option value='flat'>{t('roofTypes.flat')}</option>
+                  <option value='flat_bitumen_2layer'>{t('roofTypes.flat_bitumen_2layer')}</option>
+                  <option value='flat_bitumen_3layer'>{t('roofTypes.flat_bitumen_3layer')}</option>
+                  <option value='flat_rubber'>{t('roofTypes.flat_rubber')}</option>
+                  <option value='flat_pvc'>{t('roofTypes.flat_pvc')}</option>
+                  <option value='flat_tpo'>{t('roofTypes.flat_tpo')}</option>
+                  <option value='flat_epdm'>{t('roofTypes.flat_epdm')}</option>
                   <option value='other'>{t('roofTypes.other')}</option>
                 </select>
               </div>
@@ -301,7 +370,7 @@ const BuildingDetail: React.FC = () => {
               <input
                 type='number'
                 value={formData.roofSize}
-                onChange={(e) => setFormData({ ...formData, roofSize: e.target.value })}
+                onChange={e => setFormData({ ...formData, roofSize: e.target.value })}
                 className='w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500'
               />
             </div>
@@ -340,6 +409,13 @@ const BuildingDetail: React.FC = () => {
             {t('buildings.metadata.title') || 'Building Information'}
           </h2>
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+            {building.name && (
+              <IconLabel
+                icon={Home}
+                label={t('buildings.name') || 'Building Name'}
+                value={building.name}
+              />
+            )}
             <IconLabel
               icon={MapPin}
               label={t('buildings.address') || 'Address'}
@@ -357,7 +433,9 @@ const BuildingDetail: React.FC = () => {
             <IconLabel
               icon={Layers}
               label={t('buildings.roofType') || 'Roof Type'}
-              value={building.roofType ? t(`roofTypes.${building.roofType}`) || building.roofType : 'N/A'}
+              value={
+                building.roofType ? t(`roofTypes.${building.roofType}`) || building.roofType : 'N/A'
+              }
             />
             {building.roofSize && (
               <IconLabel
@@ -416,27 +494,28 @@ const BuildingDetail: React.FC = () => {
             </div>
           ) : (
             <div className='space-y-4'>
-              {reports.slice(0, 10).map((report) => (
-                <Link key={report.id} to={`/reports/${report.id}`}>
+              {reports.slice(0, 10).map(report => (
+                <Link key={report.id} to={`/portal/reports/${report.id}`}>
                   <ListCard className='hover:shadow-material-3 transition-shadow'>
                     <div className='flex items-start justify-between mb-2'>
-                      <div>
+                      <div className='w-full'>
                         <h3 className='font-semibold text-gray-900'>
-                          {report.isOffer
-                            ? t('buildings.reports.offer') || 'Offer'
-                            : t('buildings.reports.inspection') || 'Inspection Report'}
+                          {report.buildingName ||
+                            report.customerName ||
+                            t('buildings.reports.inspection') ||
+                            'Inspection Report'}
                         </h3>
                         <p className='text-sm text-gray-600'>
                           {formatDate(report.inspectionDate || report.createdAt)}
                         </p>
+                        {report.conditionNotes && (
+                          <p className='text-sm text-gray-500 mt-1 line-clamp-2'>
+                            {report.conditionNotes}
+                          </p>
+                        )}
                       </div>
                       <StatusBadge status={report.status || 'completed'} />
                     </div>
-                    {report.conditionNotes && (
-                      <p className='text-sm text-gray-600 mt-2 line-clamp-2'>
-                        {report.conditionNotes}
-                      </p>
-                    )}
                     {report.issuesFound && report.issuesFound.length > 0 && (
                       <p className='text-xs text-slate-500 mt-2'>
                         {report.issuesFound.length}{' '}
@@ -486,7 +565,7 @@ const BuildingDetail: React.FC = () => {
                     {t('buildings.serviceAgreements.active') || 'Active Agreements'}
                   </h3>
                   <div className='space-y-4'>
-                    {activeAgreements.map((agreement) => (
+                    {activeAgreements.map(agreement => (
                       <Link key={agreement.id} to={`/portal/service-agreements/${agreement.id}`}>
                         <ListCard className='hover:shadow-material-3 transition-shadow'>
                           <div className='flex items-start justify-between mb-2'>
@@ -530,7 +609,7 @@ const BuildingDetail: React.FC = () => {
                     {t('buildings.serviceAgreements.past') || 'Past Agreements'}
                   </h3>
                   <div className='space-y-4'>
-                    {pastAgreements.map((agreement) => (
+                    {pastAgreements.map(agreement => (
                       <Link key={agreement.id} to={`/portal/service-agreements/${agreement.id}`}>
                         <ListCard className='hover:shadow-material-3 transition-shadow opacity-75'>
                           <div className='flex items-start justify-between mb-2'>
@@ -566,6 +645,106 @@ const BuildingDetail: React.FC = () => {
         </div>
       )}
 
+      {/* ESG Reports Section */}
+      {!editing && esgReports.length > 0 && (
+        <div className='bg-white rounded-lg shadow p-6 border border-slate-200'>
+          <h2 className='text-xl font-semibold mb-4 flex items-center'>
+            <Leaf className='w-5 h-5 mr-2 text-green-600' />
+            {t('buildings.esgReports.title') || 'ESG Reports'}
+          </h2>
+          {loadingRelated ? (
+            <div className='flex items-center justify-center py-8'>
+              <LoadingSpinner />
+            </div>
+          ) : (
+            <div className='space-y-4'>
+              {esgReports.map(esgReport => (
+                <div key={esgReport.id}>
+                  {esgReport.isPublic && esgReport.publicLinkId ? (
+                    <a
+                      href={`/esg-report/public/${esgReport.publicLinkId}`}
+                      target='_blank'
+                      rel='noopener noreferrer'
+                      className='block'
+                    >
+                      <ListCard className='hover:shadow-material-3 transition-shadow'>
+                        <div className='flex items-start justify-between'>
+                          <div className='flex-1'>
+                            <div className='flex items-center gap-2 mb-2'>
+                              <div className='p-2 bg-green-100 rounded-lg'>
+                                <Leaf className='w-4 h-4 text-green-600' />
+                              </div>
+                              <div>
+                                <h3 className='font-semibold text-gray-900'>
+                                  {t('buildings.esgReports.report') || 'ESG Service Report'}
+                                </h3>
+                                <p className='text-xs text-gray-500'>
+                                  {formatDate(esgReport.createdAt)}
+                                </p>
+                              </div>
+                            </div>
+                            <div className='mt-3 grid grid-cols-2 md:grid-cols-4 gap-3 text-sm'>
+                              <div>
+                                <p className='text-xs text-gray-500'>
+                                  {t('buildings.esgReports.roofSize') || 'Roof Size'}
+                                </p>
+                                <p className='font-medium text-gray-900'>{esgReport.roofSize} m²</p>
+                              </div>
+                              <div>
+                                <p className='text-xs text-gray-500'>
+                                  {t('buildings.esgReports.greenRoof') || 'Green Roof'}
+                                </p>
+                                <p className='font-medium text-gray-900'>
+                                  {esgReport.divisions.greenRoof}%
+                                </p>
+                              </div>
+                              <div>
+                                <p className='text-xs text-gray-500'>
+                                  {t('buildings.esgReports.coolRoof') || 'Cool Roof'}
+                                </p>
+                                <p className='font-medium text-gray-900'>
+                                  {esgReport.divisions.coolRoof}%
+                                </p>
+                              </div>
+                              <div>
+                                <p className='text-xs text-gray-500'>
+                                  {t('buildings.esgReports.noxReduction') || 'NOₓ Reduction'}
+                                </p>
+                                <p className='font-medium text-gray-900'>
+                                  {esgReport.divisions.noxReduction}%
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <ExternalLink className='w-5 h-5 text-green-600 flex-shrink-0 ml-3' />
+                        </div>
+                      </ListCard>
+                    </a>
+                  ) : (
+                    <ListCard>
+                      <div className='flex items-start'>
+                        <div className='p-2 bg-gray-100 rounded-lg'>
+                          <Leaf className='w-4 h-4 text-gray-400' />
+                        </div>
+                        <div className='ml-3'>
+                          <h3 className='font-semibold text-gray-600'>
+                            {t('buildings.esgReports.private') || 'ESG Report (Private)'}
+                          </h3>
+                          <p className='text-xs text-gray-500 mt-1'>
+                            {t('buildings.esgReports.privateDesc') ||
+                              'This report is not publicly available yet'}
+                          </p>
+                        </div>
+                      </div>
+                    </ListCard>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Activity Timeline */}
       {!editing && (
         <div className='bg-white rounded-lg shadow p-6 border border-slate-200'>
@@ -586,7 +765,7 @@ const BuildingDetail: React.FC = () => {
             </div>
           ) : (
             <div className='space-y-4'>
-              {activities.slice(0, 20).map((activity) => {
+              {activities.slice(0, 20).map(activity => {
                 const Icon = getActivityIcon(activity.type);
                 return (
                   <div
@@ -607,19 +786,12 @@ const BuildingDetail: React.FC = () => {
                               {activity.description}
                             </p>
                           )}
-                          <p className='text-xs text-gray-500 mt-2'>
-                            {formatDate(activity.date)}
-                          </p>
+                          <p className='text-xs text-gray-500 mt-2'>{formatDate(activity.date)}</p>
                         </div>
                         <div className='flex items-center space-x-2 ml-4'>
-                          {activity.status && (
-                            <StatusBadge status={activity.status} />
-                          )}
+                          {activity.status && <StatusBadge status={activity.status} />}
                           {activity.link && (
-                            <Link
-                              to={activity.link}
-                              className='text-blue-600 hover:text-blue-700'
-                            >
+                            <Link to={activity.link} className='text-blue-600 hover:text-blue-700'>
                               <ExternalLink className='w-4 h-4' />
                             </Link>
                           )}
@@ -639,7 +811,6 @@ const BuildingDetail: React.FC = () => {
           )}
         </div>
       )}
-
     </div>
   );
 };

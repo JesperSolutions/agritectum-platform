@@ -62,7 +62,9 @@ const UserManagement: React.FC = () => {
   }>({});
 
   // Password strength calculation
-  const calculatePasswordStrength = (pwd: string): { strength: 'weak' | 'fair' | 'good' | 'strong'; score: number; feedback: string[] } => {
+  const calculatePasswordStrength = (
+    pwd: string
+  ): { strength: 'weak' | 'fair' | 'good' | 'strong'; score: number; feedback: string[] } => {
     if (!pwd) {
       return { strength: 'weak', score: 0, feedback: [] };
     }
@@ -73,20 +75,20 @@ const UserManagement: React.FC = () => {
     // Length check
     if (pwd.length >= 8) score += 1;
     else feedback.push('Minst 8 tecken');
-    
+
     if (pwd.length >= 12) score += 1;
     if (pwd.length >= 16) score += 1;
 
     // Character variety checks
     if (/[a-z]/.test(pwd)) score += 1;
     else feedback.push('Lägg till små bokstäver');
-    
+
     if (/[A-Z]/.test(pwd)) score += 1;
     else feedback.push('Lägg till stora bokstäver');
-    
+
     if (/[0-9]/.test(pwd)) score += 1;
     else feedback.push('Lägg till siffror');
-    
+
     if (/[^a-zA-Z0-9]/.test(pwd)) score += 1;
     else feedback.push('Lägg till specialtecken');
 
@@ -115,7 +117,12 @@ const UserManagement: React.FC = () => {
   // Form validation
   const isFormValid = (): boolean => {
     if (editingUser) {
-      return !!(formData.email && formData.displayName && !fieldErrors.email && !fieldErrors.displayName);
+      return !!(
+        formData.email &&
+        formData.displayName &&
+        !fieldErrors.email &&
+        !fieldErrors.displayName
+      );
     } else {
       return !!(
         formData.email &&
@@ -133,12 +140,12 @@ const UserManagement: React.FC = () => {
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setFormData(prev => ({ ...prev, email: value }));
-    
+
     // Clear error when user starts typing
     if (fieldErrors.email) {
       setFieldErrors(prev => ({ ...prev, email: undefined }));
     }
-    
+
     // Validate email format
     if (value && value.length > 0) {
       const error = validateEmail(value);
@@ -152,7 +159,7 @@ const UserManagement: React.FC = () => {
   const handleDisplayNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setFormData(prev => ({ ...prev, displayName: value }));
-    
+
     // Clear error when user starts typing
     if (fieldErrors.displayName) {
       setFieldErrors(prev => ({ ...prev, displayName: undefined }));
@@ -163,12 +170,12 @@ const UserManagement: React.FC = () => {
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setPassword(value);
-    
+
     // Clear error when user starts typing
     if (fieldErrors.password) {
       setFieldErrors(prev => ({ ...prev, password: undefined }));
     }
-    
+
     // Validate password length
     if (value && value.length > 0 && value.length < 8) {
       setFieldErrors(prev => ({ ...prev, password: 'Lösenordet måste vara minst 8 tecken' }));
@@ -254,7 +261,12 @@ const UserManagement: React.FC = () => {
       const usersData = await userService.getUsers(branchId);
       logger.log('🔍 UserManagement: Received branch users data:', usersData);
       setUsers(usersData);
-      logger.log('✅ UserManagement: Successfully loaded', usersData.length, 'users for branch', branchId);
+      logger.log(
+        '✅ UserManagement: Successfully loaded',
+        usersData.length,
+        'users for branch',
+        branchId
+      );
     } catch (error) {
       console.error('❌ UserManagement: Error loading branch users:', error);
       setError(t('admin.errors.failedToLoadUsers'));
@@ -316,14 +328,19 @@ const UserManagement: React.FC = () => {
 
         // Warn if password is weak
         if (passwordStrength.strength === 'weak' || passwordStrength.strength === 'fair') {
-          if (!window.confirm('Lösenordet är svagt eller måttligt. Rekommenderas att använda ett starkare lösenord. Vill du fortsätta ändå?')) {
+          if (
+            !window.confirm(
+              'Lösenordet är svagt eller måttligt. Rekommenderas att använda ett starkare lösenord. Vill du fortsätta ändå?'
+            )
+          ) {
             setLoading(false);
             return;
           }
         }
 
         // Set permission level based on role
-        const permissionLevel = formData.role === 'inspector' ? 0 : formData.role === 'branchAdmin' ? 1 : 2;
+        const permissionLevel =
+          formData.role === 'inspector' ? 0 : formData.role === 'branchAdmin' ? 1 : 2;
 
         // Create user with Firebase Auth using Cloud Function
         const authResult = await createUserWithAuth({
@@ -343,12 +360,12 @@ const UserManagement: React.FC = () => {
 
         logger.log('✅ User created with Firebase Auth:', authResult.userId);
 
-        const employee = { 
-          id: authResult.userId!, 
+        const employee = {
+          id: authResult.userId!,
           uid: authResult.firebaseUid!,
-          ...formData, 
-          permissionLevel, 
-          branchId: targetBranchId 
+          ...formData,
+          permissionLevel,
+          branchId: targetBranchId,
         } as Employee;
 
         // Refresh the users list
@@ -366,12 +383,16 @@ const UserManagement: React.FC = () => {
       setShowPassword(false);
       setError('');
       setFieldErrors({});
-      
+
       // Show success toast
       if (editingUser) {
-        showSuccess(t('admin.userManagement.userUpdatedSuccessfully') || 'User updated successfully');
+        showSuccess(
+          t('admin.userManagement.userUpdatedSuccessfully') || 'User updated successfully'
+        );
       } else {
-        showSuccess(t('admin.userManagement.userCreatedSuccessfully') || 'User created successfully');
+        showSuccess(
+          t('admin.userManagement.userCreatedSuccessfully') || 'User created successfully'
+        );
       }
     } catch (error) {
       console.error('Error saving user:', error);
@@ -440,7 +461,7 @@ const UserManagement: React.FC = () => {
     try {
       await userService.toggleUserStatus(user.id, !user.isActive);
       setUsers(prev => prev.map(u => (u.id === user.id ? { ...u, isActive: !u.isActive } : u)));
-      
+
       const status = user.isActive ? 'deactivated' : 'activated';
       showSuccess(`User ${status} successfully`);
     } catch (error) {
@@ -452,7 +473,9 @@ const UserManagement: React.FC = () => {
   };
 
   const handleResetPassword = async (user: Employee) => {
-    if (!window.confirm(t('admin.userManagement.confirmResetPassword', { name: user.displayName }))) {
+    if (
+      !window.confirm(t('admin.userManagement.confirmResetPassword', { name: user.displayName }))
+    ) {
       return;
     }
 
@@ -620,7 +643,7 @@ const UserManagement: React.FC = () => {
             {/* Basic Information Section */}
             <div className='space-y-4'>
               <h3 className='text-sm font-semibold text-slate-900 border-b border-slate-200 pb-2'>
-                Grundläggande information
+                {t('admin.userManagement.basicInfo')}
               </h3>
               <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                 <div>
@@ -634,7 +657,9 @@ const UserManagement: React.FC = () => {
                     value={formData.email || ''}
                     onChange={handleEmailChange}
                     className={`mt-1 block w-full px-4 py-2.5 border rounded-lg shadow-sm focus:ring-2 focus:ring-slate-500 focus:border-slate-500 ${
-                      fieldErrors.email ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-slate-300'
+                      fieldErrors.email
+                        ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+                        : 'border-slate-300'
                     }`}
                     placeholder={t('admin.userManagement.emailPlaceholder')}
                   />
@@ -644,7 +669,10 @@ const UserManagement: React.FC = () => {
                 </div>
 
                 <div>
-                  <label htmlFor='displayName' className='block text-sm font-medium text-slate-700 mb-1'>
+                  <label
+                    htmlFor='displayName'
+                    className='block text-sm font-medium text-slate-700 mb-1'
+                  >
                     {t('admin.userManagement.displayName')} *
                   </label>
                   <div className='relative'>
@@ -655,7 +683,9 @@ const UserManagement: React.FC = () => {
                       value={formData.displayName || ''}
                       onChange={handleDisplayNameChange}
                       className={`mt-1 block w-full px-4 py-2.5 border rounded-lg shadow-sm focus:ring-2 focus:ring-slate-500 focus:border-slate-500 ${
-                        fieldErrors.displayName ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-slate-300'
+                        fieldErrors.displayName
+                          ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+                          : 'border-slate-300'
                       }`}
                       placeholder={t('admin.userManagement.displayNamePlaceholder')}
                       maxLength={100}
@@ -676,14 +706,16 @@ const UserManagement: React.FC = () => {
             {/* Role & Permissions Section */}
             <div className='space-y-4'>
               <h3 className='text-sm font-semibold text-slate-900 border-b border-slate-200 pb-2'>
-                Roll och behörigheter
+                {t('admin.userManagement.roleAndPermissions')}
               </h3>
               <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-
                 {/* Branch Selection - Required for superadmin */}
                 {currentUser?.role === 'superadmin' && (
                   <div className='md:col-span-2'>
-                    <label htmlFor='branchId' className='block text-sm font-medium text-slate-700 mb-1'>
+                    <label
+                      htmlFor='branchId'
+                      className='block text-sm font-medium text-slate-700 mb-1'
+                    >
                       {t('admin.userManagement.branchAssignment')} *
                     </label>
                     <select
@@ -720,9 +752,13 @@ const UserManagement: React.FC = () => {
                     className='mt-1 block w-full px-4 py-2.5 border-slate-300 rounded-lg shadow-sm focus:ring-2 focus:ring-slate-500 focus:border-slate-500'
                   >
                     <option value='inspector'>{t('admin.userManagement.roles.inspector')}</option>
-                    <option value='branchAdmin'>{t('admin.userManagement.roles.branchAdmin')}</option>
+                    <option value='branchAdmin'>
+                      {t('admin.userManagement.roles.branchAdmin')}
+                    </option>
                     {currentUser?.role === 'superadmin' && (
-                      <option value='superadmin'>{t('admin.userManagement.roles.superadmin')}</option>
+                      <option value='superadmin'>
+                        {t('admin.userManagement.roles.superadmin')}
+                      </option>
                     )}
                   </select>
                 </div>
@@ -746,10 +782,13 @@ const UserManagement: React.FC = () => {
             {!editingUser && (
               <div className='space-y-4'>
                 <h3 className='text-sm font-semibold text-slate-900 border-b border-slate-200 pb-2'>
-                  Lösenord
+                  {t('admin.userManagement.passwordSection')}
                 </h3>
                 <div>
-                  <label htmlFor='password' className='block text-sm font-medium text-slate-700 mb-1'>
+                  <label
+                    htmlFor='password'
+                    className='block text-sm font-medium text-slate-700 mb-1'
+                  >
                     {t('admin.userManagement.password')} *
                   </label>
                   <div className='mt-1 flex rounded-lg shadow-sm'>
@@ -761,7 +800,9 @@ const UserManagement: React.FC = () => {
                         value={password}
                         onChange={handlePasswordChange}
                         className={`block w-full px-4 py-2.5 pr-20 rounded-l-lg border focus:ring-2 focus:ring-slate-500 focus:border-slate-500 ${
-                          fieldErrors.password ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-slate-300'
+                          fieldErrors.password
+                            ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+                            : 'border-slate-300'
                         }`}
                         placeholder={t('admin.userManagement.passwordPlaceholder')}
                         minLength={8}
@@ -772,7 +813,11 @@ const UserManagement: React.FC = () => {
                         className='absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-500 hover:text-slate-700 p-1.5'
                         tabIndex={-1}
                       >
-                        {showPassword ? <EyeOff className='w-4 h-4' /> : <Eye className='w-4 h-4' />}
+                        {showPassword ? (
+                          <EyeOff className='w-4 h-4' />
+                        ) : (
+                          <Eye className='w-4 h-4' />
+                        )}
                       </button>
                     </div>
                     <button
@@ -784,7 +829,9 @@ const UserManagement: React.FC = () => {
                       {isGeneratingPassword ? (
                         <>
                           <LoadingSpinner size='sm' />
-                          <span className='ml-2'>Genererar...</span>
+                          <span className='ml-2'>
+                            {t('admin.userManagement.generatingPassword')}
+                          </span>
                         </>
                       ) : (
                         t('admin.userManagement.generatePassword')
@@ -795,33 +842,44 @@ const UserManagement: React.FC = () => {
                     <p className='mt-1 text-xs text-red-600'>{fieldErrors.password}</p>
                   )}
                 </div>
-                
+
                 {/* Password Strength Indicator */}
                 {password && (
                   <div className='mt-2'>
                     <div className='flex items-center justify-between mb-1'>
                       <span className='text-xs font-medium text-slate-600'>
-                        Lösenordets styrka:
+                        {t('admin.userManagement.passwordStrength')}
                       </span>
-                      <span className={`text-xs font-semibold ${
-                        passwordStrength.strength === 'weak' ? 'text-red-600' :
-                        passwordStrength.strength === 'fair' ? 'text-orange-600' :
-                        passwordStrength.strength === 'good' ? 'text-yellow-600' :
-                        'text-green-600'
-                      }`}>
-                        {passwordStrength.strength === 'weak' ? 'Svagt' :
-                         passwordStrength.strength === 'fair' ? 'Måttligt' :
-                         passwordStrength.strength === 'good' ? 'Bra' :
-                         'Mycket starkt'}
+                      <span
+                        className={`text-xs font-semibold ${
+                          passwordStrength.strength === 'weak'
+                            ? 'text-red-600'
+                            : passwordStrength.strength === 'fair'
+                              ? 'text-orange-600'
+                              : passwordStrength.strength === 'good'
+                                ? 'text-yellow-600'
+                                : 'text-green-600'
+                        }`}
+                      >
+                        {passwordStrength.strength === 'weak'
+                          ? t('admin.userManagement.passwordStrengthLevels.weak')
+                          : passwordStrength.strength === 'fair'
+                            ? t('admin.userManagement.passwordStrengthLevels.fair')
+                            : passwordStrength.strength === 'good'
+                              ? t('admin.userManagement.passwordStrengthLevels.good')
+                              : t('admin.userManagement.passwordStrengthLevels.strong')}
                       </span>
                     </div>
                     <div className='w-full bg-slate-200 rounded-full h-2'>
                       <div
                         className={`h-2 rounded-full transition-all duration-300 ${
-                          passwordStrength.strength === 'weak' ? 'bg-red-500' :
-                          passwordStrength.strength === 'fair' ? 'bg-orange-500' :
-                          passwordStrength.strength === 'good' ? 'bg-yellow-500' :
-                          'bg-green-500'
+                          passwordStrength.strength === 'weak'
+                            ? 'bg-red-500'
+                            : passwordStrength.strength === 'fair'
+                              ? 'bg-orange-500'
+                              : passwordStrength.strength === 'good'
+                                ? 'bg-yellow-500'
+                                : 'bg-green-500'
                         }`}
                         style={{ width: `${(passwordStrength.score / 8) * 100}%` }}
                       />
@@ -838,7 +896,7 @@ const UserManagement: React.FC = () => {
                     )}
                   </div>
                 )}
-                
+
                 <p className='mt-1 text-sm text-slate-500'>
                   {t('admin.userManagement.passwordHelp')}
                 </p>
@@ -966,7 +1024,9 @@ const UserManagement: React.FC = () => {
                         disabled={isResettingPassword}
                         className='p-2 text-orange-600 hover:text-orange-800 hover:bg-orange-50 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
                       >
-                        <RefreshCw className={`w-4 h-4 ${isResettingPassword ? 'animate-spin' : ''}`} />
+                        <RefreshCw
+                          className={`w-4 h-4 ${isResettingPassword ? 'animate-spin' : ''}`}
+                        />
                       </button>
                     </Tooltip>
 
@@ -1004,11 +1064,10 @@ const UserManagement: React.FC = () => {
               </h3>
               <div className='mb-4'>
                 <p className='text-sm text-slate-600 mb-2'>
-                  {t('admin.userManagement.passwordFor')}: <strong>{userForPassword.displayName}</strong>
+                  {t('admin.userManagement.passwordFor')}:{' '}
+                  <strong>{userForPassword.displayName}</strong>
                 </p>
-                <p className='text-sm text-slate-600 mb-4'>
-                  {userForPassword.email}
-                </p>
+                <p className='text-sm text-slate-600 mb-4'>{userForPassword.email}</p>
                 <div className='bg-slate-50 border border-slate-200 rounded-lg p-4'>
                   <div className='flex items-center justify-between'>
                     <code className='text-lg font-mono text-slate-900 break-all'>

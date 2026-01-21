@@ -1,11 +1,11 @@
 /**
  * ESG Calculation Utilities
- * 
+ *
  * Extracted and adapted from:
  * - Agri_API/utils/calculations.js - CO2 calculations
  * - Bluwave_Form scoring logic - Assessment scoring
  * - agritectum-roof-calculator types - ESG interfaces
- * 
+ *
  * Provides building-specific ESG calculation functions for the agritectum platform.
  */
 
@@ -17,7 +17,7 @@ import { logger } from './logger';
  * Based on location (latitude/longitude) or building type
  */
 export const CLIMATE_FACTORS = {
-  temperate: 1.0,    // Baseline (Nordic countries)
+  temperate: 1.0, // Baseline (Nordic countries)
   tropical: 1.2,
   arid: 0.9,
   continental: 1.1,
@@ -32,9 +32,9 @@ export type ClimateZone = keyof typeof CLIMATE_FACTORS;
  */
 export const CARBON_FACTORS: Record<RoofType, number> = {
   tile: 15.5,
-  metal: 8.2,      // Lower due to recyclability
+  metal: 8.2, // Lower due to recyclability
   shingle: 12.8,
-  slate: 20.1,     // Higher due to extraction
+  slate: 20.1, // Higher due to extraction
   flat: 10.5,
   other: 15.0,
 };
@@ -44,11 +44,11 @@ export const CARBON_FACTORS: Record<RoofType, number> = {
  * Based on material lifecycle, recyclability, and environmental impact
  */
 export const SUSTAINABILITY_SCORES: Record<RoofType, number> = {
-  metal: 85,       // Highly recyclable, long lifespan
-  flat: 75,       // Good for green roofs
-  tile: 65,       // Moderate recyclability
-  shingle: 55,    // Lower recyclability
-  slate: 50,      // High extraction impact
+  metal: 85, // Highly recyclable, long lifespan
+  flat: 75, // Good for green roofs
+  tile: 65, // Moderate recyclability
+  shingle: 55, // Lower recyclability
+  slate: 50, // High extraction impact
   other: 60,
 };
 
@@ -57,12 +57,12 @@ export const SUSTAINABILITY_SCORES: Record<RoofType, number> = {
  * Percentage of roof area suitable for solar panels
  */
 export const SOLAR_EFFICIENCY_FACTORS: Record<RoofType, number> = {
-  flat: 0.95,     // Optimal for solar
-  metal: 0.85,    // Good for mounting
-  tile: 0.70,     // Moderate suitability
-  shingle: 0.75,  // Moderate suitability
-  slate: 0.60,    // Lower suitability
-  other: 0.70,
+  flat: 0.95, // Optimal for solar
+  metal: 0.85, // Good for mounting
+  tile: 0.7, // Moderate suitability
+  shingle: 0.75, // Moderate suitability
+  slate: 0.6, // Lower suitability
+  other: 0.7,
 };
 
 /**
@@ -71,9 +71,9 @@ export const SOLAR_EFFICIENCY_FACTORS: Record<RoofType, number> = {
  */
 export const GWP_FACTORS: Record<RoofType, number> = {
   tile: 3.5,
-  metal: 2.0,     // Lower due to recyclability
+  metal: 2.0, // Lower due to recyclability
   shingle: 3.0,
-  slate: 4.5,     // Higher extraction impact
+  slate: 4.5, // Higher extraction impact
   flat: 2.5,
   other: 3.33,
 };
@@ -91,9 +91,9 @@ export function calculateCarbonFootprint(
   materialCost?: number
 ): number {
   if (!roofSize || roofSize <= 0) return 0;
-  
+
   const baseFootprint = roofSize * CARBON_FACTORS[roofType];
-  
+
   // If material cost is provided, adjust based on cost per m²
   if (materialCost && materialCost > 0) {
     const costPerSqm = materialCost / roofSize;
@@ -101,7 +101,7 @@ export function calculateCarbonFootprint(
     const costFactor = Math.min(1.5, Math.max(0.7, costPerSqm / 100));
     return baseFootprint * costFactor;
   }
-  
+
   return baseFootprint;
 }
 
@@ -111,18 +111,15 @@ export function calculateCarbonFootprint(
  * @param roofSize - Roof area in square meters (for bonus points)
  * @returns Sustainability score (0-100)
  */
-export function calculateSustainabilityScore(
-  roofType: RoofType,
-  roofSize?: number
-): number {
+export function calculateSustainabilityScore(roofType: RoofType, roofSize?: number): number {
   let score = SUSTAINABILITY_SCORES[roofType];
-  
+
   // Bonus points for larger roofs (more impact potential)
   if (roofSize && roofSize > 100) {
     const sizeBonus = Math.min(10, Math.floor(roofSize / 100));
     score = Math.min(100, score + sizeBonus);
   }
-  
+
   return Math.round(score);
 }
 
@@ -132,17 +129,14 @@ export function calculateSustainabilityScore(
  * @param roofType - Type of roofing material
  * @returns Potential annual energy generation in kWh/year
  */
-export function calculateSolarPotential(
-  roofSize: number,
-  roofType: RoofType
-): number {
+export function calculateSolarPotential(roofSize: number, roofType: RoofType): number {
   if (!roofSize || roofSize <= 0) return 0;
-  
+
   // Average solar irradiance in Nordic countries: ~1000 kWh/m²/year
   const baseIrradiance = 1000;
   const efficiency = SOLAR_EFFICIENCY_FACTORS[roofType];
-  const panelEfficiency = 0.20; // 20% panel efficiency
-  
+  const panelEfficiency = 0.2; // 20% panel efficiency
+
   return Math.round(roofSize * baseIrradiance * efficiency * panelEfficiency);
 }
 
@@ -152,19 +146,16 @@ export function calculateSolarPotential(
  * @param roofSize - Roof area in square meters
  * @returns Recycling potential percentage (0-100)
  */
-export function calculateRecyclingPotential(
-  roofType: RoofType,
-  roofSize: number
-): number {
+export function calculateRecyclingPotential(roofType: RoofType, roofSize: number): number {
   const recyclingRates: Record<RoofType, number> = {
-    metal: 95,     // Highly recyclable
-    tile: 70,     // Moderate recyclability
-    flat: 60,     // Depends on materials
-    shingle: 40,  // Lower recyclability
-    slate: 30,    // Difficult to recycle
+    metal: 95, // Highly recyclable
+    tile: 70, // Moderate recyclability
+    flat: 60, // Depends on materials
+    shingle: 40, // Lower recyclability
+    slate: 30, // Difficult to recycle
     other: 50,
   };
-  
+
   return recyclingRates[roofType] || 50;
 }
 
@@ -182,13 +173,13 @@ export function calculateNeutralityTimeline(
   declineRate: number = 0.03
 ): number | null {
   if (annualReduction <= 0) return null;
-  
+
   // Simplified calculation: years = initial / (annual_reduction + natural_decline)
   const naturalDecline = initialCO2 * declineRate;
   const totalAnnualReduction = annualReduction + naturalDecline;
-  
+
   if (totalAnnualReduction <= 0) return null;
-  
+
   const years = initialCO2 / totalAnnualReduction;
   return years > 100 ? null : Math.round(years * 10) / 10;
 }
@@ -210,28 +201,28 @@ export function calculateAnnualCO2Offset(
   }
 ): number {
   if (!roofSize || roofSize <= 0) return 0;
-  
+
   let offset = 0;
-  
+
   // Solar panel offset (if applicable)
   if (improvements?.solar) {
     const solarPotential = calculateSolarPotential(roofSize, roofType);
     // Average CO2 per kWh in Nordic grid: ~0.15 kg CO₂/kWh
     offset += solarPotential * 0.15;
   }
-  
+
   // Green roof offset (plant absorption)
   if (improvements?.greenRoof) {
     // Average plant absorption: ~0.5 kg CO₂ per m² per year
     offset += roofSize * 0.5;
   }
-  
+
   // Water management offset (reduced treatment)
   if (improvements?.waterManagement) {
     // Water retention reduces treatment needs: ~0.2 kg CO₂ per m² per year
     offset += roofSize * 0.2;
   }
-  
+
   return Math.round(offset);
 }
 
@@ -250,32 +241,32 @@ export function getSDGAlignment(
   }
 ): string[] {
   const sdgs: string[] = [];
-  
+
   // Always applicable SDGs
   sdgs.push('Climate Action');
   sdgs.push('Sustainable Cities and Communities');
-  
+
   // Solar improvements
   if (improvements?.solar) {
     sdgs.push('Affordable and Clean Energy');
   }
-  
+
   // Green roof improvements
   if (improvements?.greenRoof) {
     sdgs.push('Good Health and Well-being');
     sdgs.push('Life on Land');
   }
-  
+
   // Water management
   if (improvements?.waterManagement) {
     sdgs.push('Clean Water and Sanitation');
   }
-  
+
   // Recyclable materials
   if (roofType === 'metal' || roofType === 'tile') {
     sdgs.push('Responsible Consumption and Production');
   }
-  
+
   return sdgs;
 }
 
@@ -312,19 +303,19 @@ export function getSustainabilityRating(score: number): string {
  */
 export function getClimateZone(latitude?: number): ClimateZone {
   if (!latitude) return 'temperate';
-  
+
   // Simplified: Nordic countries are mostly temperate
   if (latitude >= 55 && latitude <= 72) return 'temperate';
   if (latitude > 72) return 'polar';
   if (latitude < 55) return 'continental';
-  
+
   return 'temperate';
 }
 
 /**
  * Roof type specifications based on environmental research and credible sources
  * These match the 4 division areas used in ESG service reports
- * 
+ *
  * Sources:
  * - Green Roof CO2: EPA Green Infrastructure studies (2-3 kg CO₂/m²/year)
  * - Photocatalytic NOx: Multiple studies show 0.08-0.12 kg NOx/m²/year reduction
@@ -385,7 +376,8 @@ export function calculateESGFromDivisions(
   }
 
   // Validate percentages sum to 100
-  const totalPercentage = divisions.greenRoof + divisions.noxReduction + divisions.coolRoof + divisions.socialActivities;
+  const totalPercentage =
+    divisions.greenRoof + divisions.noxReduction + divisions.coolRoof + divisions.socialActivities;
   if (Math.abs(totalPercentage - 100) > 0.1) {
     throw new Error('Division percentages must sum to 100%');
   }
@@ -433,22 +425,20 @@ export function calculateESGFromDivisions(
 
   // Annual CO2 offset is the total CO2 reduction
   const annualCO2Offset = Math.round(totalCo2PerYear);
-  
+
   logger.log('ESG Calculation Debug:', {
     roofSize,
     divisions,
     totalCo2PerYear,
     totalEnergyPerYear,
-    totalWaterPerYear
+    totalWaterPerYear,
   });
 
   // Calculate carbon footprint (initial manufacturing footprint)
   const carbonFootprint = Math.round(initialCo2);
 
   // Calculate neutrality timeline
-  const neutralityTimeline = totalCo2PerYear > 0
-    ? Math.ceil(initialCo2 / totalCo2PerYear)
-    : null;
+  const neutralityTimeline = totalCo2PerYear > 0 ? Math.ceil(initialCo2 / totalCo2PerYear) : null;
 
   // Calculate sustainability score based on total CO2 offset and roof size
   // Higher CO2 offset and larger roof = higher score
@@ -467,12 +457,11 @@ export function calculateESGFromDivisions(
   const photocatalyticRecycling = 50; // Lower
   const socialRecycling = 60; // Moderate
 
-  const weightedRecycling = (
+  const weightedRecycling =
     (divisions.greenRoof / 100) * greenRoofRecycling +
     (divisions.coolRoof / 100) * coolRoofRecycling +
     (divisions.noxReduction / 100) * photocatalyticRecycling +
-    (divisions.socialActivities / 100) * socialRecycling
-  );
+    (divisions.socialActivities / 100) * socialRecycling;
   const recyclingPotential = Math.round(weightedRecycling);
 
   // Get SDG alignment based on division areas
@@ -535,55 +524,44 @@ export function calculateBuildingESG(
 } {
   const roofSize = building.roofSize || 0;
   const roofType = building.roofType || 'other';
-  
+
   // Calculate material cost from reports if available
   const materialCost = reports?.reduce((sum, report) => {
     return sum + (report.materialCost || 0);
   }, 0);
-  
+
   // Calculate carbon footprint
-  const carbonFootprint = calculateCarbonFootprint(
-    roofSize,
-    roofType,
-    materialCost
-  );
-  
+  const carbonFootprint = calculateCarbonFootprint(roofSize, roofType, materialCost);
+
   // Calculate sustainability score
   const sustainabilityScore = calculateSustainabilityScore(roofType, roofSize);
-  
+
   // Calculate solar potential
   const solarPotential = calculateSolarPotential(roofSize, roofType);
-  
+
   // Calculate recycling potential
   const recyclingPotential = calculateRecyclingPotential(roofType, roofSize);
-  
+
   // Estimate improvements based on roof type
   const improvements = {
     solar: roofType === 'flat' || roofType === 'metal',
     greenRoof: roofType === 'flat',
     waterManagement: roofType === 'flat',
   };
-  
+
   // Calculate annual CO2 offset
-  const annualCO2Offset = calculateAnnualCO2Offset(
-    roofSize,
-    roofType,
-    improvements
-  );
-  
+  const annualCO2Offset = calculateAnnualCO2Offset(roofSize, roofType, improvements);
+
   // Calculate neutrality timeline
-  const neutralityTimeline = calculateNeutralityTimeline(
-    carbonFootprint,
-    annualCO2Offset
-  );
-  
+  const neutralityTimeline = calculateNeutralityTimeline(carbonFootprint, annualCO2Offset);
+
   // Get SDG alignment
   const sdgAlignment = getSDGAlignment(roofType, improvements);
   const sdgScore = calculateSDGScore(sdgAlignment);
-  
+
   // Get rating
   const rating = getSustainabilityRating(sustainabilityScore);
-  
+
   return {
     sustainabilityScore,
     carbonFootprint,

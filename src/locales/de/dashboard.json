@@ -63,13 +63,13 @@
   "dashboard.charts.customerGrowth": "Kundenwachstum",
   "dashboard.charts.issueTypes": "Art der Mängel",
   "dashboard.charts.roofTypes": "Dachtypen",
-  
+
   "DASHBOARD.TOTALREPORTS": "Gesamtanzahl Berichte",
   "DASHBOARD.COMPLETIONRATE": "Abschlussrate",
   "DASHBOARD.PENDINGREPORTS": "Ausstehende Berichte",
   "DASHBOARD.TEAMPRODUCTIVITY": "Teamproduktivität",
   "DASHBOARD.LASTUPDATED": "Zuletzt aktualisiert",
-  
+
   "dashboard.teamActivity": "Teamaktivität",
   "dashboard.vsLastWeek": "im Vergleich zur letzten Woche",
   "dashboard.aboveTarget": "Über Ziel",
@@ -81,12 +81,12 @@
   "dashboard.completionRate": "Abschlussrate",
   "dashboard.pendingReports": "Ausstehende Berichte",
   "dashboard.teamProductivity": "Teamproduktivität",
-  
+
   "dashboard.roles.inspector": "Inspektor",
   "dashboard.roles.branchAdmin": "Filialadministrator",
   "dashboard.roles.admin": "Administrator",
   "dashboard.inspector": "Inspektor",
-  
+
   "dashboard.active": "Aktive",
   "dashboard.completed": "Abgeschlossen",
   "dashboard.status": "Status",
@@ -115,7 +115,7 @@
   "quickActions.backToTop": "Nach oben",
   "quickActions.hide": "Schnellmenü ausblenden",
   "quickActions.restore": "Schnellmenü anzeigen",
-  
+
   "dashboard.superadmin": "Superadministrator",
   "dashboard.comprehensiveOverview": "Umfassende Übersicht",
   "dashboard.branches": "Filialen",
@@ -127,34 +127,40 @@
   "dashboard.totalRevenue": "Gesamtumsatz",
   "dashboard.reports": "Berichte",
   "dashboard.pending": "Ausstehend",
-  
+
   "dashboard.serviceAgreements.activeAgreements": "Aktive Verträge",
   "dashboard.serviceAgreements.ofTotal": "von {total} insgesamt",
   "dashboard.serviceAgreements.monthlyRevenue": "Monatsumsatz",
   "dashboard.serviceAgreements.expiringSoon": "Läuft bald ab",
   "dashboard.serviceAgreements.next30Days": "Nächste 30 Tage",
-  
+
   "dashboard.scheduledVisits.title": "Geplante Besuche",
   "dashboard.scheduledVisits.viewCalendar": "Kalender anzeigen",
   "dashboard.scheduledVisits.upcoming7Days": "Kommende (7 Tage)",
   "dashboard.scheduledVisits.scheduledVisits": "Geplante Besuche",
   "dashboard.scheduledVisits.overdue": "Überfällig",
-  
+
   "dashboard.financialOverview.title": "Finanzübersicht",
   "dashboard.financialOverview.viewAnalytics": "Analysen anzeigen",
   "dashboard.financialOverview.oneTimeRevenue": "Einmalige Einnahmen",
   "dashboard.financialOverview.recurringRevenue": "Wiederkehrende Einnahmen",
   "dashboard.financialOverview.recurringPercent": "Wiederkehrend %",
   "dashboard.financialOverview.ofTotalRevenue": "vom Gesamtumsatz",
-  
+
   "dashboard.todayTasks": "Heutige Aufgaben",
-  
+
   "dashboard.completedThisWeek": "Diese Woche abgeschlossen",
   "dashboard.scheduledThisWeek": "Diese Woche geplant",
   "dashboard.averageTime": "Durchschnittliche Zeit",
   "dashboard.hours": "Stunden",
   "dashboard.allTime": "insgesamt",
   "dashboard.upcoming": "bevorstehend",
-  "dashboard.activeUsers": "Aktive Benutzer"
-}
+  "dashboard.activeUsers": "Aktive Benutzer",
 
+  "dashboard.map.title": "Gebäudekarte",
+  "dashboard.map.subtitle": "Geografische Übersicht aller Immobilien",
+  "dashboard.map.noLocations": "Keine Gebäudestandorte verfügbar",
+  "dashboard.map.addLocations": "Fügen Sie Ihren Gebäuden Koordinaten hinzu, um sie auf der Karte zu sehen.",
+  "dashboard.map.buildingsShown": "Gebäude angezeigt",
+  "dashboard.viewDetails": "Details anzeigen"
+}

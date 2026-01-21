@@ -24,6 +24,7 @@ This document provides guidelines for using and creating components in the unifi
 **Location:** `src/components/ui/button.tsx`
 
 **Variants:**
+
 - `default` - Primary button (slate-700 background)
 - `destructive` - Danger button (red-600 background)
 - `outline` - Outlined button (white background, slate border)
@@ -32,12 +33,14 @@ This document provides guidelines for using and creating components in the unifi
 - `link` - Link button (text only with underline)
 
 **Sizes:**
+
 - `sm` - Small (h-8, px-3, text-xs)
 - `default` - Default (h-10, px-4, text-sm)
 - `lg` - Large (h-12, px-6, text-base)
 - `icon` - Icon only (h-10, w-10)
 
 **Usage:**
+
 ```typescript
 import { Button } from '@/components/ui/button';
 
@@ -49,6 +52,7 @@ import { Button } from '@/components/ui/button';
 ```
 
 **Do's:**
+
 - ✅ Use `default` variant for primary actions
 - ✅ Use `destructive` for destructive actions
 - ✅ Use `outline` or `secondary` for secondary actions
@@ -56,6 +60,7 @@ import { Button } from '@/components/ui/button';
 - ✅ Use `link` for text-only actions
 
 **Don'ts:**
+
 - ❌ Don't use brand colors (orange, blue) for UI buttons
 - ❌ Don't use custom border radius (always use `rounded-material`)
 - ❌ Don't use custom shadows (use Material elevation system)
@@ -65,11 +70,13 @@ import { Button } from '@/components/ui/button';
 **Location:** `src/components/ui/card.tsx`
 
 **Variants:**
+
 - `elevated` (default) - Card with shadow-material-2, hover to shadow-material-3
 - `outlined` - Card with border only, no shadow
 - `filled` - Card with slate-50 background
 
 **Usage:**
+
 ```typescript
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 
@@ -88,11 +95,13 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 ```
 
 **Do's:**
+
 - ✅ Use `Card` for all card containers
 - ✅ Use `CardHeader`, `CardContent`, `CardFooter` for structure
 - ✅ Use `CardTitle` and `CardDescription` for headers
 
 **Don'ts:**
+
 - ❌ Don't use custom card implementations
 - ❌ Don't use `rounded-lg` or `rounded-xl` (use `rounded-material`)
 - ❌ Don't use custom shadows (use Material elevation)
@@ -102,6 +111,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 **Location:** `src/components/ui/input.tsx`
 
 **Features:**
+
 - Material Design styling
 - 4dp border radius
 - Material elevation on focus
@@ -109,6 +119,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 - Proper focus states
 
 **Usage:**
+
 ```typescript
 import { Input } from '@/components/ui/input';
 
@@ -118,11 +129,13 @@ import { Input } from '@/components/ui/input';
 ```
 
 **Do's:**
+
 - ✅ Use `Input` for all text inputs
 - ✅ Use proper `type` attributes
 - ✅ Use `placeholder` for hints
 
 **Don'ts:**
+
 - ❌ Don't use legacy `FormField` or `ValidatedInput` components
 - ❌ Don't use custom border radius
 - ❌ Don't use gray or blue colors
@@ -132,6 +145,7 @@ import { Input } from '@/components/ui/input';
 **Location:** `src/components/shared/badges/StatusBadge.tsx`
 
 **Variants:**
+
 - `scheduled` - Blue badge
 - `in_progress` - Yellow badge
 - `completed` - Green badge
@@ -141,6 +155,7 @@ import { Input } from '@/components/ui/input';
 - `rejected` - Red badge
 
 **Usage:**
+
 ```typescript
 import StatusBadge from '@/components/shared/badges/StatusBadge';
 
@@ -149,11 +164,13 @@ import StatusBadge from '@/components/shared/badges/StatusBadge';
 ```
 
 **Do's:**
+
 - ✅ Use semantic status values
 - ✅ Provide `label` prop for custom labels
 - ✅ Use icons when appropriate
 
 **Don'ts:**
+
 - ❌ Don't use custom colors
 - ❌ Don't use custom border radius (always `rounded-full`)
 

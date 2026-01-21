@@ -18,7 +18,7 @@
   "serviceAgreement.noAgreementsMessage": "Kom i gang ved at tilføje din første serviceaftale.",
   "serviceAgreement.errorLoading": "Fejl ved indlæsning af serviceaftaler",
   "serviceAgreement.errorMessage": "Kunne ikke indlæse serviceaftaler. Tjek din forbindelse og prøv igen.",
-  
+
   "serviceAgreement.statusFilters.almostDue": "Næsten forfaldne",
   "serviceAgreement.statusFilters.dueTomorrow": "Forfalder i morgen",
   "serviceAgreement.statusFilters.dueInWeek": "Forfalder om en uge",
@@ -28,34 +28,34 @@
   "serviceAgreement.statusFilters.expired": "Udløbne",
   "serviceAgreement.statusFilters.cancelled": "Annullerede",
   "serviceAgreement.statusFilters.pending": "Afventende",
-  
+
   "serviceAgreement.viewMode.list": "Listevisning",
   "serviceAgreement.viewMode.map": "Kortvisning",
-  
+
   "serviceAgreement.table.customer": "Kunde",
   "serviceAgreement.table.title": "Titel",
   "serviceAgreement.table.type": "Type",
   "serviceAgreement.table.nextService": "Næste service",
   "serviceAgreement.table.status": "Status",
   "serviceAgreement.table.actions": "Handlinger",
-  
+
   "serviceAgreement.type.maintenance": "Vedligeholdelse",
   "serviceAgreement.type.inspection": "Inspektion",
   "serviceAgreement.type.repair": "Reparation",
   "serviceAgreement.type.other": "Andet",
-  
+
   "serviceAgreement.status.active": "Aktiv",
   "serviceAgreement.status.expired": "Udløbet",
   "serviceAgreement.status.cancelled": "Annulleret",
   "serviceAgreement.status.pending": "Afventende",
-  
+
   "serviceAgreement.frequency.weekly": "Ugentligt",
   "serviceAgreement.frequency.monthly": "Månedligt",
   "serviceAgreement.frequency.quarterly": "Kvartalsvis",
   "serviceAgreement.frequency.biannual": "Halvårligt",
   "serviceAgreement.frequency.annual": "Årligt",
   "serviceAgreement.frequency.custom": "Tilpasset",
-  
+
   "serviceAgreement.form.title": "Serviceaftale",
   "serviceAgreement.form.customer": "Kunde",
   "serviceAgreement.form.customerPlaceholder": "Vælg kunde",
@@ -83,7 +83,7 @@
   "serviceAgreement.form.noCustomers": "Ingen kunder fundet. Opret venligst en kunde først.",
   "serviceAgreement.form.retry": "Prøv igen",
   "serviceAgreement.form.refresh": "Opdater",
-  
+
   "serviceAgreement.validation.customerRequired": "Kunde er påkrævet",
   "serviceAgreement.validation.titleRequired": "Titel er påkrævet",
   "serviceAgreement.validation.startDateRequired": "Startdato er påkrævet",
@@ -91,7 +91,7 @@
   "serviceAgreement.validation.nextServiceDateRequired": "Næste servicedato er påkrævet",
   "serviceAgreement.validation.endDateAfterStart": "Slutdato skal være efter startdato",
   "serviceAgreement.validation.nextServiceDateValid": "Næste servicedato skal være inden for aftaleperioden",
-  
+
   "serviceAgreement.detail.title": "Serviceaftaledetaljer",
   "serviceAgreement.detail.customer": "Kunde",
   "serviceAgreement.detail.address": "Adresse",
@@ -118,24 +118,24 @@
   "serviceAgreement.detail.linkCopied": "Link kopieret til udklipsholder",
   "serviceAgreement.detail.acceptedOn": "Accepteret den",
   "serviceAgreement.detail.by": "af",
-  
+
   "serviceAgreement.map.title": "Serviceaftaler på kort",
   "serviceAgreement.map.noLocation": "Ingen placering tilgængelig",
   "serviceAgreement.map.loading": "Indlæser kort...",
-  
+
   "serviceAgreement.confirmDelete": "Er du sikker på, at du vil slette denne serviceaftale?",
   "serviceAgreement.confirmDeleteDescription": "Dette kan ikke fortrydes.",
   "serviceAgreement.deleting": "Sletter serviceaftale...",
   "serviceAgreement.deleted": "Serviceaftale slettet",
   "serviceAgreement.created": "Serviceaftale oprettet",
   "serviceAgreement.updated": "Serviceaftale opdateret",
-  
+
   "serviceAgreement.dueDate.days": "dage",
   "serviceAgreement.dueDate.day": "dag",
   "serviceAgreement.dueDate.overdue": "Forfalden",
   "serviceAgreement.dueDate.today": "I dag",
   "serviceAgreement.dueDate.tomorrow": "I morgen",
-  
+
   "serviceAgreement.public.title": "Serviceaftale",
   "serviceAgreement.public.headerTitle": "Agritectum Serviceaftale",
   "serviceAgreement.public.invalidToken": "Ugyldig token",
@@ -190,7 +190,7 @@
   "serviceAgreement.public.validation.emailInvalid": "Ugyldig e-mailadresse",
   "serviceAgreement.public.validation.termsRequired": "Du skal acceptere vilkårene",
   "serviceAgreement.public.validation.acceptanceRequired": "Du skal acceptere serviceaftalen",
-  
+
   "serviceAgreement.form.purpose.title": "1. AFTALENS FORMÅL",
   "serviceAgreement.form.purpose.placeholder": "Løbende service og vedligehold af taget for at sikre funktion, tæthed og lang levetid. Aftalen omfatter både udbedring af begyndende skader, forebyggende kontrol samt dokumentation til brug for drift og eventuel garantisikring.",
   "serviceAgreement.form.purpose.text": "Løbende service og vedligehold af taget for at sikre funktion, tæthed og lang levetid. Aftalen omfatter både udbedring af begyndende skader, forebyggende kontrol samt dokumentation til brug for drift og eventuel garantisikring.",
@@ -254,4 +254,3 @@
   "serviceAgreement.detail.sendError": "Kunne ikke sende serviceaftale",
   "serviceAgreement.detail.noEmail": "Kunde email er påkrævet for at sende aftalen"
 }
-

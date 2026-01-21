@@ -72,7 +72,7 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({
   };
 
   const badgeClass = statusStyles[status] || 'bg-blue-100 text-blue-800';
-  
+
   // Determine display label: use provided label, or translate status, or fallback to formatted status
   let displayLabel: string;
   if (label) {
@@ -89,14 +89,8 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({
   }
 
   return (
-    <span
-      className={cn(
-        'px-2 py-1 text-xs font-medium rounded-full',
-        badgeClass,
-        className
-      )}
-    >
-      {Icon && <Icon className="w-3 h-3 inline mr-1" />}
+    <span className={cn('px-2 py-1 text-xs font-medium rounded-full', badgeClass, className)}>
+      {Icon && <Icon className='w-3 h-3 inline mr-1' />}
       {displayLabel}
     </span>
   );

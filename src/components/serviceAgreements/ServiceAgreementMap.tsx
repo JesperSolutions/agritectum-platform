@@ -14,7 +14,10 @@ interface ServiceAgreementMapProps {
   onAgreementClick: (agreement: ServiceAgreement) => void;
 }
 
-const ServiceAgreementMap: React.FC<ServiceAgreementMapProps> = ({ agreements, onAgreementClick }) => {
+const ServiceAgreementMap: React.FC<ServiceAgreementMapProps> = ({
+  agreements,
+  onAgreementClick,
+}) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<L.Marker[]>([]);
@@ -61,20 +64,23 @@ const ServiceAgreementMap: React.FC<ServiceAgreementMapProps> = ({ agreements, o
       try {
         // Initialize map
         const map = L.map(mapRef.current, {
-          center: [59.334591, 18.063240], // Stockholm default
+          center: [59.334591, 18.06324], // Stockholm default
           zoom: 10,
           zoomControl: true,
           attributionControl: true,
         });
 
         // Add satellite tile layer
-        const tileLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-          attribution: 'Tiles © Esri',
-          maxZoom: 20,
-          crossOrigin: true,
-          keepBuffer: 2,
-          updateWhenIdle: true,
-        });
+        const tileLayer = L.tileLayer(
+          'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+          {
+            attribution: 'Tiles © Esri',
+            maxZoom: 20,
+            crossOrigin: true,
+            keepBuffer: 2,
+            updateWhenIdle: true,
+          }
+        );
 
         tileLayer.addTo(map);
         tileLayerRef.current = tileLayer;
@@ -109,7 +115,7 @@ const ServiceAgreementMap: React.FC<ServiceAgreementMapProps> = ({ agreements, o
 
     // Start initialization check
     const timer = setTimeout(checkAndInit, 100);
-    
+
     return () => {
       clearTimeout(timer);
     };
@@ -135,7 +141,7 @@ const ServiceAgreementMap: React.FC<ServiceAgreementMapProps> = ({ agreements, o
       spiderfyOnMaxZoom: true,
       showCoverageOnHover: false,
       zoomToBoundsOnClick: true,
-      iconCreateFunction: (cluster) => {
+      iconCreateFunction: cluster => {
         const count = cluster.getChildCount();
         return L.divIcon({
           html: `<div style="
@@ -169,8 +175,10 @@ const ServiceAgreementMap: React.FC<ServiceAgreementMapProps> = ({ agreements, o
         now.setHours(0, 0, 0, 0);
         const nextServiceDate = new Date(agreement.nextServiceDate);
         nextServiceDate.setHours(0, 0, 0, 0);
-        const daysUntilDue = Math.ceil((nextServiceDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-        
+        const daysUntilDue = Math.ceil(
+          (nextServiceDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+        );
+
         const colors = getMarkerColor(daysUntilDue);
 
         const icon = L.divIcon({
@@ -189,7 +197,7 @@ const ServiceAgreementMap: React.FC<ServiceAgreementMapProps> = ({ agreements, o
           iconAnchor: [12, 12],
         });
 
-        const marker = L.marker([agreement.latitude, agreement.longitude], { 
+        const marker = L.marker([agreement.latitude, agreement.longitude], {
           icon,
           riseOnHover: true,
         });
@@ -254,7 +262,9 @@ const ServiceAgreementMap: React.FC<ServiceAgreementMapProps> = ({ agreements, o
       <div className='bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden'>
         <div className='flex items-center justify-center h-96 bg-gray-50'>
           <div className='text-center'>
-            <p className='text-gray-500 text-lg mb-2'>{t('serviceAgreement.map.noLocation') || 'No agreements with location data'}</p>
+            <p className='text-gray-500 text-lg mb-2'>
+              {t('serviceAgreement.map.noLocation') || 'No agreements with location data'}
+            </p>
             <p className='text-sm text-gray-400'>Agreements need addresses to appear on the map</p>
           </div>
         </div>
@@ -275,7 +285,10 @@ const ServiceAgreementMap: React.FC<ServiceAgreementMapProps> = ({ agreements, o
       {isLoading && (
         <div className='absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center z-50'>
           <div className='text-center'>
-            <LoadingSpinner size='lg' text={t('serviceAgreement.map.loading') || 'Loading map...'} />
+            <LoadingSpinner
+              size='lg'
+              text={t('serviceAgreement.map.loading') || 'Loading map...'}
+            />
           </div>
         </div>
       )}
@@ -284,4 +297,3 @@ const ServiceAgreementMap: React.FC<ServiceAgreementMapProps> = ({ agreements, o
 };
 
 export default ServiceAgreementMap;
-

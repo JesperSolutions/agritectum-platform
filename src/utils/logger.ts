@@ -43,7 +43,7 @@ const isDebugEnabled = () => {
  * - info: Only logs in development
  * - debug: Only logs in development
  * - log: Only logs in development
- * 
+ *
  * Production builds suppress all non-error logs for performance and security.
  */
 export const logger = {

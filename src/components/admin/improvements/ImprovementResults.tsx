@@ -1,6 +1,6 @@
 /**
  * Improvement Results Component
- * 
+ *
  * Displays calculated ESG impact results from improvements
  */
 
@@ -48,10 +48,7 @@ interface ImprovementResultsProps {
   onExport?: (format: 'PDF' | 'Excel') => void;
 }
 
-const ImprovementResults: React.FC<ImprovementResultsProps> = ({
-  metrics,
-  onExport,
-}) => {
+const ImprovementResults: React.FC<ImprovementResultsProps> = ({ metrics, onExport }) => {
   const { t } = useIntl();
 
   const getScoreColor = (score: number) => {
@@ -69,28 +66,28 @@ const ImprovementResults: React.FC<ImprovementResultsProps> = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div className='space-y-6'>
       {/* Header with Export */}
-      <div className="bg-white rounded-lg shadow p-6 border border-slate-200">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold flex items-center">
-            <Award className="w-5 h-5 mr-2 text-green-600" />
+      <div className='bg-white rounded-lg shadow p-6 border border-slate-200'>
+        <div className='flex items-center justify-between mb-4'>
+          <h2 className='text-xl font-semibold flex items-center'>
+            <Award className='w-5 h-5 mr-2 text-green-600' />
             {t('admin.improvements.results') || 'Improvement Impact Results'}
           </h2>
           {onExport && (
-            <div className="flex space-x-2">
+            <div className='flex space-x-2'>
               <button
                 onClick={() => onExport('PDF')}
-                className="flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                className='flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors'
               >
-                <FileText className="w-4 h-4 mr-2" />
+                <FileText className='w-4 h-4 mr-2' />
                 PDF
               </button>
               <button
                 onClick={() => onExport('Excel')}
-                className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                className='flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors'
               >
-                <Download className="w-4 h-4 mr-2" />
+                <Download className='w-4 h-4 mr-2' />
                 Excel
               </button>
             </div>
@@ -99,17 +96,17 @@ const ImprovementResults: React.FC<ImprovementResultsProps> = ({
       </div>
 
       {/* Key Metrics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
         {/* Total Cost */}
         <ListCard>
-          <div className="text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-purple-50 border-4 border-purple-200 mb-3">
-              <DollarSign className="w-8 h-8 text-purple-600" />
+          <div className='text-center'>
+            <div className='inline-flex items-center justify-center w-16 h-16 rounded-full bg-purple-50 border-4 border-purple-200 mb-3'>
+              <DollarSign className='w-8 h-8 text-purple-600' />
             </div>
-            <p className="text-2xl font-bold text-purple-600">
+            <p className='text-2xl font-bold text-purple-600'>
               €{metrics.totalCost.toLocaleString()}
             </p>
-            <p className="text-sm font-medium text-gray-900">
+            <p className='text-sm font-medium text-gray-900'>
               {t('admin.improvements.totalCost') || 'Total Investment'}
             </p>
           </div>
@@ -117,60 +114,60 @@ const ImprovementResults: React.FC<ImprovementResultsProps> = ({
 
         {/* Annual CO2 Reduction */}
         <ListCard>
-          <div className="text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-50 border-4 border-green-200 mb-3">
-              <Leaf className="w-8 h-8 text-green-600" />
+          <div className='text-center'>
+            <div className='inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-50 border-4 border-green-200 mb-3'>
+              <Leaf className='w-8 h-8 text-green-600' />
             </div>
-            <p className="text-2xl font-bold text-green-600">
+            <p className='text-2xl font-bold text-green-600'>
               {metrics.annualCO2Reduction.toLocaleString()}
             </p>
-            <p className="text-sm font-medium text-gray-900">
+            <p className='text-sm font-medium text-gray-900'>
               {t('admin.improvements.annualCO2Reduction') || 'Annual CO₂ Reduction'}
             </p>
-            <p className="text-xs text-gray-500 mt-1">kg CO₂/year</p>
+            <p className='text-xs text-gray-500 mt-1'>kg CO₂/year</p>
           </div>
         </ListCard>
 
         {/* Annual Energy Savings */}
         <ListCard>
-          <div className="text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-yellow-50 border-4 border-yellow-200 mb-3">
-              <Sun className="w-8 h-8 text-yellow-600" />
+          <div className='text-center'>
+            <div className='inline-flex items-center justify-center w-16 h-16 rounded-full bg-yellow-50 border-4 border-yellow-200 mb-3'>
+              <Sun className='w-8 h-8 text-yellow-600' />
             </div>
-            <p className="text-2xl font-bold text-yellow-600">
+            <p className='text-2xl font-bold text-yellow-600'>
               {metrics.annualEnergySavings.toLocaleString()}
             </p>
-            <p className="text-sm font-medium text-gray-900">
+            <p className='text-sm font-medium text-gray-900'>
               {t('admin.improvements.annualEnergySavings') || 'Annual Energy Savings'}
             </p>
-            <p className="text-xs text-gray-500 mt-1">kWh/year</p>
+            <p className='text-xs text-gray-500 mt-1'>kWh/year</p>
           </div>
         </ListCard>
 
         {/* Annual Water Savings */}
         <ListCard>
-          <div className="text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-50 border-4 border-blue-200 mb-3">
-              <Droplet className="w-8 h-8 text-blue-600" />
+          <div className='text-center'>
+            <div className='inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-50 border-4 border-blue-200 mb-3'>
+              <Droplet className='w-8 h-8 text-blue-600' />
             </div>
-            <p className="text-2xl font-bold text-blue-600">
+            <p className='text-2xl font-bold text-blue-600'>
               {metrics.annualWaterSavings.toFixed(1)}
             </p>
-            <p className="text-sm font-medium text-gray-900">
+            <p className='text-sm font-medium text-gray-900'>
               {t('admin.improvements.annualWaterSavings') || 'Annual Water Savings'}
             </p>
-            <p className="text-xs text-gray-500 mt-1">m³/year</p>
+            <p className='text-xs text-gray-500 mt-1'>m³/year</p>
           </div>
         </ListCard>
       </div>
 
       {/* Financial Metrics */}
-      <div className="bg-white rounded-lg shadow p-6 border border-slate-200">
-        <h3 className="text-lg font-semibold mb-4 flex items-center">
-          <DollarSign className="w-5 h-5 mr-2 text-green-600" />
+      <div className='bg-white rounded-lg shadow p-6 border border-slate-200'>
+        <h3 className='text-lg font-semibold mb-4 flex items-center'>
+          <DollarSign className='w-5 h-5 mr-2 text-green-600' />
           {t('admin.improvements.financialAnalysis') || 'Financial Analysis'}
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
           <IconLabel
             icon={TrendingUp}
             label={t('admin.improvements.npv') || 'Net Present Value (10yr)'}
@@ -211,21 +208,21 @@ const ImprovementResults: React.FC<ImprovementResultsProps> = ({
       </div>
 
       {/* Sustainability Score */}
-      <div className="bg-white rounded-lg shadow p-6 border border-slate-200">
-        <h3 className="text-lg font-semibold mb-4 flex items-center">
-          <Award className="w-5 h-5 mr-2 text-green-600" />
+      <div className='bg-white rounded-lg shadow p-6 border border-slate-200'>
+        <h3 className='text-lg font-semibold mb-4 flex items-center'>
+          <Award className='w-5 h-5 mr-2 text-green-600' />
           {t('admin.improvements.sustainabilityScore') || 'Sustainability Score'}
         </h3>
-        <div className="flex items-center justify-center">
+        <div className='flex items-center justify-center'>
           <div
             className={`inline-flex items-center justify-center w-32 h-32 rounded-full border-8 ${getScoreBgColor(
               metrics.sustainabilityScore
             )} ${getScoreColor(metrics.sustainabilityScore)}`}
           >
-            <span className="text-5xl font-bold">{metrics.sustainabilityScore}</span>
+            <span className='text-5xl font-bold'>{metrics.sustainabilityScore}</span>
           </div>
         </div>
-        <p className="text-center text-sm text-gray-600 mt-4">
+        <p className='text-center text-sm text-gray-600 mt-4'>
           {t('admin.improvements.sustainabilityNote') ||
             'Score improved by configured improvements'}
         </p>

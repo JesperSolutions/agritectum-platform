@@ -4,11 +4,9 @@
   "marketing.userRoles.superadmin.manageBranches": "Hantera alla filialer",
   "marketing.userRoles.superadmin.viewAllReports": "Visa alla rapporter",
   "marketing.userRoles.superadmin.createUsers": "Skapa/redigera användare",
-  "marketing.userRoles.superadmin.systemAnalytics": "Systemanalys"
-  ,
+  "marketing.userRoles.superadmin.systemAnalytics": "Systemanalys",
   "marketing.userRoles.superadmin.title": "Superadmin",
-  "marketing.userRoles.superadmin.permissionLevel": "Behörighetsnivå 2"
-  ,
+  "marketing.userRoles.superadmin.permissionLevel": "Behörighetsnivå 2",
   "marketing.brand.name": "Taklaget Service",
   "marketing.brand.tagline": "Professionell taginspektionshantering",
   "marketing.backToApp": "Tillbaka till appen",

@@ -4,12 +4,12 @@
  * @movedDate 2025-01-11
  * @reason Original dashboard implementation replaced by SmartDashboard
  * @deprecated Do not use in new code. Kept for reference only.
- * 
+ *
  * This component was moved to legacy on 2025-01-11 because:
  * - OriginalDashboard component (lines 41-611) is no longer used
  * - SmartDashboard is now the canonical implementation
  * - The current Dashboard.tsx now only exports a wrapper that uses SmartDashboard
- * 
+ *
  * Migration: Use SmartDashboard from src/components/dashboards/SmartDashboard.tsx
  */
 
@@ -115,7 +115,6 @@ const OriginalDashboard: React.FC = () => {
       dataActions.setReports(state.reports);
     }
   }, [state.reports, dataActions]);
-
 
   // Ensure fresh data when user focuses or returns to dashboard
   useEffect(() => {
@@ -269,7 +268,7 @@ const OriginalDashboard: React.FC = () => {
               ) : null}
               {(!branchInfo?.logoUrl || branchInfo.logoUrl === '') && (
                 <div className='fallback-logo flex items-center justify-center w-16 h-16'>
-                  <AgritectumLogo size="sm" showText={false} />
+                  <AgritectumLogo size='sm' showText={false} />
                 </div>
               )}
             </div>

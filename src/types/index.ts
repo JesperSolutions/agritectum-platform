@@ -107,6 +107,8 @@ export interface Branch {
   municipality?: string;
   postalCode?: string;
   country: string;
+  // Currency configuration for this branch
+  currency?: string; // Currency code (e.g., 'DKK', 'SEK', 'EUR', 'NOK'). If not set, will be determined by country.
 }
 
 export interface Customer {
@@ -126,6 +128,11 @@ export interface Customer {
   totalReports: number;
   totalRevenue: number;
   notes?: string;
+  notificationPreferences?: {
+    email: boolean;
+    sms: boolean;
+    inApp: boolean;
+  };
 }
 
 export interface Employee {
@@ -146,7 +153,7 @@ export type AppointmentStatus = 'scheduled' | 'in_progress' | 'completed' | 'can
 export interface Appointment {
   id: string;
   branchId: string;
-  
+
   // Customer information
   customerId?: string; // Optional link to customers collection
   customerName: string;
@@ -154,32 +161,32 @@ export interface Appointment {
   customerPhone?: string;
   customerEmail?: string;
   customerCompany?: string;
-  
+
   // Assignment information
   assignedInspectorId: string;
   assignedInspectorName: string;
-  
+
   // Scheduling information
   scheduledDate: string; // ISO date string: "2025-10-02"
   scheduledTime: string; // Time string: "10:00"
-  duration: number;      // Duration in minutes (default: 120)
-  
+  duration: number; // Duration in minutes (default: 120)
+
   // Status and workflow
   status: AppointmentStatus;
   reportId?: string; // Links to report once inspection starts
-  
+
   // Details
-  title: string;                  // e.g., "Roof Inspection - Åkergatan 15"
-  description?: string;           // Admin notes for inspector
-  inspectorNotes?: string;        // Inspector's post-appointment notes
+  title: string; // e.g., "Roof Inspection - Åkergatan 15"
+  description?: string; // Admin notes for inspector
+  inspectorNotes?: string; // Inspector's post-appointment notes
   appointmentType?: 'inspection' | 'follow_up' | 'estimate' | 'other';
-  
+
   // Customer response (for acceptance/denial workflow)
   customerResponse?: 'pending' | 'accepted' | 'rejected';
   customerResponseAt?: string;
   customerResponseReason?: string;
   scheduledVisitId?: string; // Link to scheduledVisit
-  
+
   // Metadata
   createdBy: string;
   createdByName: string;
@@ -203,7 +210,9 @@ export interface Report {
   customerEmail?: string;
   customerType?: 'individual' | 'company'; // Customer type: individual or company
   buildingId: string; // Required: Link to buildings collection - all reports must be associated with a building
+  buildingName?: string; // Building name (denormalized for quick access and display)
   buildingAddress?: string; // Building address (denormalized for quick access, but buildingId is source of truth)
+  buildingSnapshot?: BuildingSnapshot; // Snapshot of building data at time of report creation (for audit trail)
   roofType: RoofType;
   roofAge?: number;
   roofSize?: number; // Total roof area in square meters (optional)
@@ -218,6 +227,7 @@ export interface Report {
   pdfLink?: string;
   images?: string[];
   inspectionDuration?: number; // minutes
+  inspectionChecklist?: Record<string, InspectionChecklistItem>; // Inspection checklist items with status and comments
   priorReportId?: string; // Link to previous report/offer for the same customer
   appointmentId?: string; // Link to appointment this report was created from
   isOffer: boolean; // Indicates if this is an offer being sent to customer
@@ -237,6 +247,12 @@ export interface Report {
   profitMargin?: number; // Profit margin percentage (optional, for future use)
 }
 
+export interface InspectionChecklistItem {
+  id: string;
+  status: 'pass' | 'fail' | 'needs_review' | 'na';
+  comment?: string;
+}
+
 export interface RoofPinMarker {
   id: string;
   x: number; // Percentage from left (0-100)
@@ -253,7 +269,19 @@ export interface MapMarker {
   severity: IssueSeverity;
 }
 
-export type RoofType = 'tile' | 'metal' | 'shingle' | 'slate' | 'flat' | 'other';
+export type RoofType =
+  | 'tile'
+  | 'metal'
+  | 'shingle'
+  | 'slate'
+  | 'flat_bitumen_2layer'
+  | 'flat_bitumen_3layer'
+  | 'flat_rubber'
+  | 'flat_pvc'
+  | 'flat_tpo'
+  | 'flat_epdm'
+  | 'flat'
+  | 'other';
 
 export type ReportStatus =
   | 'draft'
@@ -317,12 +345,7 @@ export interface OfflineReport extends Omit<Report, 'id'> {
 
 // Offer and Acceptance Flow Types
 
-export type OfferStatus = 
-  | 'pending'
-  | 'accepted'
-  | 'rejected'
-  | 'awaiting_response'
-  | 'expired';
+export type OfferStatus = 'pending' | 'accepted' | 'rejected' | 'awaiting_response' | 'expired';
 
 export interface Offer {
   id: string;
@@ -330,46 +353,46 @@ export interface Offer {
   branchId: string;
   createdBy: string;
   createdByName: string;
-  
+
   // Customer information
   customerName: string;
   customerEmail: string;
   customerPhone?: string;
   customerAddress: string;
-  
+
   // Offer details
   title: string;
   description: string;
   totalAmount: number;
   currency: string; // Default: 'DKK'
-  
+
   // Pricing breakdown
   laborCost: number;
   materialCost: number;
   travelCost: number;
   overheadCost: number;
   profitMargin: number;
-  
+
   // Status and workflow
   status: OfferStatus;
   statusHistory: OfferStatusHistory[];
-  
+
   // Validity and timing
   validUntil: string; // ISO date string
   sentAt: string;
   respondedAt?: string;
-  
+
   // Communication
   publicLink: string; // Unique URL for customer access
   emailSent: boolean;
   followUpAttempts: number;
   lastFollowUpAt?: string;
-  
+
   // Response
   customerResponse?: 'accept' | 'reject';
   customerResponseReason?: string;
   customerResponseAt?: string;
-  
+
   // Metadata
   createdAt: string;
   updatedAt: string;
@@ -451,6 +474,7 @@ export interface ESGMetrics {
 
 export interface Building {
   id: string;
+  name?: string; // Building name (e.g., "Main Office", "Warehouse")
   companyId?: string; // If owned by company
   customerId?: string; // If owned by individual customer
   address: string;
@@ -463,6 +487,22 @@ export interface Building {
   createdBy: string;
   branchId?: string;
   esgMetrics?: ESGMetrics; // Optional ESG metrics
+  lastVerified?: string; // Last time building data was verified as accurate
+}
+
+// Building history snapshot for audit trail
+export interface BuildingSnapshot {
+  id: string;
+  buildingId: string;
+  address: string;
+  buildingType?: 'residential' | 'commercial' | 'industrial';
+  roofType?: RoofType;
+  roofSize?: number;
+  latitude?: number;
+  longitude?: number;
+  changedBy: string;
+  changedAt: string;
+  changeReason?: string;
 }
 
 // Building ESG Improvements Types
@@ -558,12 +598,17 @@ export interface BuildingImprovements {
 
 // Scheduled Visit Types (extends Appointment)
 
-export type ScheduledVisitStatus = 'scheduled' | 'in_progress' | 'completed' | 'cancelled' | 'no_show';
+export type ScheduledVisitStatus =
+  | 'scheduled'
+  | 'in_progress'
+  | 'completed'
+  | 'cancelled'
+  | 'no_show';
 
 export interface ScheduledVisit {
   id: string;
   branchId: string;
-  
+
   // Customer information
   customerId?: string; // Optional link to customers collection
   customerName: string;
@@ -571,37 +616,37 @@ export interface ScheduledVisit {
   customerPhone?: string;
   customerEmail?: string;
   customerCompany?: string;
-  
+
   // Building and company links
   buildingId?: string;
   companyId?: string;
-  
+
   // Assignment information
   assignedInspectorId: string;
   assignedInspectorName: string;
-  
+
   // Scheduling information
   scheduledDate: string; // ISO date string: "2025-10-02"
   scheduledTime: string; // Time string: "10:00"
-  duration: number;      // Duration in minutes (default: 120)
-  
+  duration: number; // Duration in minutes (default: 120)
+
   // Status and workflow
   status: ScheduledVisitStatus;
   reportId?: string; // Links to report once inspection starts
   appointmentId?: string; // Link back to appointment
-  
+
   // Customer response (for acceptance/denial workflow)
   customerResponse?: 'pending' | 'accepted' | 'rejected';
   customerResponseAt?: string;
   customerResponseReason?: string;
   publicToken?: string; // For public acceptance link
-  
+
   // Details
-  title: string;                  // e.g., "Roof Inspection - Åkergatan 15"
-  description?: string;           // Admin notes for inspector
-  inspectorNotes?: string;        // Inspector's post-visit notes
+  title: string; // e.g., "Roof Inspection - Åkergatan 15"
+  description?: string; // Admin notes for inspector
+  inspectorNotes?: string; // Inspector's post-visit notes
   visitType: 'inspection' | 'maintenance' | 'repair' | 'other';
-  
+
   // Metadata
   createdBy: string;
   createdByName: string;
@@ -695,4 +740,33 @@ export interface RejectedOrder {
   rejectedReason?: string;
   createdBy: string; // Branch manager who created original appointment
   createdAt: string;
+}
+
+// Notification types
+export type NotificationType =
+  | 'report_completed'
+  | 'esg_report_completed'
+  | 'service_agreement_created'
+  | 'appointment_scheduled'
+  | 'appointment_reminder'
+  | 'system';
+
+export interface Notification {
+  id: string;
+  userId: string; // User who receives the notification
+  customerId?: string; // Customer ID (for customer users)
+  type: NotificationType;
+  title: string;
+  message: string;
+  link?: string; // URL to navigate to when clicked
+  read: boolean;
+  createdAt: string;
+  readAt?: string;
+  metadata?: {
+    reportId?: string;
+    esgReportId?: string;
+    serviceAgreementId?: string;
+    appointmentId?: string;
+    buildingId?: string;
+  };
 }

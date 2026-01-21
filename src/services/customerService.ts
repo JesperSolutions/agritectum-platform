@@ -15,9 +15,7 @@ import { Customer, User } from '../types';
 
 // Helper function to remove undefined fields
 const removeUndefinedFields = (obj: any): any => {
-  return Object.fromEntries(
-    Object.entries(obj).filter(([_, value]) => value !== undefined)
-  );
+  return Object.fromEntries(Object.entries(obj).filter(([_, value]) => value !== undefined));
 };
 
 // Create a new customer
@@ -32,10 +30,10 @@ export const createCustomer = async (
       totalRevenue: 0,
       createdAt: new Date().toISOString(),
     };
-    
+
     // Remove undefined fields to prevent Firestore errors
     const cleanData = removeUndefinedFields(customerWithDefaults);
-    
+
     const docRef = await addDoc(customersRef, cleanData);
     return docRef.id;
   } catch (error) {
@@ -143,18 +141,18 @@ export const updateCustomer = async (
       if (!customer) {
         throw new Error('Customer not found');
       }
-      
+
       // Branch admin can only edit customers in their branch
       if (customer.branchId !== currentUser.branchId) {
         throw new Error('Cannot edit customer outside your branch');
       }
-      
+
       // Prevent changing branchId for branch admins
       if (updates.branchId && updates.branchId !== currentUser.branchId) {
         throw new Error('Cannot change customer branch assignment');
       }
     }
-    
+
     const customerRef = doc(db, 'customers', customerId);
     await updateDoc(customerRef, {
       ...updates,
@@ -171,10 +169,7 @@ export const updateCustomer = async (
 };
 
 // Delete customer
-export const deleteCustomer = async (
-  customerId: string,
-  currentUser?: User
-): Promise<void> => {
+export const deleteCustomer = async (customerId: string, currentUser?: User): Promise<void> => {
   try {
     // Force token refresh FIRST
     const { logger } = await import('../utils/logger');
@@ -185,7 +180,7 @@ export const deleteCustomer = async (
       logger.debug('Token refreshed');
       await new Promise(resolve => setTimeout(resolve, 100));
     }
-    
+
     // JUST DELETE IT
     logger.debug(`Deleting customer: ${customerId}`);
     const customerRef = doc(db, 'customers', customerId);

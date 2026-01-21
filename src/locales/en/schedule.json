@@ -105,7 +105,7 @@
   "schedule.filters.inProgress": "In Progress",
   "schedule.filters.completed": "Completed",
   "schedule.filters.cancelled": "Cancelled",
-  
+
   "SCHEDULE.ADDAPPOINTMENT": "New Appointment",
   "schedule.addAppointment": "New Appointment",
   "schedule.form.conflictWarning": "Conflict: {inspector} already has an inspection at this time.",
@@ -114,7 +114,7 @@
   "schedule.todaysAppointments": "Today's Inspections",
   "schedule.appointment.start": "Start",
   "schedule.errorMessage": "An error occurred",
-  
+
   "schedule.visits.subtitle": "View scheduled roofer visits for your buildings",
   "schedule.visits.noVisits": "No scheduled visits found",
   "schedule.visits.dateTime": "Date & Time",
@@ -142,7 +142,7 @@
   "schedule.visits.rejectReasonLabel": "Reason for Rejection (Optional)",
   "schedule.visits.rejectReasonPlaceholder": "Please let us know why you're rejecting this appointment...",
   "schedule.visits.confirmReject": "Confirm Rejection",
-  
+
   "schedule.list.date": "Date",
   "schedule.list.customer": "Customer",
   "schedule.list.address": "Address",
@@ -150,7 +150,7 @@
   "schedule.list.status": "Status",
   "schedule.list.actions": "Actions",
   "schedule.list.viewReport": "View Report",
-  
+
   "schedule.appointment.edit": "Edit",
   "schedule.appointment.cancel": "Cancel",
   "schedule.appointment.delete": "Delete",

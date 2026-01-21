@@ -23,6 +23,12 @@ const roofTypeOptions = [
   { value: 'shingle' },
   { value: 'slate' },
   { value: 'flat' },
+  { value: 'flat_bitumen_2layer' },
+  { value: 'flat_bitumen_3layer' },
+  { value: 'flat_rubber' },
+  { value: 'flat_pvc' },
+  { value: 'flat_tpo' },
+  { value: 'flat_epdm' },
   { value: 'other' },
 ];
 

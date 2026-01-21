@@ -24,18 +24,30 @@ const messages: Record<SupportedLocale, any> = {
 if (import.meta.env.DEV) {
   logger.log('[i18n] Messages loaded for locales:', Object.keys(messages));
   logger.log('[i18n] English messages type:', typeof enMessages);
-  logger.log('[i18n] English messages is object:', typeof enMessages === 'object' && enMessages !== null);
+  logger.log(
+    '[i18n] English messages is object:',
+    typeof enMessages === 'object' && enMessages !== null
+  );
   if (enMessages && typeof enMessages === 'object') {
     const enKeys = Object.keys(enMessages);
     logger.log('[i18n] English messages keys count:', enKeys.length);
     logger.log('[i18n] English messages first 5 keys:', enKeys.slice(0, 5));
-    logger.log('[i18n] English has navigation.scheduledVisits:', 'navigation.scheduledVisits' in enMessages);
+    logger.log(
+      '[i18n] English has navigation.scheduledVisits:',
+      'navigation.scheduledVisits' in enMessages
+    );
     if (enMessages['navigation.scheduledVisits']) {
-      logger.log('[i18n] English navigation.scheduledVisits value:', enMessages['navigation.scheduledVisits']);
+      logger.log(
+        '[i18n] English navigation.scheduledVisits value:',
+        enMessages['navigation.scheduledVisits']
+      );
     }
   }
   if (svMessages && typeof svMessages === 'object') {
-    logger.log('[i18n] Swedish has navigation.scheduledVisits:', 'navigation.scheduledVisits' in svMessages);
+    logger.log(
+      '[i18n] Swedish has navigation.scheduledVisits:',
+      'navigation.scheduledVisits' in svMessages
+    );
   }
 }
 
@@ -74,17 +86,20 @@ export const updateLocale = (locale: SupportedLocale): void => {
     logger.warn(`Locale ${locale} not available, falling back to ${defaultLocale}`);
     return;
   }
-  
+
   // Update the intl instance
-  Object.assign(intl, createIntl(
-    {
-      locale,
-      messages: messages[locale],
-      defaultLocale,
-    },
-    cache
-  ));
-  
+  Object.assign(
+    intl,
+    createIntl(
+      {
+        locale,
+        messages: messages[locale],
+        defaultLocale,
+      },
+      cache
+    )
+  );
+
   // Store as manual selection so it won't be overridden by auto-detection
   storeLocale(locale, true);
 };

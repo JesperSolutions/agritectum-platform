@@ -15,13 +15,16 @@ import { getAuth } from 'firebase/auth';
 import { Company } from '../types';
 
 const removeUndefinedFields = <T extends Record<string, unknown>>(data: T): T => {
-  const cleanedEntries = Object.entries(data).reduce<Record<string, unknown>>((acc, [key, value]) => {
-    if (value === undefined) {
+  const cleanedEntries = Object.entries(data).reduce<Record<string, unknown>>(
+    (acc, [key, value]) => {
+      if (value === undefined) {
+        return acc;
+      }
+      acc[key] = value;
       return acc;
-    }
-    acc[key] = value;
-    return acc;
-  }, {});
+    },
+    {}
+  );
 
   return cleanedEntries as T;
 };
@@ -83,11 +86,7 @@ export const getCompanies = async (branchId?: string): Promise<Company[]> => {
         orderBy('createdAt', 'desc')
       );
     } else {
-      q = query(
-        companiesRef,
-        where('isActive', '==', true),
-        orderBy('createdAt', 'desc')
-      );
+      q = query(companiesRef, where('isActive', '==', true), orderBy('createdAt', 'desc'));
     }
 
     const querySnapshot = await getDocs(q);
@@ -97,7 +96,7 @@ export const getCompanies = async (branchId?: string): Promise<Company[]> => {
     })) as Company[];
   } catch (error: any) {
     console.error('Error fetching companies:', error);
-    
+
     // Handle missing index error
     if (error.code === 'failed-precondition' || error.message?.includes('index')) {
       console.warn('⚠️ Missing Firestore index detected. Falling back to client-side filtering.');
@@ -108,12 +107,12 @@ export const getCompanies = async (branchId?: string): Promise<Company[]> => {
         ...doc.data(),
       })) as Company[];
 
-      const filtered = branchId 
+      const filtered = branchId
         ? companies.filter(company => company.branchId === branchId && company.isActive)
         : companies.filter(company => company.isActive);
 
-      return filtered.sort((a, b) => 
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      return filtered.sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       );
     }
 
@@ -192,5 +191,3 @@ export const deleteCompany = async (companyId: string): Promise<void> => {
     throw new Error('Failed to delete company');
   }
 };
-
-

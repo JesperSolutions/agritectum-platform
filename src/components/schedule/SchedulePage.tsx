@@ -9,7 +9,17 @@ import AppointmentList from './AppointmentList';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { logger } from '../../utils/logger';
 import { Button } from '../ui/button';
-import { Plus, RefreshCw, AlertTriangle, Calendar, CheckCircle, FileText, Filter, ChevronUp, ChevronDown } from 'lucide-react';
+import {
+  Plus,
+  RefreshCw,
+  AlertTriangle,
+  Calendar,
+  CheckCircle,
+  FileText,
+  Filter,
+  ChevronUp,
+  ChevronDown,
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const SchedulePage: React.FC = () => {
@@ -26,15 +36,15 @@ const SchedulePage: React.FC = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingAppointment, setEditingAppointment] = useState<Appointment | null>(null);
   const [filterStatus, setFilterStatus] = useState<AppointmentStatus | 'all'>('all');
-  
+
   const userCanManage = currentUser && currentUser.permissionLevel >= 1; // Branch Admin or Superadmin
   const isInspector = currentUser && currentUser.permissionLevel === 0; // Inspector only
-  
+
   // Enhanced filter states (after isInspector is defined)
   // For inspectors, default to 'all' to show all their appointments
-  const [dateFilter, setDateFilter] = useState<'all' | 'today' | 'week' | 'month' | 'upcoming' | 'past'>(
-    () => (currentUser?.permissionLevel === 0 ? 'all' : 'all')
-  );
+  const [dateFilter, setDateFilter] = useState<
+    'all' | 'today' | 'week' | 'month' | 'upcoming' | 'past'
+  >(() => (currentUser?.permissionLevel === 0 ? 'all' : 'all'));
   const [hideCancelled, setHideCancelled] = useState<boolean>(false);
   const [hideCompleted, setHideCompleted] = useState<boolean>(false);
   const [hideOld, setHideOld] = useState<boolean>(false);
@@ -88,7 +98,9 @@ const SchedulePage: React.FC = () => {
     try {
       await appointmentService.deleteAppointment(appointment.id);
       await loadAppointments();
-      showSuccess(t('schedule.appointment.deletedSuccessfully') || 'Appointment deleted successfully');
+      showSuccess(
+        t('schedule.appointment.deletedSuccessfully') || 'Appointment deleted successfully'
+      );
     } catch (err: any) {
       const errorMsg = err.message || t('schedule.error.delete') || 'Failed to delete appointment';
       showError(errorMsg);
@@ -104,7 +116,9 @@ const SchedulePage: React.FC = () => {
     try {
       await appointmentService.cancelAppointment(appointment.id, reason);
       await loadAppointments();
-      showSuccess(t('schedule.appointment.cancelledSuccessfully') || 'Appointment cancelled successfully');
+      showSuccess(
+        t('schedule.appointment.cancelledSuccessfully') || 'Appointment cancelled successfully'
+      );
     } catch (err: any) {
       const errorMsg = err.message || t('schedule.error.cancel') || 'Failed to cancel appointment';
       showError(errorMsg);
@@ -136,7 +150,7 @@ const SchedulePage: React.FC = () => {
           // Continue anyway - the navigation should still work
         }
       }
-      
+
       // Navigate to report creation with pre-filled data
       navigate('/report/new', {
         state: {
@@ -211,7 +225,7 @@ const SchedulePage: React.FC = () => {
   const filteredAppointments = useMemo(() => {
     let filtered = appointments;
     const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-    
+
     // Debug logging for inspectors
     if (isInspector && appointments.length > 0) {
       logger.log('🔍 Inspector appointments filter debug:', {
@@ -223,12 +237,12 @@ const SchedulePage: React.FC = () => {
         hideOld,
       });
     }
-    
+
     // Status filter (existing)
     if (filterStatus !== 'all') {
       filtered = filtered.filter(apt => apt.status === filterStatus);
     }
-    
+
     // Date filter (new)
     if (dateFilter === 'today') {
       filtered = filtered.filter(apt => apt.scheduledDate === today);
@@ -251,7 +265,7 @@ const SchedulePage: React.FC = () => {
         return aptDate >= new Date(today) && aptDate <= monthLater;
       });
     }
-    
+
     // Hide filters (new)
     if (hideCancelled) {
       filtered = filtered.filter(apt => apt.status !== 'cancelled');
@@ -267,28 +281,39 @@ const SchedulePage: React.FC = () => {
         return aptDate >= cutoff;
       });
     }
-    
+
     // Inspector filter (admin only)
     if (userCanManage && inspectorFilter !== 'all') {
       filtered = filtered.filter(apt => apt.assignedInspectorId === inspectorFilter);
     }
-    
+
     // Debug logging for filtered result
     if (isInspector && appointments.length > 0) {
       logger.log('✅ Filtered appointments count:', filtered.length);
     }
-    
+
     return filtered;
-  }, [appointments, filterStatus, dateFilter, hideCancelled, hideCompleted, hideOld, inspectorFilter, userCanManage, isInspector]);
+  }, [
+    appointments,
+    filterStatus,
+    dateFilter,
+    hideCancelled,
+    hideCompleted,
+    hideOld,
+    inspectorFilter,
+    userCanManage,
+    isInspector,
+  ]);
 
   // Get today's appointments for inspectors
   const todaysAppointments = useMemo(() => {
     if (!isInspector) return [];
-    
+
     const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
-    return appointments.filter(appointment => 
-      appointment.scheduledDate === today && 
-      (appointment.status === 'scheduled' || appointment.status === 'in_progress')
+    return appointments.filter(
+      appointment =>
+        appointment.scheduledDate === today &&
+        (appointment.status === 'scheduled' || appointment.status === 'in_progress')
     );
   }, [appointments, isInspector]);
 
@@ -310,11 +335,7 @@ const SchedulePage: React.FC = () => {
             </p>
           </div>
           <div className='flex items-center gap-2'>
-            <Button
-              variant='outline'
-              onClick={loadAppointments}
-              disabled={loading}
-            >
+            <Button variant='outline' onClick={loadAppointments} disabled={loading}>
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
               <span className='hidden sm:inline'>{t('schedule.refresh')}</span>
             </Button>
@@ -336,12 +357,15 @@ const SchedulePage: React.FC = () => {
             className='flex items-center gap-2 text-slate-700 hover:text-slate-900'
           >
             <Filter className='w-4 h-4' />
-            <span className='text-sm font-medium'>
-              {t('schedule.filters') || 'Filters'}
-            </span>
+            <span className='text-sm font-medium'>{t('schedule.filters') || 'Filters'}</span>
             {showFilters ? <ChevronUp className='w-4 h-4' /> : <ChevronDown className='w-4 h-4' />}
           </button>
-          {(filterStatus !== 'all' || dateFilter !== 'all' || hideCancelled || hideCompleted || hideOld || inspectorFilter !== 'all') && (
+          {(filterStatus !== 'all' ||
+            dateFilter !== 'all' ||
+            hideCancelled ||
+            hideCompleted ||
+            hideOld ||
+            inspectorFilter !== 'all') && (
             <button
               onClick={() => {
                 setFilterStatus('all');
@@ -480,7 +504,7 @@ const SchedulePage: React.FC = () => {
             </span>
           </div>
           <div className='space-y-2'>
-            {todaysAppointments.map((appointment) => (
+            {todaysAppointments.map(appointment => (
               <div key={appointment.id} className='bg-white rounded-lg p-3 border border-blue-100'>
                 <div className='flex items-center justify-between'>
                   <div className='flex-1'>
@@ -491,12 +515,16 @@ const SchedulePage: React.FC = () => {
                     </div>
                   </div>
                   <div className='flex items-center gap-2'>
-                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                      appointment.status === 'scheduled' 
-                        ? 'bg-blue-100 text-blue-800' 
-                        : 'bg-yellow-100 text-yellow-800'
-                    }`}>
-                      {appointment.status === 'scheduled' ? t('schedule.status.scheduled') : t('schedule.status.inProgress')}
+                    <span
+                      className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                        appointment.status === 'scheduled'
+                          ? 'bg-blue-100 text-blue-800'
+                          : 'bg-yellow-100 text-yellow-800'
+                      }`}
+                    >
+                      {appointment.status === 'scheduled'
+                        ? t('schedule.status.scheduled')
+                        : t('schedule.status.inProgress')}
                     </span>
                     {appointment.status === 'scheduled' && (
                       <Button
@@ -512,15 +540,17 @@ const SchedulePage: React.FC = () => {
                       <Button
                         size='sm'
                         variant='outline'
-                        onClick={() => navigate('/report/new', {
-                          state: {
-                            appointmentId: appointment.id,
-                            customerName: appointment.customerName,
-                            customerAddress: appointment.customerAddress,
-                            customerPhone: appointment.customerPhone,
-                            customerEmail: appointment.customerEmail,
-                          },
-                        })}
+                        onClick={() =>
+                          navigate('/report/new', {
+                            state: {
+                              appointmentId: appointment.id,
+                              customerName: appointment.customerName,
+                              customerAddress: appointment.customerAddress,
+                              customerPhone: appointment.customerPhone,
+                              customerEmail: appointment.customerEmail,
+                            },
+                          })
+                        }
                       >
                         <FileText className='w-4 h-4' />
                         {t('schedule.appointment.createReport')}
@@ -555,7 +585,8 @@ const SchedulePage: React.FC = () => {
                 : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
             }`}
           >
-            {t('schedule.filters.scheduled')} ({appointments.filter(a => a.status === 'scheduled').length})
+            {t('schedule.filters.scheduled')} (
+            {appointments.filter(a => a.status === 'scheduled').length})
           </button>
           <button
             onClick={() => setFilterStatus('in_progress')}
@@ -565,7 +596,8 @@ const SchedulePage: React.FC = () => {
                 : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
             }`}
           >
-            {t('schedule.filters.inProgress')} ({appointments.filter(a => a.status === 'in_progress').length})
+            {t('schedule.filters.inProgress')} (
+            {appointments.filter(a => a.status === 'in_progress').length})
           </button>
           <button
             onClick={() => setFilterStatus('completed')}
@@ -575,7 +607,8 @@ const SchedulePage: React.FC = () => {
                 : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
             }`}
           >
-            {t('schedule.filters.completed')} ({appointments.filter(a => a.status === 'completed').length})
+            {t('schedule.filters.completed')} (
+            {appointments.filter(a => a.status === 'completed').length})
           </button>
           <button
             onClick={() => setFilterStatus('cancelled')}
@@ -585,7 +618,8 @@ const SchedulePage: React.FC = () => {
                 : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
             }`}
           >
-            {t('schedule.filters.cancelled')} ({appointments.filter(a => a.status === 'cancelled').length})
+            {t('schedule.filters.cancelled')} (
+            {appointments.filter(a => a.status === 'cancelled').length})
           </button>
         </div>
       </div>
@@ -617,4 +651,3 @@ const SchedulePage: React.FC = () => {
 };
 
 export default SchedulePage;
-

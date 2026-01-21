@@ -1,5 +1,6 @@
 # Software Requirements Specification (SRS)
-## Taklaget Service App
+
+## Agritectum Platform
 
 **Version:** 1.0.0  
 **Date:** January 2025  
@@ -27,11 +28,12 @@
 
 ### 1.1 Purpose
 
-This document provides a comprehensive specification for the Taklaget Service App, a professional roof inspection management system designed for inspection companies to manage inspections, generate reports, schedule appointments, and communicate with customers.
+This document provides a comprehensive specification for the Agritectum Platform, a professional roof inspection management system designed for inspection companies to manage inspections, generate reports, schedule appointments, and communicate with customers.
 
 ### 1.2 Scope
 
-The Taklaget Service App is a web-based application that enables:
+The Agritectum Platform is a web-based application that enables:
+
 - Multi-branch inspection management
 - Real-time report creation and editing
 - Customer relationship management
@@ -74,6 +76,7 @@ This document is organized into sections covering functional requirements, user 
 ### 2.1 Product Perspective
 
 The Taklaget Service App is a standalone web application that operates in the cloud using Firebase as the backend infrastructure. It integrates with:
+
 - **Firebase Authentication** - User authentication and authorization
 - **Cloud Firestore** - NoSQL database for data storage
 - **Cloud Storage** - File storage for images and documents
@@ -83,6 +86,7 @@ The Taklaget Service App is a standalone web application that operates in the cl
 ### 2.2 Product Functions
 
 **Core Features:**
+
 1. User Authentication & Authorization
 2. Multi-Branch Management
 3. Inspection Report Creation & Management
@@ -97,24 +101,28 @@ The Taklaget Service App is a standalone web application that operates in the cl
 ### 2.3 User Classes and Characteristics
 
 #### 2.3.1 Super Admin
+
 - **Purpose:** System-wide administration
 - **Characteristics:** Full system access, manages all branches and users
 - **Technical Skills:** Advanced
 - **Frequency of Use:** Daily
 
 #### 2.3.2 Branch Admin
+
 - **Purpose:** Manage specific branch operations
 - **Characteristics:** Manages branch users, customers, and reports
 - **Technical Skills:** Intermediate
 - **Frequency of Use:** Daily
 
 #### 2.3.3 Inspector
+
 - **Purpose:** Conduct inspections and create reports
 - **Characteristics:** Field workers, mobile users
 - **Technical Skills:** Basic to Intermediate
 - **Frequency of Use:** Daily
 
 #### 2.3.4 Customer (External)
+
 - **Purpose:** View inspection reports
 - **Characteristics:** Non-technical users
 - **Technical Skills:** Basic
@@ -123,12 +131,14 @@ The Taklaget Service App is a standalone web application that operates in the cl
 ### 2.4 Operating Environment
 
 **Client Requirements:**
+
 - Modern web browser (Chrome, Firefox, Safari, Edge)
 - JavaScript enabled
 - Internet connection (with offline support)
 - Responsive design for mobile, tablet, and desktop
 
 **Server Requirements:**
+
 - Firebase Hosting
 - Cloud Firestore
 - Cloud Storage
@@ -154,26 +164,31 @@ The Taklaget Service App is a standalone web application that operates in the cl
 **Complexity:** Medium
 
 #### 3.1.1 Description
+
 Secure user authentication with role-based access control supporting three user roles: Inspector, Branch Admin, and Super Admin.
 
 #### 3.1.2 Functional Requirements
 
 **FR-1.1:** System shall support email/password authentication
+
 - **Input:** Email address, password
 - **Output:** Authentication token, user session
 - **Validation:** Email format, password strength
 
 **FR-1.2:** System shall implement role-based access control
+
 - **Roles:** Inspector (Level 0), Branch Admin (Level 1), Super Admin (Level 2)
 - **Permissions:** Hierarchical permission system
 - **Branch Access:** Users assigned to specific branches
 
 **FR-1.3:** System shall support session management
+
 - **Token Refresh:** Automatic token refresh
 - **Session Timeout:** Configurable timeout
 - **Logout:** Secure session termination
 
 #### 3.1.3 Business Rules
+
 - Password must be minimum 8 characters
 - Failed login attempts: 5 attempts before temporary lockout
 - Session timeout: 24 hours
@@ -187,32 +202,38 @@ Secure user authentication with role-based access control supporting three user 
 **Complexity:** High
 
 #### 3.2.1 Description
+
 Create, edit, view, and manage roof inspection reports with images, issues, and recommendations.
 
 #### 3.2.2 Functional Requirements
 
 **FR-2.1:** System shall allow creation of new inspection reports
+
 - **Input:** Customer info, inspection details, issues, images
 - **Output:** Saved report with unique ID
 - **Validation:** Required fields, data types
 
 **FR-2.2:** System shall support report editing
+
 - **Edit Mode:** Draft reports can be edited
 - **Version Control:** Track changes and history
 - **Status Management:** Draft → Completed → Sent
 
 **FR-2.3:** System shall generate PDF reports
+
 - **PDF Format:** Professional branded PDF
 - **Content:** Customer info, inspection details, issues, recommendations
 - **Images:** Embedded images in PDF
 - **QR Code:** Link to online report view
 
 **FR-2.4:** System shall support report sharing
+
 - **Public Link:** Unique URL for customer access
 - **Email Sharing:** Send report via email
 - **Access Control:** Time-limited access
 
 #### 3.2.3 Business Rules
+
 - Reports are branch-specific
 - Only assigned inspectors can edit their reports
 - Draft reports can be edited indefinitely
@@ -227,26 +248,31 @@ Create, edit, view, and manage roof inspection reports with images, issues, and 
 **Complexity:** Medium
 
 #### 3.3.1 Description
+
 Manage customer information, track history, and maintain customer relationships.
 
 #### 3.3.2 Functional Requirements
 
 **FR-3.1:** System shall store customer information
+
 - **Fields:** Name, email, phone, address, company
 - **History:** Track all inspections for customer
 - **Revenue:** Calculate total revenue per customer
 
 **FR-3.2:** System shall support customer search
+
 - **Search Criteria:** Name, email, phone, company
 - **Filters:** Date range, branch, status
 - **Sorting:** By name, date, revenue
 
 **FR-3.3:** System shall track customer history
+
 - **Report History:** All reports for customer
 - **Timeline:** Chronological view
 - **Statistics:** Total inspections, revenue, last contact
 
 #### 3.3.3 Business Rules
+
 - Customers are branch-specific
 - Customer data is GDPR compliant
 - Duplicate prevention based on email/phone
@@ -260,26 +286,31 @@ Manage customer information, track history, and maintain customer relationships.
 **Complexity:** Medium
 
 #### 3.4.1 Description
+
 Schedule, manage, and track inspection appointments.
 
 #### 3.4.2 Functional Requirements
 
 **FR-4.1:** System shall allow appointment creation
+
 - **Input:** Customer info, date, time, inspector, notes
 - **Output:** Scheduled appointment
 - **Validation:** Date/time conflicts, inspector availability
 
 **FR-4.2:** System shall support appointment status tracking
+
 - **Statuses:** Scheduled, In Progress, Completed, Cancelled, No Show
 - **Transitions:** State machine for status changes
 - **Notifications:** Email notifications for status changes
 
 **FR-4.3:** System shall provide calendar view
+
 - **Calendar:** Monthly/weekly/daily views
 - **Filters:** By inspector, branch, status
 - **Drag & Drop:** Reschedule appointments
 
 #### 3.4.3 Business Rules
+
 - Appointments are branch-specific
 - Default duration: 2 hours
 - Buffer time: 30 minutes between appointments
@@ -294,26 +325,31 @@ Schedule, manage, and track inspection appointments.
 **Complexity:** Medium
 
 #### 3.5.1 Description
+
 Automated and manual email notifications for various events.
 
 #### 3.5.2 Functional Requirements
 
 **FR-5.1:** System shall send automated emails
+
 - **Triggers:** Report completion, appointment reminders, status changes
 - **Templates:** Customizable email templates
 - **Personalization:** Dynamic content based on context
 
 **FR-5.2:** System shall support manual email sending
+
 - **Compose:** Create custom emails
 - **Attachments:** Attach PDF reports
 - **Templates:** Use predefined templates
 
 **FR-5.3:** System shall track email delivery
+
 - **Status:** Sent, Delivered, Opened, Bounced
 - **Logs:** Email history and status
 - **Retry:** Automatic retry for failed sends
 
 #### 3.5.3 Business Rules
+
 - Email templates are branch-specific
 - Maximum email size: 10MB
 - Email rate limit: 100 emails/hour
@@ -328,26 +364,31 @@ Automated and manual email notifications for various events.
 **Complexity:** High
 
 #### 3.6.1 Description
+
 Analytics dashboard with business metrics and insights.
 
 #### 3.6.2 Functional Requirements
 
 **FR-6.1:** System shall provide analytics dashboard
+
 - **Metrics:** Reports created, revenue, customers, appointments
 - **Charts:** Visual representations of data
 - **Filters:** Date range, branch, inspector
 
 **FR-6.2:** System shall support data export
+
 - **Formats:** CSV, Excel, PDF
 - **Data:** Reports, customers, appointments, revenue
 - **Scheduling:** Scheduled exports
 
 **FR-6.3:** System shall track key performance indicators
+
 - **KPIs:** Revenue, report completion rate, customer satisfaction
 - **Trends:** Historical data and trends
 - **Comparisons:** Period-over-period comparisons
 
 #### 3.6.3 Business Rules
+
 - Analytics are branch-specific (except for Super Admin)
 - Data aggregation: Real-time
 - Export limit: 10,000 records
@@ -359,21 +400,21 @@ Analytics dashboard with business metrics and insights.
 
 ### 4.1 Permission Matrix
 
-| Feature | Inspector | Branch Admin | Super Admin |
-|---------|-----------|--------------|-------------|
-| View Dashboard | ✅ | ✅ | ✅ |
-| Create Reports | ✅ | ✅ | ✅ |
-| Edit Own Reports | ✅ | ✅ | ✅ |
-| Edit All Reports | ❌ | ✅ | ✅ |
-| Delete Reports | ❌ | ✅ | ✅ |
-| View All Reports | ❌ | ✅ (Branch) | ✅ (All) |
-| Manage Customers | ❌ | ✅ | ✅ |
-| Manage Users | ❌ | ✅ (Branch) | ✅ (All) |
-| Manage Branches | ❌ | ❌ | ✅ |
-| View Analytics | ❌ | ✅ (Branch) | ✅ (All) |
-| Manage Appointments | ✅ | ✅ | ✅ |
-| Manage Email Templates | ❌ | ❌ | ✅ |
-| System Configuration | ❌ | ❌ | ✅ |
+| Feature                | Inspector | Branch Admin | Super Admin |
+| ---------------------- | --------- | ------------ | ----------- |
+| View Dashboard         | ✅        | ✅           | ✅          |
+| Create Reports         | ✅        | ✅           | ✅          |
+| Edit Own Reports       | ✅        | ✅           | ✅          |
+| Edit All Reports       | ❌        | ✅           | ✅          |
+| Delete Reports         | ❌        | ✅           | ✅          |
+| View All Reports       | ❌        | ✅ (Branch)  | ✅ (All)    |
+| Manage Customers       | ❌        | ✅           | ✅          |
+| Manage Users           | ❌        | ✅ (Branch)  | ✅ (All)    |
+| Manage Branches        | ❌        | ❌           | ✅          |
+| View Analytics         | ❌        | ✅ (Branch)  | ✅ (All)    |
+| Manage Appointments    | ✅        | ✅           | ✅          |
+| Manage Email Templates | ❌        | ❌           | ✅          |
+| System Configuration   | ❌        | ❌           | ✅          |
 
 ### 4.2 Branch Access
 
@@ -691,6 +732,7 @@ Analytics dashboard with business metrics and insights.
 ### 6.1 User Interfaces
 
 #### 6.1.1 Web Application
+
 - **Framework:** React 18.3
 - **Styling:** Tailwind CSS
 - **UI Components:** Radix UI, Custom Components
@@ -698,6 +740,7 @@ Analytics dashboard with business metrics and insights.
 - **Browser Support:** Chrome, Firefox, Safari, Edge (last 2 versions)
 
 #### 6.1.2 Design System
+
 - **Colors:** Primary blue (#3B82F6), Success green (#10B981), Danger red (#EF4444)
 - **Typography:** Noto Sans, system fonts
 - **Spacing:** 4px base unit
@@ -712,6 +755,7 @@ Analytics dashboard with business metrics and insights.
 ### 6.3 Software Interfaces
 
 #### 6.3.1 Firebase Services
+
 - **Authentication:** Firebase Auth
 - **Database:** Cloud Firestore
 - **Storage:** Cloud Storage
@@ -719,6 +763,7 @@ Analytics dashboard with business metrics and insights.
 - **Hosting:** Firebase Hosting
 
 #### 6.3.2 External APIs
+
 - **Email Service:** Nodemailer / SendGrid
 - **PDF Generation:** jsPDF, html2canvas
 - **QR Code:** qrcode library
@@ -820,6 +865,7 @@ Analytics dashboard with business metrics and insights.
 ### 8.2 Technology Stack
 
 **Frontend:**
+
 - React 18.3
 - TypeScript 5.5
 - Tailwind CSS 3.4
@@ -828,6 +874,7 @@ Analytics dashboard with business metrics and insights.
 - Zustand 5.0 (State Management)
 
 **Backend:**
+
 - Firebase 12.2
 - Cloud Firestore
 - Cloud Functions
@@ -835,6 +882,7 @@ Analytics dashboard with business metrics and insights.
 - Firebase Authentication
 
 **DevOps:**
+
 - Vite (Build Tool)
 - ESLint (Linting)
 - Prettier (Formatting)
@@ -1058,9 +1106,9 @@ interface Customer {
 
 ## Document Control
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0.0 | January 2025 | AI Documentation System | Initial SRS creation |
+| Version | Date         | Author                  | Changes              |
+| ------- | ------------ | ----------------------- | -------------------- |
+| 1.0.0   | January 2025 | AI Documentation System | Initial SRS creation |
 
 ---
 
@@ -1071,5 +1119,4 @@ interface Customer {
 
 ---
 
-*This document is confidential and proprietary to Taklaget Service App.*
-
+_This document is confidential and proprietary to Taklaget Service App._

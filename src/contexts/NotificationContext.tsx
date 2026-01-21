@@ -1,16 +1,16 @@
 /**
  * Notification Context
- * 
+ *
  * Provides real-time notification management throughout the application.
  * Handles notification state, real-time updates, and user interactions.
- * 
+ *
  * Features:
  * - Real-time Firestore subscriptions
  * - Notification CRUD operations
  * - Statistics and analytics
  * - Error handling and loading states
  * - Automatic cleanup on unmount
- * 
+ *
  * @author Agritectum Development Team
  * @version 1.0.0
  * @since 2024-09-22
@@ -20,14 +20,14 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { useAuth } from './AuthContext';
 import { useToast } from './ToastContext';
 import { logger } from '../utils/logger';
-import { 
-  Notification, 
-  subscribeToNotifications, 
+import {
+  Notification,
+  subscribeToNotifications,
   getNotificationStats,
   markNotificationAsRead,
   markAllNotificationsAsRead,
   deleteNotification,
-  NotificationStats
+  NotificationStats,
 } from '../services/notificationService';
 
 interface NotificationContextType {
@@ -101,31 +101,36 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
   }, [currentUser?.uid, loadStats]);
 
   // Mark notification as read
-  const markAsRead = useCallback(async (notificationId: string) => {
-    try {
-      await markNotificationAsRead(notificationId);
-      
-      // Update local state
-      setNotifications(prev => 
-        prev.map(n => 
-          n.id === notificationId ? { ...n, read: true } : n
-        )
-      );
-      
-      // Update stats
-      if (stats) {
-        setStats(prev => prev ? {
-          ...prev,
-          unread: Math.max(0, prev.unread - 1)
-        } : null);
+  const markAsRead = useCallback(
+    async (notificationId: string) => {
+      try {
+        await markNotificationAsRead(notificationId);
+
+        // Update local state
+        setNotifications(prev =>
+          prev.map(n => (n.id === notificationId ? { ...n, read: true } : n))
+        );
+
+        // Update stats
+        if (stats) {
+          setStats(prev =>
+            prev
+              ? {
+                  ...prev,
+                  unread: Math.max(0, prev.unread - 1),
+                }
+              : null
+          );
+        }
+      } catch (err: any) {
+        logger.error('Error marking notification as read:', err);
+        const errorMessage = 'Failed to mark notification as read';
+        setError(errorMessage);
+        showToastError(errorMessage);
       }
-    } catch (err: any) {
-      logger.error('Error marking notification as read:', err);
-      const errorMessage = 'Failed to mark notification as read';
-      setError(errorMessage);
-      showToastError(errorMessage);
-    }
-  }, [stats]);
+    },
+    [stats]
+  );
 
   // Mark all notifications as read
   const markAllAsRead = useCallback(async () => {
@@ -133,17 +138,19 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
 
     try {
       await markAllNotificationsAsRead(currentUser.uid);
-      
+
       // Update local state
-      setNotifications(prev => 
-        prev.map(n => ({ ...n, read: true }))
-      );
-      
+      setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+
       // Update stats
-      setStats(prev => prev ? {
-        ...prev,
-        unread: 0
-      } : null);
+      setStats(prev =>
+        prev
+          ? {
+              ...prev,
+              unread: 0,
+            }
+          : null
+      );
     } catch (err: any) {
       logger.error('Error marking all notifications as read:', err);
       const errorMessage = 'Failed to mark all notifications as read';
@@ -153,32 +160,39 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
   }, [currentUser?.uid]);
 
   // Delete notification
-  const deleteNotificationHandler = useCallback(async (notificationId: string) => {
-    try {
-      await deleteNotification(notificationId);
-      
-      // Update local state
-      setNotifications(prev => 
-        prev.filter(n => n.id !== notificationId)
-      );
-      
-      // Update stats
-      if (stats) {
-        const deletedNotification = notifications.find(n => n.id === notificationId);
-        setStats(prev => prev ? {
-          ...prev,
-          total: prev.total - 1,
-          unread: deletedNotification && !deletedNotification.read ? 
-            Math.max(0, prev.unread - 1) : prev.unread
-        } : null);
+  const deleteNotificationHandler = useCallback(
+    async (notificationId: string) => {
+      try {
+        await deleteNotification(notificationId);
+
+        // Update local state
+        setNotifications(prev => prev.filter(n => n.id !== notificationId));
+
+        // Update stats
+        if (stats) {
+          const deletedNotification = notifications.find(n => n.id === notificationId);
+          setStats(prev =>
+            prev
+              ? {
+                  ...prev,
+                  total: prev.total - 1,
+                  unread:
+                    deletedNotification && !deletedNotification.read
+                      ? Math.max(0, prev.unread - 1)
+                      : prev.unread,
+                }
+              : null
+          );
+        }
+      } catch (err: any) {
+        logger.error('Error deleting notification:', err);
+        const errorMessage = 'Failed to delete notification';
+        setError(errorMessage);
+        showToastError(errorMessage);
       }
-    } catch (err: any) {
-      logger.error('Error deleting notification:', err);
-      const errorMessage = 'Failed to delete notification';
-      setError(errorMessage);
-      showToastError(errorMessage);
-    }
-  }, [notifications, stats]);
+    },
+    [notifications, stats]
+  );
 
   // Set up real-time listener
   useEffect(() => {
@@ -196,7 +210,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
       const unsubscribeFn = subscribeToNotifications(
         currentUser.uid,
         { limit: 50 }, // Limit to 50 most recent notifications
-        (newNotifications) => {
+        newNotifications => {
           setNotifications(newNotifications);
           setLoading(false);
         }
@@ -206,7 +220,6 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
 
       // Load initial stats
       loadStats();
-
     } catch (err: any) {
       logger.error('Error setting up notification listener:', err);
       setError('Failed to load notifications');
@@ -243,9 +256,5 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
     refreshNotifications,
   };
 
-  return (
-    <NotificationContext.Provider value={value}>
-      {children}
-    </NotificationContext.Provider>
-  );
+  return <NotificationContext.Provider value={value}>{children}</NotificationContext.Provider>;
 };

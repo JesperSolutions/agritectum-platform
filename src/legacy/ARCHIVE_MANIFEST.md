@@ -7,6 +7,7 @@ Status: Active inventory
 ## Overview
 
 This manifest documents all code moved to the `src/legacy/` directory for reference and historical context. Code in legacy directories should not be used in new implementations but is kept for:
+
 - Reference and historical context
 - Potential rollback if needed
 - Migration documentation
@@ -15,6 +16,7 @@ This manifest documents all code moved to the `src/legacy/` directory for refere
 ## Components
 
 ### OriginalDashboard.tsx
+
 - **Moved from:** `src/components/Dashboard.tsx` (lines 41-611)
 - **Moved date:** 2025-01-11
 - **Reason:** Unused OriginalDashboard implementation replaced by SmartDashboard
@@ -23,6 +25,7 @@ This manifest documents all code moved to the `src/legacy/` directory for refere
 - **Location:** `src/legacy/components/OriginalDashboard.tsx`
 
 ### OptimizedDashboard.tsx
+
 - **Moved from:** `src/components/OptimizedDashboard.tsx`
 - **Moved date:** 2025-01-11
 - **Reason:** Not imported or used anywhere in the codebase
@@ -31,6 +34,7 @@ This manifest documents all code moved to the `src/legacy/` directory for refere
 - **Location:** `src/legacy/components/OptimizedDashboard.tsx`
 
 ### AddressWithMap.tsx
+
 - **Moved from:** `src/components/AddressWithMap.tsx`
 - **Moved date:** 2025-01-11
 - **Reason:** Replaced by AddressWithMapV2.tsx using Leaflet.js instead of Google Maps
@@ -39,6 +43,7 @@ This manifest documents all code moved to the `src/legacy/` directory for refere
 - **Location:** `src/legacy/components/AddressWithMap.tsx`
 
 ### AddressMapPreview.tsx
+
 - **Moved from:** `src/components/AddressMapPreview.tsx`
 - **Moved date:** 2025-01-11
 - **Reason:** Not currently used in the application, marked as deprecated
@@ -49,6 +54,7 @@ This manifest documents all code moved to the `src/legacy/` directory for refere
 ## Services
 
 ### emailService.ts (Marked as Legacy Wrapper)
+
 - **Location:** `src/services/emailService.ts` (kept in place for backward compatibility)
 - **Marked date:** 2025-01-11
 - **Reason:** Legacy wrapper that exports to triggerEmailService.ts
@@ -56,6 +62,7 @@ This manifest documents all code moved to the `src/legacy/` directory for refere
 - **Migration:** Import directly from `./triggerEmailService` instead of `./emailService`
 
 ### generateEnhancedReportPDF (Deprecated Function)
+
 - **Location:** `src/services/simplePdfService.ts` (function marked as deprecated)
 - **Marked date:** 2025-01-11
 - **Reason:** Legacy compatibility function, replaced by generateReportPDF
@@ -65,6 +72,7 @@ This manifest documents all code moved to the `src/legacy/` directory for refere
 ## Legacy Patterns
 
 ### Router.tsx (Re-export Wrapper)
+
 - **Location:** `src/Router.tsx`
 - **Status:** Minimal wrapper that re-exports from `./routing`
 - **Reason:** Legacy pattern from before modular router migration
@@ -73,12 +81,14 @@ This manifest documents all code moved to the `src/legacy/` directory for refere
 ## Design System
 
 ### utilities.ts vs utilities/
+
 - **Status:** Both currently used
 - **utilities.ts:** Contains utility functions (getStatusBadgeClass, etc.)
 - **utilities/:** Contains modular utilities (accessibility, responsive, theme)
 - **Note:** Not moved - both serve different purposes. Monitor for future consolidation.
 
 ### tokens.ts vs tokens/
+
 - **Status:** Both currently used
 - **tokens.ts:** Contains flat token definitions
 - **tokens/:** Contains modular token exports

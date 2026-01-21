@@ -1,56 +1,111 @@
-# Administration Documentation
+# Administration
 
-This directory contains administrative, operational, and maintenance documentation for the Taklaget Service App.
+Operational, maintenance, and security documentation.
 
-## Contents
+## Quick Navigation
 
-### Root Files
-- **PERMISSION_SYSTEM.md** - User roles and permission hierarchy
-- **SECURITY_IMPROVEMENTS.md** - Security measures and improvements
-- **README.md** (this file) - Administration documentation index
+### Security 🔒
 
-### security/
-Security documentation and audit reports.
-- **SECURITY_AUDIT.md** - Comprehensive security audit
-- **SECURITY_FIXES_APPLIED.md** - Security fixes and improvements
-- **CUSTOM_CLAIMS_EXPLAINED.md** - Firebase custom claims documentation
-- **README.md** - Security documentation guide
+**Folder**: `security/`
 
-### qa/
-Quality assurance and testing documentation.
-- **QA_FIXES_IMPLEMENTED.md** - QA fixes and improvements
-- **ISSUES_FOUND_DURING_FIX.md** - Issues and resolutions
-- **QA_TESTING_GUIDE.md** - Comprehensive QA testing procedures
-- **QA_QUICK_REFERENCE.md** - Quick reference for QA testing
-- **README.md** - QA documentation guide
+- [SECURITY.md](security/SECURITY.md) - Security audit, fixes, and best practices
 
-### Branch Admin Management
-- **BRANCH_ADMIN_VERIFICATION_GUIDE.md** - Complete verification guide
-- **BRANCH_ADMIN_CHECKLIST.md** - Quick verification checklist
-- **BRANCH_ADMIN_VERIFICATION_SUMMARY.md** - Verification summary
+---
 
-## Key Documentation
+### Quality Assurance ✅
 
-### Permission System
-- **PERMISSION_SYSTEM.md** - Complete permission hierarchy
-  - User roles (Inspector, Branch Admin, Super Admin)
-  - Permission levels (0, 1, 2)
-  - Branch access rules
-  - Permission checking functions
+**Folder**: `qa/`
 
-### Security
-- **security/SECURITY_AUDIT.md** - Security audit results
-- **security/SECURITY_FIXES_APPLIED.md** - Security improvements
-- **security/CUSTOM_CLAIMS_EXPLAINED.md** - Custom claims guide
-- **SECURITY_IMPROVEMENTS.md** - Security enhancements
+- [TESTING.md](qa/TESTING.md) - QA procedures, test accounts, testing workflows
 
-### Quality Assurance
-- **qa/QA_TESTING_GUIDE.md** - Complete testing procedures
-- **qa/QA_QUICK_REFERENCE.md** - Quick reference guide
-- **qa/QA_FIXES_IMPLEMENTED.md** - QA fixes and improvements
+---
+
+### Permissions & Roles 👥
+
+[PERMISSION_SYSTEM.md](PERMISSION_SYSTEM.md) - User roles, permission levels, custom claims
+
+---
+
+### System Security 🛡️
+
+[SECURITY_IMPROVEMENTS.md](SECURITY_IMPROVEMENTS.md) - Security best practices and measures
+
+---
+
+## Administration Tasks
+
+### User Management
+
+1. **Create User**
+   - Go to Admin → Users
+   - Enter email and select role
+   - Set permissions level
+
+2. **Reset Password**
+
+   ```bash
+   node scripts/reset-inspector-passwords.cjs
+   ```
+
+3. **Update Permissions**
+   ```bash
+   node scripts/update-user-claims.cjs
+   ```
+
+### Branch Management
+
+1. **Create Branch**
+   - Go to Admin → Branches
+   - Enter branch details
+   - Assign branch admin
+
+2. **Assign Permissions**
+   - Set branch admin
+   - Configure branch inspectors
+
+### Monitoring
+
+- Check Firebase Console for errors
+- Monitor Cloud Function logs
+- Review authentication failures
+- Track email delivery status
+
+---
+
+## Important Links
+
+- [Firestore Structure](../05-reference/FIRESTORE_DATABASE_STRUCTURE.md)
+- [System Architecture](../05-reference/SYSTEM_ARCHITECTURE.md)
+- [Testing Guide](qa/TESTING.md)
+
+---
+
+## Emergency Procedures
+
+### System Down
+
+1. Check Firebase status
+2. Review Cloud Function logs
+3. Check for quota limits exceeded
+4. Review Firestore billing
+5. Contact Firebase support if needed
+
+### Security Incident
+
+1. Revoke compromised credentials
+2. Force password reset for affected users
+3. Review audit logs
+4. Document incident
+5. Implement fixes
+
+---
+
+**Last Updated**: January 2026
+
 - **qa/ISSUES_FOUND_DURING_FIX.md** - Issues and resolutions
 
 ### Branch Admin Verification
+
 - **BRANCH_ADMIN_VERIFICATION_GUIDE.md** - Complete verification process
 - **BRANCH_ADMIN_CHECKLIST.md** - Quick verification checklist
 - **BRANCH_ADMIN_VERIFICATION_SUMMARY.md** - Verification summary
@@ -58,17 +113,20 @@ Quality assurance and testing documentation.
 ## Quick Access
 
 ### For System Administrators
+
 1. **Permission System** - `PERMISSION_SYSTEM.md`
 2. **Security Audit** - `security/SECURITY_AUDIT.md`
 3. **Branch Admin Verification** - `BRANCH_ADMIN_VERIFICATION_GUIDE.md`
 4. **QA Testing** - `qa/QA_TESTING_GUIDE.md`
 
 ### For Branch Admins
+
 1. **Permission System** - `PERMISSION_SYSTEM.md`
 2. **QA Quick Reference** - `qa/QA_QUICK_REFERENCE.md`
 3. **Security Improvements** - `SECURITY_IMPROVEMENTS.md`
 
 ### For QA Team
+
 1. **QA Testing Guide** - `qa/QA_TESTING_GUIDE.md`
 2. **QA Quick Reference** - `qa/QA_QUICK_REFERENCE.md`
 3. **QA Fixes** - `qa/QA_FIXES_IMPLEMENTED.md`
@@ -77,12 +135,14 @@ Quality assurance and testing documentation.
 ## User Roles
 
 ### Inspector (Level 0)
+
 - Create and edit own reports
 - Manage appointments
 - View assigned reports
 - Access only assigned branch
 
 ### Branch Admin (Level 1)
+
 - All Inspector permissions
 - Manage branch users
 - Manage branch customers
@@ -91,6 +151,7 @@ Quality assurance and testing documentation.
 - **Verification:** See `BRANCH_ADMIN_VERIFICATION_GUIDE.md`
 
 ### Super Admin (Level 2)
+
 - All Branch Admin permissions
 - Manage all branches
 - Manage all users
@@ -100,11 +161,13 @@ Quality assurance and testing documentation.
 ## Verification Tools
 
 ### Automated Verification
+
 ```bash
 node scripts/verify-branch-admins.cjs
 ```
 
 **What it checks:**
+
 - All branches exist and are active
 - All branch admins have correct configurations
 - Custom claims are set correctly
@@ -112,6 +175,7 @@ node scripts/verify-branch-admins.cjs
 - All branches have admins
 
 ### Manual Verification
+
 Use the checklist in `BRANCH_ADMIN_CHECKLIST.md` for manual verification through Firebase Console.
 
 ## Security Best Practices
@@ -126,18 +190,21 @@ Use the checklist in `BRANCH_ADMIN_CHECKLIST.md` for manual verification through
 ## Maintenance
 
 ### Weekly
+
 - Run branch admin verification
 - Check for security updates
 - Review QA test results
 - Update documentation
 
 ### Monthly
+
 - Full security audit
 - Permission review
 - User access review
 - Documentation update
 
 ### Quarterly
+
 - Complete system audit
 - Security assessment
 - Performance review
@@ -154,6 +221,7 @@ Use the checklist in `BRANCH_ADMIN_CHECKLIST.md` for manual verification through
 ## Support
 
 For questions about administration:
+
 1. Check this README and relevant documentation
 2. Review troubleshooting guides
 3. Check security documentation
@@ -161,5 +229,4 @@ For questions about administration:
 
 ---
 
-*Last updated: January 2025*
-
+_Last updated: January 2025_

@@ -72,7 +72,7 @@
   "form.fields.actionUrgencyPlaceholder": "Välj brådska",
   "form.fields.estimatedCost": "Beräknad kostnad",
   "form.fields.estimatedCostPlaceholder": "Ange beräknad kostnad",
-  
+
   "form.labels.actionPriority": "Prioritet",
   "form.labels.actionUrgency": "Brådska",
   "form.labels.estimatedCost": "Beräknad kostnad",
@@ -118,6 +118,7 @@
   "form.messages.uploadingImages": "Laddar upp bilder",
   "form.messages.noImagesUploaded": "Inga bilder uppladdade än",
   "form.messages.clickButtonsToAddImages": "Klicka på knapparna ovan för att lägga till bilder",
+  "form.messages.pasteImageHint": "Du kan också klistra in bilder med Ctrl+V (Cmd+V på Mac)",
   "form.messages.reportNotFound": "Rapporten hittades inte",
   "form.messages.failedToLoadReport": "Kunde inte ladda rapport",
   "form.messages.failedToSaveReport": "Kunde inte spara rapport",
@@ -254,8 +255,7 @@
   "reportForm.customerInfo.phoneHelp": "Valfritt - för kundkontakt",
   "reportForm.customerInfo.email": "E-postadress",
   "reportForm.customerInfo.emailInvalid": "Ange en giltig e-postadress",
-  "reportForm.customerInfo.emailHelp": "Valfritt - för att skicka rapporter"
-,
+  "reportForm.customerInfo.emailHelp": "Valfritt - för att skicka rapporter",
   "reportForm.roofMeasurer.title": "Mät takyta",
   "reportForm.roofMeasurer.instructions.start": "Klicka \"Start Drawing\" för att börja mäta. Klicka sedan på kartan för att markera takets hörn.",
   "reportForm.roofMeasurer.instructions.drawing": "Ritläge: Klicka på kartan för att lägga till punkter runt takets omkrets. Du behöver minst 3 punkter för att bilda en polygon. Ytan beräknas automatiskt.",
@@ -265,8 +265,7 @@
   "reportForm.roofMeasurer.minimumReached": "Minimum uppnått",
   "reportForm.roofMeasurer.calculatedArea": "Beräknad yta",
   "reportForm.roofMeasurer.sqft": "kv ft",
-  "reportForm.roofMeasurer.useThisArea": "Använd detta område"
-  ,
+  "reportForm.roofMeasurer.useThisArea": "Använd detta område",
   "form.errors.userNotAuthenticated": "Användaren är inte inloggad. Logga in igen.",
   "form.errors.userNoBranch": "Användaren måste vara kopplad till en filial. Kontakta administratören.",
   "form.errors.fixValidation": "Åtgärda valideringsfel nedan.",
@@ -287,7 +286,7 @@
   "form.fields.customerType": "Kundtyp",
   "form.fields.customerTypeIndividual": "Privatperson",
   "form.fields.customerTypeCompany": "Företag",
-  
+
   "form.defectFlow.step.camera": "Ta foto",
   "form.defectFlow.step.map": "Placera pin",
   "form.defectFlow.step.describe": "Beskriv",
@@ -323,12 +322,12 @@
   "form.customerSearch.clearSelection": "Rensa val",
   "form.customerSearch.noResults": "Inga kunder hittades",
   "common.buttons.close": "Stäng",
-  
+
   "form.messages.errorSavingDefect": "Kunde inte spara defekt. Försök igen.",
   "form.messages.errorUploadingImage": "Kunde inte ladda upp bild. Kontrollera din anslutning och försök igen.",
   "form.messages.reportSaveSuccess": "Rapport sparad!",
   "form.messages.reportCompletedSuccess": "Rapport slutförd och inskickad!",
-  
+
   "form.validation.summaryGuidance": "Granska de markerade fälten och korrigera problemen innan du fortsätter.",
   "form.validation.customerNameGuidance": "Ange kundens fullständiga namn (minst 2 tecken).",
   "form.validation.customerAddressGuidance": "Ange den fullständiga adressen där inspektionen utfördes.",
@@ -339,12 +338,12 @@
   "form.validation.phoneGuidance": "Ange ett giltigt telefonnummer med landskod.",
   "form.validation.issueGuidance": "Varje brist behöver en titel, beskrivning och allvarlighetsgrad.",
   "form.validation.offerGuidance": "Ange ett positivt värde för offertbeloppet.",
-  
+
   "form.help.step1": "Börja med att ange kundens kontaktuppgifter. Du kan söka efter befintliga kunder eller skapa en ny.",
   "form.help.step2": "Beskriv takets skick inklusive typ, ålder och allmänna observationer.",
   "form.help.step3": "Dokumentera alla brister som upptäcktes under inspektionen. Du kan lägga till foton och markera platser på takbilden.",
   "form.help.step4": "Lägg till rekommenderade åtgärder och skapa en offert baserat på de brister som hittades.",
-  
+
   "form.errors.saveFailed": "Kunde inte spara rapporten. Kontrollera din anslutning och försök igen.",
   "form.errors.imageUploadFailed": "Kunde inte ladda upp bilden. Filen kan vara för stor eller din anslutning instabil.",
   "form.errors.connectionLost": "Anslutningen förlorades. Dina ändringar sparas automatiskt när anslutningen återupprättas.",

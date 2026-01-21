@@ -84,14 +84,14 @@ const ResetPasswordForm: React.FC = () => {
     try {
       await confirmPasswordReset(code, password);
       setSuccess(true);
-      
+
       // Redirect to login after 3 seconds
       setTimeout(() => {
         navigate('/login');
       }, 3000);
     } catch (error: any) {
       console.error('Reset password error:', error);
-      
+
       switch (error.code) {
         case 'auth/expired-action-code':
           setError(t('resetPassword.error.expiredLink'));
@@ -116,7 +116,7 @@ const ResetPasswordForm: React.FC = () => {
         <div className='max-w-md w-full space-y-8'>
           <div className='text-center'>
             <div className='flex justify-center mb-8'>
-              <AgritectumLogo size="xl" className="justify-center" />
+              <AgritectumLogo size='xl' className='justify-center' />
             </div>
             <LoadingSpinner size='lg' />
             <p className='mt-4 text-gray-600'>{t('resetPassword.verifying')}</p>
@@ -131,7 +131,7 @@ const ResetPasswordForm: React.FC = () => {
       <div className='max-w-md w-full space-y-8'>
         <div className='text-center'>
           <div className='flex justify-center mb-8'>
-            <AgritectumLogo size="xl" className="justify-center" />
+            <AgritectumLogo size='xl' className='justify-center' />
           </div>
           <h2 className='mt-4 text-4xl font-light text-gray-900 tracking-tight'>
             {t('resetPassword.title')}
@@ -141,7 +141,10 @@ const ResetPasswordForm: React.FC = () => {
           </p>
         </div>
 
-        <form className='mt-8 space-y-6 bg-white p-8 rounded-material shadow-material-4' onSubmit={handleSubmit}>
+        <form
+          className='mt-8 space-y-6 bg-white p-8 rounded-material shadow-material-4'
+          onSubmit={handleSubmit}
+        >
           {error && (
             <div className='rounded-material bg-red-50 p-4 border-l-4 border-red-500'>
               <div className='flex items-center'>
@@ -173,7 +176,10 @@ const ResetPasswordForm: React.FC = () => {
             <>
               <div className='space-y-6'>
                 <div>
-                  <label htmlFor='password' className='block text-xs font-medium text-gray-700 uppercase tracking-wide mb-2'>
+                  <label
+                    htmlFor='password'
+                    className='block text-xs font-medium text-gray-700 uppercase tracking-wide mb-2'
+                  >
                     {t('resetPassword.newPassword')}
                   </label>
                   <div className='relative'>
@@ -205,13 +211,14 @@ const ResetPasswordForm: React.FC = () => {
                       )}
                     </button>
                   </div>
-                  <p className='mt-2 text-xs text-gray-500'>
-                    {t('resetPassword.passwordHint')}
-                  </p>
+                  <p className='mt-2 text-xs text-gray-500'>{t('resetPassword.passwordHint')}</p>
                 </div>
 
                 <div>
-                  <label htmlFor='confirmPassword' className='block text-xs font-medium text-gray-700 uppercase tracking-wide mb-2'>
+                  <label
+                    htmlFor='confirmPassword'
+                    className='block text-xs font-medium text-gray-700 uppercase tracking-wide mb-2'
+                  >
                     {t('resetPassword.confirmPassword')}
                   </label>
                   <div className='relative'>
@@ -281,7 +288,7 @@ const ResetPasswordForm: React.FC = () => {
                 src='/agritectum-logo.png'
                 alt='Agritectum'
                 className='h-5 w-auto'
-                onError={(e) => {
+                onError={e => {
                   const img = e.currentTarget;
                   img.style.display = 'none';
                   const parent = img.parentElement;
@@ -293,7 +300,12 @@ const ResetPasswordForm: React.FC = () => {
                   }
                 }}
               />
-              <span className='fallback-text ml-1.5 font-medium text-gray-700' style={{ display: 'none' }}>Agritectum</span>
+              <span
+                className='fallback-text ml-1.5 font-medium text-gray-700'
+                style={{ display: 'none' }}
+              >
+                Agritectum
+              </span>
             </a>
           </div>
         </div>
@@ -303,5 +315,3 @@ const ResetPasswordForm: React.FC = () => {
 };
 
 export default ResetPasswordForm;
-
-

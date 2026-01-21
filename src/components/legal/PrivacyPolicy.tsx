@@ -21,7 +21,9 @@ const PrivacyPolicy: React.FC = () => {
         {/* Header */}
         <div className='bg-white rounded-xl shadow-sm p-8 mb-6'>
           <h1 className='text-3xl font-bold text-slate-900 mb-4'>Privatlivspolitik</h1>
-          <p className='text-slate-600'>Sidst opdateret: {new Date().toLocaleDateString('da-DK')}</p>
+          <p className='text-slate-600'>
+            Sidst opdateret: {new Date().toLocaleDateString('da-DK')}
+          </p>
         </div>
 
         {/* Content */}
@@ -29,13 +31,16 @@ const PrivacyPolicy: React.FC = () => {
           <section>
             <h2 className='text-2xl font-semibold text-slate-900 mb-4'>1. Indledning</h2>
             <p className='text-slate-700 leading-relaxed'>
-              Agritectum ApS ("vi", "os", "vores") respekterer dit privatliv og forpligter sig til at beskytte dine personoplysninger.
-              Denne privatlivspolitik forklarer, hvordan vi indsamler, bruger og beskytter dine oplysninger, når du bruger vores platform.
+              Agritectum ApS ("vi", "os", "vores") respekterer dit privatliv og forpligter sig til
+              at beskytte dine personoplysninger. Denne privatlivspolitik forklarer, hvordan vi
+              indsamler, bruger og beskytter dine oplysninger, når du bruger vores platform.
             </p>
           </section>
 
           <section>
-            <h2 className='text-2xl font-semibold text-slate-900 mb-4'>2. Oplysninger vi indsamler</h2>
+            <h2 className='text-2xl font-semibold text-slate-900 mb-4'>
+              2. Oplysninger vi indsamler
+            </h2>
             <div className='space-y-3'>
               <div>
                 <h3 className='text-lg font-medium text-slate-800 mb-2'>2.1 Personoplysninger</h3>
@@ -51,7 +56,9 @@ const PrivacyPolicy: React.FC = () => {
               </div>
 
               <div>
-                <h3 className='text-lg font-medium text-slate-800 mb-2'>2.2 Tekniske oplysninger</h3>
+                <h3 className='text-lg font-medium text-slate-800 mb-2'>
+                  2.2 Tekniske oplysninger
+                </h3>
                 <ul className='list-disc list-inside text-slate-700 space-y-1'>
                   <li>IP-adresse</li>
                   <li>Browsertype og -version</li>
@@ -63,7 +70,9 @@ const PrivacyPolicy: React.FC = () => {
           </section>
 
           <section>
-            <h2 className='text-2xl font-semibold text-slate-900 mb-4'>3. Hvordan vi bruger dine oplysninger</h2>
+            <h2 className='text-2xl font-semibold text-slate-900 mb-4'>
+              3. Hvordan vi bruger dine oplysninger
+            </h2>
             <p className='text-slate-700 leading-relaxed mb-3'>
               Vi bruger de indsamlede oplysninger til:
             </p>
@@ -84,65 +93,92 @@ const PrivacyPolicy: React.FC = () => {
             <ul className='list-disc list-inside text-slate-700 mt-2 space-y-1'>
               <li>Med dit samtykke</li>
               <li>For at overholde lovkrav</li>
-              <li>Med tjenesteudbydere, der hjælper os med at drive platformen (f.eks. Firebase/Google Cloud)</li>
+              <li>
+                Med tjenesteudbydere, der hjælper os med at drive platformen (f.eks. Firebase/Google
+                Cloud)
+              </li>
             </ul>
           </section>
 
           <section>
             <h2 className='text-2xl font-semibold text-slate-900 mb-4'>5. Datasikkerhed</h2>
             <p className='text-slate-700 leading-relaxed'>
-              Vi implementerer passende tekniske og organisatoriske sikkerhedsforanstaltninger for at beskytte dine personoplysninger
-              mod uautoriseret adgang, ændring, videregivelse eller ødelæggelse. Vi bruger kryptering (SSL/TLS) og sikre cloud-tjenester.
+              Vi implementerer passende tekniske og organisatoriske sikkerhedsforanstaltninger for
+              at beskytte dine personoplysninger mod uautoriseret adgang, ændring, videregivelse
+              eller ødelæggelse. Vi bruger kryptering (SSL/TLS) og sikre cloud-tjenester.
             </p>
           </section>
 
           <section>
-            <h2 className='text-2xl font-semibold text-slate-900 mb-4'>6. Dine rettigheder (GDPR)</h2>
+            <h2 className='text-2xl font-semibold text-slate-900 mb-4'>
+              6. Dine rettigheder (GDPR)
+            </h2>
             <p className='text-slate-700 leading-relaxed mb-3'>
               I henhold til GDPR har du følgende rettigheder:
             </p>
             <ul className='list-disc list-inside text-slate-700 space-y-1'>
-              <li><strong>Ret til adgang:</strong> Du kan anmode om en kopi af dine personoplysninger</li>
-              <li><strong>Ret til rettelse:</strong> Du kan anmode om rettelse af unøjagtige oplysninger</li>
-              <li><strong>Ret til sletning:</strong> Du kan anmode om sletning af dine personoplysninger</li>
-              <li><strong>Ret til dataportabilitet:</strong> Du kan anmode om at modtage dine data i et struktureret format</li>
-              <li><strong>Ret til indsigelse:</strong> Du kan gøre indsigelse mod behandling af dine oplysninger</li>
+              <li>
+                <strong>Ret til adgang:</strong> Du kan anmode om en kopi af dine personoplysninger
+              </li>
+              <li>
+                <strong>Ret til rettelse:</strong> Du kan anmode om rettelse af unøjagtige
+                oplysninger
+              </li>
+              <li>
+                <strong>Ret til sletning:</strong> Du kan anmode om sletning af dine
+                personoplysninger
+              </li>
+              <li>
+                <strong>Ret til dataportabilitet:</strong> Du kan anmode om at modtage dine data i
+                et struktureret format
+              </li>
+              <li>
+                <strong>Ret til indsigelse:</strong> Du kan gøre indsigelse mod behandling af dine
+                oplysninger
+              </li>
             </ul>
           </section>
 
           <section>
             <h2 className='text-2xl font-semibold text-slate-900 mb-4'>7. Opbevaring af data</h2>
             <p className='text-slate-700 leading-relaxed'>
-              Vi opbevarer dine personoplysninger, så længe det er nødvendigt for at levere vores tjenester og overholde juridiske
-              forpligtelser. Når oplysninger ikke længere er nødvendige, sletter eller anonymiserer vi dem sikkert.
+              Vi opbevarer dine personoplysninger, så længe det er nødvendigt for at levere vores
+              tjenester og overholde juridiske forpligtelser. Når oplysninger ikke længere er
+              nødvendige, sletter eller anonymiserer vi dem sikkert.
             </p>
           </section>
 
           <section>
             <h2 className='text-2xl font-semibold text-slate-900 mb-4'>8. Cookies</h2>
             <p className='text-slate-700 leading-relaxed'>
-              Vi bruger cookies og lignende teknologier til at forbedre din oplevelse på platformen. Du kan administrere
-              cookie-indstillinger i din browser.
+              Vi bruger cookies og lignende teknologier til at forbedre din oplevelse på platformen.
+              Du kan administrere cookie-indstillinger i din browser.
             </p>
           </section>
 
           <section>
             <h2 className='text-2xl font-semibold text-slate-900 mb-4'>9. Kontakt os</h2>
             <p className='text-slate-700 leading-relaxed'>
-              Hvis du har spørgsmål om denne privatlivspolitik eller ønsker at udøve dine rettigheder, kan du kontakte os:
+              Hvis du har spørgsmål om denne privatlivspolitik eller ønsker at udøve dine
+              rettigheder, kan du kontakte os:
             </p>
             <div className='mt-3 p-4 bg-slate-50 rounded-lg'>
-              <p className='text-slate-700'><strong>Agritectum ApS</strong></p>
+              <p className='text-slate-700'>
+                <strong>Agritectum ApS</strong>
+              </p>
               <p className='text-slate-700'>E-mail: privacy@agritectum.dk</p>
               <p className='text-slate-700'>Telefon: +45 XX XX XX XX</p>
             </div>
           </section>
 
           <section>
-            <h2 className='text-2xl font-semibold text-slate-900 mb-4'>10. Ændringer til denne politik</h2>
+            <h2 className='text-2xl font-semibold text-slate-900 mb-4'>
+              10. Ændringer til denne politik
+            </h2>
             <p className='text-slate-700 leading-relaxed'>
-              Vi kan opdatere denne privatlivspolitik fra tid til anden. Vi vil informere dig om væsentlige ændringer
-              ved at sende en meddelelse til din registrerede e-mailadresse eller ved at offentliggøre en meddelelse på platformen.
+              Vi kan opdatere denne privatlivspolitik fra tid til anden. Vi vil informere dig om
+              væsentlige ændringer ved at sende en meddelelse til din registrerede e-mailadresse
+              eller ved at offentliggøre en meddelelse på platformen.
             </p>
           </section>
         </div>

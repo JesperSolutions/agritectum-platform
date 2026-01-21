@@ -4,12 +4,12 @@
  * @movedDate 2025-01-11
  * @reason Not currently used in the application
  * @deprecated Do not use in new code. Kept for reference only.
- * 
+ *
  * This component was moved to legacy on 2025-01-11 because:
  * - Not currently used anywhere in the codebase
  * - Marked as deprecated in its own code comments
  * - AddressWithMapV2 provides similar functionality with better implementation
- * 
+ *
  * Migration: Use AddressWithMapV2 from src/components/AddressWithMapV2.tsx
  * See src/legacy/ARCHIVE_MANIFEST.md for details
  */
@@ -75,27 +75,27 @@ const AddressMapPreview: React.FC<AddressMapPreviewProps> = ({ address, classNam
 
   return (
     <div className={`mt-3 ${className}`}>
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-2 text-sm text-gray-600">
-          <MapPin className="w-4 h-4" />
+      <div className='flex items-center justify-between mb-2'>
+        <div className='flex items-center gap-2 text-sm text-gray-600'>
+          <MapPin className='w-4 h-4' />
           <span>Satellitvy av fastigheten</span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className='flex items-center gap-2'>
           <button
-            type="button"
+            type='button'
             onClick={handleToggleMap}
-            className="flex items-center gap-1 px-3 py-1 text-sm bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition-colors"
+            className='flex items-center gap-1 px-3 py-1 text-sm bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition-colors'
           >
-            {showMap ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            {showMap ? <EyeOff className='w-4 h-4' /> : <Eye className='w-4 h-4' />}
             {showMap ? 'Dölj karta' : 'Visa karta'}
           </button>
           {showMap && (
             <button
-              type="button"
+              type='button'
               onClick={openInGoogleMaps}
-              className="flex items-center gap-1 px-3 py-1 text-sm bg-green-50 text-green-600 rounded-md hover:bg-green-100 transition-colors"
+              className='flex items-center gap-1 px-3 py-1 text-sm bg-green-50 text-green-600 rounded-md hover:bg-green-100 transition-colors'
             >
-              <ExternalLink className="w-4 h-4" />
+              <ExternalLink className='w-4 h-4' />
               Öppna i Google Maps
             </button>
           )}
@@ -103,45 +103,48 @@ const AddressMapPreview: React.FC<AddressMapPreviewProps> = ({ address, classNam
       </div>
 
       {showMap && (
-        <div className="relative">
+        <div className='relative'>
           {isLoading && (
-            <div className="w-full h-[300px] bg-gray-100 rounded-lg flex items-center justify-center">
-              <div className="text-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
-                <p className="text-sm text-gray-600">Laddar satellitvy...</p>
+            <div className='w-full h-[300px] bg-gray-100 rounded-lg flex items-center justify-center'>
+              <div className='text-center'>
+                <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2'></div>
+                <p className='text-sm text-gray-600'>Laddar satellitvy...</p>
               </div>
             </div>
           )}
-          
+
           {mapError && (
-            <div className="w-full h-[300px] bg-red-50 border border-red-200 rounded-lg flex items-center justify-center">
-              <div className="text-center">
-                <MapPin className="w-8 h-8 text-red-400 mx-auto mb-2" />
-                <p className="text-sm text-red-600">{mapError}</p>
+            <div className='w-full h-[300px] bg-red-50 border border-red-200 rounded-lg flex items-center justify-center'>
+              <div className='text-center'>
+                <MapPin className='w-8 h-8 text-red-400 mx-auto mb-2' />
+                <p className='text-sm text-red-600'>{mapError}</p>
               </div>
             </div>
           )}
 
           {!isLoading && !mapError && (
-            <div className="relative">
+            <div className='relative'>
               <img
                 src={generateMapUrl(address)}
                 alt={`Satellitvy av ${address}`}
-                className="w-full h-[300px] object-cover rounded-lg border border-gray-200 shadow-sm"
+                className='w-full h-[300px] object-cover rounded-lg border border-gray-200 shadow-sm'
                 onLoad={() => setIsLoading(false)}
                 onError={() => {
                   setIsLoading(false);
                   setMapError('Kunde inte ladda kartan. Kontrollera adressen.');
                 }}
               />
-              <div className="absolute top-2 left-2 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-xs">
+              <div className='absolute top-2 left-2 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-xs'>
                 Zoom: {ZOOM_LEVEL} • Satellitvy
               </div>
             </div>
           )}
 
-          <div className="mt-2 text-xs text-gray-500">
-            <p>💡 <strong>Tips:</strong> Satellitvyn hjälper dig att se takets struktur innan besöket. Klicka på "Öppna i Google Maps" för att zooma och utforska mer.</p>
+          <div className='mt-2 text-xs text-gray-500'>
+            <p>
+              💡 <strong>Tips:</strong> Satellitvyn hjälper dig att se takets struktur innan
+              besöket. Klicka på "Öppna i Google Maps" för att zooma och utforska mer.
+            </p>
           </div>
         </div>
       )}

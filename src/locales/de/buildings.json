@@ -72,5 +72,13 @@
   "buildings.esg.recommendation.solar": "Dieses Gebäude hat ein erhebliches Solarpotential. Erwägen Sie die Installation von Solarpanelen, um den CO₂-Fußabdruck zu reduzieren.",
   "buildings.esg.recommendation.recycling": "Ihr Dachmaterial hat ein hohes Recyclingpotential. Stellen Sie sicher, dass am Ende der Lebensdauer ordnungsgemäß recycelt wird.",
   "buildings.esg.recommendation.neutrality": "CO₂-Neutralität wird in {years} Jahren projiziert. Erwägen Sie weitere Verbesserungen, um diesen Zeitplan zu beschleunigen.",
-  "buildings.esg.lastCalculated": "Zuletzt berechnet"
+  "buildings.esg.lastCalculated": "Zuletzt berechnet",
+  "buildings.esgReports.title": "ESG-Berichte",
+  "buildings.esgReports.report": "ESG-Servicebericht",
+  "buildings.esgReports.roofSize": "Dachgröße",
+  "buildings.esgReports.greenRoof": "Gründach",
+  "buildings.esgReports.coolRoof": "Kühles Dach",
+  "buildings.esgReports.noxReduction": "NOₓ-Reduktion",
+  "buildings.esgReports.private": "ESG-Bericht (Privat)",
+  "buildings.esgReports.privateDesc": "Dieser Bericht ist noch nicht öffentlich verfügbar"
 }

@@ -3,9 +3,24 @@ import { useParams, Link } from 'react-router-dom';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { doc, setDoc, Timestamp } from 'firebase/firestore';
 import { auth, db } from '../../config/firebase';
-import { validateInvitation, markInvitationUsed, CustomerInvitation } from '../../services/customerInvitationService';
+import {
+  validateInvitation,
+  markInvitationUsed,
+  CustomerInvitation,
+} from '../../services/customerInvitationService';
 import { useIntl } from '../../hooks/useIntl';
-import { Eye, EyeOff, CheckCircle, XCircle, Clock, Building, User, Mail, Lock, AlertTriangle } from 'lucide-react';
+import {
+  Eye,
+  EyeOff,
+  CheckCircle,
+  XCircle,
+  Clock,
+  Building,
+  User,
+  Mail,
+  Lock,
+  AlertTriangle,
+} from 'lucide-react';
 import AgritectumLogo from '../AgritectumLogo';
 import LoadingSpinner from '../common/LoadingSpinner';
 
@@ -189,7 +204,8 @@ const CustomerSignup: React.FC = () => {
             {t('customerSignup.success.title') || 'Account Created Successfully!'}
           </h1>
           <p className='text-slate-600 mb-6'>
-            {t('customerSignup.success.message') || 'Your account has been created. You can now sign in to the customer portal.'}
+            {t('customerSignup.success.message') ||
+              'Your account has been created. You can now sign in to the customer portal.'}
           </p>
           <Link
             to='/portal/login'
@@ -225,10 +241,13 @@ const CustomerSignup: React.FC = () => {
           </h1>
           <p className='text-slate-600 mb-6'>
             {validationError.includes('expired')
-              ? t('customerSignup.error.expiredMessage') || 'This invitation link has expired. Please contact your service provider for a new invitation.'
+              ? t('customerSignup.error.expiredMessage') ||
+                'This invitation link has expired. Please contact your service provider for a new invitation.'
               : validationError.includes('used')
-                ? t('customerSignup.error.usedMessage') || 'This invitation has already been used to create an account. Please sign in instead.'
-                : t('customerSignup.error.invalidMessage') || 'This invitation link is not valid. Please check the link or contact your service provider.'}
+                ? t('customerSignup.error.usedMessage') ||
+                  'This invitation has already been used to create an account. Please sign in instead.'
+                : t('customerSignup.error.invalidMessage') ||
+                  'This invitation link is not valid. Please check the link or contact your service provider.'}
           </p>
           {invitation && (
             <div className='bg-slate-50 rounded-lg p-4 mb-6 text-left'>
@@ -297,7 +316,8 @@ const CustomerSignup: React.FC = () => {
             {t('customerSignup.title') || 'Create Your Account'}
           </h1>
           <p className='text-slate-600 mt-2'>
-            {t('customerSignup.subtitle') || 'Complete your registration to access the customer portal'}
+            {t('customerSignup.subtitle') ||
+              'Complete your registration to access the customer portal'}
           </p>
         </div>
 
@@ -309,7 +329,8 @@ const CustomerSignup: React.FC = () => {
               <div>
                 <p className='font-medium text-blue-900'>{invitation.customerName}</p>
                 <p className='text-sm text-blue-700 mt-1'>
-                  {t('customerSignup.invitationValid') || 'Invitation valid until'}: {formatExpiryDate(invitation.expiresAt)}
+                  {t('customerSignup.invitationValid') || 'Invitation valid until'}:{' '}
+                  {formatExpiryDate(invitation.expiresAt)}
                 </p>
               </div>
             </div>
@@ -367,7 +388,10 @@ const CustomerSignup: React.FC = () => {
                   value={formData.password}
                   onChange={e => setFormData(prev => ({ ...prev, password: e.target.value }))}
                   className='w-full pl-10 pr-12 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500'
-                  placeholder={t('customerSignup.form.passwordPlaceholder') || 'Create a password (min 8 characters)'}
+                  placeholder={
+                    t('customerSignup.form.passwordPlaceholder') ||
+                    'Create a password (min 8 characters)'
+                  }
                   required
                   minLength={8}
                 />
@@ -391,9 +415,13 @@ const CustomerSignup: React.FC = () => {
                 <input
                   type={showConfirmPassword ? 'text' : 'password'}
                   value={formData.confirmPassword}
-                  onChange={e => setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                  onChange={e =>
+                    setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))
+                  }
                   className='w-full pl-10 pr-12 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500'
-                  placeholder={t('customerSignup.form.confirmPasswordPlaceholder') || 'Confirm your password'}
+                  placeholder={
+                    t('customerSignup.form.confirmPasswordPlaceholder') || 'Confirm your password'
+                  }
                   required
                   minLength={8}
                 />
@@ -402,7 +430,11 @@ const CustomerSignup: React.FC = () => {
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className='absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600'
                 >
-                  {showConfirmPassword ? <EyeOff className='w-5 h-5' /> : <Eye className='w-5 h-5' />}
+                  {showConfirmPassword ? (
+                    <EyeOff className='w-5 h-5' />
+                  ) : (
+                    <Eye className='w-5 h-5' />
+                  )}
                 </button>
               </div>
             </div>
@@ -424,7 +456,9 @@ const CustomerSignup: React.FC = () => {
               {submitting ? (
                 <>
                   <LoadingSpinner size='sm' />
-                  <span className='ml-2'>{t('customerSignup.form.creating') || 'Creating account...'}</span>
+                  <span className='ml-2'>
+                    {t('customerSignup.form.creating') || 'Creating account...'}
+                  </span>
                 </>
               ) : (
                 t('customerSignup.form.submit') || 'Create Account'
@@ -445,7 +479,10 @@ const CustomerSignup: React.FC = () => {
 
         {/* Footer */}
         <div className='mt-6 text-center text-sm text-slate-500'>
-          <p>© {new Date().getFullYear()} Agritectum ApS. {t('common.allRightsReserved') || 'All rights reserved.'}</p>
+          <p>
+            © {new Date().getFullYear()} Agritectum ApS.{' '}
+            {t('common.allRightsReserved') || 'All rights reserved.'}
+          </p>
         </div>
       </div>
     </div>

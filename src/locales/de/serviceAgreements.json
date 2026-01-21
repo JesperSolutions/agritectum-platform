@@ -18,7 +18,7 @@
   "serviceAgreement.noAgreementsMessage": "Beginnen Sie, indem Sie Ihren ersten Servicevertrag hinzufügen.",
   "serviceAgreement.errorLoading": "Fehler beim Laden der Serviceverträge",
   "serviceAgreement.errorMessage": "Serviceverträge konnten nicht geladen werden. Überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
-  
+
   "serviceAgreement.statusFilters.almostDue": "Fast fällig",
   "serviceAgreement.statusFilters.dueTomorrow": "Fällig morgen",
   "serviceAgreement.statusFilters.dueInWeek": "Fällig in einer Woche",
@@ -28,34 +28,34 @@
   "serviceAgreement.statusFilters.expired": "Abgelaufen",
   "serviceAgreement.statusFilters.cancelled": "Storniert",
   "serviceAgreement.statusFilters.pending": "Ausstehend",
-  
+
   "serviceAgreement.viewMode.list": "Listenansicht",
   "serviceAgreement.viewMode.map": "Kartenansicht",
-  
+
   "serviceAgreement.table.customer": "Kunde",
   "serviceAgreement.table.title": "Titel",
   "serviceAgreement.table.type": "Typ",
   "serviceAgreement.table.nextService": "Nächster Service",
   "serviceAgreement.table.status": "Status",
   "serviceAgreement.table.actions": "Aktionen",
-  
+
   "serviceAgreement.type.maintenance": "Wartung",
   "serviceAgreement.type.inspection": "Inspektion",
   "serviceAgreement.type.repair": "Reparatur",
   "serviceAgreement.type.other": "Sonstiges",
-  
+
   "serviceAgreement.status.active": "Aktiv",
   "serviceAgreement.status.expired": "Abgelaufen",
   "serviceAgreement.status.cancelled": "Storniert",
   "serviceAgreement.status.pending": "Ausstehend",
-  
+
   "serviceAgreement.frequency.weekly": "Wöchentlich",
   "serviceAgreement.frequency.monthly": "Monatlich",
   "serviceAgreement.frequency.quarterly": "Vierteljährlich",
   "serviceAgreement.frequency.biannual": "Halbjährlich",
   "serviceAgreement.frequency.annual": "Jährlich",
   "serviceAgreement.frequency.custom": "Benutzerdefiniert",
-  
+
   "serviceAgreement.form.title": "Servicevertrag",
   "serviceAgreement.form.customer": "Kunde",
   "serviceAgreement.form.customerPlaceholder": "Kunde auswählen",
@@ -83,7 +83,7 @@
   "serviceAgreement.form.noCustomers": "Keine Kunden gefunden. Bitte erstellen Sie zuerst einen Kunden.",
   "serviceAgreement.form.retry": "Erneut versuchen",
   "serviceAgreement.form.refresh": "Aktualisieren",
-  
+
   "serviceAgreement.validation.customerRequired": "Kunde ist erforderlich",
   "serviceAgreement.validation.titleRequired": "Titel ist erforderlich",
   "serviceAgreement.validation.startDateRequired": "Startdatum ist erforderlich",
@@ -91,7 +91,7 @@
   "serviceAgreement.validation.nextServiceDateRequired": "Nächstes Servicedatum ist erforderlich",
   "serviceAgreement.validation.endDateAfterStart": "Enddatum muss nach Startdatum liegen",
   "serviceAgreement.validation.nextServiceDateValid": "Nächstes Servicedatum muss innerhalb der Vertragsperiode liegen",
-  
+
   "serviceAgreement.detail.title": "Servicevertragsdetails",
   "serviceAgreement.detail.customer": "Kunde",
   "serviceAgreement.detail.address": "Adresse",
@@ -118,24 +118,24 @@
   "serviceAgreement.detail.linkCopied": "Link in Zwischenablage kopiert",
   "serviceAgreement.detail.acceptedOn": "Akzeptiert am",
   "serviceAgreement.detail.by": "von",
-  
+
   "serviceAgreement.map.title": "Serviceverträge auf Karte",
   "serviceAgreement.map.noLocation": "Kein Standort verfügbar",
   "serviceAgreement.map.loading": "Karte wird geladen...",
-  
+
   "serviceAgreement.confirmDelete": "Sind Sie sicher, dass Sie diesen Servicevertrag löschen möchten?",
   "serviceAgreement.confirmDeleteDescription": "Dies kann nicht rückgängig gemacht werden.",
   "serviceAgreement.deleting": "Servicevertrag wird gelöscht...",
   "serviceAgreement.deleted": "Servicevertrag gelöscht",
   "serviceAgreement.created": "Servicevertrag erstellt",
   "serviceAgreement.updated": "Servicevertrag aktualisiert",
-  
+
   "serviceAgreement.dueDate.days": "Tage",
   "serviceAgreement.dueDate.day": "Tag",
   "serviceAgreement.dueDate.overdue": "Überfällig",
   "serviceAgreement.dueDate.today": "Heute",
   "serviceAgreement.dueDate.tomorrow": "Morgen",
-  
+
   "serviceAgreement.public.title": "Servicevertrag",
   "serviceAgreement.public.headerTitle": "Agritectum Servicevertrag",
   "serviceAgreement.public.invalidToken": "Ungültiger Token",
@@ -190,7 +190,7 @@
   "serviceAgreement.public.validation.emailInvalid": "Ungültige E-Mail-Adresse",
   "serviceAgreement.public.validation.termsRequired": "Sie müssen den Bedingungen zustimmen",
   "serviceAgreement.public.validation.acceptanceRequired": "Sie müssen den Servicevertrag akzeptieren",
-  
+
   "serviceAgreement.form.purpose.title": "1. ZWECK DES VERTRAGS",
   "serviceAgreement.form.purpose.placeholder": "Laufende Wartung und Instandhaltung des Daches, um Funktionalität, Dichtheit und lange Lebensdauer sicherzustellen. Der Vertrag umfasst sowohl die Reparatur beginnender Schäden als auch vorbeugende Kontrollen und Dokumentation für den Betrieb und eventuelle Garantieversicherungen.",
   "serviceAgreement.form.purpose.text": "Laufende Wartung und Instandhaltung des Daches, um Funktionalität, Dichtheit und lange Lebensdauer sicherzustellen. Der Vertrag umfasst sowohl die Reparatur beginnender Schäden als auch vorbeugende Kontrollen und Dokumentation für den Betrieb und eventuelle Garantieversicherungen.",
@@ -254,4 +254,3 @@
   "serviceAgreement.detail.sendError": "Servicevertrag konnte nicht gesendet werden",
   "serviceAgreement.detail.noEmail": "Kunden-E-Mail ist erforderlich, um den Vertrag zu senden"
 }
-

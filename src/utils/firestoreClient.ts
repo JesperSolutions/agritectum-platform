@@ -1,6 +1,6 @@
 /**
  * Consolidated Firestore Client
- * 
+ *
  * Centralizes common Firestore operations to reduce code duplication
  * and ensure consistent query patterns across the application.
  */
@@ -36,11 +36,11 @@ export const getDocument = async <T = DocumentData>(
   try {
     const docRef = doc(db, collectionName, documentId);
     const docSnap = await getDoc(docRef);
-    
+
     if (!docSnap.exists()) {
       return null;
     }
-    
+
     return { id: docSnap.id, ...docSnap.data() } as T;
   } catch (error) {
     console.error(`Error getting document ${collectionName}/${documentId}:`, error);
@@ -57,12 +57,10 @@ export const getDocuments = async <T = DocumentData>(
 ): Promise<T[]> => {
   try {
     const collectionRef = collection(db, collectionName);
-    const q = constraints.length > 0 
-      ? query(collectionRef, ...constraints)
-      : query(collectionRef);
-    
+    const q = constraints.length > 0 ? query(collectionRef, ...constraints) : query(collectionRef);
+
     const querySnapshot = await getDocs(q);
-    
+
     return querySnapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data(),
@@ -110,10 +108,7 @@ export const updateDocument = async <T = Partial<DocumentData>>(
 /**
  * Delete a document
  */
-export const deleteDocument = async (
-  collectionName: string,
-  documentId: string
-): Promise<void> => {
+export const deleteDocument = async (collectionName: string, documentId: string): Promise<void> => {
   try {
     const docRef = doc(db, collectionName, documentId);
     await deleteDoc(docRef);
@@ -136,8 +131,7 @@ export const QueryBuilder = {
   /**
    * Order by field
    */
-  orderBy: (field: string, direction: 'asc' | 'desc' = 'asc') =>
-    orderBy(field, direction),
+  orderBy: (field: string, direction: 'asc' | 'desc' = 'asc') => orderBy(field, direction),
 
   /**
    * Limit results
@@ -160,7 +154,7 @@ export const getDocumentsByBranch = async <T = DocumentData>(
     QueryBuilder.orderBy(orderByField, orderDirection),
     ...additionalConstraints,
   ];
-  
+
   return getDocuments<T>(collectionName, constraints);
 };
 
@@ -255,6 +249,3 @@ export const searchDocuments = async <T = DocumentData>(
 
   return getDocuments<T>(collectionName, constraints);
 };
-
-
-

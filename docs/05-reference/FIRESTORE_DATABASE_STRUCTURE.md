@@ -60,6 +60,7 @@ Firestore Database
 **Purpose:** User accounts and authentication metadata
 
 **Document Fields:**
+
 ```typescript
 {
   uid: string,                    // Firebase Auth UID
@@ -76,6 +77,7 @@ Firestore Database
 ```
 
 **Notes:**
+
 - Document ID = Firebase Auth UID
 - Must have corresponding Firebase Auth user
 - Custom claims must match document data
@@ -87,6 +89,7 @@ Firestore Database
 **Purpose:** Branch locations and organization
 
 **Document Fields:**
+
 ```typescript
 {
   id: string,                     // Branch identifier
@@ -101,6 +104,7 @@ Firestore Database
 ```
 
 **Subcollections:**
+
 - `/branches/{branchId}/employees/{employeeId}` - Legacy employees (deprecated)
 
 ---
@@ -123,6 +127,7 @@ Firestore Database
 **Purpose:** Customer records
 
 **Document Fields:**
+
 ```typescript
 {
   id: string,                     // Document ID
@@ -143,6 +148,7 @@ Firestore Database
 ```
 
 **Key Fields:**
+
 - `branchId`: Controls access visibility
 - `createdBy`: Track creator
 - `totalReports`: Cached aggregation
@@ -155,6 +161,7 @@ Firestore Database
 **Purpose:** Roof inspection reports
 
 **Document Fields:**
+
 ```typescript
 {
   id: string,
@@ -175,6 +182,7 @@ Firestore Database
 ```
 
 **Key Fields:**
+
 - `createdBy`: Creator tracking
 - `branchId`: Access control
 - `status`: Workflow state
@@ -187,6 +195,7 @@ Firestore Database
 **Purpose:** Customer offers/quotes
 
 **Document Fields:**
+
 ```typescript
 {
   id: string,
@@ -219,6 +228,7 @@ Firestore Database
 **Purpose:** Scheduled inspections
 
 **Document Fields:**
+
 ```typescript
 {
   id: string,
@@ -256,6 +266,7 @@ Firestore Database
 **Purpose:** User notifications
 
 **Document Fields:**
+
 ```typescript
 {
   id: string,
@@ -293,6 +304,7 @@ Firestore Database
 ### Extension Collections
 
 **Trigger Email Extension:**
+
 - `/mail/{mailId}` - Email queue
 - `/mail-templates/{templateId}` - Email templates
 - `/mail-status/{statusId}` - Extension status
@@ -325,16 +337,12 @@ function isAuthenticated() {
 
 // Permission level from custom claims
 function getPermissionLevel() {
-  return request.auth.token.permissionLevel != null 
-    ? request.auth.token.permissionLevel 
-    : 0;
+  return request.auth.token.permissionLevel != null ? request.auth.token.permissionLevel : 0;
 }
 
 // Branch ID from custom claims
 function getUserBranchId() {
-  return request.auth.token.branchId != null 
-    ? request.auth.token.branchId 
-    : "";
+  return request.auth.token.branchId != null ? request.auth.token.branchId : '';
 }
 
 // Permission checks
@@ -356,6 +364,7 @@ function isInspector() {
 ### Users Collection (`/users/{userId}`)
 
 **Read:**
+
 ```javascript
 allow read: if isAuthenticated() && (
   request.auth.uid == userId ||                           // Own document
@@ -365,6 +374,7 @@ allow read: if isAuthenticated() && (
 ```
 
 **Create:**
+
 ```javascript
 allow create: if isAuthenticated() && (
   isSuperadmin() ||
@@ -373,6 +383,7 @@ allow create: if isAuthenticated() && (
 ```
 
 **Update:**
+
 ```javascript
 allow update: if isAuthenticated() && (
   isSuperadmin() ||
@@ -382,6 +393,7 @@ allow update: if isAuthenticated() && (
 ```
 
 **Delete:**
+
 ```javascript
 allow delete: if isAuthenticated();
 ```
@@ -393,6 +405,7 @@ allow delete: if isAuthenticated();
 ### Customers Collection (`/customers/{customerId}`)
 
 **Read:**
+
 ```javascript
 allow read: if isAuthenticated() && (
   isSuperadmin() ||
@@ -402,6 +415,7 @@ allow read: if isAuthenticated() && (
 ```
 
 **Create:**
+
 ```javascript
 allow create: if isAuthenticated() &&
   request.resource.data.createdBy == request.auth.uid &&
@@ -413,6 +427,7 @@ allow create: if isAuthenticated() &&
 ```
 
 **Update:**
+
 ```javascript
 allow update: if isAuthenticated() && (
   isSuperadmin() ||
@@ -422,6 +437,7 @@ allow update: if isAuthenticated() && (
 ```
 
 **Delete:**
+
 ```javascript
 allow delete: if isAuthenticated();
 ```
@@ -433,6 +449,7 @@ allow delete: if isAuthenticated();
 ### Reports Collection (`/reports/{reportId}`)
 
 **Read:**
+
 ```javascript
 // Public access for shared reports
 allow read: if resource.data.isPublic == true;
@@ -446,6 +463,7 @@ allow read: if isAuthenticated() && (
 ```
 
 **Create:**
+
 ```javascript
 allow create: if isAuthenticated() &&
   request.resource.data.createdBy == request.auth.uid &&
@@ -457,6 +475,7 @@ allow create: if isAuthenticated() &&
 ```
 
 **Update:**
+
 ```javascript
 allow update: if isAuthenticated() && (
   isSuperadmin() ||
@@ -466,6 +485,7 @@ allow update: if isAuthenticated() && (
 ```
 
 **Delete:**
+
 ```javascript
 allow delete: if isAuthenticated() && (
   isSuperadmin() ||
@@ -480,6 +500,7 @@ allow delete: if isAuthenticated() && (
 **Status:** ⚠️ Deprecated
 
 **Read:**
+
 ```javascript
 allow read: if isAuthenticated() && (
   isSuperadmin() ||
@@ -489,6 +510,7 @@ allow read: if isAuthenticated() && (
 ```
 
 **Create:**
+
 ```javascript
 allow create: if isAuthenticated() && (
   isSuperadmin() ||
@@ -497,6 +519,7 @@ allow create: if isAuthenticated() && (
 ```
 
 **Update:**
+
 ```javascript
 allow update: if isAuthenticated() && (
   isSuperadmin() ||
@@ -505,6 +528,7 @@ allow update: if isAuthenticated() && (
 ```
 
 **Delete:**
+
 ```javascript
 allow delete: if isAuthenticated();
 ```
@@ -530,6 +554,7 @@ When a user logs in, Firebase Auth issues a JWT token containing:
 ```
 
 **Custom Claims are:**
+
 - Set by Firebase Admin SDK only
 - Included in every request automatically
 - Checked by Firestore security rules
@@ -539,11 +564,11 @@ When a user logs in, Firebase Auth issues a JWT token containing:
 
 ### Role Hierarchy
 
-| Role | Permission Level | Access |
-|------|-----------------|---------|
-| superadmin | 2 | ALL data across ALL branches |
-| branchAdmin | 1 | Data in their branch + "main" branch |
-| inspector | 0 | Read most data, create/edit own reports |
+| Role        | Permission Level | Access                                  |
+| ----------- | ---------------- | --------------------------------------- |
+| superadmin  | 2                | ALL data across ALL branches            |
+| branchAdmin | 1                | Data in their branch + "main" branch    |
+| inspector   | 0                | Read most data, create/edit own reports |
 
 ---
 
@@ -554,6 +579,7 @@ When a user logs in, Firebase Auth issues a JWT token containing:
 3. **Superadmin**: Always passes
 
 **Example:**
+
 ```javascript
 // Branch admin with branchId "stockholm" can access:
 // - resource.data.branchId == "stockholm" ✅
@@ -581,12 +607,14 @@ When a user logs in, Firebase Auth issues a JWT token containing:
 ### Example: Linus Deleting Customer
 
 **Request:**
+
 ```
 DELETE /databases/(default)/documents/customers/RSivk7YwRyFdMWIjA8nG
 Headers: Authorization: Bearer <JWT-token-with-claims>
 ```
 
 **Token Claims:**
+
 ```json
 {
   "role": "branchAdmin",
@@ -596,6 +624,7 @@ Headers: Authorization: Bearer <JWT-token-with-claims>
 ```
 
 **Rule Evaluation:**
+
 ```javascript
 match /customers/{customerId} {
   allow delete: if isAuthenticated();
@@ -614,16 +643,19 @@ match /customers/{customerId} {
 ### Issue 1: "Missing or insufficient permissions" on Delete
 
 **Symptoms:**
+
 - Custom claims present
 - `isAuthenticated()` returns true
 - Still getting permission denied
 
 **Root Causes:**
+
 1. ✅ **Browser cache** - Old JavaScript served
 2. ✅ **Service Worker** - Cached old version
 3. ✅ **Token not refreshed** - Stale JWT in request
 
 **Fixes:**
+
 ```bash
 # Hard refresh browser
 Ctrl+Shift+R (Windows)
@@ -640,6 +672,7 @@ Cmd+Shift+R (Mac)
 ### Issue 2: Custom Claims Not Present
 
 **Symptoms:**
+
 - `request.auth.token.role` is undefined
 - `getUserBranchId()` returns ""
 - Permission checks fail
@@ -647,6 +680,7 @@ Cmd+Shift+R (Mac)
 **Root Cause:** Custom claims not set in Firebase Auth
 
 **Fix:**
+
 ```bash
 node scripts/verify-production-claims.cjs
 ```
@@ -658,10 +692,12 @@ node scripts/verify-production-claims.cjs
 **Cause:** Different rules for read vs delete
 
 **Check:**
+
 - Are delete rules simpler than read rules?
 - Are custom claims required for delete?
 
 **Solution:** Simplify delete rules
+
 ```javascript
 allow delete: if isAuthenticated();  // ✅ Simple
 // NOT: allow delete: if isAuthenticated() && isBranchAdmin();  // ❌ Complex
@@ -676,8 +712,9 @@ allow delete: if isAuthenticated();  // ✅ Simple
 **Why:** Main branch = headquarters = global access
 
 **Check:**
+
 ```javascript
-getUserBranchId() == "main"  // Special case
+getUserBranchId() == 'main'; // Special case
 ```
 
 ---
@@ -686,25 +723,25 @@ getUserBranchId() == "main"  // Special case
 
 ### Permissions by Collection
 
-| Collection | Read | Create | Update | Delete |
-|------------|------|--------|--------|--------|
-| users | Branch match | Branch match | Branch match + own | Authenticated |
-| customers | Branch match | Branch match | Branch match | Authenticated |
-| reports | Branch match + public | Branch match | Branch match + own | Admin only |
-| offers | Branch match + public | Branch match | Branch match + own | Admin only |
-| appointments | Branch match | Admin | Branch match + own | Admin only |
-| employees | Branch match | Branch match | Branch match | Authenticated |
+| Collection   | Read                  | Create       | Update             | Delete        |
+| ------------ | --------------------- | ------------ | ------------------ | ------------- |
+| users        | Branch match          | Branch match | Branch match + own | Authenticated |
+| customers    | Branch match          | Branch match | Branch match       | Authenticated |
+| reports      | Branch match + public | Branch match | Branch match + own | Admin only    |
+| offers       | Branch match + public | Branch match | Branch match + own | Admin only    |
+| appointments | Branch match          | Admin        | Branch match + own | Admin only    |
+| employees    | Branch match          | Branch match | Branch match       | Authenticated |
 
 ### Helper Functions
 
 ```javascript
-isAuthenticated()       // request.auth != null
-getPermissionLevel()    // From token or default 0
-getUserBranchId()       // From token or ""
-isSuperadmin()          // Permission >= 2
-isBranchAdmin()         // Permission >= 1
-isInspector()           // Permission >= 0
-hasBranchAccess(id)     // Matches branch or main
+isAuthenticated(); // request.auth != null
+getPermissionLevel(); // From token or default 0
+getUserBranchId(); // From token or ""
+isSuperadmin(); // Permission >= 2
+isBranchAdmin(); // Permission >= 1
+isInspector(); // Permission >= 0
+hasBranchAccess(id); // Matches branch or main
 ```
 
 ---
@@ -714,6 +751,7 @@ hasBranchAccess(id)     // Matches branch or main
 ### Script: `scripts/diagnose-linus-access.cjs`
 
 Run to check:
+
 - Firebase Auth custom claims
 - Firestore user document
 - Collection access
@@ -741,9 +779,9 @@ node scripts/diagnose-linus-access.cjs
 ---
 
 **For questions or issues:**
+
 1. Run diagnostic script
 2. Check custom claims
 3. Verify Firestore document exists
 4. Hard refresh browser
 5. Check console logs
-

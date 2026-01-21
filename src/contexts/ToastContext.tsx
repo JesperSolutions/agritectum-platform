@@ -44,7 +44,7 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
 
   const removeToast = useCallback((id: string) => {
     setToasts(prev => prev.filter(toast => toast.id !== id));
-    
+
     // Clear timeout if it exists
     const timeoutId = timeoutRefs.current.get(id);
     if (timeoutId) {
@@ -53,45 +53,60 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
     }
   }, []);
 
-  const showToast = useCallback((message: string, type: ToastType = 'info', duration: number = 4000) => {
-    const id = `toast_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
-    const newToast: Toast = {
-      id,
-      message,
-      type,
-      duration,
-    };
+  const showToast = useCallback(
+    (message: string, type: ToastType = 'info', duration: number = 4000) => {
+      const id = `toast_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-    setToasts(prev => [...prev, newToast]);
+      const newToast: Toast = {
+        id,
+        message,
+        type,
+        duration,
+      };
 
-    // Auto-remove toast after duration
-    if (duration > 0) {
-      const timeoutId = setTimeout(() => {
-        removeToast(id);
-      }, duration);
-      
-      timeoutRefs.current.set(id, timeoutId);
-    }
+      setToasts(prev => [...prev, newToast]);
 
-    return id;
-  }, [removeToast]);
+      // Auto-remove toast after duration
+      if (duration > 0) {
+        const timeoutId = setTimeout(() => {
+          removeToast(id);
+        }, duration);
 
-  const showSuccess = useCallback((message: string) => {
-    return showToast(message, 'success', 4000);
-  }, [showToast]);
+        timeoutRefs.current.set(id, timeoutId);
+      }
 
-  const showError = useCallback((message: string) => {
-    return showToast(message, 'error', 5000); // Errors stay longer for readability
-  }, [showToast]);
+      return id;
+    },
+    [removeToast]
+  );
 
-  const showWarning = useCallback((message: string) => {
-    return showToast(message, 'warning', 4000);
-  }, [showToast]);
+  const showSuccess = useCallback(
+    (message: string) => {
+      return showToast(message, 'success', 4000);
+    },
+    [showToast]
+  );
 
-  const showInfo = useCallback((message: string) => {
-    return showToast(message, 'info', 4000);
-  }, [showToast]);
+  const showError = useCallback(
+    (message: string) => {
+      return showToast(message, 'error', 5000); // Errors stay longer for readability
+    },
+    [showToast]
+  );
+
+  const showWarning = useCallback(
+    (message: string) => {
+      return showToast(message, 'warning', 4000);
+    },
+    [showToast]
+  );
+
+  const showInfo = useCallback(
+    (message: string) => {
+      return showToast(message, 'info', 4000);
+    },
+    [showToast]
+  );
 
   return (
     <ToastContext.Provider
@@ -109,4 +124,3 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
     </ToastContext.Provider>
   );
 };
-

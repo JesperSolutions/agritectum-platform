@@ -17,6 +17,7 @@ This audit identifies inconsistencies in UI element patterns across the applicat
 ### Current State
 
 **Patterns Found:**
+
 - `rounded-md` - 12 instances (legacy, should migrate)
 - `rounded-lg` - 47 instances (standard for buttons/inputs)
 - `rounded-xl` - 89 instances (standard for cards)
@@ -90,6 +91,7 @@ This audit identifies inconsistencies in UI element patterns across the applicat
 ### Standardization Target
 
 **Recommended Approach:**
+
 - Create unified button component system with variants:
   - `primary` - `bg-slate-700` with proper hover states
   - `secondary` - `border border-slate-200` with hover
@@ -97,6 +99,7 @@ This audit identifies inconsistencies in UI element patterns across the applicat
   - `ghost` - Transparent with hover state
 
 **Migration Strategy:**
+
 - Phase 1: Standardize inline buttons to use consistent classes
 - Phase 2: Create shared button component
 - Phase 3: Migrate Material Design buttons (optional, can coexist)
@@ -110,13 +113,15 @@ This audit identifies inconsistencies in UI element patterns across the applicat
 **Card Patterns Found:**
 
 1. **Standard Pattern** (Most common):
+
    ```tsx
-   className='bg-white rounded-xl shadow-sm border border-slate-200'
+   className = 'bg-white rounded-xl shadow-sm border border-slate-200';
    ```
 
 2. **Material Design Pattern** (SchedulePage):
+
    ```tsx
-   className='bg-white rounded-material shadow-material-2'
+   className = 'bg-white rounded-material shadow-material-2';
    ```
 
 3. **Variations:**
@@ -143,15 +148,17 @@ This audit identifies inconsistencies in UI element patterns across the applicat
 ### Standardization Target
 
 **Card Standard:**
+
 ```tsx
 // Main card
-className='bg-white rounded-xl shadow-sm border border-slate-200 p-6'
+className = 'bg-white rounded-xl shadow-sm border border-slate-200 p-6';
 
 // Inner/metric card
-className='bg-slate-50 border border-slate-200 rounded-xl p-4'
+className = 'bg-slate-50 border border-slate-200 rounded-xl p-4';
 ```
 
 **Padding Guidelines:**
+
 - Main cards: `p-6`
 - Inner cards/metrics: `p-4`
 - Compact cards: `p-3`
@@ -165,13 +172,16 @@ className='bg-slate-50 border border-slate-200 rounded-xl p-4'
 **Form Input Patterns Found:**
 
 1. **Standardized Pattern** (Recent updates):
+
    ```tsx
-   className='w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm'
+   className =
+     'w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm';
    ```
 
 2. **Legacy Pattern** (Needs migration):
    ```tsx
-   className='w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
+   className =
+     'w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500';
    ```
 
 ### Issues Identified
@@ -201,13 +211,17 @@ className='bg-slate-50 border border-slate-200 rounded-xl p-4'
 ### Standardization Target
 
 **Form Input Standard:**
+
 ```tsx
-className='w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm'
+className =
+  'w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm';
 ```
 
 **Error State:**
+
 ```tsx
-className='w-full border border-red-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-red-500 focus:border-red-500 shadow-sm'
+className =
+  'w-full border border-red-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-red-500 focus:border-red-500 shadow-sm';
 ```
 
 ---
@@ -260,26 +274,36 @@ className='w-full border border-red-300 rounded-lg px-3 py-2 focus:ring-2 focus:
 ### Duplicate Patterns Found
 
 1. **Status Badge Pattern** (Used in 8+ components):
+
    ```tsx
    // Success
-   className='bg-green-100 text-green-800'
+   className = 'bg-green-100 text-green-800';
    // Error
-   className='bg-red-100 text-red-800'
+   className = 'bg-red-100 text-red-800';
    // Warning
-   className='bg-yellow-100 text-yellow-800'
+   className = 'bg-yellow-100 text-yellow-800';
    ```
+
    **Recommendation:** Create `StatusBadge` component
 
 2. **Loading State Pattern** (Used in 15+ components):
+
    ```tsx
-   {loading ? <LoadingSpinner /> : <Content />}
+   {
+     loading ? <LoadingSpinner /> : <Content />;
+   }
    ```
+
    **Recommendation:** Create `LoadingWrapper` HOC
 
 3. **Empty State Pattern** (Used in 10+ components):
+
    ```tsx
-   {items.length === 0 ? <EmptyState /> : <List />}
+   {
+     items.length === 0 ? <EmptyState /> : <List />;
+   }
    ```
+
    **Recommendation:** Already have `EmptyState` component, ensure consistent usage
 
 4. **Table Header Pattern** (Used in 5+ components):
@@ -296,11 +320,13 @@ className='w-full border border-red-300 rounded-lg px-3 py-2 focus:ring-2 focus:
 ### Current State
 
 **Material Design Components:**
+
 - `SchedulePage.tsx` - Uses Material Design patterns extensively
 - `ui/button.tsx` - Material Design button component
 - Some components use `shadow-material-*` and `rounded-material`
 
 **Tailwind Components:**
+
 - Majority of components use standard Tailwind classes
 - Recent standardization to `slate-*` colors
 - Standard border radius (`rounded-lg`, `rounded-xl`)
@@ -308,6 +334,7 @@ className='w-full border border-red-300 rounded-lg px-3 py-2 focus:ring-2 focus:
 ### Recommendation
 
 **Hybrid Approach:**
+
 - Allow Material Design components where they provide value (e.g., SchedulePage)
 - Standardize on Tailwind for new components
 - Document when to use each approach

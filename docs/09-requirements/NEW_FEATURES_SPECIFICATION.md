@@ -1,4 +1,5 @@
 # New Features Specification
+
 ## Taklaget Service App - Phase 2 Enhancements
 
 **Version:** 2.0.0  
@@ -11,9 +12,9 @@
 
 ## Document Control
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 2.0.0 | January 2025 | Development Team | Initial feature specification for Phase 2 enhancements |
+| Version | Date         | Author           | Changes                                                |
+| ------- | ------------ | ---------------- | ------------------------------------------------------ |
+| 2.0.0   | January 2025 | Development Team | Initial feature specification for Phase 2 enhancements |
 
 ---
 
@@ -43,6 +44,7 @@ This document specifies new features and enhancements for Phase 2 of the Taklage
 ### 1.2 Scope
 
 This specification covers:
+
 - Offer and acceptance workflow automation
 - Flexible pricing and calculation system
 - Weather-based automatic reminders
@@ -81,6 +83,7 @@ Automate and enhance the offer and acceptance process to make it more efficient 
 #### FR-2.1: Offer Status Management
 
 **FR-2.1.1:** System shall support offer status tracking
+
 - **Statuses:**
   - `pending` - Offer sent, awaiting customer response
   - `accepted` - Customer accepted the offer
@@ -89,11 +92,13 @@ Automate and enhance the offer and acceptance process to make it more efficient 
   - `expired` - Offer validity period expired
 
 **FR-2.1.2:** System shall allow status updates
+
 - **Input:** Offer ID, new status, reason (optional)
 - **Validation:** Status transition must be valid
 - **Output:** Updated offer with timestamp and user info
 
 **FR-2.1.3:** System shall track status history
+
 - **Fields:** Status, timestamp, changed by, reason
 - **Display:** Chronological list of status changes
 - **Audit:** All changes logged for compliance
@@ -101,17 +106,20 @@ Automate and enhance the offer and acceptance process to make it more efficient 
 #### FR-2.2: Automatic Follow-up System
 
 **FR-2.2.1:** System shall send automatic reminders
+
 - **Trigger:** Offer not accepted after 7 days
 - **Recipient:** Assigned inspector
 - **Content:** "Offer pending for [X] days - Follow up with customer"
 - **Frequency:** Daily until offer is resolved
 
 **FR-2.2.2:** System shall support customer notifications
+
 - **Channels:** Email, SMS (optional), Push notification
 - **Content:** Personalized offer reminder with link
 - **Timing:** Configurable (default: 7 days, 14 days)
 
 **FR-2.2.3:** System shall implement follow-up logic
+
 - **Rule:** After 7 days without response → send reminder
 - **Rule:** After 14 days → escalate to branch admin
 - **Rule:** After 30 days → mark as expired
@@ -119,11 +127,13 @@ Automate and enhance the offer and acceptance process to make it more efficient 
 #### FR-2.3: Customer Communication
 
 **FR-2.3.1:** System shall provide direct customer communication
+
 - **Email:** Send offer directly to customer
 - **SMS:** Optional SMS notification (requires opt-in)
 - **Push:** In-app notification if customer has account
 
 **FR-2.3.2:** System shall track communication history
+
 - **Log:** All sent communications
 - **Display:** Communication timeline in offer view
 - **Status:** Delivery status (sent, delivered, opened)
@@ -187,6 +197,7 @@ Automate and enhance the offer and acceptance process to make it more efficient 
 ### 2.5 GUI Design Requirements
 
 **Offer Status Badge:**
+
 - Color-coded status indicators
   - Pending: Yellow
   - Accepted: Green
@@ -195,12 +206,14 @@ Automate and enhance the offer and acceptance process to make it more efficient 
   - Expired: Gray
 
 **Offer List View:**
+
 - Columns: Customer, Date, Amount, Status, Days Pending
 - Sortable by all columns
 - Filterable by status
 - Highlight overdue offers (>7 days)
 
 **Offer Detail View:**
+
 - Status history timeline
 - Communication log
 - Customer contact information
@@ -219,6 +232,7 @@ Enable flexible pricing per department, employee, and task type. Each branch can
 #### FR-3.1: Department-Specific Pricing
 
 **FR-3.1.1:** System shall allow department-specific pricing variables
+
 - **Variables:**
   - Hourly rate per employee
   - Material costs from suppliers
@@ -227,11 +241,13 @@ Enable flexible pricing per department, employee, and task type. Each branch can
   - Profit margin
 
 **FR-3.1.2:** System shall support employee-specific rates
+
 - **Fields:** Employee ID, hourly rate, skill level, department
 - **Validation:** Rate must be within department range
 - **Default:** Department default rate if not specified
 
 **FR-3.1.3:** System shall calculate travel costs
+
 - **Input:** Start location (branch), destination (customer)
 - **Calculation:** Distance × rate per km
 - **Display:** Breakdown in offer (travel: X km × Y kr/km = Z kr)
@@ -239,11 +255,13 @@ Enable flexible pricing per department, employee, and task type. Each branch can
 #### FR-3.2: Material Pricing
 
 **FR-3.2.1:** System shall support supplier pricing
+
 - **Fields:** Supplier name, material type, unit price, currency
 - **Update:** Regular price updates via import or manual entry
 - **History:** Price change history for audit
 
 **FR-3.2.2:** System shall calculate material costs
+
 - **Input:** Material type, quantity, supplier
 - **Calculation:** Quantity × unit price
 - **Display:** Line items in offer with cost breakdown
@@ -251,6 +269,7 @@ Enable flexible pricing per department, employee, and task type. Each branch can
 #### FR-3.3: Pricing Configuration
 
 **FR-3.3.1:** System shall provide pricing configuration interface
+
 - **Access:** Branch Admin and Super Admin only
 - **Sections:**
   - Employee rates
@@ -260,6 +279,7 @@ Enable flexible pricing per department, employee, and task type. Each branch can
   - Minimum pricing rules
 
 **FR-3.3.2:** System shall support pricing templates
+
 - **Template Types:**
   - Standard inspection
   - Emergency repair
@@ -267,6 +287,7 @@ Enable flexible pricing per department, employee, and task type. Each branch can
   - Large project
 
 **FR-3.3.3:** System shall enforce pricing rules
+
 - **Rule:** Minimum price per job type
 - **Rule:** Maximum discount percentage
 - **Rule:** Approval required for discounts > 10%
@@ -332,12 +353,14 @@ Enable flexible pricing per department, employee, and task type. Each branch can
 ### 3.5 GUI Design Requirements
 
 **Pricing Configuration Dashboard:**
+
 - Tabs for different configuration sections
 - Visual indicators for configured vs. not configured
 - Summary card showing current pricing structure
 - Quick access to common configurations
 
 **Pricing Calculator:**
+
 - Input fields for job parameters
 - Real-time calculation display
 - Breakdown by category (labor, materials, travel, overhead)
@@ -357,18 +380,21 @@ Implement automatic reminders based on weather conditions and scheduled inspecti
 #### FR-4.1: Weather-Based Reminders
 
 **FR-4.1.1:** System shall monitor weather conditions
+
 - **Data Source:** Weather API (OpenWeatherMap, SMHI)
 - **Conditions:** Rain, snow, high winds, extreme temperatures
 - **Frequency:** Check every 6 hours
 - **Coverage:** All branch locations
 
 **FR-4.1.2:** System shall send weather alerts
+
 - **Trigger:** Rain detected in branch area
 - **Recipient:** Inspectors with scheduled inspections
 - **Content:** "Weather Alert: Rain forecasted. Consider rescheduling inspection at [Customer]"
 - **Action:** Quick reschedule button in notification
 
 **FR-4.1.3:** System shall implement cooldown period
+
 - **Rule:** No repeat notification for 3 days
 - **Exception:** Severe weather conditions
 - **Tracking:** Last notification timestamp per inspector
@@ -376,17 +402,20 @@ Implement automatic reminders based on weather conditions and scheduled inspecti
 #### FR-4.2: Inspection Reminders
 
 **FR-4.2.1:** System shall send pre-inspection reminders
+
 - **Timing:** 1 week before scheduled inspection
 - **Recipient:** Inspector and customer
 - **Content (Inspector):** "Upcoming inspection at [Customer] on [Date]. Call customer to confirm."
 - **Content (Customer):** "Reminder: Inspection scheduled for [Date] at [Time]"
 
 **FR-4.2.2:** System shall support multi-channel notifications
+
 - **Inspector:** Email, SMS, Push notification
 - **Customer:** Email, SMS (optional)
 - **Preferences:** User-configurable notification preferences
 
 **FR-4.2.3:** System shall track notification delivery
+
 - **Status:** Sent, Delivered, Opened, Clicked
 - **Log:** All notification attempts
 - **Retry:** Automatic retry for failed deliveries
@@ -450,12 +479,14 @@ Implement automatic reminders based on weather conditions and scheduled inspecti
 ### 4.5 GUI Design Requirements
 
 **Weather Alert Banner:**
+
 - Prominent display at top of dashboard
 - Color-coded by severity (yellow, orange, red)
 - Dismissible after action taken
 - Quick action buttons (Reschedule, Confirm)
 
 **Notification Center:**
+
 - Centralized notification hub
 - Filter by type (weather, reminder, system)
 - Mark as read/unread
@@ -474,17 +505,20 @@ Help administrators optimize logistics and planning by suggesting nearby tasks t
 #### FR-5.1: Radius-Based Task Discovery
 
 **FR-5.1.1:** System shall calculate task proximity
+
 - **Input:** Inspector location, task location, radius (km)
 - **Calculation:** Haversine formula for distance
 - **Output:** List of tasks within radius, sorted by distance
 
 **FR-5.1.2:** System shall display nearby tasks
+
 - **View:** Map view with task markers
 - **List:** List view with distance and details
 - **Filter:** By task type, priority, status
 - **Sort:** By distance, priority, date
 
 **FR-5.1.3:** System shall support configurable radius
+
 - **Default:** 10 km
 - **Range:** 5-50 km
 - **Per User:** User-configurable preference
@@ -493,17 +527,20 @@ Help administrators optimize logistics and planning by suggesting nearby tasks t
 #### FR-5.2: Task Assignment
 
 **FR-5.2.1:** System shall suggest nearby tasks
+
 - **Trigger:** Inspector completes task
 - **Logic:** Find tasks within 10 km radius
 - **Display:** "You're 3 km from another customer"
 - **Action:** Quick assign button
 
 **FR-5.2.2:** System shall require customer contact confirmation
+
 - **Rule:** Task cannot be approved until customer contacted
 - **Checkbox:** "Customer contacted and confirmed"
 - **Validation:** Required before task activation
 
 **FR-5.2.3:** System shall support bulk assignment
+
 - **Input:** Multiple tasks, inspector
 - **Validation:** Inspector availability check
 - **Output:** Assigned tasks with schedule
@@ -572,6 +609,7 @@ Help administrators optimize logistics and planning by suggesting nearby tasks t
 ### 5.5 GUI Design Requirements
 
 **Map View:**
+
 - Interactive map showing task locations
 - Color-coded by status (pending, assigned, in progress)
 - Radius circle visualization
@@ -579,6 +617,7 @@ Help administrators optimize logistics and planning by suggesting nearby tasks t
 - Navigation integration (Google Maps, Waze)
 
 **Nearby Tasks Panel:**
+
 - Slide-out panel on task completion
 - List of nearby tasks with distance
 - Quick action buttons (View, Accept, Dismiss)
@@ -597,18 +636,21 @@ Automate the planning and scheduling of follow-up inspections. After completing 
 #### FR-6.1: Automatic Follow-up Scheduling
 
 **FR-6.1.1:** System shall schedule next inspection
+
 - **Trigger:** Inspection marked as complete
 - **Logic:** Current date + 1 year (configurable)
 - **Output:** New inspection appointment
 - **Status:** Pending confirmation
 
 **FR-6.1.2:** System shall send automatic reminder
+
 - **Timing:** 1 month before scheduled date
 - **Recipient:** Inspector and customer
 - **Content:** "Follow-up inspection scheduled for [Date]"
 - **Action:** Confirm or reschedule
 
 **FR-6.1.3:** System shall link to previous inspection
+
 - **Display:** "Last inspection: [Date]" with clickable link
 - **Navigation:** Click to view previous report
 - **History:** Complete inspection history for customer
@@ -616,12 +658,14 @@ Automate the planning and scheduling of follow-up inspections. After completing 
 #### FR-6.2: Inspection History
 
 **FR-6.2.1:** System shall maintain inspection history
+
 - **Fields:** Date, inspector, report ID, status, findings
 - **Display:** Chronological list
 - **Filter:** By date range, inspector, findings
 - **Export:** PDF summary of all inspections
 
 **FR-6.2.2:** System shall track recurring issues
+
 - **Logic:** Compare issues across inspections
 - **Alert:** "Same issue found in last 3 inspections"
 - **Display:** Issue trend chart
@@ -686,12 +730,14 @@ Automate the planning and scheduling of follow-up inspections. After completing 
 ### 6.5 GUI Design Requirements
 
 **Inspection Timeline:**
+
 - Visual timeline showing all inspections
 - Color-coded by status
 - Click to view details
 - Expandable sections for each inspection
 
 **Follow-up Dashboard:**
+
 - Upcoming follow-ups list
 - Overdue follow-ups highlighted
 - Quick actions (Confirm, Reschedule, Cancel)
@@ -710,6 +756,7 @@ Integrate with external systems (Agritectum) and provide centralized access to p
 #### FR-7.1: Agritectum Integration
 
 **FR-7.1.1:** System shall send data to Agritectum
+
 - **Trigger:** New offer or report created
 - **Method:** POST request to Agritectum API
 - **Data:**
@@ -720,6 +767,7 @@ Integrate with external systems (Agritectum) and provide centralized access to p
   - Offer value
 
 **FR-7.1.2:** System shall attach data to emails
+
 - **Location:** Bottom of offer/report email
 - **Format:** Structured data block
 - **Content:**
@@ -729,6 +777,7 @@ Integrate with external systems (Agritectum) and provide centralized access to p
   - Calculations summary
 
 **FR-7.1.3:** System shall handle API responses
+
 - **Success:** Log confirmation
 - **Failure:** Retry with exponential backoff
 - **Error:** Alert admin and log error
@@ -736,6 +785,7 @@ Integrate with external systems (Agritectum) and provide centralized access to p
 #### FR-7.2: Material Datasheet Module
 
 **FR-7.2.1:** System shall provide central datasheet repository
+
 - **Storage:** Cloud Storage with metadata
 - **Types:**
   - Product datasheets
@@ -744,12 +794,14 @@ Integrate with external systems (Agritectum) and provide centralized access to p
   - Safety data sheets
 
 **FR-7.2.2:** System shall support version control
+
 - **Tracking:** Version number, date, author
 - **Display:** "Last updated: [Date]"
 - **History:** Complete version history
 - **Rollback:** Ability to revert to previous version
 
 **FR-7.2.3:** System shall enable easy access
+
 - **Search:** By product name, type, category
 - **Filter:** By manufacturer, date, version
 - **Download:** PDF download with watermark
@@ -810,12 +862,14 @@ Integrate with external systems (Agritectum) and provide centralized access to p
 ### 7.5 GUI Design Requirements
 
 **Integration Status Dashboard:**
+
 - Real-time status of integrations
 - Success/failure indicators
 - Recent transactions log
 - Configuration settings
 
 **Datasheet Library:**
+
 - Grid/list view toggle
 - Advanced search with filters
 - Category navigation
@@ -835,6 +889,7 @@ Ensure compliance with hot work requirements by including mandatory agreement fo
 #### FR-8.1: Hot Work Agreement Form
 
 **FR-8.1.1:** System shall include agreement form in templates
+
 - **Location:** Mandatory section in report/offer
 - **Content:**
   - Work description
@@ -844,12 +899,14 @@ Ensure compliance with hot work requirements by including mandatory agreement fo
   - Signatures (inspector, customer)
 
 **FR-8.1.2:** System shall require completion
+
 - **Validation:** All fields must be completed
 - **Checkbox:** "I have read and understood the safety requirements"
 - **Signature:** Digital signature or checkbox
 - **Prevention:** Cannot submit without completion
 
 **FR-8.1.3:** System shall track compliance
+
 - **Log:** All completed forms
 - **Report:** Compliance report by branch
 - **Alert:** Missing forms flagged
@@ -858,12 +915,14 @@ Ensure compliance with hot work requirements by including mandatory agreement fo
 #### FR-8.2: Photo Attachment
 
 **FR-8.2.1:** System shall support photo upload in documents
+
 - **Location:** Within report/offer sections
 - **Types:** JPG, PNG, HEIC
 - **Size:** Maximum 10 MB per photo
 - **Quantity:** Unlimited photos
 
 **FR-8.2.2:** System shall provide photo management
+
 - **Upload:** Drag and drop or file picker
 - **Preview:** Thumbnail with full-size view
 - **Delete:** Remove unwanted photos
@@ -919,6 +978,7 @@ Ensure compliance with hot work requirements by including mandatory agreement fo
 ### 8.5 GUI Design Requirements
 
 **Agreement Form:**
+
 - Clear sections with headings
 - Checkboxes for safety measures
 - Text areas for descriptions
@@ -926,6 +986,7 @@ Ensure compliance with hot work requirements by including mandatory agreement fo
 - Visual indicators for required fields
 
 **Photo Upload:**
+
 - Drag and drop zone
 - Progress bar for uploads
 - Thumbnail grid view
@@ -945,12 +1006,14 @@ Make offers more dynamic and customer-relevant by allowing inspectors to add rec
 #### FR-9.1: Recommendations Section
 
 **FR-9.1.1:** System shall provide recommendations field
+
 - **Location:** Dedicated section in offer template
 - **Type:** Free-form text
 - **Purpose:** Inspector's professional recommendations
 - **Display:** Prominent placement in offer
 
 **FR-9.1.2:** System shall support rich formatting
+
 - **Options:** Bold, italic, bullet points
 - **Templates:** Pre-written common recommendations
 - **Custom:** Inspector can add custom text
@@ -959,12 +1022,14 @@ Make offers more dynamic and customer-relevant by allowing inspectors to add rec
 #### FR-9.2: Customer Feedback
 
 **FR-9.2.1:** System shall capture customer feedback
+
 - **Types:** Verbal (notes), Written (text)
 - **Location:** Stored with offer/customer record
 - **Access:** Visible to inspector and admin
 - **History:** Complete feedback history
 
 **FR-9.2.2:** System shall support feedback categories
+
 - **Types:**
   - Pricing feedback
   - Service quality
@@ -973,6 +1038,7 @@ Make offers more dynamic and customer-relevant by allowing inspectors to add rec
   - General comments
 
 **FR-9.2.3:** System shall enable follow-up actions
+
 - **Flag:** Important feedback flagged
 - **Assign:** Assign follow-up to specific inspector
 - **Track:** Track resolution status
@@ -1034,6 +1100,7 @@ Make offers more dynamic and customer-relevant by allowing inspectors to add rec
 ### 9.5 GUI Design Requirements
 
 **Recommendations Editor:**
+
 - Rich text editor with formatting toolbar
 - Template selector dropdown
 - Character counter
@@ -1041,6 +1108,7 @@ Make offers more dynamic and customer-relevant by allowing inspectors to add rec
 - Save draft functionality
 
 **Feedback Capture Form:**
+
 - Category dropdown
 - Priority selector (low, medium, high)
 - Text area for details
@@ -1060,6 +1128,7 @@ Complete necessary setup tasks before vacation, including creating new branches,
 #### FR-10.1: Branch Creation
 
 **FR-10.1.1:** System shall support branch creation
+
 - **Fields:**
   - Branch name
   - Address
@@ -1070,6 +1139,7 @@ Complete necessary setup tasks before vacation, including creating new branches,
   - Email address
 
 **FR-10.1.2:** System shall configure branch settings
+
 - **Pricing:** Branch-specific pricing variables
 - **Users:** Initial user accounts
 - **Permissions:** Branch admin assignment
@@ -1078,12 +1148,14 @@ Complete necessary setup tasks before vacation, including creating new branches,
 #### FR-10.2: Email Configuration
 
 **FR-10.2.1:** System shall configure branch email
+
 - **Format:** [branch]@taklaget.dk
 - **Verification:** Email verification required
 - **Routing:** Automatic routing to branch admin
 - **Signature:** Branch-specific email signature
 
 **FR-10.2.2:** System shall configure email templates
+
 - **Types:** Offer, report, reminder, notification
 - **Branding:** Branch logo and colors
 - **Content:** Branch-specific content
@@ -1092,12 +1164,14 @@ Complete necessary setup tasks before vacation, including creating new branches,
 #### FR-10.3: Logo Configuration
 
 **FR-10.3.1:** System shall support logo upload
+
 - **Format:** PNG, SVG
 - **Size:** Maximum 2 MB
 - **Dimensions:** Recommended 500x500px
 - **Preview:** Real-time preview
 
 **FR-10.3.2:** System shall apply logo branding
+
 - **Locations:**
   - Email templates
   - PDF reports
@@ -1157,6 +1231,7 @@ Complete necessary setup tasks before vacation, including creating new branches,
 ### 10.5 GUI Design Requirements
 
 **Branch Setup Wizard:**
+
 - Step-by-step wizard interface
 - Progress indicator
 - Validation at each step
@@ -1164,6 +1239,7 @@ Complete necessary setup tasks before vacation, including creating new branches,
 - Completion checklist
 
 **Configuration Dashboard:**
+
 - Overview of all settings
 - Visual indicators for configured items
 - Quick access to common settings
@@ -1260,13 +1336,13 @@ Complete necessary setup tasks before vacation, including creating new branches,
 
 ### 11.5 Timeline Summary
 
-| Phase | Duration | Features | Priority |
-|-------|----------|----------|----------|
-| Phase 1 | Weeks 1-4 | Offer Flow ⭐, Pricing | MUST-HAVE |
-| Phase 2 | Weeks 5-8 | Reminders, Radius System | SHOULD-HAVE |
-| Phase 3 | Weeks 9-12 | Follow-up, Agreement, Feedback | SHOULD-HAVE |
-| Phase 4 | Weeks 13-14 | Datasheet Module, Operations | COULD-HAVE |
-| **Total** | **14 weeks** | **8 features** | - |
+| Phase     | Duration     | Features                       | Priority    |
+| --------- | ------------ | ------------------------------ | ----------- |
+| Phase 1   | Weeks 1-4    | Offer Flow ⭐, Pricing         | MUST-HAVE   |
+| Phase 2   | Weeks 5-8    | Reminders, Radius System       | SHOULD-HAVE |
+| Phase 3   | Weeks 9-12   | Follow-up, Agreement, Feedback | SHOULD-HAVE |
+| Phase 4   | Weeks 13-14  | Datasheet Module, Operations   | COULD-HAVE  |
+| **Total** | **14 weeks** | **8 features**                 | -           |
 
 **Note:** Agritectum integration deferred to future phase due to low priority.
 
@@ -1277,6 +1353,7 @@ Complete necessary setup tasks before vacation, including creating new branches,
 ### 12.1 Design Principles
 
 #### 12.1.1 Consistency
+
 - **Color Scheme:** Maintain brand colors throughout
   - Primary: #3B82F6 (Blue)
   - Success: #10B981 (Green)
@@ -1287,18 +1364,21 @@ Complete necessary setup tasks before vacation, including creating new branches,
 - **Components:** Reuse existing UI components
 
 #### 12.1.2 Simplicity
+
 - **Clutter-Free:** Only essential elements visible
 - **Progressive Disclosure:** Show details on demand
 - **Clear Hierarchy:** Visual hierarchy guides user attention
 - **White Space:** Adequate breathing room
 
 #### 12.1.3 User-Centered Design
+
 - **User Research:** Understand inspector and admin workflows
 - **User Testing:** Test with real users before release
 - **Feedback Loop:** Incorporate user feedback
 - **Accessibility:** WCAG 2.1 AA compliance
 
 #### 12.1.4 Feedback and Responsiveness
+
 - **Loading States:** Show progress indicators
 - **Success Messages:** Confirm actions completed
 - **Error Messages:** Clear, actionable error text
@@ -1306,6 +1386,7 @@ Complete necessary setup tasks before vacation, including creating new branches,
 - **Animations:** Subtle, purposeful animations
 
 #### 12.1.5 Accessibility
+
 - **Keyboard Navigation:** Full keyboard support
 - **Screen Readers:** ARIA labels and roles
 - **Color Contrast:** Minimum 4.5:1 ratio
@@ -1315,13 +1396,15 @@ Complete necessary setup tasks before vacation, including creating new branches,
 ### 12.2 Component Guidelines
 
 #### 12.2.1 Forms
+
 - **Labels:** Clear, descriptive labels
 - **Placeholders:** Helpful placeholder text
 - **Validation:** Real-time validation with clear messages
-- **Required Fields:** Marked with asterisk (*)
+- **Required Fields:** Marked with asterisk (\*)
 - **Error States:** Red border and error message below field
 
 #### 12.2.2 Buttons
+
 - **Primary:** Blue background, white text
 - **Secondary:** White background, blue border
 - **Danger:** Red background, white text
@@ -1329,6 +1412,7 @@ Complete necessary setup tasks before vacation, including creating new branches,
 - **States:** Default, hover, active, disabled
 
 #### 12.2.3 Tables
+
 - **Headers:** Bold, sortable
 - **Rows:** Alternating background colors
 - **Actions:** Icon buttons in last column
@@ -1336,6 +1420,7 @@ Complete necessary setup tasks before vacation, including creating new branches,
 - **Responsive:** Horizontal scroll on mobile
 
 #### 12.2.4 Modals
+
 - **Size:** Appropriate for content
 - **Header:** Clear title and close button
 - **Footer:** Action buttons (Cancel, Confirm)
@@ -1343,6 +1428,7 @@ Complete necessary setup tasks before vacation, including creating new branches,
 - **Animation:** Smooth slide-in animation
 
 #### 12.2.5 Notifications
+
 - **Position:** Top-right corner
 - **Duration:** 5 seconds (configurable)
 - **Types:** Success (green), Error (red), Warning (yellow), Info (blue)
@@ -1352,11 +1438,13 @@ Complete necessary setup tasks before vacation, including creating new branches,
 ### 12.3 Responsive Design
 
 #### 12.3.1 Breakpoints
+
 - **Mobile:** < 640px
 - **Tablet:** 640px - 1024px
 - **Desktop:** > 1024px
 
 #### 12.3.2 Mobile Considerations
+
 - **Touch Targets:** Minimum 44x44px
 - **Text Size:** Minimum 16px
 - **Navigation:** Hamburger menu
@@ -1366,12 +1454,14 @@ Complete necessary setup tasks before vacation, including creating new branches,
 ### 12.4 Performance
 
 #### 12.4.1 Loading Performance
+
 - **Initial Load:** < 3 seconds
 - **Time to Interactive:** < 5 seconds
 - **Code Splitting:** Lazy load routes
 - **Image Optimization:** WebP format, lazy loading
 
 #### 12.4.2 Runtime Performance
+
 - **Smooth Scrolling:** 60 FPS
 - **Debouncing:** Input debouncing for search
 - **Virtual Scrolling:** For long lists
@@ -1400,6 +1490,7 @@ Complete necessary setup tasks before vacation, including creating new branches,
 **Endpoint:** `POST https://api.agritectum.com/v1/projects`
 
 **Request Body:**
+
 ```json
 {
   "project_reference": "TKL-2025-001",
@@ -1420,6 +1511,7 @@ Complete necessary setup tasks before vacation, including creating new branches,
 ```
 
 **Response:**
+
 ```json
 {
   "status": "success",
@@ -1441,5 +1533,4 @@ Complete necessary setup tasks before vacation, including creating new branches,
 
 ---
 
-*This document is confidential and proprietary to Taklaget Service App.*
-
+_This document is confidential and proprietary to Taklaget Service App._

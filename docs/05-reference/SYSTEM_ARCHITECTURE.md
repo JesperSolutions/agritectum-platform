@@ -3,6 +3,7 @@
 ## Technology Stack
 
 ### Frontend
+
 - **Framework**: React 18 with TypeScript
 - **Build Tool**: Vite 5.4
 - **Styling**: Tailwind CSS with Material Design principles
@@ -14,6 +15,7 @@
 - **PDF Generation**: jsPDF
 
 ### Backend
+
 - **Platform**: Firebase
   - **Firestore**: NoSQL database
   - **Authentication**: Email/password auth with custom claims
@@ -23,6 +25,7 @@
   - **Extensions**: Trigger Email (MailerSend SMTP)
 
 ### Features
+
 - **Offline Support**: Service Worker, LocalStorage caching
 - **Progressive Web App (PWA)**: Installable on mobile/desktop
 - **Real-time Notifications**: Firestore listeners
@@ -33,6 +36,7 @@
 ## Architecture Patterns
 
 ### Component Structure
+
 ```
 src/
 ├── components/
@@ -52,6 +56,7 @@ src/
 ```
 
 ### Data Flow
+
 1. User interacts with component
 2. Component calls service function
 3. Service function interacts with Firebase
@@ -60,6 +65,7 @@ src/
 6. Component updates via state/context
 
 ### Security Model
+
 - **Authentication**: Firebase Auth with custom claims
 - **Authorization**: Firestore security rules
 - **Permission Levels**: 0 (Inspector), 1 (Branch Admin), 2 (Superadmin)
@@ -68,28 +74,33 @@ src/
 ## Key Features
 
 ### 1. Smart Dashboard
+
 - Role-aware component
 - Consolidates 3 dashboard types
 - Dynamic data fetching based on permissions
 
 ### 2. Scheduling System
+
 - Create/manage appointments
 - Assign inspectors
 - Conflict detection
 - Link appointments to reports
 
 ### 3. Report Management
+
 - 4-step wizard (Customer → Inspection → Issues → Summary)
 - PDF export with company branding
 - Public sharing links
 - Offline draft support
 
 ### 4. User Management
+
 - Create users with roles
 - Assign to branches
 - Set custom authentication claims
 
 ### 5. Email System
+
 - Template-based emails (Handlebars)
 - Automatic sending via Firestore triggers
 - MailerSend SMTP integration
@@ -97,6 +108,7 @@ src/
 ## Performance
 
 ### Bundle Size
+
 - Total: ~1.6 MB uncompressed
 - Largest chunks:
   - Firebase SDK: ~510 KB
@@ -104,6 +116,7 @@ src/
   - Main app: ~332 KB
 
 ### Optimization Strategies
+
 - Code splitting with React.lazy()
 - Dynamic imports for admin pages
 - Image optimization
@@ -112,12 +125,14 @@ src/
 ## Deployment
 
 ### Hosting
+
 - Firebase Hosting
 - CDN: Global edge caching
 - HTTPS: Automatic SSL
 - Custom domain: taklaget.app
 
 ### CI/CD
+
 - `npm run build` - Build production bundle
 - `firebase deploy --only hosting` - Deploy frontend
 - `firebase deploy --only firestore:rules` - Deploy security rules
@@ -125,16 +140,19 @@ src/
 ## Security
 
 ### Authentication
+
 - Email/password only
 - Custom claims for roles
 - Session management via Firebase
 
 ### Firestore Rules
+
 - Role-based read/write rules
 - Branch-level data isolation
 - Inspector can only edit own reports
 
 ### Data Privacy
+
 - GDPR compliant
 - EU data residency (europe-west1)
 - User consent for emails
@@ -143,18 +161,21 @@ src/
 ## Monitoring
 
 ### Firebase Console
+
 - Authentication users
 - Firestore data
 - Storage files
 - Hosting analytics
 
 ### Error Tracking
+
 - Client-side: ErrorBoundary components
 - Server-side: Cloud Function logs
 
 ## Future Improvements
 
 See `SYSTEM_IMPROVEMENTS.md` in archive for detailed roadmap:
+
 - Calendar view for scheduling
 - Enhanced photo management
 - Analytics dashboard with charts

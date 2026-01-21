@@ -29,15 +29,9 @@ const DefectQuickDescription: React.FC<DefectQuickDescriptionProps> = ({
   onCancel,
 }) => {
   const { t } = useIntl();
-  const [description, setDescription] = useState(
-    draftDefect?.description || ''
-  );
-  const [title, setTitle] = useState(
-    draftDefect?.title || ''
-  );
-  const [issueType, setIssueType] = useState<IssueType>(
-    draftDefect?.type || 'other'
-  );
+  const [description, setDescription] = useState(draftDefect?.description || '');
+  const [title, setTitle] = useState(draftDefect?.title || '');
+  const [issueType, setIssueType] = useState<IssueType>(draftDefect?.type || 'other');
 
   const handleSave = () => {
     if (!title.trim()) {
@@ -96,7 +90,7 @@ const DefectQuickDescription: React.FC<DefectQuickDescriptionProps> = ({
             </label>
             <select
               value={issueType}
-              onChange={(e) => setIssueType(e.target.value as IssueType)}
+              onChange={e => setIssueType(e.target.value as IssueType)}
               className='block w-full px-3 py-2 border border-slate-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm min-h-[44px]'
             >
               <option value='leak'>{t('issueTypes.leak')}</option>
@@ -118,7 +112,7 @@ const DefectQuickDescription: React.FC<DefectQuickDescriptionProps> = ({
             <input
               type='text'
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={e => setTitle(e.target.value)}
               placeholder={t('form.fields.issueTitlePlaceholder') || 'Enter issue title'}
               className='block w-full px-3 py-2 border border-slate-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm min-h-[44px]'
             />
@@ -132,8 +126,10 @@ const DefectQuickDescription: React.FC<DefectQuickDescriptionProps> = ({
             <textarea
               rows={2}
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder={t('form.fields.issueDescriptionPlaceholder') || 'Describe the issue in detail...'}
+              onChange={e => setDescription(e.target.value)}
+              placeholder={
+                t('form.fields.issueDescriptionPlaceholder') || 'Describe the issue in detail...'
+              }
               className='block w-full px-3 py-2 border border-slate-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm resize-none'
             />
           </div>

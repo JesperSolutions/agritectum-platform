@@ -3,12 +3,5 @@
     "default": "agritectum-app",
     "agri": "agritectum-platform"
   },
-  "targets": {},
-  "etags": {
-    "taklaget-service-app": {
-      "extensionInstances": {
-        "firestore-send-email-tyk0": "7f5c5971e4917b38938fddd191afb09f1c3706aa049abf0efe7d037793908140"
-      }
-    }
-  }
+  "targets": {}
 }

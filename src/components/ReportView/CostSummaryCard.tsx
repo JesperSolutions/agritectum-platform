@@ -13,6 +13,8 @@ interface CostSummaryCardProps {
     travelCost: number;
     overheadCost: number;
   }) => Promise<void>;
+  externalEditMode?: boolean;
+  onFieldChange?: (field: string, value: number) => void;
 }
 
 const CostSummaryCard: React.FC<CostSummaryCardProps> = ({
@@ -20,6 +22,8 @@ const CostSummaryCard: React.FC<CostSummaryCardProps> = ({
   isEditable,
   canEdit,
   onUpdate,
+  externalEditMode = false,
+  onFieldChange,
 }) => {
   const { t, formatCurrency } = useIntl();
   const [isEditing, setIsEditing] = useState(false);
@@ -32,9 +36,12 @@ const CostSummaryCard: React.FC<CostSummaryCardProps> = ({
     overheadCost: report.overheadCost || 0,
   });
 
-  // Sync costs when report changes (but not while editing)
+  // Effective edit mode: either internal or external
+  const activeEditMode = externalEditMode || isEditing;
+
+  // Sync costs when report changes (but not while editing internally)
   useEffect(() => {
-    if (!isEditing) {
+    if (!activeEditMode) {
       setCosts({
         laborCost: report.laborCost || 0,
         materialCost: report.materialCost || 0,
@@ -43,12 +50,18 @@ const CostSummaryCard: React.FC<CostSummaryCardProps> = ({
       });
       setHasChanges(false);
     }
-  }, [report.laborCost, report.materialCost, report.travelCost, report.overheadCost, isEditing]);
+  }, [
+    report.laborCost,
+    report.materialCost,
+    report.travelCost,
+    report.overheadCost,
+    activeEditMode,
+  ]);
 
   // Track changes
   useEffect(() => {
     if (isEditing) {
-      const changed = 
+      const changed =
         costs.laborCost !== (report.laborCost || 0) ||
         costs.materialCost !== (report.materialCost || 0) ||
         costs.travelCost !== (report.travelCost || 0) ||
@@ -66,14 +79,19 @@ const CostSummaryCard: React.FC<CostSummaryCardProps> = ({
   );
 
   // Calculate subtotal (recommended actions + cost fields)
-  const subtotal = recommendedActionsTotal + costs.laborCost + costs.materialCost + costs.travelCost + costs.overheadCost;
+  const subtotal =
+    recommendedActionsTotal +
+    costs.laborCost +
+    costs.materialCost +
+    costs.travelCost +
+    costs.overheadCost;
 
   // Total estimate (same as subtotal for now, profit margin can be added later)
   const totalEstimate = subtotal;
 
   const handleSave = async () => {
     if (!onUpdate) return;
-    
+
     setIsSaving(true);
     try {
       await onUpdate(costs);
@@ -140,7 +158,7 @@ const CostSummaryCard: React.FC<CostSummaryCardProps> = ({
               className='inline-flex items-center px-4 py-2 text-sm font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md hover:shadow-lg'
             >
               <Save className='w-4 h-4 mr-2' />
-              {isSaving ? 'Sparar...' : (t('costEstimate.save') || 'Spara')}
+              {isSaving ? 'Sparar...' : t('costEstimate.save') || 'Spara'}
             </button>
             <button
               onClick={handleCancel}
@@ -159,9 +177,7 @@ const CostSummaryCard: React.FC<CostSummaryCardProps> = ({
         <div className='text-xs uppercase tracking-wide text-gray-500 mb-2 font-medium'>
           {t('costEstimate.total') || 'Total uppskattning'}
         </div>
-        <div className='text-5xl font-bold text-gray-900'>
-          {formatCurrencySafe(totalEstimate)}
-        </div>
+        <div className='text-5xl font-bold text-gray-900'>{formatCurrencySafe(totalEstimate)}</div>
       </div>
 
       {/* Cost Breakdown */}
@@ -183,24 +199,33 @@ const CostSummaryCard: React.FC<CostSummaryCardProps> = ({
         {/* Editable Cost Fields */}
         <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
           {/* Labor Cost */}
-          <div className={`flex flex-col py-3 px-4 rounded-lg border-2 transition-all ${
-            showEditMode 
-              ? 'bg-blue-50 border-blue-300' 
-              : canEdit && showEditButton
-              ? 'bg-gray-50 border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 cursor-pointer'
-              : 'bg-gray-50 border-gray-200'
-          }`}>
+          <div
+            className={`flex flex-col py-3 px-4 rounded-lg border-2 transition-all ${
+              activeEditMode
+                ? 'bg-blue-50 border-blue-300'
+                : canEdit && showEditButton
+                  ? 'bg-gray-50 border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 cursor-pointer'
+                  : 'bg-gray-50 border-gray-200'
+            }`}
+          >
             <div className='flex items-center justify-between mb-2'>
               <label className='text-sm font-medium text-gray-700'>
                 {t('costEstimate.labor') || 'Arbetskostnad'}
               </label>
-              {showEditMode && <Pencil className='w-3 h-3 text-blue-600' />}
+              {activeEditMode && <Pencil className='w-3 h-3 text-blue-600' />}
             </div>
-            {showEditMode ? (
+            {activeEditMode ? (
               <input
                 type='number'
                 value={costs.laborCost || ''}
-                onChange={(e) => setCosts({ ...costs, laborCost: parseFloat(e.target.value) || 0 })}
+                onChange={e => {
+                  const val = parseFloat(e.target.value) || 0;
+                  if (externalEditMode && onFieldChange) {
+                    onFieldChange('laborCost', val);
+                  } else {
+                    setCosts({ ...costs, laborCost: val });
+                  }
+                }}
                 className='w-full px-3 py-2 text-base font-semibold border-2 border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white'
                 placeholder='0'
                 min='0'
@@ -215,24 +240,33 @@ const CostSummaryCard: React.FC<CostSummaryCardProps> = ({
           </div>
 
           {/* Material Cost */}
-          <div className={`flex flex-col py-3 px-4 rounded-lg border-2 transition-all ${
-            showEditMode 
-              ? 'bg-blue-50 border-blue-300' 
-              : canEdit && showEditButton
-              ? 'bg-gray-50 border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 cursor-pointer'
-              : 'bg-gray-50 border-gray-200'
-          }`}>
+          <div
+            className={`flex flex-col py-3 px-4 rounded-lg border-2 transition-all ${
+              activeEditMode
+                ? 'bg-blue-50 border-blue-300'
+                : canEdit && showEditButton
+                  ? 'bg-gray-50 border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 cursor-pointer'
+                  : 'bg-gray-50 border-gray-200'
+            }`}
+          >
             <div className='flex items-center justify-between mb-2'>
               <label className='text-sm font-medium text-gray-700'>
                 {t('costEstimate.material') || 'Materialkostnad'}
               </label>
-              {showEditMode && <Pencil className='w-3 h-3 text-blue-600' />}
+              {activeEditMode && <Pencil className='w-3 h-3 text-blue-600' />}
             </div>
-            {showEditMode ? (
+            {activeEditMode ? (
               <input
                 type='number'
                 value={costs.materialCost || ''}
-                onChange={(e) => setCosts({ ...costs, materialCost: parseFloat(e.target.value) || 0 })}
+                onChange={e => {
+                  const val = parseFloat(e.target.value) || 0;
+                  if (externalEditMode && onFieldChange) {
+                    onFieldChange('materialCost', val);
+                  } else {
+                    setCosts({ ...costs, materialCost: val });
+                  }
+                }}
                 className='w-full px-3 py-2 text-base font-semibold border-2 border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white'
                 placeholder='0'
                 min='0'
@@ -246,24 +280,33 @@ const CostSummaryCard: React.FC<CostSummaryCardProps> = ({
           </div>
 
           {/* Travel Cost */}
-          <div className={`flex flex-col py-3 px-4 rounded-lg border-2 transition-all ${
-            showEditMode 
-              ? 'bg-blue-50 border-blue-300' 
-              : canEdit && showEditButton
-              ? 'bg-gray-50 border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 cursor-pointer'
-              : 'bg-gray-50 border-gray-200'
-          }`}>
+          <div
+            className={`flex flex-col py-3 px-4 rounded-lg border-2 transition-all ${
+              activeEditMode
+                ? 'bg-blue-50 border-blue-300'
+                : canEdit && showEditButton
+                  ? 'bg-gray-50 border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 cursor-pointer'
+                  : 'bg-gray-50 border-gray-200'
+            }`}
+          >
             <div className='flex items-center justify-between mb-2'>
               <label className='text-sm font-medium text-gray-700'>
                 {t('costEstimate.travel') || 'Resekostnad'}
               </label>
-              {showEditMode && <Pencil className='w-3 h-3 text-blue-600' />}
+              {activeEditMode && <Pencil className='w-3 h-3 text-blue-600' />}
             </div>
-            {showEditMode ? (
+            {activeEditMode ? (
               <input
                 type='number'
                 value={costs.travelCost || ''}
-                onChange={(e) => setCosts({ ...costs, travelCost: parseFloat(e.target.value) || 0 })}
+                onChange={e => {
+                  const val = parseFloat(e.target.value) || 0;
+                  if (externalEditMode && onFieldChange) {
+                    onFieldChange('travelCost', val);
+                  } else {
+                    setCosts({ ...costs, travelCost: val });
+                  }
+                }}
                 className='w-full px-3 py-2 text-base font-semibold border-2 border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white'
                 placeholder='0'
                 min='0'
@@ -277,24 +320,33 @@ const CostSummaryCard: React.FC<CostSummaryCardProps> = ({
           </div>
 
           {/* Overhead Cost */}
-          <div className={`flex flex-col py-3 px-4 rounded-lg border-2 transition-all ${
-            showEditMode 
-              ? 'bg-blue-50 border-blue-300' 
-              : canEdit && showEditButton
-              ? 'bg-gray-50 border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 cursor-pointer'
-              : 'bg-gray-50 border-gray-200'
-          }`}>
+          <div
+            className={`flex flex-col py-3 px-4 rounded-lg border-2 transition-all ${
+              activeEditMode
+                ? 'bg-blue-50 border-blue-300'
+                : canEdit && showEditButton
+                  ? 'bg-gray-50 border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 cursor-pointer'
+                  : 'bg-gray-50 border-gray-200'
+            }`}
+          >
             <div className='flex items-center justify-between mb-2'>
               <label className='text-sm font-medium text-gray-700'>
                 {t('costEstimate.overhead') || 'Omkostnader'}
               </label>
-              {showEditMode && <Pencil className='w-3 h-3 text-blue-600' />}
+              {activeEditMode && <Pencil className='w-3 h-3 text-blue-600' />}
             </div>
-            {showEditMode ? (
+            {activeEditMode ? (
               <input
                 type='number'
                 value={costs.overheadCost || ''}
-                onChange={(e) => setCosts({ ...costs, overheadCost: parseFloat(e.target.value) || 0 })}
+                onChange={e => {
+                  const val = parseFloat(e.target.value) || 0;
+                  if (externalEditMode && onFieldChange) {
+                    onFieldChange('overheadCost', val);
+                  } else {
+                    setCosts({ ...costs, overheadCost: val });
+                  }
+                }}
                 className='w-full px-3 py-2 text-base font-semibold border-2 border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white'
                 placeholder='0'
                 min='0'
@@ -313,9 +365,7 @@ const CostSummaryCard: React.FC<CostSummaryCardProps> = ({
           <span className='text-base font-bold text-gray-900'>
             {t('costEstimate.subtotal') || 'Delsumma'}
           </span>
-          <span className='text-xl font-bold text-blue-700'>
-            {formatCurrencySafe(subtotal)}
-          </span>
+          <span className='text-xl font-bold text-blue-700'>{formatCurrencySafe(subtotal)}</span>
         </div>
       </div>
     </div>
@@ -323,4 +373,3 @@ const CostSummaryCard: React.FC<CostSummaryCardProps> = ({
 };
 
 export default CostSummaryCard;
-

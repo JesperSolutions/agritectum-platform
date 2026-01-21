@@ -9,7 +9,7 @@ import { logger } from '../utils/logger';
 // Supports: development (emulators), test (test Firebase project), production (prod Firebase project)
 const getFirebaseConfig = () => {
   const mode = import.meta.env.MODE; // 'development', 'test', or 'production'
-  
+
   // Production config (default for production builds) - Agritectum Platform
   // Require VITE_FIREBASE_* variables in production builds. Do not fall back to hardcoded prod credentials here.
   const prodConfig = {
@@ -20,21 +20,27 @@ const getFirebaseConfig = () => {
     messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '',
     appId: import.meta.env.VITE_FIREBASE_APP_ID || '',
   };
-  
+
   // Test environment config (uses test Firebase project)
   if (mode === 'test' || import.meta.env.VITE_USE_TEST_PROJECT === 'true') {
     // Test project defaults (from .env.test or hardcoded test project values)
     const testConfig = {
-      apiKey: import.meta.env.VITE_FIREBASE_API_KEY_TEST || 'AIzaSyDONTxBtz3LRvDgoGJAEhTG_iK61GX30-0',
-      authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN_TEST || 'agritectum-platform-test.firebaseapp.com',
+      apiKey:
+        import.meta.env.VITE_FIREBASE_API_KEY_TEST || 'AIzaSyDONTxBtz3LRvDgoGJAEhTG_iK61GX30-0',
+      authDomain:
+        import.meta.env.VITE_FIREBASE_AUTH_DOMAIN_TEST ||
+        'agritectum-platform-test.firebaseapp.com',
       projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID_TEST || 'agritectum-platform-test',
-      storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET_TEST || 'agritectum-platform-test.firebasestorage.app',
+      storageBucket:
+        import.meta.env.VITE_FIREBASE_STORAGE_BUCKET_TEST ||
+        'agritectum-platform-test.firebasestorage.app',
       messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID_TEST || '649108739976',
-      appId: import.meta.env.VITE_FIREBASE_APP_ID_TEST || '1:649108739976:web:a5a1fd3b2f56fa364d4c3d',
+      appId:
+        import.meta.env.VITE_FIREBASE_APP_ID_TEST || '1:649108739976:web:a5a1fd3b2f56fa364d4c3d',
     };
     return testConfig;
   }
-  
+
   // Development/Production uses production config (or emulators in dev)
   return prodConfig;
 };
@@ -51,8 +57,12 @@ if (mode === 'production') {
   if (!import.meta.env.VITE_FIREBASE_PROJECT_ID) missing.push('VITE_FIREBASE_PROJECT_ID');
 
   if (missing.length > 0) {
-    console.error(`⚠️ Firebase config: Missing environment variables for production: ${missing.join(', ')}.`);
-    console.error('Set the VITE_FIREBASE_* variables in your Firebase Hosting or CI environment before building.');
+    console.error(
+      `⚠️ Firebase config: Missing environment variables for production: ${missing.join(', ')}.`
+    );
+    console.error(
+      'Set the VITE_FIREBASE_* variables in your Firebase Hosting or CI environment before building.'
+    );
   }
 } else if (mode === 'test') {
   // In test mode, warn if test-specific vars are missing
@@ -83,12 +93,12 @@ export const functions = getFunctions(app, 'europe-west1');
 if (import.meta.env.DEV) {
   try {
     logger.log('🔥 Connecting to Firebase Emulators...');
-    
+
     connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true });
     connectFirestoreEmulator(db, '127.0.0.1', 8080);
     connectStorageEmulator(storage, '127.0.0.1', 9199);
     connectFunctionsEmulator(functions, '127.0.0.1', 5001);
-    
+
     logger.log('✅ Connected to Firebase Emulators');
     logger.log('📊 Emulator UI: http://localhost:4000');
   } catch (error) {

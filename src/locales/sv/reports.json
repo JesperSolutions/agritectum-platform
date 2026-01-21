@@ -169,7 +169,7 @@
   "reports.mostRecentDraft": "Senaste utkast: {title}",
   "reports.viewDrafts": "Visa utkast",
   "reports.resume": "Fortsätt",
-  
+
   "reportView.roofOverview": "Taköversikt med brister",
   "reportView.pinLegend": "Markörer indikerar brister på taket. Färger representerar allvarlighetsgrad.",
   "reportView.reportActions": "Rapportåtgärder",
@@ -195,5 +195,8 @@
   "costEstimate.subtotal": "Delsumma",
   "costEstimate.edit": "Redigera kostnader",
   "costEstimate.save": "Spara kostnader",
-  "costEstimate.cancel": "Avbryt"
+  "costEstimate.cancel": "Avbryt",
+
+  "report.changesSaved": "Ändringar sparade",
+  "report.errorSavingChanges": "Kunde inte spara ändringar"
 }

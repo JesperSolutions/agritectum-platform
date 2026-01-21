@@ -22,34 +22,52 @@ import { getFunctions, httpsCallable } from 'firebase/functions';
  */
 export const createOffer = async (
   reportId: string,
-  offerData: Omit<Offer, 'id' | 'createdAt' | 'updatedAt' | 'statusHistory' | 'publicLink' | 'emailSent' | 'followUpAttempts'>
+  offerData: Omit<
+    Offer,
+    | 'id'
+    | 'createdAt'
+    | 'updatedAt'
+    | 'statusHistory'
+    | 'publicLink'
+    | 'emailSent'
+    | 'followUpAttempts'
+  >
 ): Promise<string> => {
   try {
     // Validate that the report exists and user has access
     const reportRef = doc(db, 'reports', reportId);
     const reportSnap = await getDoc(reportRef);
-    
+
     if (!reportSnap.exists()) {
       throw new Error('Report not found');
     }
-    
+
     const report = reportSnap.data();
     const userBranchId = offerData.branchId;
     const userPermissionLevel = offerData.createdBy ? undefined : 0; // Can't determine from offerData alone
-    
+
     // Validate branch access (unless superadmin - they can create offers for any report)
     // Note: This is a best-effort client-side validation. Firestore rules provide the real security.
     // If branchId doesn't match and user isn't "main" branch, log a warning but proceed
     // Firestore rules will block if unauthorized
-    if (userBranchId && userBranchId !== 'main' && report.branchId && report.branchId !== userBranchId) {
-      logger.warn(`Warning: Attempting to create offer for report in different branch. User branch: ${userBranchId}, Report branch: ${report.branchId}`);
+    if (
+      userBranchId &&
+      userBranchId !== 'main' &&
+      report.branchId &&
+      report.branchId !== userBranchId
+    ) {
+      logger.warn(
+        `Warning: Attempting to create offer for report in different branch. User branch: ${userBranchId}, Report branch: ${report.branchId}`
+      );
     }
-    
+
     // Generate unique public link
     const publicLink = `offer/${reportId}_${Date.now()}`;
-    
+
     const offer: Omit<Offer, 'id'> = {
       ...offerData,
+      customerId: report.customerId, // Ensure customerId is set from report
+      companyId: report.companyId, // Ensure companyId is set from report
       status: 'pending',
       statusHistory: [
         {
@@ -75,10 +93,10 @@ export const createOffer = async (
 
     const offersRef = collection(db, 'offers');
     const docRef = await addDoc(offersRef, offer);
-    
+
     // Link the offer back to the report
     await linkOfferToReport(docRef.id, reportId, 'pending');
-    
+
     return docRef.id;
   } catch (error) {
     console.error('Error creating offer:', error);
@@ -102,18 +120,10 @@ export const getOffers = async (user: User): Promise<Offer[]> => {
       q = query(offersRef, orderBy('createdAt', 'desc'));
     } else if (user.permissionLevel === 1 && user.branchId) {
       // Branch Admin: see offers in their branch
-      q = query(
-        offersRef,
-        where('branchId', '==', user.branchId),
-        orderBy('createdAt', 'desc')
-      );
+      q = query(offersRef, where('branchId', '==', user.branchId), orderBy('createdAt', 'desc'));
     } else if (user.branchId && user.uid) {
       // Inspector: see only their own offers
-      q = query(
-        offersRef,
-        where('createdBy', '==', user.uid),
-        orderBy('createdAt', 'desc')
-      );
+      q = query(offersRef, where('createdBy', '==', user.uid), orderBy('createdAt', 'desc'));
     } else {
       return [];
     }
@@ -416,9 +426,10 @@ export const sendReminderToCustomer = async (offerId: string): Promise<void> => 
 
     // Calculate days since sent
     // Support both Firestore Timestamp and legacy string date
-    const sentDate = (offer as any).sentAt && typeof (offer as any).sentAt?.toDate === 'function'
-      ? (offer as any).sentAt.toDate()
-      : new Date((offer as any).sentAt);
+    const sentDate =
+      (offer as any).sentAt && typeof (offer as any).sentAt?.toDate === 'function'
+        ? (offer as any).sentAt.toDate()
+        : new Date((offer as any).sentAt);
     const now = new Date();
     const daysSinceSent = Math.floor((now.getTime() - sentDate.getTime()) / (1000 * 60 * 60 * 24));
 
@@ -466,21 +477,14 @@ export const sendReminderToCustomer = async (offerId: string): Promise<void> => 
 /**
  * Get offers by status
  */
-export const getOffersByStatus = async (
-  status: OfferStatus,
-  user: User
-): Promise<Offer[]> => {
+export const getOffersByStatus = async (status: OfferStatus, user: User): Promise<Offer[]> => {
   try {
     const offersRef = collection(db, 'offers');
     let q;
 
     if (user.permissionLevel === 2) {
       // Superadmin: see all offers
-      q = query(
-        offersRef,
-        where('status', '==', status),
-        orderBy('createdAt', 'desc')
-      );
+      q = query(offersRef, where('status', '==', status), orderBy('createdAt', 'desc'));
     } else if (user.permissionLevel === 1 && user.branchId) {
       // Branch Admin: see offers in their branch
       q = query(
@@ -526,7 +530,9 @@ export const getOffersNeedingFollowUp = async (user: User): Promise<Offer[]> => 
       }
 
       const sentDate = new Date(offer.sentAt);
-      const daysSinceSent = Math.floor((now.getTime() - sentDate.getTime()) / (1000 * 60 * 60 * 24));
+      const daysSinceSent = Math.floor(
+        (now.getTime() - sentDate.getTime()) / (1000 * 60 * 60 * 24)
+      );
 
       return daysSinceSent >= 7 && offer.followUpAttempts < 3;
     });
@@ -542,13 +548,13 @@ export const getOffersNeedingFollowUp = async (user: User): Promise<Offer[]> => 
 export const reportHasOffer = async (reportId: string, userBranchId?: string): Promise<boolean> => {
   try {
     const offersRef = collection(db, 'offers');
-    
+
     // Build query based on user permissions
     let q;
     if (userBranchId) {
       // Filter by branch for branch-specific users
       q = query(
-        offersRef, 
+        offersRef,
         where('reportId', '==', reportId),
         where('branchId', '==', userBranchId)
       );
@@ -556,7 +562,7 @@ export const reportHasOffer = async (reportId: string, userBranchId?: string): P
       // For superadmins, query all offers
       q = query(offersRef, where('reportId', '==', reportId));
     }
-    
+
     const querySnapshot = await getDocs(q);
     return !querySnapshot.empty;
   } catch (error) {
@@ -568,16 +574,19 @@ export const reportHasOffer = async (reportId: string, userBranchId?: string): P
 /**
  * Get offer by report ID
  */
-export const getOfferByReportId = async (reportId: string, userBranchId?: string): Promise<Offer | null> => {
+export const getOfferByReportId = async (
+  reportId: string,
+  userBranchId?: string
+): Promise<Offer | null> => {
   try {
     const offersRef = collection(db, 'offers');
-    
+
     // Build query based on user permissions
     let q;
     if (userBranchId) {
       // Filter by branch for branch-specific users
       q = query(
-        offersRef, 
+        offersRef,
         where('reportId', '==', reportId),
         where('branchId', '==', userBranchId)
       );
@@ -585,13 +594,13 @@ export const getOfferByReportId = async (reportId: string, userBranchId?: string
       // For superadmins, query all offers
       q = query(offersRef, where('reportId', '==', reportId));
     }
-    
+
     const querySnapshot = await getDocs(q);
-    
+
     if (querySnapshot.empty) {
       return null;
     }
-    
+
     const offerDoc = querySnapshot.docs[0];
     return {
       id: offerDoc.id,
@@ -608,9 +617,14 @@ export const getOfferByReportId = async (reportId: string, userBranchId?: string
  */
 export const getReportsNeedingOffers = async (branchId: string): Promise<any[]> => {
   try {
-    const { collection: firestoreCollection, query: firestoreQuery, where: firestoreWhere, getDocs: firestoreGetDocs } = await import('firebase/firestore');
+    const {
+      collection: firestoreCollection,
+      query: firestoreQuery,
+      where: firestoreWhere,
+      getDocs: firestoreGetDocs,
+    } = await import('firebase/firestore');
     const { db } = await import('../config/firebase');
-    
+
     // Get all completed reports for the branch
     const reportsRef = firestoreCollection(db, 'reports');
     const q = firestoreQuery(
@@ -619,7 +633,7 @@ export const getReportsNeedingOffers = async (branchId: string): Promise<any[]> 
       firestoreWhere('status', 'in', ['completed', 'sent'])
     );
     const querySnapshot = await firestoreGetDocs(q);
-    
+
     // Filter out reports that already have offers
     const reportsWithoutOffers: any[] = [];
     for (const doc of querySnapshot.docs) {
@@ -629,7 +643,7 @@ export const getReportsNeedingOffers = async (branchId: string): Promise<any[]> 
         reportsWithoutOffers.push(report);
       }
     }
-    
+
     // Sort by completion date (oldest first)
     return reportsWithoutOffers.sort((a, b) => {
       const dateA = new Date(a.lastEdited || a.createdAt).getTime();
@@ -645,11 +659,15 @@ export const getReportsNeedingOffers = async (branchId: string): Promise<any[]> 
 /**
  * Link offer to report (update both documents)
  */
-export const linkOfferToReport = async (offerId: string, reportId: string, offerStatus: string): Promise<void> => {
+export const linkOfferToReport = async (
+  offerId: string,
+  reportId: string,
+  offerStatus: string
+): Promise<void> => {
   try {
     const { doc: firestoreDoc, updateDoc: firestoreUpdateDoc } = await import('firebase/firestore');
     const { db } = await import('../config/firebase');
-    
+
     // Update report with offer information
     const reportRef = firestoreDoc(db, 'reports', reportId);
     await firestoreUpdateDoc(reportRef, {
@@ -689,21 +707,25 @@ export const deleteOffer = async (offerId: string, user: User): Promise<void> =>
     // Verify offer exists and user has access
     const offerRef = doc(db, 'offers', offerId);
     const offerSnap = await getDoc(offerRef);
-    
+
     if (!offerSnap.exists()) {
       throw new Error('Offer not found');
     }
-    
+
     const offer = offerSnap.data() as Offer;
-    
+
     // Check branch access (unless superadmin)
-    if (user.permissionLevel !== 2 && offer.branchId !== user.branchId && user.branchId !== 'main') {
+    if (
+      user.permissionLevel !== 2 &&
+      offer.branchId !== user.branchId &&
+      user.branchId !== 'main'
+    ) {
       throw new Error('You do not have permission to delete this offer');
     }
-    
+
     // Delete the offer document
     await deleteDoc(offerRef);
-    
+
     // Optionally remove offerId from associated report if it exists
     if (offer.reportId) {
       try {

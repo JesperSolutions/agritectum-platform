@@ -117,15 +117,3 @@ export const getBranchEmployees = async (branchId: string): Promise<Employee[]> 
     throw new Error('Failed to fetch branch employees');
   }
 };
-
-
-
-
-
-
-
-
-
-
-
-

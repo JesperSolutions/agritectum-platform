@@ -105,7 +105,7 @@
   "schedule.filters.inProgress": "In Bearbeitung",
   "schedule.filters.completed": "Abgeschlossen",
   "schedule.filters.cancelled": "Abgebrochen",
-  
+
   "SCHEDULE.ADDAPPOINTMENT": "Neuer Termin",
   "schedule.addAppointment": "Neuer Termin",
   "schedule.form.conflictWarning": "Konflikt: {inspector} hat bereits eine Inspektion zu dieser Zeit.",
@@ -114,7 +114,7 @@
   "schedule.todaysAppointments": "Heutige Termine",
   "schedule.appointment.start": "Starten",
   "schedule.errorMessage": "Ein Fehler ist aufgetreten",
-  
+
   "schedule.visits.subtitle": "Sehen Sie geplante Dachdeckerbesuche für Ihre Gebäude",
   "schedule.visits.noVisits": "Keine geplanten Besuche gefunden",
   "schedule.visits.dateTime": "Datum & Uhrzeit",
@@ -142,7 +142,7 @@
   "schedule.visits.rejectReasonLabel": "Grund für Ablehnung (Optional)",
   "schedule.visits.rejectReasonPlaceholder": "Bitte teilen Sie uns mit, warum Sie diesen Besuch ablehnen...",
   "schedule.visits.confirmReject": "Ablehnung bestätigen",
-  
+
   "schedule.list.date": "Datum",
   "schedule.list.customer": "Kunde",
   "schedule.list.address": "Adresse",
@@ -150,7 +150,7 @@
   "schedule.list.status": "Status",
   "schedule.list.actions": "Aktionen",
   "schedule.list.viewReport": "Bericht anzeigen",
-  
+
   "schedule.appointment.edit": "Bearbeiten",
   "schedule.appointment.cancel": "Abbrechen",
   "schedule.appointment.delete": "Löschen",

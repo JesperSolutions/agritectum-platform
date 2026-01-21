@@ -76,41 +76,41 @@ const InstallPrompt: React.FC = () => {
 
   return (
     <div
-      className="fixed bottom-4 right-4 bg-white shadow-2xl rounded-lg border border-gray-200 p-4 z-50 max-w-sm animate-slide-up"
-      role="dialog"
-      aria-labelledby="install-prompt-title"
-      aria-describedby="install-prompt-description"
+      className='fixed bottom-4 right-4 bg-white shadow-2xl rounded-lg border border-gray-200 p-4 z-50 max-w-sm animate-slide-up'
+      role='dialog'
+      aria-labelledby='install-prompt-title'
+      aria-describedby='install-prompt-description'
     >
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <Download className="w-5 h-5 text-blue-600" />
-          <h3 id="install-prompt-title" className="font-semibold text-gray-900 text-sm">
+      <div className='flex items-start justify-between mb-3'>
+        <div className='flex items-center gap-2'>
+          <Download className='w-5 h-5 text-blue-600' />
+          <h3 id='install-prompt-title' className='font-semibold text-gray-900 text-sm'>
             {t('common.install.title') || 'Install Taklaget App'}
           </h3>
         </div>
         <button
           onClick={handleDismiss}
-          className="text-gray-400 hover:text-gray-600 transition-colors"
+          className='text-gray-400 hover:text-gray-600 transition-colors'
           aria-label={t('common.buttons.close')}
         >
-          <X className="w-4 h-4" />
+          <X className='w-4 h-4' />
         </button>
       </div>
-      
-      <p id="install-prompt-description" className="text-sm text-gray-600 mb-4">
+
+      <p id='install-prompt-description' className='text-sm text-gray-600 mb-4'>
         {t('common.install.description') || 'Install for offline access and faster performance'}
       </p>
 
-      <div className="flex gap-2">
+      <div className='flex gap-2'>
         <button
           onClick={handleInstall}
-          className="flex-1 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          className='flex-1 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
         >
           {t('common.install.button') || 'Install Now'}
         </button>
         <button
           onClick={handleDismiss}
-          className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
+          className='px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors'
         >
           {t('common.buttons.cancel')}
         </button>

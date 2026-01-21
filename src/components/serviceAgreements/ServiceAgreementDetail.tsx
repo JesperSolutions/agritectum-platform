@@ -1,7 +1,24 @@
 import React, { useState } from 'react';
 import { ServiceAgreement } from '../../types';
 import { useIntl } from '../../hooks/useIntl';
-import { X, Edit, Trash2, User, MapPin, Mail, Phone, Calendar, DollarSign, FileCheck, Clock, ExternalLink, Copy, Check, Send, CheckCircle } from 'lucide-react';
+import {
+  X,
+  Edit,
+  Trash2,
+  User,
+  MapPin,
+  Mail,
+  Phone,
+  Calendar,
+  DollarSign,
+  FileCheck,
+  Clock,
+  ExternalLink,
+  Copy,
+  Check,
+  Send,
+  CheckCircle,
+} from 'lucide-react';
 import { useToast } from '../../contexts/ToastContext';
 import { sendServiceAgreementToCustomer } from '../../services/serviceAgreementService';
 import { useAuth } from '../../contexts/AuthContext';
@@ -81,14 +98,18 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
 
   const handleSend = async () => {
     if (!agreement.customerEmail) {
-      showError(t('serviceAgreement.detail.noEmail') || 'Customer email is required to send the agreement');
+      showError(
+        t('serviceAgreement.detail.noEmail') || 'Customer email is required to send the agreement'
+      );
       return;
     }
 
     setSending(true);
     try {
       await sendServiceAgreementToCustomer(agreement.id, agreement.customerEmail);
-      showSuccess(t('serviceAgreement.detail.sent') || 'Service agreement sent to customer successfully');
+      showSuccess(
+        t('serviceAgreement.detail.sent') || 'Service agreement sent to customer successfully'
+      );
     } catch (error) {
       console.error('Error sending service agreement:', error);
       showError(t('serviceAgreement.detail.sendError') || 'Failed to send service agreement');
@@ -103,7 +124,9 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
         {/* Header */}
         <div className='sticky top-0 bg-white border-b border-slate-200 px-8 py-6 flex items-center justify-between z-10'>
           <div>
-            <h2 className='text-2xl font-bold text-slate-900 tracking-tight'>{t('serviceAgreement.detail.title')}</h2>
+            <h2 className='text-2xl font-bold text-slate-900 tracking-tight'>
+              {t('serviceAgreement.detail.title')}
+            </h2>
             <p className='text-sm text-slate-600 mt-1'>{agreement.customerName}</p>
           </div>
           <button
@@ -118,7 +141,9 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
         <div className='p-8 space-y-6'>
           {/* Status and Type Badges */}
           <div className='flex items-center gap-3'>
-            <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(agreement.status)}`}>
+            <span
+              className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(agreement.status)}`}
+            >
               {t(`serviceAgreement.status.${agreement.status}`)}
             </span>
             <span className='inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-slate-100 text-slate-800'>
@@ -166,41 +191,55 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
             </h4>
             <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
               <div>
-                <p className='text-xs text-slate-500 uppercase tracking-wide mb-1'>{t('serviceAgreement.detail.startDate')}</p>
+                <p className='text-xs text-slate-500 uppercase tracking-wide mb-1'>
+                  {t('serviceAgreement.detail.startDate')}
+                </p>
                 <p className='text-slate-900 font-medium'>{formatDate(agreement.startDate)}</p>
               </div>
               <div>
-                <p className='text-xs text-slate-500 uppercase tracking-wide mb-1'>{t('serviceAgreement.detail.endDate')}</p>
+                <p className='text-xs text-slate-500 uppercase tracking-wide mb-1'>
+                  {t('serviceAgreement.detail.endDate')}
+                </p>
                 <p className='text-slate-900 font-medium'>{formatDate(agreement.endDate)}</p>
               </div>
               <div>
-                <p className='text-xs text-slate-500 uppercase tracking-wide mb-1'>{t('serviceAgreement.detail.nextService')}</p>
+                <p className='text-xs text-slate-500 uppercase tracking-wide mb-1'>
+                  {t('serviceAgreement.detail.nextService')}
+                </p>
                 <p className='text-slate-900 font-bold text-lg'>
                   {formatDate(agreement.nextServiceDate)}
                 </p>
                 {daysUntilDue >= 0 && (
-                  <p className={`text-sm mt-1 font-medium ${
-                    daysUntilDue === 0 || daysUntilDue === 1 
-                      ? 'text-orange-600' 
-                      : daysUntilDue <= 3 
-                      ? 'text-yellow-600' 
-                      : 'text-slate-600'
-                  }`}>
+                  <p
+                    className={`text-sm mt-1 font-medium ${
+                      daysUntilDue === 0 || daysUntilDue === 1
+                        ? 'text-orange-600'
+                        : daysUntilDue <= 3
+                          ? 'text-yellow-600'
+                          : 'text-slate-600'
+                    }`}
+                  >
                     {daysUntilDue === 0
                       ? t('serviceAgreement.dueDate.today')
                       : daysUntilDue === 1
-                      ? t('serviceAgreement.dueDate.tomorrow')
-                      : `${daysUntilDue} ${t('serviceAgreement.dueDate.days')}`}
+                        ? t('serviceAgreement.dueDate.tomorrow')
+                        : `${daysUntilDue} ${t('serviceAgreement.dueDate.days')}`}
                   </p>
                 )}
                 {daysUntilDue < 0 && (
-                  <p className='text-sm text-red-600 font-medium mt-1'>{t('serviceAgreement.dueDate.overdue')}</p>
+                  <p className='text-sm text-red-600 font-medium mt-1'>
+                    {t('serviceAgreement.dueDate.overdue')}
+                  </p>
                 )}
               </div>
               {agreement.lastServiceDate && (
                 <div>
-                  <p className='text-xs text-slate-500 uppercase tracking-wide mb-1'>{t('serviceAgreement.detail.lastService')}</p>
-                  <p className='text-slate-900 font-medium'>{formatDate(agreement.lastServiceDate)}</p>
+                  <p className='text-xs text-slate-500 uppercase tracking-wide mb-1'>
+                    {t('serviceAgreement.detail.lastService')}
+                  </p>
+                  <p className='text-slate-900 font-medium'>
+                    {formatDate(agreement.lastServiceDate)}
+                  </p>
                 </div>
               )}
             </div>
@@ -212,10 +251,13 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
               <Clock className='w-4 h-4' />
               {t('serviceAgreement.detail.frequency')}
             </h4>
-            <p className='text-slate-900 font-medium'>{t(`serviceAgreement.frequency.${agreement.serviceFrequency}`)}</p>
+            <p className='text-slate-900 font-medium'>
+              {t(`serviceAgreement.frequency.${agreement.serviceFrequency}`)}
+            </p>
             {agreement.serviceInterval && (
               <p className='text-sm text-slate-600 mt-2'>
-                {t('serviceAgreement.form.serviceInterval')}: {agreement.serviceInterval} {t('serviceAgreement.dueDate.days')}
+                {t('serviceAgreement.form.serviceInterval')}: {agreement.serviceInterval}{' '}
+                {t('serviceAgreement.dueDate.days')}
               </p>
             )}
           </div>
@@ -231,27 +273,32 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
           )}
 
           {/* Service Visits */}
-          {agreement.serviceVisits && (agreement.serviceVisits.oneAnnual || agreement.serviceVisits.twoAnnual) && (
-            <div className='bg-slate-50 rounded-xl p-6 border border-slate-200'>
-              <h4 className='text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3'>
-                {t('serviceAgreement.form.services.serviceVisits') || 'SERVICEBESØG:'}
-              </h4>
-              <div className='space-y-2'>
-                {agreement.serviceVisits.oneAnnual && (
-                  <div className='flex items-center gap-2 text-slate-700'>
-                    <CheckCircle className='w-5 h-5 text-green-600' />
-                    <span>{t('serviceAgreement.form.services.oneAnnual') || '1 årligt servicebesøg'}</span>
-                  </div>
-                )}
-                {agreement.serviceVisits.twoAnnual && (
-                  <div className='flex items-center gap-2 text-slate-700'>
-                    <CheckCircle className='w-5 h-5 text-green-600' />
-                    <span>{t('serviceAgreement.form.services.twoAnnual') || '2 årlige servicebesøg'}</span>
-                  </div>
-                )}
+          {agreement.serviceVisits &&
+            (agreement.serviceVisits.oneAnnual || agreement.serviceVisits.twoAnnual) && (
+              <div className='bg-slate-50 rounded-xl p-6 border border-slate-200'>
+                <h4 className='text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3'>
+                  {t('serviceAgreement.form.services.serviceVisits') || 'SERVICEBESØG:'}
+                </h4>
+                <div className='space-y-2'>
+                  {agreement.serviceVisits.oneAnnual && (
+                    <div className='flex items-center gap-2 text-slate-700'>
+                      <CheckCircle className='w-5 h-5 text-green-600' />
+                      <span>
+                        {t('serviceAgreement.form.services.oneAnnual') || '1 årligt servicebesøg'}
+                      </span>
+                    </div>
+                  )}
+                  {agreement.serviceVisits.twoAnnual && (
+                    <div className='flex items-center gap-2 text-slate-700'>
+                      <CheckCircle className='w-5 h-5 text-green-600' />
+                      <span>
+                        {t('serviceAgreement.form.services.twoAnnual') || '2 årlige servicebesøg'}
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
           {/* Standard Services */}
           {agreement.standardServices && agreement.standardServices.length > 0 && (
@@ -271,8 +318,11 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
           )}
 
           {/* Addons */}
-          {agreement.addons && (
-            (agreement.addons.skylights?.length || agreement.addons.solar?.length || agreement.addons.steel?.length || agreement.addons.sedum?.length) && (
+          {agreement.addons &&
+            (agreement.addons.skylights?.length ||
+              agreement.addons.solar?.length ||
+              agreement.addons.steel?.length ||
+              agreement.addons.sedum?.length) && (
               <div className='bg-slate-50 rounded-xl p-6 border border-slate-200'>
                 <h4 className='text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3'>
                   {t('serviceAgreement.form.addons.title') || '3. TILLÆG (VALGFRIE YDELSER)'}
@@ -281,13 +331,16 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
                   {agreement.addons.skylights && agreement.addons.skylights.length > 0 && (
                     <div>
                       <h5 className='text-sm font-medium text-slate-800 mb-2'>
-                        {t('serviceAgreement.form.addons.skylights.title') || 'OVENLYS & FALDSIKRING:'}
+                        {t('serviceAgreement.form.addons.skylights.title') ||
+                          'OVENLYS & FALDSIKRING:'}
                       </h5>
                       <div className='space-y-1 pl-4'>
                         {agreement.addons.skylights.map(addon => (
                           <div key={addon} className='flex items-center gap-2 text-slate-700'>
                             <CheckCircle className='w-4 h-4 text-green-600' />
-                            <span className='text-sm'>{t(`serviceAgreement.form.addons.${addon}`) || addon}</span>
+                            <span className='text-sm'>
+                              {t(`serviceAgreement.form.addons.${addon}`) || addon}
+                            </span>
                           </div>
                         ))}
                       </div>
@@ -302,7 +355,9 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
                         {agreement.addons.solar.map(addon => (
                           <div key={addon} className='flex items-center gap-2 text-slate-700'>
                             <CheckCircle className='w-4 h-4 text-green-600' />
-                            <span className='text-sm'>{t(`serviceAgreement.form.addons.${addon}`) || addon}</span>
+                            <span className='text-sm'>
+                              {t(`serviceAgreement.form.addons.${addon}`) || addon}
+                            </span>
                           </div>
                         ))}
                       </div>
@@ -317,7 +372,9 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
                         {agreement.addons.steel.map(addon => (
                           <div key={addon} className='flex items-center gap-2 text-slate-700'>
                             <CheckCircle className='w-4 h-4 text-green-600' />
-                            <span className='text-sm'>{t(`serviceAgreement.form.addons.${addon}`) || addon}</span>
+                            <span className='text-sm'>
+                              {t(`serviceAgreement.form.addons.${addon}`) || addon}
+                            </span>
                           </div>
                         ))}
                       </div>
@@ -332,7 +389,9 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
                         {agreement.addons.sedum.map(addon => (
                           <div key={addon} className='flex items-center gap-2 text-slate-700'>
                             <CheckCircle className='w-4 h-4 text-green-600' />
-                            <span className='text-sm'>{t(`serviceAgreement.form.addons.${addon}`) || addon}</span>
+                            <span className='text-sm'>
+                              {t(`serviceAgreement.form.addons.${addon}`) || addon}
+                            </span>
                           </div>
                         ))}
                       </div>
@@ -340,52 +399,60 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
                   )}
                 </div>
               </div>
-            )
-          )}
+            )}
 
           {/* Pricing Structure */}
-          {agreement.pricingStructure && (agreement.pricingStructure.perRoof || agreement.pricingStructure.perSquareMeter) && (
-            <div className='bg-slate-50 rounded-xl p-6 border border-slate-200'>
-              <h4 className='text-sm font-semibold text-slate-500 uppercase tracking-wide mb-4 flex items-center gap-2'>
-                <DollarSign className='w-4 h-4' />
-                {t('serviceAgreement.form.pricing.title') || '6. PRIS & FAKTURERING'}
-              </h4>
-              <div className='space-y-3'>
-                {agreement.pricingStructure.perRoof && (
-                  <div className='flex justify-between items-center'>
-                    <span className='text-slate-600'>
-                      {t('serviceAgreement.form.pricing.perRoof') || 'Opstarts pris per tag:'}
-                    </span>
-                    <span className='text-slate-900 font-bold text-lg'>
-                      {formatCurrency(agreement.pricingStructure.perRoof, agreement.currency || 'DKK')}
-                    </span>
-                  </div>
-                )}
-                {agreement.pricingStructure.perSquareMeter && (
-                  <div className='flex justify-between items-center'>
-                    <span className='text-slate-600'>
-                      {t('serviceAgreement.form.pricing.perSquareMeter') || 'Pris pr. år per m²:'}
-                    </span>
-                    <span className='text-slate-900 font-bold text-lg'>
-                      {formatCurrency(agreement.pricingStructure.perSquareMeter, agreement.currency || 'DKK')} / m²
-                    </span>
-                  </div>
-                )}
-                {agreement.billingFrequency && (
-                  <div className='flex justify-between items-center pt-2 border-t border-slate-200'>
-                    <span className='text-slate-600'>
-                      {t('serviceAgreement.form.pricing.billingFrequency') || 'Faktureringsfrekvens:'}
-                    </span>
-                    <span className='text-slate-900 font-medium'>
-                      {agreement.billingFrequency === 'annual' 
-                        ? (t('serviceAgreement.form.pricing.annual') || 'Årlig betaling')
-                        : (t('serviceAgreement.form.pricing.semiAnnual') || 'Halvårlig betaling')}
-                    </span>
-                  </div>
-                )}
+          {agreement.pricingStructure &&
+            (agreement.pricingStructure.perRoof || agreement.pricingStructure.perSquareMeter) && (
+              <div className='bg-slate-50 rounded-xl p-6 border border-slate-200'>
+                <h4 className='text-sm font-semibold text-slate-500 uppercase tracking-wide mb-4 flex items-center gap-2'>
+                  <DollarSign className='w-4 h-4' />
+                  {t('serviceAgreement.form.pricing.title') || '6. PRIS & FAKTURERING'}
+                </h4>
+                <div className='space-y-3'>
+                  {agreement.pricingStructure.perRoof && (
+                    <div className='flex justify-between items-center'>
+                      <span className='text-slate-600'>
+                        {t('serviceAgreement.form.pricing.perRoof') || 'Opstarts pris per tag:'}
+                      </span>
+                      <span className='text-slate-900 font-bold text-lg'>
+                        {formatCurrency(
+                          agreement.pricingStructure.perRoof,
+                          agreement.currency || 'DKK'
+                        )}
+                      </span>
+                    </div>
+                  )}
+                  {agreement.pricingStructure.perSquareMeter && (
+                    <div className='flex justify-between items-center'>
+                      <span className='text-slate-600'>
+                        {t('serviceAgreement.form.pricing.perSquareMeter') || 'Pris pr. år per m²:'}
+                      </span>
+                      <span className='text-slate-900 font-bold text-lg'>
+                        {formatCurrency(
+                          agreement.pricingStructure.perSquareMeter,
+                          agreement.currency || 'DKK'
+                        )}{' '}
+                        / m²
+                      </span>
+                    </div>
+                  )}
+                  {agreement.billingFrequency && (
+                    <div className='flex justify-between items-center pt-2 border-t border-slate-200'>
+                      <span className='text-slate-600'>
+                        {t('serviceAgreement.form.pricing.billingFrequency') ||
+                          'Faktureringsfrekvens:'}
+                      </span>
+                      <span className='text-slate-900 font-medium'>
+                        {agreement.billingFrequency === 'annual'
+                          ? t('serviceAgreement.form.pricing.annual') || 'Årlig betaling'
+                          : t('serviceAgreement.form.pricing.semiAnnual') || 'Halvårlig betaling'}
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
           {/* Price (legacy) */}
           {agreement.price && (
@@ -401,48 +468,58 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
           )}
 
           {/* Signatures */}
-          {agreement.signatures && (agreement.signatures.supplier || agreement.signatures.customer || agreement.signatures.supplierImageUrl || agreement.signatures.customerImageUrl) && (
-            <div className='bg-slate-50 rounded-xl p-6 border border-slate-200'>
-              <h4 className='text-sm font-semibold text-slate-500 uppercase tracking-wide mb-4'>
-                {t('serviceAgreement.form.signatures.title') || '7. UNDERSKRIFTER'}
-              </h4>
-              <div className='grid grid-cols-2 gap-4'>
-                <div>
-                  <p className='text-xs text-slate-500 uppercase tracking-wide mb-2'>
-                    {t('serviceAgreement.form.signatures.supplier') || 'Leverandør:'}
-                  </p>
-                  {agreement.signatures.supplierImageUrl ? (
-                    <img
-                      src={agreement.signatures.supplierImageUrl}
-                      alt='Supplier signature'
-                      className='h-20 w-auto border border-slate-300 rounded'
-                    />
-                  ) : (
-                    <p className='text-slate-900 font-medium'>{agreement.signatures.supplier || '-'}</p>
-                  )}
-                </div>
-                <div>
-                  <p className='text-xs text-slate-500 uppercase tracking-wide mb-2'>
-                    {t('serviceAgreement.form.signatures.customer') || 'Kunde:'}
-                  </p>
-                  {agreement.signatures.customerImageUrl ? (
-                    <img
-                      src={agreement.signatures.customerImageUrl}
-                      alt='Customer signature'
-                      className='h-20 w-auto border border-slate-300 rounded'
-                    />
-                  ) : (
-                    <p className='text-slate-900 font-medium'>{agreement.signatures.customer || '-'}</p>
-                  )}
+          {agreement.signatures &&
+            (agreement.signatures.supplier ||
+              agreement.signatures.customer ||
+              agreement.signatures.supplierImageUrl ||
+              agreement.signatures.customerImageUrl) && (
+              <div className='bg-slate-50 rounded-xl p-6 border border-slate-200'>
+                <h4 className='text-sm font-semibold text-slate-500 uppercase tracking-wide mb-4'>
+                  {t('serviceAgreement.form.signatures.title') || '7. UNDERSKRIFTER'}
+                </h4>
+                <div className='grid grid-cols-2 gap-4'>
+                  <div>
+                    <p className='text-xs text-slate-500 uppercase tracking-wide mb-2'>
+                      {t('serviceAgreement.form.signatures.supplier') || 'Leverandør:'}
+                    </p>
+                    {agreement.signatures.supplierImageUrl ? (
+                      <img
+                        src={agreement.signatures.supplierImageUrl}
+                        alt='Supplier signature'
+                        className='h-20 w-auto border border-slate-300 rounded'
+                      />
+                    ) : (
+                      <p className='text-slate-900 font-medium'>
+                        {agreement.signatures.supplier || '-'}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <p className='text-xs text-slate-500 uppercase tracking-wide mb-2'>
+                      {t('serviceAgreement.form.signatures.customer') || 'Kunde:'}
+                    </p>
+                    {agreement.signatures.customerImageUrl ? (
+                      <img
+                        src={agreement.signatures.customerImageUrl}
+                        alt='Customer signature'
+                        className='h-20 w-auto border border-slate-300 rounded'
+                      />
+                    ) : (
+                      <p className='text-slate-900 font-medium'>
+                        {agreement.signatures.customer || '-'}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
           {/* Notes */}
           {agreement.notes && (
             <div>
-              <h4 className='text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3'>{t('serviceAgreement.detail.notes')}</h4>
+              <h4 className='text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3'>
+                {t('serviceAgreement.detail.notes')}
+              </h4>
               <div className='bg-slate-50 rounded-lg p-4 border border-slate-200'>
                 <p className='text-slate-700 whitespace-pre-wrap'>{agreement.notes}</p>
               </div>
@@ -462,14 +539,16 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
                   readOnly
                   value={`${window.location.origin}/service-agreement/public/${agreement.publicToken}`}
                   className='flex-1 px-4 py-2 bg-white border border-blue-300 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500'
-                  onClick={(e) => (e.target as HTMLInputElement).select()}
+                  onClick={e => (e.target as HTMLInputElement).select()}
                 />
                 <button
                   onClick={async () => {
                     const url = `${window.location.origin}/service-agreement/public/${agreement.publicToken}`;
                     await navigator.clipboard.writeText(url);
                     setCopied(true);
-                    showSuccess(t('serviceAgreement.detail.linkCopied') || 'Link copied to clipboard');
+                    showSuccess(
+                      t('serviceAgreement.detail.linkCopied') || 'Link copied to clipboard'
+                    );
                     setTimeout(() => setCopied(false), 2000);
                   }}
                   className='px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2'
@@ -501,8 +580,10 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
               </div>
               {agreement.acceptedAt && (
                 <p className='mt-3 text-sm text-green-700'>
-                  ✓ {t('serviceAgreement.detail.acceptedOn') || 'Accepted on'} {formatDate(agreement.acceptedAt)}
-                  {agreement.acceptedBy && ` ${t('serviceAgreement.detail.by') || 'by'} ${agreement.acceptedBy}`}
+                  ✓ {t('serviceAgreement.detail.acceptedOn') || 'Accepted on'}{' '}
+                  {formatDate(agreement.acceptedAt)}
+                  {agreement.acceptedBy &&
+                    ` ${t('serviceAgreement.detail.by') || 'by'} ${agreement.acceptedBy}`}
                 </p>
               )}
             </div>
@@ -512,11 +593,15 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
           <div className='border-t border-slate-200 pt-6'>
             <div className='grid grid-cols-1 md:grid-cols-2 gap-4 text-sm'>
               <div>
-                <p className='text-xs text-slate-500 uppercase tracking-wide mb-1'>{t('serviceAgreement.detail.createdBy')}</p>
+                <p className='text-xs text-slate-500 uppercase tracking-wide mb-1'>
+                  {t('serviceAgreement.detail.createdBy')}
+                </p>
                 <p className='text-slate-900 font-medium'>{agreement.createdByName}</p>
               </div>
               <div>
-                <p className='text-xs text-slate-500 uppercase tracking-wide mb-1'>{t('serviceAgreement.detail.createdAt')}</p>
+                <p className='text-xs text-slate-500 uppercase tracking-wide mb-1'>
+                  {t('serviceAgreement.detail.createdAt')}
+                </p>
                 <p className='text-slate-900 font-medium'>{formatDate(agreement.createdAt)}</p>
               </div>
             </div>
@@ -571,4 +656,3 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
 };
 
 export default ServiceAgreementDetail;
-

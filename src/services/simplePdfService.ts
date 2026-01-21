@@ -3,10 +3,10 @@ import { logger } from '../utils/logger';
 
 /**
  * Simplified PDF Service
- * 
+ *
  * Replaces the complex enhancedPdfService.ts with a simple approach
  * that uses the existing PublicReportView page for PDF generation.
- * 
+ *
  * Benefits:
  * - Perfect consistency between web and PDF views
  * - Much simpler maintenance
@@ -48,9 +48,9 @@ export const generateReportPDF = async (
           top: '20px',
           bottom: '20px',
           left: '20px',
-          right: '20px'
-        }
-      })
+          right: '20px',
+        },
+      }),
     });
 
     if (!response.ok) {
@@ -60,20 +60,19 @@ export const generateReportPDF = async (
 
     // Get the PDF blob
     const pdfBlob = await response.blob();
-    
+
     logger.log(`✅ PDF generated successfully: ${pdfBlob.size} bytes`);
 
     return {
       success: true,
-      blob: pdfBlob
+      blob: pdfBlob,
     };
-
   } catch (error) {
     console.error('❌ PDF generation failed:', error);
-    
+
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error occurred'
+      error: error instanceof Error ? error.message : 'Unknown error occurred',
     };
   }
 };
@@ -87,11 +86,11 @@ export const downloadReportPDF = async (
 ): Promise<{ success: boolean; error?: string }> => {
   try {
     const result = await generateReportPDF(reportId, options);
-    
+
     if (!result.success) {
       return {
         success: false,
-        error: result.error
+        error: result.error,
       };
     }
 
@@ -100,23 +99,22 @@ export const downloadReportPDF = async (
     const link = document.createElement('a');
     link.href = url;
     link.download = `report-${reportId}.pdf`;
-    
+
     // Trigger download
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
+
     // Clean up
     URL.revokeObjectURL(url);
 
     return { success: true };
-
   } catch (error) {
     console.error('❌ PDF download failed:', error);
-    
+
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error occurred'
+      error: error instanceof Error ? error.message : 'Unknown error occurred',
     };
   }
 };
@@ -130,31 +128,30 @@ export const openReportPDF = async (
 ): Promise<{ success: boolean; error?: string }> => {
   try {
     const result = await generateReportPDF(reportId, options);
-    
+
     if (!result.success) {
       return {
         success: false,
-        error: result.error
+        error: result.error,
       };
     }
 
     // Open PDF in new tab
     const url = URL.createObjectURL(result.blob!);
     window.open(url, '_blank');
-    
+
     // Clean up after a delay
     setTimeout(() => {
       URL.revokeObjectURL(url);
     }, 1000);
 
     return { success: true };
-
   } catch (error) {
     console.error('❌ PDF open failed:', error);
-    
+
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error occurred'
+      error: error instanceof Error ? error.message : 'Unknown error occurred',
     };
   }
 };
@@ -163,10 +160,10 @@ export const openReportPDF = async (
  * @deprecated Legacy compatibility function
  * @legacy
  * Maintains the same interface as the old enhancedPdfService
- * 
+ *
  * This function is deprecated and kept for backward compatibility only.
  * Migration: Use generateReportPDF(reportId, options) instead
- * 
+ *
  * @see generateReportPDF
  */
 export const generateEnhancedReportPDF = async (
@@ -174,10 +171,10 @@ export const generateEnhancedReportPDF = async (
   options: any = {}
 ): Promise<{ success: boolean; blob?: Blob; error?: string }> => {
   console.warn('⚠️ generateEnhancedReportPDF is deprecated. Use generateReportPDF instead.');
-  
+
   return generateReportPDF(report.id, {
     format: options.format || 'A4',
-    margin: options.margin
+    margin: options.margin,
   });
 };
 

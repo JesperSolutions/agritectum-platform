@@ -53,9 +53,9 @@ const ToastItem: React.FC<{ toast: Toast; onClose: () => void }> = ({ toast, onC
       <button
         onClick={onClose}
         className={`flex-shrink-0 ${styles.icon} hover:opacity-70 transition-opacity`}
-        aria-label="Close"
+        aria-label='Close'
       >
-        <X className="w-4 h-4" />
+        <X className='w-4 h-4' />
       </button>
     </div>
   );
@@ -67,11 +67,10 @@ export const ToastContainer: React.FC = () => {
   if (toasts.length === 0) return null;
 
   return (
-    <div className="fixed top-20 right-4 z-50 space-y-2 max-w-md">
+    <div className='fixed top-20 right-4 z-50 space-y-2 max-w-md'>
       {toasts.map(toast => (
         <ToastItem key={toast.id} toast={toast} onClose={() => removeToast(toast.id)} />
       ))}
     </div>
   );
 };
-

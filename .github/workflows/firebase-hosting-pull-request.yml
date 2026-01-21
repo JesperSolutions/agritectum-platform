@@ -17,5 +17,5 @@ jobs:
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_TAKLAGET_SERVICE_APP }}
-          projectId: taklaget-service-app
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_AGRITECTUM_PLATFORM }}
+          projectId: agritectum-platform

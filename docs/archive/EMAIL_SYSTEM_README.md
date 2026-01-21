@@ -76,8 +76,8 @@ const result = await queueMail({
     reportLink: 'https://taklaget.app/report/RPT-12345',
     branchName: 'Stockholm Branch',
     branchPhone: '+46 8 123 4567',
-    branchEmail: 'stockholm@taklaget.app'
-  }
+    branchEmail: 'stockholm@taklaget.app',
+  },
 });
 
 if (result.data.success) {
@@ -92,18 +92,15 @@ import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from './config/firebase';
 
 // Monitor email delivery status
-const unsubscribe = onSnapshot(
-  doc(db, 'mail', messageId),
-  (doc) => {
-    const data = doc.data();
-    if (data?.delivery) {
-      console.log('Delivery status:', data.delivery.state);
-      if (data.delivery.state === 'SUCCESS') {
-        console.log('Email delivered successfully!');
-      }
+const unsubscribe = onSnapshot(doc(db, 'mail', messageId), doc => {
+  const data = doc.data();
+  if (data?.delivery) {
+    console.log('Delivery status:', data.delivery.state);
+    if (data.delivery.state === 'SUCCESS') {
+      console.log('Email delivered successfully!');
     }
   }
-);
+});
 ```
 
 ## 📋 Email Templates
@@ -162,17 +159,21 @@ email/templates/
 ### Required DNS Records
 
 #### SPF Record
+
 ```
 v=spf1 include:spf.protection.outlook.com include:_spf.mailersend.net -all
 ```
 
 #### DMARC Record
+
 ```
 v=DMARC1; p=quarantine; rua=mailto:dmarc@taklaget.app; fo=1
 ```
 
 #### DKIM Records
+
 Configure in MailerSend dashboard and add CNAME records:
+
 - `ms1._domainkey.taklaget.app` → `ms1._domainkey.mailersend.net`
 - `ms2._domainkey.taklaget.app` → `ms2._domainkey.mailersend.net`
 
@@ -272,24 +273,28 @@ node scripts/test-trigger-email.cjs
 ### Common Issues
 
 #### Emails Going to Spam
+
 1. Check SPF/DKIM/DMARC alignment
 2. Verify domain reputation
 3. Review email content and headers
 4. Check MailerSend domain status
 
 #### High Bounce Rate
+
 1. Review recipient list quality
 2. Check for invalid email addresses
 3. Update suppression rules
 4. Verify domain reputation
 
 #### Authentication Failures
+
 1. Verify SMTP credentials in Secret Manager
 2. Check Trigger Email extension configuration
 3. Review Cloud Functions logs
 4. Ensure proper IAM permissions
 
 #### Webhook Issues
+
 1. Check webhook endpoint URL in MailerSend
 2. Verify webhook signature validation
 3. Review Cloud Functions logs
@@ -349,18 +354,21 @@ echo "new_password" | gcloud secrets versions add MAILERSEND_SMTP_PASSWORD --dat
 ### Emergency Procedures
 
 #### Disable Email Sending
+
 ```bash
 # Set maintenance mode environment variable
 export EMAIL_MAINTENANCE_MODE=true
 ```
 
 #### Switch to Microsoft Graph (Fallback)
+
 ```bash
 # Enable fallback mode
 export EMAIL_CHANNEL=graph
 ```
 
 #### Contact Information
+
 - **MailerSend Support**: support@mailersend.com
 - **Firebase Support**: Firebase Console → Support
 - **DNS Provider**: Check their support documentation
@@ -393,16 +401,19 @@ export EMAIL_CHANNEL=graph
 ## 📋 Compliance
 
 ### GDPR
+
 - Email addresses collected with consent
 - Unsubscribe mechanisms provided
 - Data subject requests handled appropriately
 
 ### CAN-SPAM
+
 - Clear sender identification
 - Valid physical address included
 - Unsubscribe requests honored promptly
 
 ### Industry Standards
+
 - Follow RFC standards for email authentication
 - Implement proper error handling
 - Maintain delivery statistics and logs

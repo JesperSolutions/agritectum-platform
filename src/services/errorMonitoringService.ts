@@ -1,5 +1,14 @@
 import { db } from '../config/firebase';
-import { collection, addDoc, getDocs, query, where, orderBy, limit, serverTimestamp } from 'firebase/firestore';
+import {
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  where,
+  orderBy,
+  limit,
+  serverTimestamp,
+} from 'firebase/firestore';
 import { logger } from '../utils/logger';
 
 export interface ErrorLog {
@@ -40,7 +49,9 @@ export interface ErrorMetrics {
 /**
  * Log an error to the monitoring system
  */
-export const logError = async (errorData: Omit<ErrorLog, 'id' | 'timestamp' | 'resolved'>): Promise<string> => {
+export const logError = async (
+  errorData: Omit<ErrorLog, 'id' | 'timestamp' | 'resolved'>
+): Promise<string> => {
   try {
     const errorLog: Omit<ErrorLog, 'id'> = {
       ...errorData,
@@ -68,10 +79,12 @@ export const logError = async (errorData: Omit<ErrorLog, 'id' | 'timestamp' | 'r
  */
 const checkForCriticalError = async (error: ErrorLog): Promise<void> => {
   const criticalKeywords = ['critical', 'fatal', 'authentication', 'payment', 'database'];
-  const isCritical = error.level === 'critical' || 
-    criticalKeywords.some(keyword => 
-      error.message.toLowerCase().includes(keyword) ||
-      error.component?.toLowerCase().includes(keyword)
+  const isCritical =
+    error.level === 'critical' ||
+    criticalKeywords.some(
+      keyword =>
+        error.message.toLowerCase().includes(keyword) ||
+        error.component?.toLowerCase().includes(keyword)
     );
 
   if (isCritical) {
@@ -190,17 +203,17 @@ export const getErrorMetrics = async (days: number = 30): Promise<ErrorMetrics> 
     errors.forEach(error => {
       // Count by level
       errorsByLevel[error.level] = (errorsByLevel[error.level] || 0) + 1;
-      
+
       // Count by component
       if (error.component) {
         errorsByComponent[error.component] = (errorsByComponent[error.component] || 0) + 1;
       }
-      
+
       // Count by user
       if (error.userId) {
         errorsByUser[error.userId] = (errorsByUser[error.userId] || 0) + 1;
       }
-      
+
       // Count by message
       errorMessages[error.message] = (errorMessages[error.message] || 0) + 1;
     });
@@ -217,7 +230,7 @@ export const getErrorMetrics = async (days: number = 30): Promise<ErrorMetrics> 
       const date = new Date();
       date.setDate(date.getDate() - i);
       const dateStr = date.toISOString().split('T')[0];
-      
+
       const dayErrors = errors.filter(error => {
         const errorDate = error.timestamp.toISOString().split('T')[0];
         return errorDate === dateStr;
@@ -255,11 +268,8 @@ export const getErrorMetrics = async (days: number = 30): Promise<ErrorMetrics> 
  */
 export const getUnresolvedErrorsCount = async (): Promise<number> => {
   try {
-    const q = query(
-      collection(db, 'errorLogs'),
-      where('resolved', '==', false)
-    );
-    
+    const q = query(collection(db, 'errorLogs'), where('resolved', '==', false));
+
     const snapshot = await getDocs(q);
     return snapshot.size;
   } catch (error) {
@@ -276,10 +286,7 @@ export const cleanupOldErrorLogs = async (): Promise<void> => {
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - 90);
 
-    const q = query(
-      collection(db, 'errorLogs'),
-      where('timestamp', '<', cutoffDate)
-    );
+    const q = query(collection(db, 'errorLogs'), where('timestamp', '<', cutoffDate));
 
     const snapshot = await getDocs(q);
     const batch = db.batch();

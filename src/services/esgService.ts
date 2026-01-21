@@ -1,6 +1,6 @@
 /**
  * ESG Service
- * 
+ *
  * Provides functions to calculate and manage ESG metrics for buildings.
  * Integrates with buildingService and reportService to aggregate data.
  * Also manages ESG Service Reports created by branch managers.
@@ -27,13 +27,16 @@ import { getBuildingImprovements } from './buildingImprovementService';
 import { logger } from '../utils/logger';
 
 const removeUndefinedFields = <T extends Record<string, unknown>>(data: T): T => {
-  const cleanedEntries = Object.entries(data).reduce<Record<string, unknown>>((acc, [key, value]) => {
-    if (value === undefined) {
+  const cleanedEntries = Object.entries(data).reduce<Record<string, unknown>>(
+    (acc, [key, value]) => {
+      if (value === undefined) {
+        return acc;
+      }
+      acc[key] = value;
       return acc;
-    }
-    acc[key] = value;
-    return acc;
-  }, {});
+    },
+    {}
+  );
 
   return cleanedEntries as T;
 };
@@ -74,17 +77,18 @@ export async function calculateBuildingESGMetrics(
     if (savedImprovements && savedImprovements.improvements.length > 0) {
       // Enhance metrics with improvement impact
       const improvementImpact = savedImprovements.metrics;
-      
+
       // Update metrics with improvement data
       metrics.sustainabilityScore = Math.min(
         100,
-        metrics.sustainabilityScore + 
-        (improvementImpact.sustainabilityScore - (building.esgMetrics?.sustainabilityScore || 50))
+        metrics.sustainabilityScore +
+          (improvementImpact.sustainabilityScore - (building.esgMetrics?.sustainabilityScore || 50))
       );
       metrics.annualCO2Offset += improvementImpact.annualCO2Reduction;
       metrics.solarPotential += improvementImpact.annualEnergySavings; // Add energy savings to solar potential
-      metrics.neutralityTimeline = improvementImpact.neutralityTimeline || metrics.neutralityTimeline;
-      
+      metrics.neutralityTimeline =
+        improvementImpact.neutralityTimeline || metrics.neutralityTimeline;
+
       // Update rating based on new score
       const { getSustainabilityRating } = await import('../utils/esgCalculations');
       metrics.rating = getSustainabilityRating(metrics.sustainabilityScore);
@@ -117,9 +121,8 @@ export async function getBuildingESGMetrics(
     // Check if metrics are recent (less than 30 days old)
     if (building.esgMetrics.lastCalculated) {
       const lastCalculated = new Date(building.esgMetrics.lastCalculated);
-      const daysSinceCalculation =
-        (Date.now() - lastCalculated.getTime()) / (1000 * 60 * 60 * 24);
-      
+      const daysSinceCalculation = (Date.now() - lastCalculated.getTime()) / (1000 * 60 * 60 * 24);
+
       // Use cached metrics if less than 30 days old
       if (daysSinceCalculation < 30) {
         return building.esgMetrics;
@@ -150,14 +153,10 @@ export async function calculateAggregatedESG(
   buildingCount: number;
 }> {
   const metrics = await Promise.all(
-    buildings.map((building) =>
-      calculateBuildingESGMetrics(building, branchId).catch(() => null)
-    )
+    buildings.map(building => calculateBuildingESGMetrics(building, branchId).catch(() => null))
   );
 
-  const validMetrics = metrics.filter(
-    (m): m is ESGMetrics => m !== null
-  );
+  const validMetrics = metrics.filter((m): m is ESGMetrics => m !== null);
 
   if (validMetrics.length === 0) {
     return {
@@ -171,29 +170,18 @@ export async function calculateAggregatedESG(
     };
   }
 
-  const totalCarbonFootprint = validMetrics.reduce(
-    (sum, m) => sum + m.carbonFootprint,
-    0
-  );
-  const totalAnnualCO2Offset = validMetrics.reduce(
-    (sum, m) => sum + m.annualCO2Offset,
-    0
-  );
+  const totalCarbonFootprint = validMetrics.reduce((sum, m) => sum + m.carbonFootprint, 0);
+  const totalAnnualCO2Offset = validMetrics.reduce((sum, m) => sum + m.annualCO2Offset, 0);
   const averageSustainabilityScore =
-    validMetrics.reduce((sum, m) => sum + m.sustainabilityScore, 0) /
-    validMetrics.length;
-  const totalSolarPotential = validMetrics.reduce(
-    (sum, m) => sum + m.solarPotential,
-    0
-  );
+    validMetrics.reduce((sum, m) => sum + m.sustainabilityScore, 0) / validMetrics.length;
+  const totalSolarPotential = validMetrics.reduce((sum, m) => sum + m.solarPotential, 0);
   const averageRecyclingPotential =
-    validMetrics.reduce((sum, m) => sum + m.recyclingPotential, 0) /
-    validMetrics.length;
+    validMetrics.reduce((sum, m) => sum + m.recyclingPotential, 0) / validMetrics.length;
 
   // Collect unique SDGs
   const allSDGs = new Set<string>();
-  validMetrics.forEach((m) => {
-    m.sdgAlignment.forEach((sdg) => allSDGs.add(sdg));
+  validMetrics.forEach(m => {
+    m.sdgAlignment.forEach(sdg => allSDGs.add(sdg));
   });
 
   return {
@@ -218,7 +206,10 @@ export async function calculateAggregatedESG(
  * @returns Created report ID
  */
 export async function createESGServiceReport(
-  reportData: Omit<ESGServiceReport, 'id' | 'createdAt' | 'updatedAt' | 'calculatedMetrics' | 'isPublic' | 'publicLinkId'>
+  reportData: Omit<
+    ESGServiceReport,
+    'id' | 'createdAt' | 'updatedAt' | 'calculatedMetrics' | 'isPublic' | 'publicLinkId'
+  >
 ): Promise<string> {
   try {
     const auth = getAuth();
@@ -229,11 +220,12 @@ export async function createESGServiceReport(
     }
 
     // Validate divisions sum to 100
-    const totalPercentage = reportData.divisions.greenRoof +
+    const totalPercentage =
+      reportData.divisions.greenRoof +
       reportData.divisions.noxReduction +
       reportData.divisions.coolRoof +
       reportData.divisions.socialActivities;
-    
+
     if (Math.abs(totalPercentage - 100) > 0.1) {
       throw new Error('Division percentages must sum to 100%');
     }
@@ -288,11 +280,12 @@ export async function updateESGServiceReport(
       const divisions = updates.divisions ?? report.divisions;
 
       // Validate divisions sum to 100
-      const totalPercentage = divisions.greenRoof +
+      const totalPercentage =
+        divisions.greenRoof +
         divisions.noxReduction +
         divisions.coolRoof +
         divisions.socialActivities;
-      
+
       if (Math.abs(totalPercentage - 100) > 0.1) {
         throw new Error('Division percentages must sum to 100%');
       }
@@ -347,14 +340,10 @@ export async function getESGServiceReport(reportId: string): Promise<ESGServiceR
 export async function getESGServiceReportsByBranch(branchId: string): Promise<ESGServiceReport[]> {
   try {
     const reportsRef = collection(db, 'esgServiceReports');
-    const q = query(
-      reportsRef,
-      where('branchId', '==', branchId),
-      orderBy('createdAt', 'desc')
-    );
+    const q = query(reportsRef, where('branchId', '==', branchId), orderBy('createdAt', 'desc'));
 
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map((doc) => ({
+    return querySnapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data(),
     })) as ESGServiceReport[];
@@ -369,25 +358,25 @@ export async function getESGServiceReportsByBranch(branchId: string): Promise<ES
  * @param buildingId - Building ID
  * @returns Array of reports
  */
-export async function getESGServiceReportsByBuilding(buildingId: string, branchId?: string): Promise<ESGServiceReport[]> {
+export async function getESGServiceReportsByBuilding(
+  buildingId: string,
+  branchId?: string
+): Promise<ESGServiceReport[]> {
   try {
     const reportsRef = collection(db, 'esgServiceReports');
-    
+
     // Include branchId in query to satisfy Firestore security rules
-    const constraints = [
-      where('buildingId', '==', buildingId),
-      orderBy('createdAt', 'desc')
-    ];
-    
+    const constraints = [where('buildingId', '==', buildingId), orderBy('createdAt', 'desc')];
+
     // If branchId provided, add it to the query for security rule compliance
     if (branchId) {
       constraints.unshift(where('branchId', '==', branchId));
     }
-    
+
     const q = query(reportsRef, ...constraints);
 
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map((doc) => ({
+    return querySnapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data(),
     })) as ESGServiceReport[];
@@ -433,7 +422,9 @@ export async function generatePublicESGReportLink(reportId: string): Promise<str
  * @param publicLinkId - Public link ID
  * @returns Report object or null if not found or not public
  */
-export async function getPublicESGServiceReport(publicLinkId: string): Promise<ESGServiceReport | null> {
+export async function getPublicESGServiceReport(
+  publicLinkId: string
+): Promise<ESGServiceReport | null> {
   try {
     const reportsRef = collection(db, 'esgServiceReports');
     const q = query(

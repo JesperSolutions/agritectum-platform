@@ -5,13 +5,13 @@
 
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { getFirestore, doc, writeBatch } from 'firebase/firestore';
-import { 
-  testUserDK, 
-  testCustomerDK, 
-  testBuildingDK1, 
-  testBuildingDK2, 
-  testReportDK1, 
-  testReportDK2 
+import {
+  testUserDK,
+  testCustomerDK,
+  testBuildingDK1,
+  testBuildingDK2,
+  testReportDK1,
+  testReportDK2,
 } from '../data/testSeedData';
 
 export async function seedTestDataBrowser() {

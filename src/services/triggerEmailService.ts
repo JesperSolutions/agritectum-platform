@@ -732,7 +732,7 @@ export const sendReportEmail = async (
 
     if (result.success) {
       logger.log('✅ Email sent successfully:', result.messageId);
-      
+
       // Create notification for successful email
       try {
         await createEmailNotification(
@@ -747,7 +747,7 @@ export const sendReportEmail = async (
       }
     } else {
       console.error('❌ Email sending failed:', result.error);
-      
+
       // Create notification for failed email
       try {
         await createEmailNotification(

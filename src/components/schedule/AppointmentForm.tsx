@@ -6,7 +6,13 @@ import { Label } from '../ui/label';
 import { useIntl } from '../../hooks/useIntl';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../contexts/ToastContext';
-import { Appointment, AppointmentStatus, Employee, Customer, canAccessAllBranches } from '../../types';
+import {
+  Appointment,
+  AppointmentStatus,
+  Employee,
+  Customer,
+  canAccessAllBranches,
+} from '../../types';
 import * as appointmentService from '../../services/appointmentService';
 import * as userService from '../../services/userService';
 import * as customerService from '../../services/customerService';
@@ -20,7 +26,12 @@ interface AppointmentFormProps {
   appointment?: Appointment | null; // If provided, we're editing
 }
 
-const AppointmentForm: React.FC<AppointmentFormProps> = ({ isOpen, onClose, onSuccess, appointment }) => {
+const AppointmentForm: React.FC<AppointmentFormProps> = ({
+  isOpen,
+  onClose,
+  onSuccess,
+  appointment,
+}) => {
   const { t } = useIntl();
   const { currentUser } = useAuth();
   const { showSuccess, showError } = useToast();
@@ -38,7 +49,9 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({ isOpen, onClose, onSu
   const [scheduledDate, setScheduledDate] = useState('');
   const [scheduledTime, setScheduledTime] = useState('09:00');
   const [duration, setDuration] = useState(120); // Default 2 hours
-  const [appointmentType, setAppointmentType] = useState<'inspection' | 'follow_up' | 'estimate' | 'other'>('inspection');
+  const [appointmentType, setAppointmentType] = useState<
+    'inspection' | 'follow_up' | 'estimate' | 'other'
+  >('inspection');
   const [description, setDescription] = useState('');
 
   // UI state
@@ -105,21 +118,25 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({ isOpen, onClose, onSu
   const loadInspectors = async () => {
     try {
       if (!currentUser) return;
-      
+
       // Get inspectors based on user permissions
-      const branchId = canAccessAllBranches(currentUser.permissionLevel) ? undefined : currentUser.branchId;
+      const branchId = canAccessAllBranches(currentUser.permissionLevel)
+        ? undefined
+        : currentUser.branchId;
       const allUsers = await userService.getUsers(branchId);
-      
+
       logger.log('🔍 Schedule Debug - All users loaded:', allUsers.length);
       logger.log('🔍 Schedule Debug - Users data:', allUsers);
-      
+
       const inspectors = allUsers.filter((user: any) => {
         const isInspector = user.permissionLevel === 0 || user.role === 'inspector';
         const isActive = user.isActive !== false; // Default to true if not set
-        logger.log(`🔍 Schedule Debug - User ${user.displayName}: permissionLevel=${user.permissionLevel}, role=${user.role}, isActive=${user.isActive}, isInspector=${isInspector}, isActive=${isActive}`);
+        logger.log(
+          `🔍 Schedule Debug - User ${user.displayName}: permissionLevel=${user.permissionLevel}, role=${user.role}, isActive=${user.isActive}, isInspector=${isInspector}, isActive=${isActive}`
+        );
         return isInspector && isActive;
       });
-      
+
       logger.log('🔍 Schedule Debug - Filtered inspectors:', inspectors.length, inspectors);
       setInspectors(inspectors);
     } catch (error) {
@@ -130,11 +147,13 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({ isOpen, onClose, onSu
   const loadCustomers = async () => {
     try {
       if (!currentUser) return;
-      
+
       // Get customers based on user permissions
-      const branchId = canAccessAllBranches(currentUser.permissionLevel) ? undefined : currentUser.branchId;
+      const branchId = canAccessAllBranches(currentUser.permissionLevel)
+        ? undefined
+        : currentUser.branchId;
       const allCustomers = await customerService.getCustomers(branchId);
-      
+
       setCustomers(allCustomers);
     } catch (error) {
       console.error('Error loading customers:', error);
@@ -178,7 +197,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({ isOpen, onClose, onSu
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!currentUser) return;
 
     // Validation
@@ -251,19 +270,23 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({ isOpen, onClose, onSu
 
       if (isEditing && appointment) {
         await appointmentService.updateAppointment(appointment.id, appointmentData);
-        showSuccess(t('schedule.appointment.updatedSuccessfully') || 'Appointment updated successfully');
+        showSuccess(
+          t('schedule.appointment.updatedSuccessfully') || 'Appointment updated successfully'
+        );
       } else {
         const appointmentId = await appointmentService.createAppointment(appointmentData);
-        
+
         // Get the created appointment and scheduledVisit to send notifications
         try {
           const createdAppointment = await appointmentService.getAppointment(appointmentId);
           if (createdAppointment?.scheduledVisitId) {
             const { getScheduledVisit } = await import('../../services/scheduledVisitService');
             const scheduledVisit = await getScheduledVisit(createdAppointment.scheduledVisitId);
-            
+
             if (scheduledVisit && createdAppointment) {
-              const { notifyCustomerOfAppointment } = await import('../../services/appointmentNotificationService');
+              const { notifyCustomerOfAppointment } = await import(
+                '../../services/appointmentNotificationService'
+              );
               await notifyCustomerOfAppointment(createdAppointment, scheduledVisit);
             }
           }
@@ -271,15 +294,20 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({ isOpen, onClose, onSu
           console.error('Error sending notifications (non-blocking):', notificationError);
           // Don't fail appointment creation if notifications fail
         }
-        
-        showSuccess(t('schedule.appointment.createdSuccessfully') || 'Appointment scheduled successfully');
+
+        showSuccess(
+          t('schedule.appointment.createdSuccessfully') || 'Appointment scheduled successfully'
+        );
       }
 
       onSuccess();
       onClose();
       resetForm();
     } catch (err: any) {
-      const errorMsg = err.message || t(isEditing ? 'schedule.error.update' : 'schedule.error.create') || 'Failed to save appointment';
+      const errorMsg =
+        err.message ||
+        t(isEditing ? 'schedule.error.update' : 'schedule.error.create') ||
+        'Failed to save appointment';
       setError(errorMsg);
       showError(errorMsg);
     } finally {
@@ -300,14 +328,15 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({ isOpen, onClose, onSu
 
   const filteredCustomers = useMemo(() => {
     if (!customerSearchTerm.trim()) return customers.slice(0, 5);
-    
+
     const searchLower = customerSearchTerm.toLowerCase();
     return customers
-      .filter(c => 
-        c.name.toLowerCase().includes(searchLower) ||
-        c.address?.toLowerCase().includes(searchLower) ||
-        c.phone?.toLowerCase().includes(searchLower) ||
-        c.email?.toLowerCase().includes(searchLower)
+      .filter(
+        c =>
+          c.name.toLowerCase().includes(searchLower) ||
+          c.address?.toLowerCase().includes(searchLower) ||
+          c.phone?.toLowerCase().includes(searchLower) ||
+          c.email?.toLowerCase().includes(searchLower)
       )
       .slice(0, 10);
   }, [customers, customerSearchTerm]);
@@ -318,7 +347,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({ isOpen, onClose, onSu
   }, [inspectors, assignedInspectorId]);
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+    <Dialog open={isOpen} onOpenChange={open => !open && onClose()}>
       <DialogContent className='max-w-2xl max-h-[90vh] overflow-y-auto'>
         <DialogHeader>
           <DialogTitle className='text-2xl font-light'>
@@ -343,7 +372,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({ isOpen, onClose, onSu
                   type='text'
                   placeholder={t('schedule.form.customerPlaceholder')}
                   value={customerSearchTerm}
-                  onChange={(e) => {
+                  onChange={e => {
                     setCustomerSearchTerm(e.target.value);
                     setShowCustomerSearch(true);
                   }}
@@ -351,7 +380,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({ isOpen, onClose, onSu
                 />
                 {showCustomerSearch && filteredCustomers.length > 0 && (
                   <div className='absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-material shadow-material-3 max-h-60 overflow-y-auto'>
-                    {filteredCustomers.map((customer) => (
+                    {filteredCustomers.map(customer => (
                       <button
                         key={customer.id}
                         type='button'
@@ -377,14 +406,16 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({ isOpen, onClose, onSu
                   id='customerName'
                   type='text'
                   value={customerName}
-                  onChange={(e) => setCustomerName(e.target.value)}
+                  onChange={e => setCustomerName(e.target.value)}
                   required
                   title={t('schedule.validation.fillThisField')}
-                  onInvalid={(e) => {
+                  onInvalid={e => {
                     e.preventDefault();
-                    (e.target as HTMLInputElement).setCustomValidity(t('schedule.validation.customerRequired'));
+                    (e.target as HTMLInputElement).setCustomValidity(
+                      t('schedule.validation.customerRequired')
+                    );
                   }}
-                  onInput={(e) => {
+                  onInput={e => {
                     (e.target as HTMLInputElement).setCustomValidity('');
                   }}
                 />
@@ -396,7 +427,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({ isOpen, onClose, onSu
                   id='customerCompany'
                   type='text'
                   value={customerCompany}
-                  onChange={(e) => setCustomerCompany(e.target.value)}
+                  onChange={e => setCustomerCompany(e.target.value)}
                 />
               </div>
             </div>
@@ -407,14 +438,16 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({ isOpen, onClose, onSu
                 id='customerAddress'
                 type='text'
                 value={customerAddress}
-                onChange={(e) => setCustomerAddress(e.target.value)}
+                onChange={e => setCustomerAddress(e.target.value)}
                 required
                 title={t('schedule.validation.fillThisField')}
-                onInvalid={(e) => {
+                onInvalid={e => {
                   e.preventDefault();
-                  (e.target as HTMLInputElement).setCustomValidity(t('schedule.validation.addressRequired'));
+                  (e.target as HTMLInputElement).setCustomValidity(
+                    t('schedule.validation.addressRequired')
+                  );
                 }}
-                onInput={(e) => {
+                onInput={e => {
                   (e.target as HTMLInputElement).setCustomValidity('');
                 }}
               />
@@ -427,7 +460,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({ isOpen, onClose, onSu
                   id='customerPhone'
                   type='tel'
                   value={customerPhone}
-                  onChange={(e) => setCustomerPhone(e.target.value)}
+                  onChange={e => setCustomerPhone(e.target.value)}
                 />
               </div>
 
@@ -437,7 +470,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({ isOpen, onClose, onSu
                   id='customerEmail'
                   type='email'
                   value={customerEmail}
-                  onChange={(e) => setCustomerEmail(e.target.value)}
+                  onChange={e => setCustomerEmail(e.target.value)}
                 />
               </div>
             </div>
@@ -455,20 +488,22 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({ isOpen, onClose, onSu
               <select
                 id='inspector'
                 value={assignedInspectorId}
-                onChange={(e) => setAssignedInspectorId(e.target.value)}
+                onChange={e => setAssignedInspectorId(e.target.value)}
                 className='flex h-10 w-full rounded-material border border-input bg-gray-50 px-4 py-2.5 text-base font-light shadow-material-1 transition-all duration-material focus-visible:outline-none focus-visible:bg-white focus-visible:ring-2 focus-visible:ring-ring focus-visible:shadow-material-2'
                 required
                 title={t('schedule.validation.fillThisField')}
-                onInvalid={(e) => {
+                onInvalid={e => {
                   e.preventDefault();
-                  (e.target as HTMLSelectElement).setCustomValidity(t('schedule.validation.inspectorRequired'));
+                  (e.target as HTMLSelectElement).setCustomValidity(
+                    t('schedule.validation.inspectorRequired')
+                  );
                 }}
-                onInput={(e) => {
+                onInput={e => {
                   (e.target as HTMLSelectElement).setCustomValidity('');
                 }}
               >
                 <option value=''>{t('schedule.form.inspectorPlaceholder')}</option>
-                {inspectors.map((inspector) => (
+                {inspectors.map(inspector => (
                   <option key={inspector.uid} value={inspector.uid}>
                     {inspector.displayName}
                   </option>
@@ -483,15 +518,17 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({ isOpen, onClose, onSu
                   id='date'
                   type='date'
                   value={scheduledDate}
-                  onChange={(e) => setScheduledDate(e.target.value)}
+                  onChange={e => setScheduledDate(e.target.value)}
                   min={new Date().toISOString().split('T')[0]}
                   required
                   title={t('schedule.validation.fillThisField')}
-                  onInvalid={(e) => {
+                  onInvalid={e => {
                     e.preventDefault();
-                    (e.target as HTMLInputElement).setCustomValidity(t('schedule.validation.dateRequired'));
+                    (e.target as HTMLInputElement).setCustomValidity(
+                      t('schedule.validation.dateRequired')
+                    );
                   }}
-                  onInput={(e) => {
+                  onInput={e => {
                     (e.target as HTMLInputElement).setCustomValidity('');
                   }}
                 />
@@ -503,14 +540,16 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({ isOpen, onClose, onSu
                   id='time'
                   type='time'
                   value={scheduledTime}
-                  onChange={(e) => setScheduledTime(e.target.value)}
+                  onChange={e => setScheduledTime(e.target.value)}
                   required
                   title={t('schedule.validation.fillThisField')}
-                  onInvalid={(e) => {
+                  onInvalid={e => {
                     e.preventDefault();
-                    (e.target as HTMLInputElement).setCustomValidity(t('schedule.validation.timeRequired'));
+                    (e.target as HTMLInputElement).setCustomValidity(
+                      t('schedule.validation.timeRequired')
+                    );
                   }}
-                  onInput={(e) => {
+                  onInput={e => {
                     (e.target as HTMLInputElement).setCustomValidity('');
                   }}
                 />
@@ -521,7 +560,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({ isOpen, onClose, onSu
                 <select
                   id='duration'
                   value={duration}
-                  onChange={(e) => setDuration(Number(e.target.value))}
+                  onChange={e => setDuration(Number(e.target.value))}
                   className='flex h-10 w-full rounded-material border border-input bg-gray-50 px-4 py-2.5 text-base font-light shadow-material-1 transition-all duration-material focus-visible:outline-none focus-visible:bg-white focus-visible:ring-2 focus-visible:ring-ring focus-visible:shadow-material-2'
                   required
                 >
@@ -542,7 +581,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({ isOpen, onClose, onSu
               <select
                 id='appointmentType'
                 value={appointmentType}
-                onChange={(e) => setAppointmentType(e.target.value as any)}
+                onChange={e => setAppointmentType(e.target.value as any)}
                 className='flex h-10 w-full rounded-material border border-input bg-gray-50 px-4 py-2.5 text-base font-light shadow-material-1 transition-all duration-material focus-visible:outline-none focus-visible:bg-white focus-visible:ring-2 focus-visible:ring-ring focus-visible:shadow-material-2'
               >
                 <option value='inspection'>{t('schedule.form.types.inspection')}</option>
@@ -557,7 +596,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({ isOpen, onClose, onSu
               <textarea
                 id='description'
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                onChange={e => setDescription(e.target.value)}
                 placeholder={t('schedule.form.descriptionPlaceholder')}
                 rows={3}
                 className='flex w-full rounded-material border border-input bg-gray-50 px-4 py-2.5 text-base font-light shadow-material-1 transition-all duration-material focus-visible:outline-none focus-visible:bg-white focus-visible:ring-2 focus-visible:ring-ring focus-visible:shadow-material-2 resize-none'
@@ -612,4 +651,3 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({ isOpen, onClose, onSu
 };
 
 export default AppointmentForm;
-

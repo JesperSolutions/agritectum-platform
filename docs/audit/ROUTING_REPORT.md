@@ -17,6 +17,7 @@ This audit identifies routing inconsistencies, missing error boundaries, hardcod
 ### Current Route Organization
 
 **Public Routes (No Authentication):**
+
 - `/report/public/:reportId` ✅
 - `/offer/public/:offerId` ✅
 - `/service-agreement/public/:token` ✅
@@ -24,6 +25,7 @@ This audit identifies routing inconsistencies, missing error boundaries, hardcod
 - `/unsubscribe` ✅
 
 **Authentication Routes:**
+
 - `/login` ✅
 - `/forgot-password` ✅
 - `/reset-password` ✅
@@ -31,6 +33,7 @@ This audit identifies routing inconsistencies, missing error boundaries, hardcod
 - `/portal/register` ✅
 
 **Portal Routes (Customer):**
+
 - `/portal` (layout) ✅
   - `/portal/dashboard` ✅
   - `/portal/buildings` ✅
@@ -40,6 +43,7 @@ This audit identifies routing inconsistencies, missing error boundaries, hardcod
   - `/portal/profile` ✅
 
 **Main App Routes (Protected):**
+
 - `/` (layout) ✅
   - `/dashboard` ✅
   - `/profile` ✅
@@ -60,6 +64,7 @@ This audit identifies routing inconsistencies, missing error boundaries, hardcod
   - `/admin/testing` ⚠️ (missing errorElement)
 
 **Error Routes:**
+
 - `/unauthorized` ✅
 - `/no-branch` ✅
 - `*` (404) ✅
@@ -80,6 +85,7 @@ This audit identifies routing inconsistencies, missing error boundaries, hardcod
 ### Missing errorElement
 
 **Routes Missing errorElement:**
+
 1. `/admin/analytics` (line 405-413)
    - Has `EnhancedErrorBoundary` wrapper but no `errorElement`
    - **Issue:** Route-level error handling missing
@@ -105,6 +111,7 @@ This audit identifies routing inconsistencies, missing error boundaries, hardcod
 **Patterns Found:**
 
 1. **Route-level errorElement:**
+
    ```tsx
    {
      path: 'dashboard',
@@ -114,6 +121,7 @@ This audit identifies routing inconsistencies, missing error boundaries, hardcod
    ```
 
 2. **Component-level ErrorBoundary:**
+
    ```tsx
    {
      path: 'report/public/:reportId',
@@ -142,6 +150,7 @@ This audit identifies routing inconsistencies, missing error boundaries, hardcod
 ### Recommendation
 
 **Standard Pattern:**
+
 - All routes should have `errorElement: <RouteErrorBoundary />`
 - Remove redundant `ErrorBoundary` wrappers from route elements
 - Use `EnhancedErrorBoundary` only when additional context is needed, but still include `errorElement`
@@ -155,6 +164,7 @@ This audit identifies routing inconsistencies, missing error boundaries, hardcod
 **Current Patterns:**
 
 1. **With allowedRoles:**
+
    ```tsx
    <ProtectedRoute allowedRoles={['superadmin', 'branchAdmin']}>
      <Component />
@@ -162,6 +172,7 @@ This audit identifies routing inconsistencies, missing error boundaries, hardcod
    ```
 
 2. **With requiredBranch:**
+
    ```tsx
    <ProtectedRoute allowedRoles={['inspector', 'branchAdmin']} requiredBranch>
      <Component />
@@ -193,6 +204,7 @@ This audit identifies routing inconsistencies, missing error boundaries, hardcod
 ### Recommendation
 
 **Standardize Role Arrays:**
+
 - Use consistent order: `['inspector', 'branchAdmin', 'superadmin']`
 - Create role constants to avoid typos
 - Document role hierarchy
@@ -227,6 +239,7 @@ This audit identifies routing inconsistencies, missing error boundaries, hardcod
 ### Translation Keys Needed
 
 **Create in `src/locales/{locale}/errors.json`:**
+
 ```json
 {
   "routing.accessDenied": "Access Denied",
@@ -244,12 +257,14 @@ This audit identifies routing inconsistencies, missing error boundaries, hardcod
 ### Potential Conflicts
 
 **No Duplicate Routes Found:**
+
 - All route paths are unique
 - No conflicting route definitions
 
 ### Route Hierarchy
 
 **Nested Routes:**
+
 - Portal routes properly nested under `/portal`
 - Main app routes properly nested under `/`
 - No conflicts between portal and main routes
@@ -261,6 +276,7 @@ This audit identifies routing inconsistencies, missing error boundaries, hardcod
 ### Current State
 
 **Suspense Usage:**
+
 - Most routes use `<Suspense fallback={<LoadingFallback />}>` ✅
 - Some routes have Suspense in wrapper components (redundant)
 - Loading state is consistent
@@ -279,6 +295,7 @@ This audit identifies routing inconsistencies, missing error boundaries, hardcod
 ### Recommendation
 
 **Standard Pattern:**
+
 - Use `<Suspense fallback={<LoadingFallback />}>` for all lazy-loaded routes
 - Remove redundant Suspense wrappers
 - Use consistent loading component
@@ -314,6 +331,7 @@ This audit identifies routing inconsistencies, missing error boundaries, hardcod
 ### Recommendation
 
 **Refactor Structure:**
+
 ```
 src/routing/
 ├── index.tsx              (Main router - < 200 lines)
@@ -336,6 +354,7 @@ src/routing/
 ### Current Documentation
 
 **Documented In:**
+
 - `docs/05-reference/QUICK_REFERENCE.md` - Route table
 - `docs/05-reference/SYSTEM_FLOW_ANALYSIS.md` - Route structure
 - `docs/05-reference/FUNCTIONALITY_INVENTORY.md` - Route mapping
@@ -354,6 +373,7 @@ src/routing/
 ### Recommendation
 
 **Add Route Metadata:**
+
 ```typescript
 interface RouteConfig {
   path: string;
@@ -375,6 +395,7 @@ interface RouteConfig {
 ### Missing Test Coverage
 
 **No Route Tests Found:**
+
 - No tests for route protection
 - No tests for route navigation
 - No tests for error boundaries
@@ -383,6 +404,7 @@ interface RouteConfig {
 ### Recommendation
 
 **Create Route Tests:**
+
 - Test route protection logic
 - Test role-based access
 - Test error boundary behavior

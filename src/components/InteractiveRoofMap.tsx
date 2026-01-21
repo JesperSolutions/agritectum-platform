@@ -58,7 +58,6 @@ const InteractiveRoofMap: React.FC<InteractiveRoofMapProps> = ({
       if (!mapRef.current) return;
 
       try {
-
         // Add custom CSS for high z-index popups
         if (!document.getElementById('leaflet-popup-override-style')) {
           const style = document.createElement('style');
@@ -73,7 +72,7 @@ const InteractiveRoofMap: React.FC<InteractiveRoofMapProps> = ({
           `;
           document.head.appendChild(style);
         }
-        
+
         // Initialize map with zoom constraints to prevent breaking
         const map = L.map(mapRef.current, {
           center: [lat, lon],
@@ -91,8 +90,8 @@ const InteractiveRoofMap: React.FC<InteractiveRoofMapProps> = ({
             attribution: '© Esri',
             maxZoom: 20,
             // PERFORMANCE OPTIMIZATIONS
-            keepBuffer: 4,          // Keep extra tiles cached
-            updateWhenIdle: true,    // Avoid redraws while panning
+            keepBuffer: 4, // Keep extra tiles cached
+            updateWhenIdle: true, // Avoid redraws while panning
             crossOrigin: true,
           }
         ).addTo(map);
@@ -109,7 +108,7 @@ const InteractiveRoofMap: React.FC<InteractiveRoofMapProps> = ({
         const checkLoaded = () => {
           loadingCount--;
           setTilesLoading(prev => Math.max(0, prev - 1));
-          
+
           // Consider map ready when all tiles are loaded
           if (loadingCount === 0 && !tilesInitialLoadRef.current) {
             tilesInitialLoadRef.current = true;
@@ -148,7 +147,7 @@ const InteractiveRoofMap: React.FC<InteractiveRoofMapProps> = ({
           // Round coordinates to 2 decimal places
           const roundedLat = Math.round(markerData.lat * 100) / 100;
           const roundedLon = Math.round(markerData.lon * 100) / 100;
-          
+
           const customIcon = L.divIcon({
             className: 'custom-marker',
             html: `<div style="background-color: ${markerData.issueId ? '#10b981' : '#ef4444'}; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>`,
@@ -164,10 +163,13 @@ const InteractiveRoofMap: React.FC<InteractiveRoofMapProps> = ({
           // Add click handler to rebuild popup with latest issues
           marker.on('click', () => {
             // Rebuild popup content with latest issues
-            const issueOptions = availableIssuesRef.current.map(issue => 
-              `<option value="${issue.id}" ${issue.id === markerData.issueId ? 'selected' : ''}>${issue.title || 'Issue #' + issue.id}</option>`
-            ).join('');
-            
+            const issueOptions = availableIssuesRef.current
+              .map(
+                issue =>
+                  `<option value="${issue.id}" ${issue.id === markerData.issueId ? 'selected' : ''}>${issue.title || 'Issue #' + issue.id}</option>`
+              )
+              .join('');
+
             const popupContent = `
               <div style="text-align: center; min-width: 200px;">
                 <p style="margin: 0 0 8px 0; font-weight: bold;">Link to Issue</p>
@@ -185,24 +187,26 @@ const InteractiveRoofMap: React.FC<InteractiveRoofMapProps> = ({
                 </div>
               </div>
             `;
-            
+
             const popup = L.popup({
               maxWidth: 250,
             }).setContent(popupContent);
-            
+
             marker.unbindPopup().bindPopup(popup).openPopup();
-            
+
             // Handle popup button clicks
             setTimeout(() => {
               const select = document.getElementById(`issue-select-${markerData.id}`);
               const saveBtn = document.getElementById(`save-marker-${markerData.id}`);
               const removeBtn = document.getElementById(`remove-marker-${markerData.id}`);
-              
+
               const saveHandler = () => {
                 const issueId = (select as HTMLSelectElement)?.value;
                 if (issueId) {
                   markerData.issueId = issueId;
-                  const updatedMarkers = markers.map(m => m.id === markerData.id ? { ...m, issueId } : m);
+                  const updatedMarkers = markers.map(m =>
+                    m.id === markerData.id ? { ...m, issueId } : m
+                  );
                   setMarkers(updatedMarkers);
                   onMarkersChange?.(updatedMarkers);
                   // Update marker color
@@ -218,7 +222,7 @@ const InteractiveRoofMap: React.FC<InteractiveRoofMapProps> = ({
                 saveBtn?.removeEventListener('click', saveHandler);
                 removeBtn?.removeEventListener('click', removeHandler);
               };
-              
+
               const removeHandler = () => {
                 map.removeLayer(marker);
                 const updatedMarkers = markers.filter(m => m.id !== markerData.id);
@@ -231,7 +235,7 @@ const InteractiveRoofMap: React.FC<InteractiveRoofMapProps> = ({
                 saveBtn?.removeEventListener('click', saveHandler);
                 removeBtn?.removeEventListener('click', removeHandler);
               };
-              
+
               saveBtn?.addEventListener('click', saveHandler);
               removeBtn?.addEventListener('click', removeHandler);
             }, 100);
@@ -243,10 +247,8 @@ const InteractiveRoofMap: React.FC<InteractiveRoofMapProps> = ({
             // Round coordinates to 2 decimal places
             const roundedLat = Math.round(position.lat * 100) / 100;
             const roundedLon = Math.round(position.lng * 100) / 100;
-            const updatedMarkers = markers.map(m => 
-              m.id === markerData.id 
-                ? { ...m, lat: roundedLat, lon: roundedLon }
-                : m
+            const updatedMarkers = markers.map(m =>
+              m.id === markerData.id ? { ...m, lat: roundedLat, lon: roundedLon } : m
             );
             setMarkers(updatedMarkers);
             onMarkersChange?.(updatedMarkers);
@@ -263,11 +265,11 @@ const InteractiveRoofMap: React.FC<InteractiveRoofMapProps> = ({
         // Add click handler to place markers
         map.on('click', (e: any) => {
           const { lat: clickedLat, lng: clickedLon } = e.latlng;
-          
+
           // Round coordinates to 2 decimal places
           const roundedLat = Math.round(clickedLat * 100) / 100;
           const roundedLon = Math.round(clickedLon * 100) / 100;
-          
+
           // Generate marker ID first
           const markerId = `marker_${Date.now()}`;
           const markerData: MapMarker = {
@@ -276,7 +278,7 @@ const InteractiveRoofMap: React.FC<InteractiveRoofMapProps> = ({
             lon: roundedLon,
             severity: 'medium', // Default severity
           };
-          
+
           // Create a custom marker with a different color
           const customIcon = L.divIcon({
             className: 'custom-marker',
@@ -284,17 +286,19 @@ const InteractiveRoofMap: React.FC<InteractiveRoofMapProps> = ({
             iconSize: [20, 20],
             iconAnchor: [10, 10],
           });
-          
+
           const marker = L.marker([roundedLat, roundedLon], {
             icon: customIcon,
             draggable: true,
           }).addTo(map);
-          
+
           // Build popup with issue linking (use ref to get latest issues)
-          const issueOptions = availableIssuesRef.current.map(issue => 
-            `<option value="${issue.id}">${issue.title || 'Issue #' + issue.id}</option>`
-          ).join('');
-          
+          const issueOptions = availableIssuesRef.current
+            .map(
+              issue => `<option value="${issue.id}">${issue.title || 'Issue #' + issue.id}</option>`
+            )
+            .join('');
+
           const popupContent = `
             <div style="text-align: center; min-width: 200px;">
               <p style="margin: 0 0 8px 0; font-weight: bold;">Link to Issue</p>
@@ -312,32 +316,35 @@ const InteractiveRoofMap: React.FC<InteractiveRoofMapProps> = ({
               </div>
             </div>
           `;
-          
+
           const popup = L.popup({
             maxWidth: 250,
           }).setContent(popupContent);
-          
+
           marker.bindPopup(popup).openPopup();
-          
+
           markersRef.current.push(marker);
           const newMarkers = [...markers, markerData];
           setMarkers(newMarkers);
           onMarkersChange?.(newMarkers);
-          
+
           // Handle popup button clicks (delegated)
           setTimeout(() => {
             const popupContent = marker.getPopup()?.getContent();
-            const popupElement = typeof popupContent === 'string' ? null : (popupContent as HTMLElement);
-            
+            const popupElement =
+              typeof popupContent === 'string' ? null : (popupContent as HTMLElement);
+
             const select = document.getElementById(`issue-select-${markerId}`);
             const saveBtn = popupElement?.querySelector(`#save-marker-${markerId}`);
             const removeBtn = popupElement?.querySelector(`#remove-marker-${markerId}`);
-            
+
             saveBtn?.addEventListener('click', () => {
               const issueId = (select as HTMLSelectElement)?.value;
               if (issueId) {
                 markerData.issueId = issueId;
-                const updatedMarkers = markers.map(m => m.id === markerId ? { ...m, issueId } : m);
+                const updatedMarkers = markers.map(m =>
+                  m.id === markerId ? { ...m, issueId } : m
+                );
                 setMarkers(updatedMarkers);
                 onMarkersChange?.(updatedMarkers);
                 // Change marker color to green to indicate it's linked
@@ -351,7 +358,7 @@ const InteractiveRoofMap: React.FC<InteractiveRoofMapProps> = ({
                 marker.closePopup();
               }
             });
-            
+
             removeBtn?.addEventListener('click', () => {
               map.removeLayer(marker);
               const updatedMarkers = markers.filter(m => m.id !== markerId);
@@ -363,14 +370,12 @@ const InteractiveRoofMap: React.FC<InteractiveRoofMapProps> = ({
               }
             });
           }, 100);
-          
+
           // Handle marker drag
           marker.on('dragend', () => {
             const position = marker.getLatLng();
-            const updatedMarkers = markers.map(m => 
-              m.id === markerId 
-                ? { ...m, lat: position.lat, lon: position.lng }
-                : m
+            const updatedMarkers = markers.map(m =>
+              m.id === markerId ? { ...m, lat: position.lat, lon: position.lng } : m
             );
             setMarkers(updatedMarkers);
             onMarkersChange?.(updatedMarkers);
@@ -380,7 +385,6 @@ const InteractiveRoofMap: React.FC<InteractiveRoofMapProps> = ({
         // Mark map as initialized
         setTilesLoading(0);
         setIsMapReady(true);
-
       } catch (error) {
         console.error('Error initializing map:', error);
       }
@@ -426,60 +430,60 @@ const InteractiveRoofMap: React.FC<InteractiveRoofMapProps> = ({
   };
 
   return (
-    <div className="relative w-full h-96 bg-gray-100 rounded-lg overflow-hidden border-2 border-blue-200" style={{ zIndex: 0 }}>
+    <div
+      className='relative w-full h-96 bg-gray-100 rounded-lg overflow-hidden border-2 border-blue-200'
+      style={{ zIndex: 0 }}
+    >
       {/* Map Container */}
-      <div ref={mapRef} className="w-full h-full" style={{ zIndex: 0 }} />
+      <div ref={mapRef} className='w-full h-full' style={{ zIndex: 0 }} />
 
       {/* Loading Overlay */}
       {(!isMapReady || tilesLoading > 0) && (
-        <div className="absolute inset-0 bg-gray-200 bg-opacity-75 flex items-center justify-center z-10">
-          <div className="text-center">
-            <Loader2 className="animate-spin h-8 w-8 text-blue-600 mx-auto mb-2" />
-            <p className="text-sm text-gray-700">{t('address.map.loading')}</p>
+        <div className='absolute inset-0 bg-gray-200 bg-opacity-75 flex items-center justify-center z-10'>
+          <div className='text-center'>
+            <Loader2 className='animate-spin h-8 w-8 text-blue-600 mx-auto mb-2' />
+            <p className='text-sm text-gray-700'>{t('address.map.loading')}</p>
           </div>
         </div>
       )}
 
       {/* Controls Overlay */}
-      <div className="absolute top-4 right-4 flex flex-col gap-2 z-[1000]">
+      <div className='absolute top-4 right-4 flex flex-col gap-2 z-[1000]'>
         {onCancel && (
           <button
-            type="button"
+            type='button'
             onClick={onCancel}
-            className="bg-white hover:bg-gray-50 p-2 rounded-md shadow-md transition-colors"
-            title="Close map"
+            className='bg-white hover:bg-gray-50 p-2 rounded-md shadow-md transition-colors'
+            title='Close map'
           >
-            <X className="w-5 h-5 text-gray-600" />
+            <X className='w-5 h-5 text-gray-600' />
           </button>
         )}
       </div>
 
       {/* Capture Button - Primary Action */}
-      <div className="absolute bottom-4 left-0 right-0 flex justify-center z-[1000] px-4">
+      <div className='absolute bottom-4 left-0 right-0 flex justify-center z-[1000] px-4'>
         <button
-          type="button"
+          type='button'
           onClick={handleCapture}
           disabled={isCapturing || !isReady}
-          className="inline-flex items-center px-6 py-3 border border-transparent text-base font-semibold rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-400 disabled:cursor-not-allowed shadow-xl transition-all transform hover:scale-105"
+          className='inline-flex items-center px-6 py-3 border border-transparent text-base font-semibold rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-400 disabled:cursor-not-allowed shadow-xl transition-all transform hover:scale-105'
         >
           {isCapturing ? (
             <>
-              <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+              <Loader2 className='w-5 h-5 mr-2 animate-spin' />
               {t('address.map.capturing')}
             </>
           ) : (
             <>
-              <Camera className="w-5 h-5 mr-2" />
+              <Camera className='w-5 h-5 mr-2' />
               {t('address.map.captureButton') || 'Ta satellitvy'}
             </>
           )}
         </button>
       </div>
-
-
     </div>
   );
 };
 
 export default InteractiveRoofMap;
-

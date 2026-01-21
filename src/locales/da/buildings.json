@@ -72,5 +72,13 @@
   "buildings.esg.recommendation.solar": "Denne bygning har betydeligt solpotentiale. Overvej at installere solpaneler for at reducere kulstofaftrykket.",
   "buildings.esg.recommendation.recycling": "Dit tagmateriale har højt genanvendelsespotentiale. Sørg for korrekt genanvendelse ved slutningen af levetiden.",
   "buildings.esg.recommendation.neutrality": "CO₂-neutralitet forventes om {years} år. Overvej yderligere forbedringer for at fremskynde denne tidslinje.",
-  "buildings.esg.lastCalculated": "Sidst beregnet"
+  "buildings.esg.lastCalculated": "Sidst beregnet",
+  "buildings.esgReports.title": "ESG-rapporter",
+  "buildings.esgReports.report": "ESG-servicerapport",
+  "buildings.esgReports.roofSize": "Tagstørrelse",
+  "buildings.esgReports.greenRoof": "Grønt tag",
+  "buildings.esgReports.coolRoof": "Køligt tag",
+  "buildings.esgReports.noxReduction": "NOₓ-reduktion",
+  "buildings.esgReports.private": "ESG-rapport (Privat)",
+  "buildings.esgReports.privateDesc": "Denne rapport er ikke offentligt tilgængelig endnu"
 }

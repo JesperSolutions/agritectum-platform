@@ -129,7 +129,7 @@
   "admin.branches.form.address": "Adress",
   "admin.errors.failedToDeleteCustomer": "Misslyckades att ta bort kund",
   "admin.errors.failedToSaveCustomer": "Misslyckades att spara kund",
-  
+
   "admin.customerManagement.deleteCustomerWithReports": "Denna kund har {count} rapport(er). Radering kommer att påverka dessa rapporter.",
   "admin.customerManagement.customerDeletedSuccessfully": "Kund borttagen framgångsrikt",
   "admin.customerManagement.customerUpdatedSuccessfully": "Kund uppdaterad framgångsrikt",

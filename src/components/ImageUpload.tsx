@@ -1,5 +1,5 @@
-import React, { useState, useRef, useCallback } from 'react';
-import { X, Loader2, Camera, FileImage, AlertCircle } from 'lucide-react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { X, Loader2, Camera, FileImage, AlertCircle, Clipboard } from 'lucide-react';
 import {
   uploadImageToStorage,
   validateImageFile,
@@ -31,6 +31,86 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [uploadProgress, setUploadProgress] = useState<ImageUploadProgress | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [showPasteHint, setShowPasteHint] = useState(false);
+
+  const isAtLimit = currentImageCount >= maxImages;
+
+  // Handle paste from clipboard
+  useEffect(() => {
+    const handlePaste = async (event: ClipboardEvent) => {
+      // Only handle paste if this component is visible and not uploading
+      if (!containerRef.current || disabled || uploading || isAtLimit) return;
+
+      const items = event.clipboardData?.items;
+      if (!items) return;
+
+      let imageFile: File | null = null;
+
+      // Check for image items in clipboard
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].type.indexOf('image') !== -1) {
+          const blob = items[i].getAsFile();
+          if (blob) {
+            imageFile = blob;
+            break; // Only take first image
+          }
+        }
+      }
+
+      if (!imageFile) return;
+
+      // Prevent default paste behavior
+      event.preventDefault();
+
+      // Validate file
+      const validationError = validateImageFile(imageFile);
+      if (validationError) {
+        setError(validationError);
+        return;
+      }
+
+      setUploading(true);
+      setError(null);
+      setUploadProgress({ loaded: 0, total: imageFile.size, percentage: 0 });
+
+      try {
+        if (reportId && issueId) {
+          // Upload to Firebase Storage
+          const result = await uploadImageToStorage(imageFile, reportId, issueId, progress =>
+            setUploadProgress(progress)
+          );
+          onChange(result.url);
+        } else {
+          // Fallback to base64 for development
+          const reader = new FileReader();
+          reader.onload = e => {
+            const result = e.target?.result as string;
+            onChange(result);
+            setUploading(false);
+            setUploadProgress(null);
+          };
+          reader.onerror = () => {
+            setError('Failed to read pasted image');
+            setUploading(false);
+            setUploadProgress(null);
+          };
+          reader.readAsDataURL(imageFile);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to process pasted image');
+      } finally {
+        setUploading(false);
+        setUploadProgress(null);
+      }
+    };
+
+    // Add listener
+    window.addEventListener('paste', handlePaste);
+    return () => {
+      window.removeEventListener('paste', handlePaste);
+    };
+  }, [reportId, issueId, maxImages, currentImageCount, onChange, disabled, uploading, isAtLimit]);
 
   const handleFileSelect = useCallback(
     async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -100,10 +180,13 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     }
   }, [disabled, uploading, currentImageCount, maxImages]);
 
-  const isAtLimit = currentImageCount >= maxImages;
-
   return (
-    <div className={`relative ${className}`}>
+    <div
+      ref={containerRef}
+      className={`relative ${className}`}
+      onMouseEnter={() => !uploading && setShowPasteHint(true)}
+      onMouseLeave={() => setShowPasteHint(false)}
+    >
       <input
         ref={fileInputRef}
         type='file'

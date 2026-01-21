@@ -172,7 +172,7 @@ async function logEmailEvent(
 /**
  * Verify webhook signature (implementation depends on MailerSend's method)
  */
-async function verifyWebhookSignature(payload: any, signature: string): Promise<boolean> {
+async function verifyWebhookSignature(_payload: any, _signature: string): Promise<boolean> {
   try {
     // MailerSend may use HMAC-SHA256 or similar
     // This is a placeholder implementation

@@ -160,7 +160,7 @@
   "errors.branch.notSelected": "No branch selected",
   "errors.branch.notAssigned": "No branch assigned to user",
   "errors.permissionDenied": "You don't have permission to perform this action. Please contact your administrator.",
-  
+
   "errors.display.encounteredIssue": "We encountered an issue",
   "errors.display.suggestedActions": "Suggested actions:",
   "errors.display.stillHavingTrouble": "Still having trouble?",

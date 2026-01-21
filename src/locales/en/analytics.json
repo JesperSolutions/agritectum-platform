@@ -45,6 +45,7 @@
   "analytics.openIssues": "Open Issues",
   "analytics.resolutionRate": "Resolution Rate",
   "analytics.criticalIssueRate": "Critical Issue Rate",
+  "analytics.activeServiceAgreements": "Active Service Agreements",
   "analytics.userBranchManagement": "User and Branch Management",
   "analytics.reportsPerEmployee": "Reports per Employee",
   "analytics.inspector": "Inspector",

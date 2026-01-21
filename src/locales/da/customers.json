@@ -163,5 +163,21 @@
   "customer.invitation.created": "Tilmeldingslink oprettet!",
   "customer.invitation.error": "Kunne ikke oprette tilmeldingslink",
   "customer.invitation.copied": "Link kopieret til udklipsholder!",
-  "customer.invitation.copyError": "Kunne ikke kopiere link"
+  "customer.invitation.copyError": "Kunne ikke kopiere link",
+
+  "customer.type.company": "Virksomhed",
+  "customer.type.individual": "Privatperson",
+  "customer.type.parentCompany": "Moderselskab",
+  "customer.type.subsidiary": "Datterselskab",
+  "customer.type.subsidiaryOf": "Datterselskab af",
+  "customer.type.subsidiaries": "datterselskaber",
+
+  "customer.filter.parentCompany": "Moderselskab",
+  "customer.filter.allCompanies": "Alle virksomheder",
+  "customer.filter.parentCompaniesOnly": "Kun moderselskaber",
+
+  "customer.hierarchy.title": "Virksomhedshierarki",
+  "customer.hierarchy.empty": "Ingen moderselskaber fundet. Opret en virksomhed for at begynde at opbygge hierarkiet.",
+
+  "customer.error.unknownCompany": "Ukendt virksomhed"
 }

@@ -1,6 +1,6 @@
 /**
  * Design System Tokens
- * 
+ *
  * Centralized design tokens for consistent styling across the application.
  * These tokens define colors, spacing, typography, and other design constants.
  */
@@ -62,25 +62,29 @@ export const colors = {
       bg: 'bg-slate-700',
       text: 'text-white',
       hover: 'hover:bg-slate-800',
-      className: 'px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium shadow-sm',
+      className:
+        'px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium shadow-sm',
     },
     secondary: {
       bg: 'bg-white',
       text: 'text-slate-700',
       border: 'border border-slate-200',
       hover: 'hover:bg-slate-50',
-      className: 'px-4 py-2 border border-slate-200 rounded-lg shadow-sm text-sm font-medium text-slate-700 bg-white hover:bg-slate-50',
+      className:
+        'px-4 py-2 border border-slate-200 rounded-lg shadow-sm text-sm font-medium text-slate-700 bg-white hover:bg-slate-50',
     },
     danger: {
       bg: 'bg-red-600',
       text: 'text-white',
       hover: 'hover:bg-red-700',
-      className: 'px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium shadow-sm',
+      className:
+        'px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium shadow-sm',
     },
     ghost: {
       text: 'text-slate-700',
       hover: 'hover:bg-slate-100',
-      className: 'px-4 py-2 text-slate-700 hover:bg-slate-100 rounded-lg transition-colors text-sm font-medium',
+      className:
+        'px-4 py-2 text-slate-700 hover:bg-slate-100 rounded-lg transition-colors text-sm font-medium',
     },
   },
 };
@@ -131,8 +135,10 @@ export const shadows = {
 // Form Input Tokens
 export const formInput = {
   base: 'w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm',
-  error: 'w-full border border-red-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-red-500 focus:border-red-500 shadow-sm',
-  disabled: 'w-full border border-slate-300 rounded-lg px-3 py-2 bg-slate-100 text-slate-500 cursor-not-allowed',
+  error:
+    'w-full border border-red-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-red-500 focus:border-red-500 shadow-sm',
+  disabled:
+    'w-full border border-slate-300 rounded-lg px-3 py-2 bg-slate-100 text-slate-500 cursor-not-allowed',
 };
 
 // Card Tokens
@@ -174,7 +180,8 @@ export const typography = {
   },
   label: {
     default: 'block text-sm font-medium text-slate-700 mb-2',
-    required: 'block text-sm font-medium text-slate-700 mb-2 after:content-["*"] after:ml-0.5 after:text-red-500',
+    required:
+      'block text-sm font-medium text-slate-700 mb-2 after:content-["*"] after:ml-0.5 after:text-red-500',
   },
 };
 

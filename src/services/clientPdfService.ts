@@ -5,7 +5,7 @@ import { logger } from '../utils/logger';
 
 /**
  * Client-side PDF Generation Service
- * 
+ *
  * Renders the actual PublicReportView HTML as a PDF using html2canvas + jsPDF.
  * Ensures the PDF matches exactly what users see on screen - a true 1:1 visual match.
  */
@@ -28,9 +28,7 @@ export interface PDFGenerationOptions {
  * Render HTML element to PDF using html2canvas
  * This captures the exact rendered HTML as a canvas and converts it to PDF
  */
-const renderElementToPDF = async (
-  element: HTMLElement
-): Promise<Blob> => {
+const renderElementToPDF = async (element: HTMLElement): Promise<Blob> => {
   // Capture the visible element dimensions
   const elementWidth = element.offsetWidth || element.scrollWidth;
   const elementHeight = element.scrollHeight;
@@ -77,7 +75,7 @@ const renderElementToPDF = async (
 
   // If longer than one page, split automatically
   let remainingHeight = displayHeight;
-  let currentY = posY;
+  const currentY = posY;
 
   const imgData = canvas.toDataURL('image/png', 0.95);
 
@@ -91,7 +89,7 @@ const renderElementToPDF = async (
       displayHeight
     );
 
-    remainingHeight -= (pageHeight - 2 * margin);
+    remainingHeight -= pageHeight - 2 * margin;
     if (remainingHeight > 0) pdf.addPage();
   }
 
@@ -110,7 +108,7 @@ export const generateReportPDF = async (
 
     // Find the report root element which includes header and content
     const reportRoot = document.getElementById('report-root');
-    
+
     if (!reportRoot) {
       throw new Error('Could not find report-root element to render');
     }
@@ -120,15 +118,14 @@ export const generateReportPDF = async (
 
     return {
       success: true,
-      blob: pdfBlob
+      blob: pdfBlob,
     };
-
   } catch (error) {
     console.error('❌ PDF generation failed:', error);
-    
+
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error occurred'
+      error: error instanceof Error ? error.message : 'Unknown error occurred',
     };
   }
 };
@@ -141,7 +138,7 @@ export const downloadReportPDF = async (
   options: PDFGenerationOptions = {}
 ): Promise<void> => {
   const result = await generateReportPDF(report, options);
-  
+
   if (!result.success) {
     throw new Error(result.error || 'Failed to generate PDF');
   }
@@ -152,7 +149,7 @@ export const downloadReportPDF = async (
   const url = URL.createObjectURL(pdfBlob);
   const link = document.createElement('a');
   link.href = url;
-  
+
   // Safe date formatting for filename
   const safeDate = (() => {
     try {
@@ -167,14 +164,12 @@ export const downloadReportPDF = async (
   })();
 
   link.download = `taklaget-report-${report.id}-${safeDate}.pdf`;
-  
+
   // Trigger download
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
-  
+
   // Clean up
   URL.revokeObjectURL(url);
 };
-
-

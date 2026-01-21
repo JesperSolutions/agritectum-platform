@@ -109,6 +109,12 @@
   "roofTypes.shingle": "Teglsten",
   "roofTypes.slate": "Skifer",
   "roofTypes.flat": "Fladt",
+  "roofTypes.flat_bitumen_2layer": "Fladt - Bitumen 2-lag",
+  "roofTypes.flat_bitumen_3layer": "Fladt - Bitumen 3-lag",
+  "roofTypes.flat_rubber": "Fladt - Gummi (EPDM)",
+  "roofTypes.flat_pvc": "Fladt - PVC",
+  "roofTypes.flat_tpo": "Fladt - TPO",
+  "roofTypes.flat_epdm": "Fladt - EPDM",
   "roofTypes.other": "Andet",
 
   "severity.low": "Lav",
@@ -216,6 +222,33 @@
   "issueTemplates.mossGrowth.description": "Mos eller algevækst på tagfladen, hvilket kan beholde fugt og forårsage skader.",
   "issueTemplates.mossGrowth.location": "Skyggede områder",
 
+  "inspection.checklist": "Inspektionstjekliste",
+  "inspection.selectStatus": "Vælg status...",
+  "inspection.status": "Status",
+  "inspection.status.pass": "✓ I orden",
+  "inspection.status.fail": "✗ Kræver handling",
+  "inspection.status.needsReview": "⚠ Kræver gennemgang",
+  "inspection.status.notApplicable": "N/A Ikke relevant",
+  "inspection.comment": "Kommentar",
+  "inspection.commentHint": "Tilføj resultater eller bemærkninger",
+  "inspection.commentPlaceholder": "Tilføj observationer, resultater eller noter...",
+  "inspection.roofEdging": "Faldsikring / Rækværk",
+  "inspection.roofEdgingHint": "Kontroller tilstand af faldsikring og rækværk",
+  "inspection.technicalSpecifications": "Tekniske udførelse iht specifikationer",
+  "inspection.technicalSpecificationsHint": "Bekræft at arbejdet opfylder tekniske specifikationer",
+  "inspection.welds": "Svejsninger",
+  "inspection.weldsHint": "Inspicér samlingskvalitet og svejsesamlinger",
+  "inspection.drainage": "Afløb",
+  "inspection.drainageHint": "Kontroller regnrende og afløbsfunktionalitet",
+  "inspection.cornersCrowns": "Opkanter og murkroner",
+  "inspection.cornersCrownsHint": "Inspicér hjørnedetaljer og vægovergang",
+  "inspection.skylights": "Ovenlys",
+  "inspection.skylightsHint": "Kontroller tilstand og tætning af ovenlys",
+  "inspection.technicalInstallations": "Tekniske installationer",
+  "inspection.technicalInstallationsHint": "Inspicér HVAC, ventilation og øvrige installationer",
+  "inspection.insulationAssessment": "Vurdering af isoleringstype",
+  "inspection.insulationAssessmentHint": "Vurdér isoleringstype og -tilstand",
+
   "roofImage.pinInstruction": "💡 Klik på billedet for at tilføje markører, der markerer problemsteder. Markører kan linkes til specifikke problemer.",
 
   "common.signedInAs": "Logget ind som",
@@ -226,4 +259,3 @@
   "common.roles.branchAdmin": "Filialadministrator",
   "common.roles.superAdmin": "Superadministrator"
 }
-

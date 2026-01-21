@@ -16,6 +16,7 @@ Professional roof inspection management system with customer portal. Multi-branc
 ## 🛠️ Tech Stack
 
 ### Frontend
+
 - **React 18** - Modern UI library with hooks and concurrent features
 - **TypeScript** - Type-safe JavaScript with enhanced developer experience
 - **Tailwind CSS** - Utility-first CSS framework for rapid UI development
@@ -23,6 +24,7 @@ Professional roof inspection management system with customer portal. Multi-branc
 - **PWA** - Progressive Web App with offline capabilities
 
 ### Backend & Services
+
 - **Firebase Auth** - Secure authentication and user management
 - **Firestore** - NoSQL document database with real-time sync
 - **Cloud Functions** - Serverless backend functions for automation
@@ -30,6 +32,7 @@ Professional roof inspection management system with customer portal. Multi-branc
 - **Puppeteer** - PDF generation with HTML-to-PDF conversion
 
 ### Features
+
 - **PWA** - Offline-first architecture with IndexedDB
 - **Multi-branch RBAC** - Three-tier permission system
 - **Smart PDF Generation** - Professional reports with Danish CVR compliance
@@ -39,6 +42,7 @@ Professional roof inspection management system with customer portal. Multi-branc
 ## ⚡ Quick Start
 
 ### Prerequisites
+
 - Node.js 18+
 - Firebase project
 
@@ -93,11 +97,13 @@ npm run dev
 ## 🗂️ Legacy Code
 
 Legacy code is organized in `src/legacy/` directories:
+
 - **Components:** Unused components moved for reference
 - **Services:** Legacy wrappers marked for backward compatibility
 - **Documentation:** See `src/legacy/ARCHIVE_MANIFEST.md` for complete inventory
 
 **Guidelines:**
+
 - Do not use code from `src/legacy/` in new implementations
 - Check ARCHIVE_MANIFEST.md for migration paths
 - Legacy code is kept for reference and potential rollback only
@@ -135,13 +141,16 @@ src/
 ## 🚀 Deployment
 
 ### Build & Deploy
+
 ```bash
 npm run build
 npm run deploy
 ```
 
 ### Environment Variables
+
 Set these for production:
+
 - `VITE_FIREBASE_API_KEY`
 - `VITE_FIREBASE_AUTH_DOMAIN`
 - `VITE_FIREBASE_PROJECT_ID`
@@ -171,12 +180,14 @@ Set these for production:
 ## 🐛 Troubleshooting
 
 ### Common Issues
+
 1. **Permission denied**: Check Firestore rules and user claims
 2. **User not found**: Verify Firebase Auth user exists
 3. **Offline sync issues**: Check IndexedDB and network status
 4. **PDF export failures**: Verify report data integrity
 
 ### Debug Mode
+
 ```javascript
 localStorage.setItem('debug', 'true');
 ```

@@ -3,10 +3,10 @@ import { onRequest } from 'firebase-functions/v2/https';
 
 /**
  * Simplified PDF Generation Service
- * 
+ *
  * Uses the existing PublicReportView page to generate PDFs.
  * This ensures perfect consistency between web and PDF views.
- * 
+ *
  * Benefits:
  * - Single source of truth for report rendering
  * - Perfect styling consistency
@@ -32,17 +32,17 @@ export const generateReportPDF = onRequest({ region: 'europe-west1' }, async (re
     if (req.method !== 'POST') {
       res.status(405).json({
         success: false,
-        error: 'Method not allowed. Use POST.'
+        error: 'Method not allowed. Use POST.',
       });
       return;
     }
 
     const { reportId, format, margin } = req.body;
-    
+
     if (!reportId) {
       res.status(400).json({
         success: false,
-        error: 'Report ID is required'
+        error: 'Report ID is required',
       });
       return;
     }
@@ -50,7 +50,7 @@ export const generateReportPDF = onRequest({ region: 'europe-west1' }, async (re
     // Construct the public report URL
     const baseUrl = process.env.APP_URL || 'https://taklaget-service-app.web.app';
     const reportUrl = `${baseUrl}/report/public/${reportId}`;
-    
+
     console.log(`🖨️ Generating PDF for report: ${reportId}`);
     console.log(`📄 URL: ${reportUrl}`);
 
@@ -75,24 +75,24 @@ export const generateReportPDF = onRequest({ region: 'europe-west1' }, async (re
         '--disable-extensions',
         '--disable-plugins',
         '--disable-default-apps',
-        '--disable-sync'
+        '--disable-sync',
       ],
-      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/google-chrome-stable'
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/google-chrome-stable',
     });
 
     const page = await browser.newPage();
-    
+
     // Set viewport to a standard desktop size to allow content to render properly
     await page.setViewport({
-      width: 1440,  // Standard desktop width
+      width: 1440, // Standard desktop width
       height: 2560, // Tall viewport for scrolling content
-      deviceScaleFactor: 1
+      deviceScaleFactor: 1,
     });
 
     // Navigate to the public report page
     await page.goto(reportUrl, {
       waitUntil: 'networkidle0',
-      timeout: 30000
+      timeout: 30000,
     });
 
     // Wait for the report content to load
@@ -107,10 +107,10 @@ export const generateReportPDF = onRequest({ region: 'europe-west1' }, async (re
         top: '20px',
         bottom: '20px',
         left: '20px',
-        right: '20px'
+        right: '20px',
       },
-      preferCSSPageSize: false,  // Ignore CSS page size rules for consistent A4 output
-      displayHeaderFooter: false
+      preferCSSPageSize: false, // Ignore CSS page size rules for consistent A4 output
+      displayHeaderFooter: false,
     });
 
     await browser.close();
@@ -124,13 +124,12 @@ export const generateReportPDF = onRequest({ region: 'europe-west1' }, async (re
     res.setHeader('Content-Length', pdfBuffer.length);
 
     res.send(pdfBuffer);
-
   } catch (error) {
     console.error('❌ PDF generation failed:', error);
-    
+
     res.status(500).json({
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error occurred'
+      error: error instanceof Error ? error.message : 'Unknown error occurred',
     });
   }
 });

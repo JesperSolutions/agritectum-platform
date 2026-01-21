@@ -201,7 +201,7 @@ const BranchManagement: React.FC = () => {
 
   const loadBranchEmployees = async (branchId: string) => {
     try {
-      // Use userService.getUsers() instead of getBranchEmployees() 
+      // Use userService.getUsers() instead of getBranchEmployees()
       // because employees are stored in /users collection, not in subcollections
       const employeesData = await userService.getUsers(branchId);
       setEmployees(employeesData);
@@ -259,9 +259,7 @@ const BranchManagement: React.FC = () => {
   };
 
   const handleDelete = async (branchId: string) => {
-    if (
-      !window.confirm(t('common.deleteBranchConfirmation'))
-    ) {
+    if (!window.confirm(t('common.deleteBranchConfirmation'))) {
       return;
     }
 
@@ -321,362 +319,378 @@ const BranchManagement: React.FC = () => {
           </div>
         </div>
 
-      {/* Error Message */}
-      {error && (
-        <div className='bg-red-50 border border-red-200 rounded-xl p-4 shadow-sm'>
-          <div className='flex'>
-            <AlertTriangle className='w-5 h-5 text-red-400' />
-            <div className='ml-3'>
-              <h3 className='text-sm font-medium text-red-800'>{error}</h3>
+        {/* Error Message */}
+        {error && (
+          <div className='bg-red-50 border border-red-200 rounded-xl p-4 shadow-sm'>
+            <div className='flex'>
+              <AlertTriangle className='w-5 h-5 text-red-400' />
+              <div className='ml-3'>
+                <h3 className='text-sm font-medium text-red-800'>{error}</h3>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Branch Form */}
-      {showForm && (
-        <div className='bg-white p-6 rounded-xl shadow-sm border border-slate-200'>
-          <h2 className='text-lg font-semibold text-slate-900 mb-4'>
-            {editingBranch
-              ? t('admin.branchManagement.editBranch')
-              : t('admin.branchManagement.addNewBranch')}
-          </h2>
-
-          <form onSubmit={handleSubmit} className='space-y-4'>
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-              <div>
-                <label htmlFor='name' className='block text-sm font-medium text-slate-700'>
-                  {t('admin.branchManagement.branchName')} *
-                </label>
-                <input
-                  type='text'
-                  id='name'
-                  required
-                  value={formData.name || ''}
-                  onChange={e => {
-                    setFormData(prev => ({ ...prev, name: e.target.value }));
-                    if (formErrors.name) {
-                      clearFormErrors();
-                    }
-                  }}
-                  className={`mt-1 block w-full px-4 py-2.5 border rounded-lg shadow-sm focus:ring-2 ${
-                    formErrors.name
-                      ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
-                      : 'border-slate-300 focus:ring-slate-500 focus:border-slate-500'
-                  }`}
-                  placeholder={t('admin.branchManagement.branchNamePlaceholder')}
-                />
-                {formErrors.name && <p className='mt-1 text-sm text-red-600'>{formErrors.name}</p>}
-              </div>
-
-              <div>
-                <label htmlFor='phone' className='block text-sm font-medium text-slate-700'>
-                  {t('admin.branchManagement.phoneNumber')}
-                </label>
-                <input
-                  type='tel'
-                  id='phone'
-                  value={formData.phone || ''}
-                  onChange={e => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                  className='mt-1 block w-full px-4 py-2.5 border-slate-300 rounded-lg shadow-sm focus:ring-2 focus:ring-slate-500 focus:border-slate-500'
-                  placeholder={t('admin.branchManagement.phonePlaceholder')}
-                />
-              </div>
-
-              <div className='md:col-span-2'>
-                <label htmlFor='address' className='block text-sm font-medium text-slate-700'>
-                  {t('admin.branchManagement.address')} *
-                </label>
-                <input
-                  type='text'
-                  id='address'
-                  required
-                  value={formData.address || ''}
-                  onChange={e => {
-                    setFormData(prev => ({ ...prev, address: e.target.value }));
-                    if (formErrors.address) {
-                      clearFormErrors();
-                    }
-                  }}
-                  className={`mt-1 block w-full px-4 py-2.5 border rounded-lg shadow-sm focus:ring-2 ${
-                    formErrors.address
-                      ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
-                      : 'border-slate-300 focus:ring-slate-500 focus:border-slate-500'
-                  }`}
-                  placeholder={t('admin.branchManagement.addressPlaceholder')}
-                />
-                {formErrors.address && (
-                  <p className='mt-1 text-sm text-red-600'>{formErrors.address}</p>
-                )}
-              </div>
-
-              <div className='md:col-span-2'>
-                <label htmlFor='email' className='block text-sm font-medium text-slate-700'>
-                  {t('admin.branchManagement.emailAddress')}
-                </label>
-                <input
-                  type='email'
-                  id='email'
-                  value={formData.email || ''}
-                  onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                  className='mt-1 block w-full px-4 py-2.5 border-slate-300 rounded-lg shadow-sm focus:ring-2 focus:ring-slate-500 focus:border-slate-500'
-                  placeholder={t('admin.branchManagement.emailPlaceholder')}
-                />
-              </div>
-            </div>
-
-            <div className='flex justify-end space-x-3'>
-              <button
-                type='button'
-                onClick={handleCancel}
-                className='px-4 py-2 border border-slate-300 rounded-lg shadow-sm text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500'
-              >
-                {t('form.buttons.cancel')}
-              </button>
-
-              <button
-                type='submit'
-                disabled={isSubmitting}
-                className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-slate-700 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 disabled:opacity-50 shadow-sm'
-              >
-                {isSubmitting ? (
-                  <LoadingSpinner size='sm' />
-                ) : (
-                  <CheckCircle className='w-4 h-4 mr-2' />
-                )}
-                {isSubmitting
-                  ? editingBranch
-                    ? t('admin.branchManagement.updating')
-                    : t('admin.branchManagement.creating')
-                  : editingBranch
-                    ? t('admin.branchManagement.updateBranch')
-                    : t('admin.branchManagement.createBranch')}
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
-
-      <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
-        {/* Branches List */}
-        <div className='bg-white rounded-xl shadow-sm border border-slate-200'>
-          <div className='px-6 py-4 border-b border-slate-200'>
-            <h2 className='text-lg font-semibold text-slate-900'>Branches ({branches.length})</h2>
-          </div>
-
-          {branches.length === 0 ? (
-            <div className='p-6 text-center'>
-              <Building className='w-12 h-12 text-slate-400 mx-auto' />
-              <h3 className='mt-2 text-sm font-semibold text-slate-900'>{t('errors.branch.none')}</h3>
-              <p className='mt-1 text-sm text-slate-500'>
-                Get started by creating your first branch.
-              </p>
-            </div>
-          ) : (
-            <div className='divide-y divide-slate-200'>
-              {branches.map(branch => (
-                <div
-                  key={branch.id}
-                  className={`p-4 cursor-pointer hover:bg-slate-50 transition-colors ${
-                    selectedBranch?.id === branch.id ? 'bg-slate-100 border-l-4 border-slate-700' : ''
-                  }`}
-                  onClick={() => setSelectedBranch(branch)}
-                >
-                  <div className='flex items-center justify-between'>
-                    <div className='flex-1 min-w-0'>
-                      <h3 className='text-sm font-semibold text-slate-900 truncate'>{branch.name}</h3>
-                      <p className='text-sm text-slate-600 truncate'>{branch.address}</p>
-                      <div className='flex items-center mt-1 space-x-4'>
-                        {branch.phone && (
-                          <div className='flex items-center text-xs text-slate-500'>
-                            <Phone className='w-3 h-3 mr-1' />
-                            {branch.phone}
-                          </div>
-                        )}
-                        {branch.email && (
-                          <div className='flex items-center text-xs text-slate-500'>
-                            <Mail className='w-3 h-3 mr-1' />
-                            {branch.email}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className='flex items-center space-x-2'>
-                      <button
-                        onClick={e => {
-                          e.stopPropagation();
-                          handleEdit(branch);
-                        }}
-                        className='text-slate-700 hover:text-slate-900 transition-colors'
-                      >
-                        <Edit className='w-4 h-4' />
-                      </button>
-                      <button
-                        onClick={e => {
-                          e.stopPropagation();
-                          handleDelete(branch.id);
-                        }}
-                        className='text-red-600 hover:text-red-800 transition-colors'
-                      >
-                        <Trash2 className='w-4 h-4' />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Selected Branch Details */}
-        <div className='bg-white rounded-xl shadow-sm border border-slate-200'>
-          <div className='px-6 py-4 border-b border-slate-200'>
-            <h2 className='text-lg font-semibold text-slate-900'>
-              {selectedBranch ? `${selectedBranch.name} - Employees` : 'Select a Branch'}
+        {/* Branch Form */}
+        {showForm && (
+          <div className='bg-white p-6 rounded-xl shadow-sm border border-slate-200'>
+            <h2 className='text-lg font-semibold text-slate-900 mb-4'>
+              {editingBranch
+                ? t('admin.branchManagement.editBranch')
+                : t('admin.branchManagement.addNewBranch')}
             </h2>
-          </div>
 
-          {!selectedBranch ? (
-            <div className='p-6 text-center'>
-              <Users className='w-12 h-12 text-slate-400 mx-auto' />
-              <h3 className='mt-2 text-sm font-semibold text-slate-900'>{t('errors.branch.notSelected')}</h3>
-              <p className='mt-1 text-sm text-slate-500'>Select a branch to view its employees.</p>
-            </div>
-          ) : (
-            <div className='p-6'>
-              <div className='mb-4'>
-                <h3 className='text-sm font-semibold text-slate-900 mb-2'>Branch Information</h3>
-
-                {/* Branch Logo */}
-                <div className='mb-4'>
-                  <label className='block text-sm font-medium text-slate-700 mb-2'>
-                    Branch Logo
+            <form onSubmit={handleSubmit} className='space-y-4'>
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                <div>
+                  <label htmlFor='name' className='block text-sm font-medium text-slate-700'>
+                    {t('admin.branchManagement.branchName')} *
                   </label>
-                  <div className='flex items-center space-x-4'>
-                    {selectedBranch.logoUrl ? (
-                      <div className='relative'>
-                        <img
-                          src={selectedBranch.logoUrl}
-                          alt={`${selectedBranch.name} logo`}
-                          className='w-16 h-16 object-cover rounded-lg border border-slate-300'
-                        />
+                  <input
+                    type='text'
+                    id='name'
+                    required
+                    value={formData.name || ''}
+                    onChange={e => {
+                      setFormData(prev => ({ ...prev, name: e.target.value }));
+                      if (formErrors.name) {
+                        clearFormErrors();
+                      }
+                    }}
+                    className={`mt-1 block w-full px-4 py-2.5 border rounded-lg shadow-sm focus:ring-2 ${
+                      formErrors.name
+                        ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
+                        : 'border-slate-300 focus:ring-slate-500 focus:border-slate-500'
+                    }`}
+                    placeholder={t('admin.branchManagement.branchNamePlaceholder')}
+                  />
+                  {formErrors.name && (
+                    <p className='mt-1 text-sm text-red-600'>{formErrors.name}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label htmlFor='phone' className='block text-sm font-medium text-slate-700'>
+                    {t('admin.branchManagement.phoneNumber')}
+                  </label>
+                  <input
+                    type='tel'
+                    id='phone'
+                    value={formData.phone || ''}
+                    onChange={e => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                    className='mt-1 block w-full px-4 py-2.5 border-slate-300 rounded-lg shadow-sm focus:ring-2 focus:ring-slate-500 focus:border-slate-500'
+                    placeholder={t('admin.branchManagement.phonePlaceholder')}
+                  />
+                </div>
+
+                <div className='md:col-span-2'>
+                  <label htmlFor='address' className='block text-sm font-medium text-slate-700'>
+                    {t('admin.branchManagement.address')} *
+                  </label>
+                  <input
+                    type='text'
+                    id='address'
+                    required
+                    value={formData.address || ''}
+                    onChange={e => {
+                      setFormData(prev => ({ ...prev, address: e.target.value }));
+                      if (formErrors.address) {
+                        clearFormErrors();
+                      }
+                    }}
+                    className={`mt-1 block w-full px-4 py-2.5 border rounded-lg shadow-sm focus:ring-2 ${
+                      formErrors.address
+                        ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
+                        : 'border-slate-300 focus:ring-slate-500 focus:border-slate-500'
+                    }`}
+                    placeholder={t('admin.branchManagement.addressPlaceholder')}
+                  />
+                  {formErrors.address && (
+                    <p className='mt-1 text-sm text-red-600'>{formErrors.address}</p>
+                  )}
+                </div>
+
+                <div className='md:col-span-2'>
+                  <label htmlFor='email' className='block text-sm font-medium text-slate-700'>
+                    {t('admin.branchManagement.emailAddress')}
+                  </label>
+                  <input
+                    type='email'
+                    id='email'
+                    value={formData.email || ''}
+                    onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                    className='mt-1 block w-full px-4 py-2.5 border-slate-300 rounded-lg shadow-sm focus:ring-2 focus:ring-slate-500 focus:border-slate-500'
+                    placeholder={t('admin.branchManagement.emailPlaceholder')}
+                  />
+                </div>
+              </div>
+
+              <div className='flex justify-end space-x-3'>
+                <button
+                  type='button'
+                  onClick={handleCancel}
+                  className='px-4 py-2 border border-slate-300 rounded-lg shadow-sm text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500'
+                >
+                  {t('form.buttons.cancel')}
+                </button>
+
+                <button
+                  type='submit'
+                  disabled={isSubmitting}
+                  className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-slate-700 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 disabled:opacity-50 shadow-sm'
+                >
+                  {isSubmitting ? (
+                    <LoadingSpinner size='sm' />
+                  ) : (
+                    <CheckCircle className='w-4 h-4 mr-2' />
+                  )}
+                  {isSubmitting
+                    ? editingBranch
+                      ? t('admin.branchManagement.updating')
+                      : t('admin.branchManagement.creating')
+                    : editingBranch
+                      ? t('admin.branchManagement.updateBranch')
+                      : t('admin.branchManagement.createBranch')}
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+
+        <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
+          {/* Branches List */}
+          <div className='bg-white rounded-xl shadow-sm border border-slate-200'>
+            <div className='px-6 py-4 border-b border-slate-200'>
+              <h2 className='text-lg font-semibold text-slate-900'>Branches ({branches.length})</h2>
+            </div>
+
+            {branches.length === 0 ? (
+              <div className='p-6 text-center'>
+                <Building className='w-12 h-12 text-slate-400 mx-auto' />
+                <h3 className='mt-2 text-sm font-semibold text-slate-900'>
+                  {t('errors.branch.none')}
+                </h3>
+                <p className='mt-1 text-sm text-slate-500'>
+                  Get started by creating your first branch.
+                </p>
+              </div>
+            ) : (
+              <div className='divide-y divide-slate-200'>
+                {branches.map(branch => (
+                  <div
+                    key={branch.id}
+                    className={`p-4 cursor-pointer hover:bg-slate-50 transition-colors ${
+                      selectedBranch?.id === branch.id
+                        ? 'bg-slate-100 border-l-4 border-slate-700'
+                        : ''
+                    }`}
+                    onClick={() => setSelectedBranch(branch)}
+                  >
+                    <div className='flex items-center justify-between'>
+                      <div className='flex-1 min-w-0'>
+                        <h3 className='text-sm font-semibold text-slate-900 truncate'>
+                          {branch.name}
+                        </h3>
+                        <p className='text-sm text-slate-600 truncate'>{branch.address}</p>
+                        <div className='flex items-center mt-1 space-x-4'>
+                          {branch.phone && (
+                            <div className='flex items-center text-xs text-slate-500'>
+                              <Phone className='w-3 h-3 mr-1' />
+                              {branch.phone}
+                            </div>
+                          )}
+                          {branch.email && (
+                            <div className='flex items-center text-xs text-slate-500'>
+                              <Mail className='w-3 h-3 mr-1' />
+                              {branch.email}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className='flex items-center space-x-2'>
                         <button
-                          onClick={async () => {
-                            if (!selectedBranch?.id) return;
-
-                            try {
-                              // Delete logo from database
-                              await branchService.updateBranch(selectedBranch.id, { logoUrl: '' });
-
-                              // Update local state
-                              setBranches(prev =>
-                                prev.map(branch =>
-                                  branch.id === selectedBranch.id
-                                    ? { ...branch, logoUrl: '' }
-                                    : branch
-                                )
-                              );
-                              setSelectedBranch(prev => (prev ? { ...prev, logoUrl: '' } : null));
-                            } catch (error) {
-                              console.error('Error deleting logo:', error);
-                              setError('Failed to delete logo');
-                            }
+                          onClick={e => {
+                            e.stopPropagation();
+                            handleEdit(branch);
                           }}
-                          className='absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors shadow-sm'
+                          className='text-slate-700 hover:text-slate-900 transition-colors'
                         >
-                          <X className='w-3 h-3' />
+                          <Edit className='w-4 h-4' />
+                        </button>
+                        <button
+                          onClick={e => {
+                            e.stopPropagation();
+                            handleDelete(branch.id);
+                          }}
+                          className='text-red-600 hover:text-red-800 transition-colors'
+                        >
+                          <Trash2 className='w-4 h-4' />
                         </button>
                       </div>
-                    ) : (
-                      <div className='w-16 h-16 border-2 border-dashed border-slate-300 rounded-lg flex items-center justify-center'>
-                        <Building className='w-8 h-8 text-slate-400' />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Selected Branch Details */}
+          <div className='bg-white rounded-xl shadow-sm border border-slate-200'>
+            <div className='px-6 py-4 border-b border-slate-200'>
+              <h2 className='text-lg font-semibold text-slate-900'>
+                {selectedBranch ? `${selectedBranch.name} - Employees` : 'Select a Branch'}
+              </h2>
+            </div>
+
+            {!selectedBranch ? (
+              <div className='p-6 text-center'>
+                <Users className='w-12 h-12 text-slate-400 mx-auto' />
+                <h3 className='mt-2 text-sm font-semibold text-slate-900'>
+                  {t('errors.branch.notSelected')}
+                </h3>
+                <p className='mt-1 text-sm text-slate-500'>
+                  Select a branch to view its employees.
+                </p>
+              </div>
+            ) : (
+              <div className='p-6'>
+                <div className='mb-4'>
+                  <h3 className='text-sm font-semibold text-slate-900 mb-2'>Branch Information</h3>
+
+                  {/* Branch Logo */}
+                  <div className='mb-4'>
+                    <label className='block text-sm font-medium text-slate-700 mb-2'>
+                      Branch Logo
+                    </label>
+                    <div className='flex items-center space-x-4'>
+                      {selectedBranch.logoUrl ? (
+                        <div className='relative'>
+                          <img
+                            src={selectedBranch.logoUrl}
+                            alt={`${selectedBranch.name} logo`}
+                            className='w-16 h-16 object-cover rounded-lg border border-slate-300'
+                          />
+                          <button
+                            onClick={async () => {
+                              if (!selectedBranch?.id) return;
+
+                              try {
+                                // Delete logo from database
+                                await branchService.updateBranch(selectedBranch.id, {
+                                  logoUrl: '',
+                                });
+
+                                // Update local state
+                                setBranches(prev =>
+                                  prev.map(branch =>
+                                    branch.id === selectedBranch.id
+                                      ? { ...branch, logoUrl: '' }
+                                      : branch
+                                  )
+                                );
+                                setSelectedBranch(prev => (prev ? { ...prev, logoUrl: '' } : null));
+                              } catch (error) {
+                                console.error('Error deleting logo:', error);
+                                setError('Failed to delete logo');
+                              }
+                            }}
+                            className='absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors shadow-sm'
+                          >
+                            <X className='w-3 h-3' />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className='w-16 h-16 border-2 border-dashed border-slate-300 rounded-lg flex items-center justify-center'>
+                          <Building className='w-8 h-8 text-slate-400' />
+                        </div>
+                      )}
+
+                      <div className='flex-1'>
+                        <input
+                          type='file'
+                          accept='image/*'
+                          onChange={handleLogoUpload}
+                          disabled={logoUploading}
+                          className='hidden'
+                          id='logo-upload'
+                        />
+                        <label
+                          htmlFor='logo-upload'
+                          className={`inline-flex items-center px-4 py-2 border border-slate-300 rounded-lg shadow-sm text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 cursor-pointer ${
+                            logoUploading ? 'opacity-50 cursor-not-allowed' : ''
+                          }`}
+                        >
+                          {logoUploading ? (
+                            <>
+                              <Loader2 className='w-4 h-4 mr-2 animate-spin' />
+                              Uploading... {logoUploadProgress}%
+                            </>
+                          ) : (
+                            <>
+                              <Plus className='w-4 h-4 mr-2' />
+                              {selectedBranch.logoUrl ? 'Change Logo' : 'Upload Logo'}
+                            </>
+                          )}
+                        </label>
+                        <p className='text-xs text-slate-500 mt-1'>PNG, JPG up to 2MB</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className='space-y-2 text-sm text-slate-600'>
+                    <div className='flex items-center'>
+                      <MapPin className='w-4 h-4 mr-2' />
+                      {selectedBranch.address}
+                    </div>
+                    {selectedBranch.phone && (
+                      <div className='flex items-center'>
+                        <Phone className='w-4 h-4 mr-2' />
+                        {selectedBranch.phone}
                       </div>
                     )}
-
-                    <div className='flex-1'>
-                      <input
-                        type='file'
-                        accept='image/*'
-                        onChange={handleLogoUpload}
-                        disabled={logoUploading}
-                        className='hidden'
-                        id='logo-upload'
-                      />
-                      <label
-                        htmlFor='logo-upload'
-                        className={`inline-flex items-center px-4 py-2 border border-slate-300 rounded-lg shadow-sm text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 cursor-pointer ${
-                          logoUploading ? 'opacity-50 cursor-not-allowed' : ''
-                        }`}
-                      >
-                        {logoUploading ? (
-                          <>
-                            <Loader2 className='w-4 h-4 mr-2 animate-spin' />
-                            Uploading... {logoUploadProgress}%
-                          </>
-                        ) : (
-                          <>
-                            <Plus className='w-4 h-4 mr-2' />
-                            {selectedBranch.logoUrl ? 'Change Logo' : 'Upload Logo'}
-                          </>
-                        )}
-                      </label>
-                      <p className='text-xs text-slate-500 mt-1'>PNG, JPG up to 2MB</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className='space-y-2 text-sm text-slate-600'>
-                  <div className='flex items-center'>
-                    <MapPin className='w-4 h-4 mr-2' />
-                    {selectedBranch.address}
-                  </div>
-                  {selectedBranch.phone && (
-                    <div className='flex items-center'>
-                      <Phone className='w-4 h-4 mr-2' />
-                      {selectedBranch.phone}
-                    </div>
-                  )}
-                  {selectedBranch.email && (
-                    <div className='flex items-center'>
-                      <Mail className='w-4 h-4 mr-2' />
-                      {selectedBranch.email}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div>
-                <h3 className='text-sm font-semibold text-slate-900 mb-2'>
-                  Employees ({employees.length})
-                </h3>
-                {employees.length === 0 ? (
-                  <p className='text-sm text-slate-500'>No employees assigned to this branch yet.</p>
-                ) : (
-                  <div className='space-y-2'>
-                    {employees.map(employee => (
-                      <div
-                        key={employee.id}
-                        className='flex items-center justify-between p-2 bg-slate-50 rounded-lg border border-slate-200'
-                      >
-                        <div>
-                          <p className='text-sm font-semibold text-slate-900'>
-                            {employee.displayName}
-                          </p>
-                          <p className='text-xs text-slate-500'>{employee.email}</p>
-                        </div>
-                        <span className='text-xs px-2 py-1 bg-slate-100 text-slate-800 rounded-full capitalize font-medium'>
-                          {employee.role}
-                        </span>
+                    {selectedBranch.email && (
+                      <div className='flex items-center'>
+                        <Mail className='w-4 h-4 mr-2' />
+                        {selectedBranch.email}
                       </div>
-                    ))}
+                    )}
                   </div>
-                )}
+                </div>
+
+                <div>
+                  <h3 className='text-sm font-semibold text-slate-900 mb-2'>
+                    Employees ({employees.length})
+                  </h3>
+                  {employees.length === 0 ? (
+                    <p className='text-sm text-slate-500'>
+                      No employees assigned to this branch yet.
+                    </p>
+                  ) : (
+                    <div className='space-y-2'>
+                      {employees.map(employee => (
+                        <div
+                          key={employee.id}
+                          className='flex items-center justify-between p-2 bg-slate-50 rounded-lg border border-slate-200'
+                        >
+                          <div>
+                            <p className='text-sm font-semibold text-slate-900'>
+                              {employee.displayName}
+                            </p>
+                            <p className='text-xs text-slate-500'>{employee.email}</p>
+                          </div>
+                          <span className='text-xs px-2 py-1 bg-slate-100 text-slate-800 rounded-full capitalize font-medium'>
+                            {employee.role}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
-      </div>
       </div>
     </div>
   );

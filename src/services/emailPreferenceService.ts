@@ -1,5 +1,16 @@
 import { db } from '../config/firebase';
-import { collection, doc, getDoc, setDoc, updateDoc, deleteDoc, query, where, getDocs, serverTimestamp } from 'firebase/firestore';
+import {
+  collection,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  deleteDoc,
+  query,
+  where,
+  getDocs,
+  serverTimestamp,
+} from 'firebase/firestore';
 
 export interface EmailPreferences {
   email: string;
@@ -38,7 +49,7 @@ const generateUnsubscribeToken = (email: string): string => {
 export const getEmailPreferences = async (email: string): Promise<EmailPreferences | null> => {
   try {
     const prefDoc = await getDoc(doc(db, 'emailPreferences', email));
-    
+
     if (!prefDoc.exists()) {
       return null;
     }
@@ -67,7 +78,7 @@ export const setEmailPreferences = async (
 ): Promise<void> => {
   try {
     const existingPrefs = await getEmailPreferences(email);
-    
+
     const prefData = {
       email,
       subscribed: true,
@@ -100,7 +111,7 @@ export const unsubscribeUser = async (
 ): Promise<boolean> => {
   try {
     const prefDoc = await getDoc(doc(db, 'emailPreferences', email));
-    
+
     if (!prefDoc.exists()) {
       return false;
     }
@@ -155,7 +166,7 @@ export const isUserSubscribed = async (
 ): Promise<boolean> => {
   try {
     const preferences = await getEmailPreferences(email);
-    
+
     if (!preferences || !preferences.subscribed) {
       return false;
     }
@@ -178,10 +189,7 @@ export const getUnsubscribeUrl = (email: string, token: string): string => {
 /**
  * Validate unsubscribe token
  */
-export const validateUnsubscribeToken = async (
-  email: string,
-  token: string
-): Promise<boolean> => {
+export const validateUnsubscribeToken = async (email: string, token: string): Promise<boolean> => {
   try {
     const preferences = await getEmailPreferences(email);
     return preferences?.unsubscribeToken === token;
@@ -207,7 +215,8 @@ export const getUnsubscribeStats = async (): Promise<{
 
     const totalSubscribers = subscribedDocs.size;
     const totalUnsubscribed = unsubscribedDocs.size;
-    const unsubscribeRate = totalSubscribers > 0 ? (totalUnsubscribed / (totalSubscribers + totalUnsubscribed)) * 100 : 0;
+    const unsubscribeRate =
+      totalSubscribers > 0 ? (totalUnsubscribed / (totalSubscribers + totalUnsubscribed)) * 100 : 0;
 
     return {
       totalSubscribers,

@@ -6,6 +6,7 @@
 ## 🎯 Objective
 
 Comprehensive review and improvement of the roof inspector report creation flow:
+
 1. Fix all hardcoded strings and ensure proper translation support
 2. Optimize the roof drawing and measurement feature
 3. Implement improvements from the Taklaget project
@@ -20,6 +21,7 @@ Comprehensive review and improvement of the roof inspector report creation flow:
 **Problem:** Multiple hardcoded English strings in the Inspection Details section
 
 **Fixed Strings:**
+
 - ❌ "Inspection Details" → ✅ `t('form.sections.inspectionDetails')`
 - ❌ "Inspection Date" → ✅ `t('form.fields.inspectionDate')`
 - ❌ "Inspection date is required" → ✅ `t('form.validation.inspectionDateRequired')`
@@ -38,6 +40,7 @@ Comprehensive review and improvement of the roof inspector report creation flow:
 - ❌ "Describe the overall condition of the roof" → ✅ `t('form.fields.conditionNotesHelp')`
 
 **Added Translation Keys (en/reportForm.json):**
+
 ```json
 {
   "form.fields.roofAgeHelp": "Optional - estimated age of the roof",
@@ -52,6 +55,7 @@ Comprehensive review and improvement of the roof inspector report creation flow:
 ```
 
 **Files Modified:**
+
 - ✅ `src/components/ReportForm/InspectionDetailsSection.tsx`
 - ✅ `src/locales/en/reportForm.json`
 
@@ -62,6 +66,7 @@ Comprehensive review and improvement of the roof inspector report creation flow:
 **Key Improvements Identified:**
 
 #### A. Better Area Calculation Algorithm
+
 - **Old:** Spherical geometry calculation (overly complex for small areas)
 - **New:** Shoelace formula with lat/lng to meter conversion
   - More accurate for roof-sized areas
@@ -76,6 +81,7 @@ const metersPerDegreeLon = 111320 * Math.cos((avgLat * Math.PI) / 180);
 ```
 
 #### B. Mobile Optimizations
+
 - **Touch Events:** Better handling with `touchAction` CSS
 - **Touch Targets:** Minimum 44px height for iOS accessibility
 - **Responsive UI:** Different layouts for mobile vs desktop
@@ -83,6 +89,7 @@ const metersPerDegreeLon = 111320 * Math.cos((avgLat * Math.PI) / 180);
 - **Zoom Controls:** Larger touch-friendly zoom buttons on mobile
 
 #### C. State Management Improvements
+
 - **Refs-based approach:** Prevents map re-initialization
 - **Separate refs for:** `pointsRef`, `isDrawingRef`, `polygonRef`, `markersRef`
 - **Benefits:**
@@ -91,6 +98,7 @@ const metersPerDegreeLon = 111320 * Math.cos((avgLat * Math.PI) / 180);
   - Smoother drawing experience
 
 #### D. UI/UX Enhancements
+
 - **Instructions:** Dynamic based on drawing state
 - **Visual Feedback:** Shows point count and minimum requirement
 - **Mobile Padding:** `p-2 sm:p-4` for better mobile spacing
@@ -98,12 +106,14 @@ const metersPerDegreeLon = 111320 * Math.cos((avgLat * Math.PI) / 180);
 - **Responsive Text:** `text-sm sm:text-base` for readability
 
 #### E. Drawing Improvements
+
 - **Stop Propagation:** Prevents map interaction conflicts
 - **Touch Action Control:** Disables panning while drawing
 - **Visual Markers:** Improved marker styling with proper z-index
 - **Polygon Updates:** Real-time area calculation as you draw
 
 **Created New File:**
+
 - ✅ `src/components/RoofSizeMeasurer.improved.tsx` (ready to replace current version)
 
 ---
@@ -113,9 +123,10 @@ const metersPerDegreeLon = 111320 * Math.cos((avgLat * Math.PI) / 180);
 ### 3. Check ReportForm.tsx for More Hardcoded Strings
 
 **Areas to Review:**
+
 - Step 1: Customer Information section
 - Step 3: Issues section
-- Step 4: Recommended Actions section  
+- Step 4: Recommended Actions section
 - Validation messages
 - Button labels
 - Modal/dialog text
@@ -124,6 +135,7 @@ const metersPerDegreeLon = 111320 * Math.cos((avgLat * Math.PI) / 180);
 ### 4. Implement Taklaget RoofSizeMeasurer
 
 **Tasks:**
+
 - Replace current `RoofSizeMeasurer.tsx` with improved version
 - Test on both desktop and mobile
 - Verify area calculations are accurate
@@ -132,12 +144,14 @@ const metersPerDegreeLon = 111320 * Math.cos((avgLat * Math.PI) / 180);
 ### 5. Review Step 3 (Issues) Implementation
 
 **Current Features:**
+
 - Add/remove issues
 - Issue templates
 - Image uploads
 - Severity levels
 
 **Potential Improvements from Taklaget:**
+
 - DefectCameraCapture component
 - DefectQuickDescription component
 - Better mobile camera integration
@@ -146,11 +160,13 @@ const metersPerDegreeLon = 111320 * Math.cos((avgLat * Math.PI) / 180);
 ### 6. Review Step 4 (Actions) Implementation
 
 **Current Features:**
+
 - Add/remove recommended actions
 - Priority levels
 - Cost estimates
 
 **Check for:**
+
 - Hardcoded strings
 - Translation coverage
 - Mobile optimization
@@ -159,6 +175,7 @@ const metersPerDegreeLon = 111320 * Math.cos((avgLat * Math.PI) / 180);
 ### 7. Test Complete Flow
 
 **Test Scenarios:**
+
 1. Create report from scratch (all steps)
 2. Edit existing report
 3. Test on mobile device
@@ -172,6 +189,7 @@ const metersPerDegreeLon = 111320 * Math.cos((avgLat * Math.PI) / 180);
 ## 🔍 Known Hardcoded Strings to Check
 
 **High Priority:**
+
 - [ ] ReportForm.tsx - main component
 - [ ] Step navigation buttons
 - [ ] Validation error messages
@@ -180,12 +198,14 @@ const metersPerDegreeLon = 111320 * Math.cos((avgLat * Math.PI) / 180);
 - [ ] Modal dialogs
 
 **Medium Priority:**
+
 - [ ] ReportView.tsx
 - [ ] PublicReportView.tsx
 - [ ] IssueTemplateSelector.tsx
 - [ ] RoofImageAnnotation.tsx
 
 **Low Priority:**
+
 - [ ] Helper tooltips
 - [ ] Placeholder text consistency
 - [ ] Error boundary messages
@@ -195,16 +215,20 @@ const metersPerDegreeLon = 111320 * Math.cos((avgLat * Math.PI) / 180);
 ## 📊 Current Translation Coverage
 
 ### English (en) ✅
+
 - reportForm.json: Comprehensive coverage
 - Recent additions: All InspectionDetails fields
 
 ### Swedish (sv) ⚠️
+
 - Need to update with new keys
 
 ### Danish (da) ⚠️
+
 - Need to update with new keys
 
 ### German (de) ⚠️
+
 - Need to update with new keys
 
 ---
@@ -212,18 +236,21 @@ const metersPerDegreeLon = 111320 * Math.cos((avgLat * Math.PI) / 180);
 ## 🎨 UI/UX Improvements from Taklaget
 
 ### 1. Roof Measurement Tool
+
 - ✅ Better mobile support
 - ✅ Clearer instructions
 - ✅ Visual feedback improvements
 - ✅ More accurate calculations
 
 ### 2. Drawing Interface
+
 - ✅ Touch-optimized controls
 - ✅ Better marker visibility
 - ✅ Responsive layout
 - ✅ Accessibility improvements
 
 ### 3. Mobile Experience
+
 - ✅ Larger touch targets (44px minimum)
 - ✅ Responsive text sizes
 - ✅ Better spacing on small screens
@@ -234,23 +261,27 @@ const metersPerDegreeLon = 111320 * Math.cos((avgLat * Math.PI) / 180);
 ## 🚀 Implementation Priority
 
 ### Phase 1: Critical (Immediate) ✅
+
 - [x] Fix InspectionDetailsSection translations
 - [x] Add missing translation keys
 - [x] Create improved RoofSizeMeasurer
 
 ### Phase 2: High Priority (Next)
+
 - [ ] Replace RoofSizeMeasurer with improved version
 - [ ] Scan ReportForm.tsx for hardcoded strings
 - [ ] Update all language files with new keys
 - [ ] Test roof measurement on mobile
 
 ### Phase 3: Medium Priority
+
 - [ ] Review Step 3 (Issues) implementation
 - [ ] Review Step 4 (Actions) implementation
 - [ ] Check all validation messages
 - [ ] Implement DefectCameraCapture if beneficial
 
 ### Phase 4: Polish
+
 - [ ] Test complete report creation flow
 - [ ] Cross-browser testing
 - [ ] Mobile device testing
@@ -263,12 +294,14 @@ const metersPerDegreeLon = 111320 * Math.cos((avgLat * Math.PI) / 180);
 ### Taklaget Project Insights
 
 **Better Features Found:**
+
 1. **RoofSizeMeasurer:** Significantly improved with better math and mobile support
 2. **Mobile-First Design:** Touch-optimized throughout
 3. **Refs-based State:** Prevents unnecessary re-renders
 4. **Clear Instructions:** Better user guidance
 
 **Components to Consider:**
+
 - `DefectCameraCapture.tsx` - Mobile camera integration
 - `DefectQuickDescription.tsx` - Quick issue entry
 - Improved touch handling patterns
@@ -307,27 +340,28 @@ const calculatePolygonArea = (latlngs: L.LatLng[]): number => {
   const metersPerDegreeLat = 111320;
   const avgLat = latlngs.reduce((sum, p) => sum + p.lat, 0) / latlngs.length;
   const metersPerDegreeLon = 111320 * Math.cos((avgLat * Math.PI) / 180);
-  
+
   const originLat = latlngs[0].lat;
   const originLon = latlngs[0].lng;
-  
+
   const pointsInMeters = latlngs.map(p => ({
     x: (p.lng - originLon) * metersPerDegreeLon,
     y: (p.lat - originLat) * metersPerDegreeLat,
   }));
-  
+
   let area = 0;
   for (let i = 0; i < pointsInMeters.length; i++) {
     const j = (i + 1) % pointsInMeters.length;
     area += pointsInMeters[i].x * pointsInMeters[j].y;
     area -= pointsInMeters[j].x * pointsInMeters[i].y;
   }
-  
+
   return Math.abs(area) / 2;
 };
 ```
 
 **Why This Is Better:**
+
 - More accurate for small areas (roofs)
 - Accounts for latitude-dependent longitude distance
 - Uses origin point to minimize rounding errors
@@ -339,6 +373,7 @@ const calculatePolygonArea = (latlngs: L.LatLng[]): number => {
 ## 📞 Support & Questions
 
 For questions about these improvements, refer to:
+
 - Taklaget project: `F:\GitHub\Taklaget`
 - Translation files: `src/locales/*/reportForm.json`
 - Component documentation: This file

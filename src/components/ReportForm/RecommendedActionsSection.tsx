@@ -137,7 +137,9 @@ const RecommendedActionsSection: React.FC<RecommendedActionsSectionProps> = ({
                   <select
                     value={action.estimatedCost || ''}
                     onChange={e =>
-                      onUpdateAction(index, { estimatedCost: e.target.value ? parseInt(e.target.value) : undefined })
+                      onUpdateAction(index, {
+                        estimatedCost: e.target.value ? parseInt(e.target.value) : undefined,
+                      })
                     }
                     className='block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
                   >

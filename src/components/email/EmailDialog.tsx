@@ -102,7 +102,7 @@ const EmailDialog: React.FC<EmailDialogProps> = ({ isOpen, onClose, report, bran
             // Don't fail the email send if status update fails
           }
         }
-        
+
         setSendResult({
           success: true,
           message: `Email sent successfully! Message ID: ${result.messageId}`,

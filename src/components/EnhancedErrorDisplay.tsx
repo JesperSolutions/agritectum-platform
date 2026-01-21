@@ -21,7 +21,7 @@ const EnhancedErrorDisplay: React.FC<EnhancedErrorDisplayProps> = ({
   className = '',
 }) => {
   const { t } = useIntl();
-  
+
   const getErrorMessage = (error: string | Error): string => {
     if (typeof error === 'string') return error;
 

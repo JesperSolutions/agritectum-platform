@@ -4,8 +4,7 @@
   "marketing.userRoles.superadmin.manageBranches": "Manage all branches",
   "marketing.userRoles.superadmin.viewAllReports": "View all reports",
   "marketing.userRoles.superadmin.createUsers": "Create/edit users",
-  "marketing.userRoles.superadmin.systemAnalytics": "System analytics"
-  ,
+  "marketing.userRoles.superadmin.systemAnalytics": "System analytics",
   "marketing.userRoles.superadmin.title": "Superadmin",
   "marketing.userRoles.superadmin.permissionLevel": "Permission Level 2",
   "marketing.brand.name": "Taklaget Service",

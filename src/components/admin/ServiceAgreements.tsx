@@ -45,10 +45,16 @@ const ServiceAgreements: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'expired' | 'cancelled' | 'pending'>('all');
-  const [dueDateFilter, setDueDateFilter] = useState<'all' | 'almostDue' | 'dueTomorrow' | 'dueInWeek' | 'dueInTwoWeeks'>('all');
-  const [typeFilter, setTypeFilter] = useState<'all' | 'maintenance' | 'inspection' | 'repair' | 'other'>('all');
-  
+  const [statusFilter, setStatusFilter] = useState<
+    'all' | 'active' | 'expired' | 'cancelled' | 'pending'
+  >('all');
+  const [dueDateFilter, setDueDateFilter] = useState<
+    'all' | 'almostDue' | 'dueTomorrow' | 'dueInWeek' | 'dueInTwoWeeks'
+  >('all');
+  const [typeFilter, setTypeFilter] = useState<
+    'all' | 'maintenance' | 'inspection' | 'repair' | 'other'
+  >('all');
+
   // Status counts
   const [almostDueCount, setAlmostDueCount] = useState(0);
   const [dueTomorrowCount, setDueTomorrowCount] = useState(0);
@@ -78,7 +84,11 @@ const ServiceAgreements: React.FC = () => {
       console.error('Error fetching service agreements:', error);
       // Only show error for actual connection/network errors
       const errorMessage = error instanceof Error ? error.message : String(error);
-      if (errorMessage.includes('Failed to fetch') || errorMessage.includes('network') || errorMessage.includes('permission')) {
+      if (
+        errorMessage.includes('Failed to fetch') ||
+        errorMessage.includes('network') ||
+        errorMessage.includes('permission')
+      ) {
         setError(t('serviceAgreement.errorMessage'));
       } else {
         // For other errors, still show error but allow empty state to show if agreements is empty
@@ -112,7 +122,9 @@ const ServiceAgreements: React.FC = () => {
       // Count all agreements regardless of status (pending, active, etc.)
       const nextServiceDate = new Date(agreement.nextServiceDate);
       nextServiceDate.setHours(0, 0, 0, 0);
-      const daysUntilDue = Math.ceil((nextServiceDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+      const daysUntilDue = Math.ceil(
+        (nextServiceDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+      );
 
       // Count agreements that are due (not overdue)
       if (daysUntilDue >= 0) {
@@ -150,7 +162,7 @@ const ServiceAgreements: React.FC = () => {
 
   // Filter and sort agreements
   const filteredAgreements = useMemo(() => {
-    let filtered = agreements.filter(agreement => {
+    const filtered = agreements.filter(agreement => {
       // Search filter
       const matchesSearch =
         debouncedSearchTerm === '' ||
@@ -169,7 +181,9 @@ const ServiceAgreements: React.FC = () => {
       if (dueDateFilter !== 'all') {
         const now = new Date();
         const nextServiceDate = new Date(agreement.nextServiceDate);
-        const daysUntilDue = Math.ceil((nextServiceDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+        const daysUntilDue = Math.ceil(
+          (nextServiceDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+        );
 
         switch (dueDateFilter) {
           case 'almostDue':
@@ -278,11 +292,20 @@ const ServiceAgreements: React.FC = () => {
     } else if (days === 0) {
       return { text: t('serviceAgreement.dueDate.today'), color: 'bg-red-100 text-red-800' };
     } else if (days === 1) {
-      return { text: t('serviceAgreement.dueDate.tomorrow'), color: 'bg-orange-100 text-orange-800' };
+      return {
+        text: t('serviceAgreement.dueDate.tomorrow'),
+        color: 'bg-orange-100 text-orange-800',
+      };
     } else if (days <= 3) {
-      return { text: `${days} ${t('serviceAgreement.dueDate.days')}`, color: 'bg-yellow-100 text-yellow-800' };
+      return {
+        text: `${days} ${t('serviceAgreement.dueDate.days')}`,
+        color: 'bg-yellow-100 text-yellow-800',
+      };
     } else {
-      return { text: `${days} ${t('serviceAgreement.dueDate.days')}`, color: 'bg-blue-100 text-blue-800' };
+      return {
+        text: `${days} ${t('serviceAgreement.dueDate.days')}`,
+        color: 'bg-blue-100 text-blue-800',
+      };
     }
   };
 
@@ -328,74 +351,82 @@ const ServiceAgreements: React.FC = () => {
 
         {/* Status Filter Boxes */}
         <div className='grid grid-cols-1 md:grid-cols-4 gap-4 mb-6'>
-        <button
-          onClick={() => setDueDateFilter('almostDue')}
-          className={`p-4 rounded-lg border-2 transition-all ${
-            dueDateFilter === 'almostDue'
-              ? 'border-orange-500 bg-orange-50'
-              : 'border-gray-200 bg-white hover:border-gray-300'
-          }`}
-        >
-          <div className='flex items-center justify-between'>
-            <div>
-              <p className='text-sm text-gray-600'>{t('serviceAgreement.statusFilters.almostDue')}</p>
-              <p className='text-2xl font-bold text-gray-900'>{almostDueCount}</p>
+          <button
+            onClick={() => setDueDateFilter('almostDue')}
+            className={`p-4 rounded-lg border-2 transition-all ${
+              dueDateFilter === 'almostDue'
+                ? 'border-orange-500 bg-orange-50'
+                : 'border-gray-200 bg-white hover:border-gray-300'
+            }`}
+          >
+            <div className='flex items-center justify-between'>
+              <div>
+                <p className='text-sm text-gray-600'>
+                  {t('serviceAgreement.statusFilters.almostDue')}
+                </p>
+                <p className='text-2xl font-bold text-gray-900'>{almostDueCount}</p>
+              </div>
+              <AlertCircle className='h-8 w-8 text-orange-500' />
             </div>
-            <AlertCircle className='h-8 w-8 text-orange-500' />
-          </div>
-        </button>
+          </button>
 
-        <button
-          onClick={() => setDueDateFilter('dueTomorrow')}
-          className={`p-4 rounded-lg border-2 transition-all ${
-            dueDateFilter === 'dueTomorrow'
-              ? 'border-red-500 bg-red-50'
-              : 'border-gray-200 bg-white hover:border-gray-300'
-          }`}
-        >
-          <div className='flex items-center justify-between'>
-            <div>
-              <p className='text-sm text-gray-600'>{t('serviceAgreement.statusFilters.dueTomorrow')}</p>
-              <p className='text-2xl font-bold text-gray-900'>{dueTomorrowCount}</p>
+          <button
+            onClick={() => setDueDateFilter('dueTomorrow')}
+            className={`p-4 rounded-lg border-2 transition-all ${
+              dueDateFilter === 'dueTomorrow'
+                ? 'border-red-500 bg-red-50'
+                : 'border-gray-200 bg-white hover:border-gray-300'
+            }`}
+          >
+            <div className='flex items-center justify-between'>
+              <div>
+                <p className='text-sm text-gray-600'>
+                  {t('serviceAgreement.statusFilters.dueTomorrow')}
+                </p>
+                <p className='text-2xl font-bold text-gray-900'>{dueTomorrowCount}</p>
+              </div>
+              <Calendar className='h-8 w-8 text-red-500' />
             </div>
-            <Calendar className='h-8 w-8 text-red-500' />
-          </div>
-        </button>
+          </button>
 
-        <button
-          onClick={() => setDueDateFilter('dueInWeek')}
-          className={`p-4 rounded-lg border-2 transition-all ${
-            dueDateFilter === 'dueInWeek'
-              ? 'border-yellow-500 bg-yellow-50'
-              : 'border-gray-200 bg-white hover:border-gray-300'
-          }`}
-        >
-          <div className='flex items-center justify-between'>
-            <div>
-              <p className='text-sm text-gray-600'>{t('serviceAgreement.statusFilters.dueInWeek')}</p>
-              <p className='text-2xl font-bold text-gray-900'>{dueInWeekCount}</p>
+          <button
+            onClick={() => setDueDateFilter('dueInWeek')}
+            className={`p-4 rounded-lg border-2 transition-all ${
+              dueDateFilter === 'dueInWeek'
+                ? 'border-yellow-500 bg-yellow-50'
+                : 'border-gray-200 bg-white hover:border-gray-300'
+            }`}
+          >
+            <div className='flex items-center justify-between'>
+              <div>
+                <p className='text-sm text-gray-600'>
+                  {t('serviceAgreement.statusFilters.dueInWeek')}
+                </p>
+                <p className='text-2xl font-bold text-gray-900'>{dueInWeekCount}</p>
+              </div>
+              <FileCheck className='h-8 w-8 text-yellow-500' />
             </div>
-            <FileCheck className='h-8 w-8 text-yellow-500' />
-          </div>
-        </button>
+          </button>
 
-        <button
-          onClick={() => setDueDateFilter('dueInTwoWeeks')}
-          className={`p-4 rounded-lg border-2 transition-all ${
-            dueDateFilter === 'dueInTwoWeeks'
-              ? 'border-blue-500 bg-blue-50'
-              : 'border-gray-200 bg-white hover:border-gray-300'
-          }`}
-        >
-          <div className='flex items-center justify-between'>
-            <div>
-              <p className='text-sm text-gray-600'>{t('serviceAgreement.statusFilters.dueInTwoWeeks')}</p>
-              <p className='text-2xl font-bold text-gray-900'>{dueInTwoWeeksCount}</p>
+          <button
+            onClick={() => setDueDateFilter('dueInTwoWeeks')}
+            className={`p-4 rounded-lg border-2 transition-all ${
+              dueDateFilter === 'dueInTwoWeeks'
+                ? 'border-blue-500 bg-blue-50'
+                : 'border-gray-200 bg-white hover:border-gray-300'
+            }`}
+          >
+            <div className='flex items-center justify-between'>
+              <div>
+                <p className='text-sm text-gray-600'>
+                  {t('serviceAgreement.statusFilters.dueInTwoWeeks')}
+                </p>
+                <p className='text-2xl font-bold text-gray-900'>{dueInTwoWeeksCount}</p>
+              </div>
+              <Calendar className='h-8 w-8 text-blue-500' />
             </div>
-            <Calendar className='h-8 w-8 text-blue-500' />
-          </div>
-        </button>
-      </div>
+          </button>
+        </div>
 
         {/* Search and Filters */}
         <div className='bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6 relative z-10'>
@@ -410,7 +441,7 @@ const ServiceAgreements: React.FC = () => {
                 <input
                   type='text'
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={e => setSearchTerm(e.target.value)}
                   placeholder={t('serviceAgreement.searchPlaceholder')}
                   className='pl-10 pr-10 w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm'
                 />
@@ -426,8 +457,11 @@ const ServiceAgreements: React.FC = () => {
               </div>
               <p className='mt-1 text-sm text-gray-500'>
                 {filteredAgreements.length === 1
-                  ? t('serviceAgreement.searchResults.singular', { count: 1 }) || 'Hittade 1 serviceavtal'
-                  : t('serviceAgreement.searchResults.plural', { count: filteredAgreements.length }) || `Hittade ${filteredAgreements.length} serviceavtal`}
+                  ? t('serviceAgreement.searchResults.singular', { count: 1 }) ||
+                    'Hittade 1 serviceavtal'
+                  : t('serviceAgreement.searchResults.plural', {
+                      count: filteredAgreements.length,
+                    }) || `Hittade ${filteredAgreements.length} serviceavtal`}
               </p>
             </div>
 
@@ -435,7 +469,7 @@ const ServiceAgreements: React.FC = () => {
             <div className='flex flex-wrap gap-3 items-center'>
               <select
                 value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value as any)}
+                onChange={e => setStatusFilter(e.target.value as any)}
                 className='px-4 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm'
               >
                 <option value='all'>{t('serviceAgreement.statusFilters.all')}</option>
@@ -447,7 +481,7 @@ const ServiceAgreements: React.FC = () => {
 
               <select
                 value={typeFilter}
-                onChange={(e) => setTypeFilter(e.target.value as any)}
+                onChange={e => setTypeFilter(e.target.value as any)}
                 className='px-4 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm'
               >
                 <option value='all'>{t('serviceAgreement.statusFilters.all')}</option>
@@ -487,172 +521,173 @@ const ServiceAgreements: React.FC = () => {
 
         {viewMode === 'list' ? (
           <div className='bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden'>
-          {filteredAgreements.length === 0 ? (
-            <EmptyState
-              title={t('serviceAgreement.noAgreements')}
-              message={t('serviceAgreement.noAgreementsMessage')}
-              actionLabel={t('serviceAgreement.addAgreement')}
-              onAction={handleCreate}
-            />
-          ) : (
-            <div className='overflow-x-auto'>
-              <table className='min-w-full divide-y divide-gray-200'>
-                <thead className='bg-slate-50'>
-                  <tr>
-                    <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                      {t('serviceAgreement.table.customer')}
-                    </th>
-                    <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                      {t('serviceAgreement.table.title')}
-                    </th>
-                    <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                      {t('serviceAgreement.table.type')}
-                    </th>
-                    <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                      {t('serviceAgreement.table.nextService')}
-                    </th>
-                    <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                      {t('serviceAgreement.table.status')}
-                    </th>
-                    <th className='px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider sticky right-0 bg-slate-50 z-10'>
-                      {t('serviceAgreement.table.actions')}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className='bg-white divide-y divide-gray-200'>
-                  {filteredAgreements.map((agreement) => {
-                    const dueBadge = getDueDateBadge(agreement.nextServiceDate);
-                    return (
-                      <tr key={agreement.id} className='hover:bg-slate-50'>
-                        <td className='px-6 py-4 whitespace-nowrap'>
-                          <div className='text-sm font-medium text-gray-900'>{agreement.customerName}</div>
-                          <div className='text-sm text-gray-500'>{agreement.customerAddress}</div>
-                        </td>
-                        <td className='px-6 py-4'>
-                          <div className='text-sm text-gray-900'>{agreement.title}</div>
-                        </td>
-                        <td className='px-6 py-4 whitespace-nowrap'>
-                          <span className='text-sm text-gray-500'>
-                            {t(`serviceAgreement.type.${agreement.agreementType}`)}
-                          </span>
-                        </td>
-                        <td className='px-6 py-4 whitespace-nowrap'>
-                          <div className='text-sm text-gray-900'>
-                            {new Date(agreement.nextServiceDate).toLocaleDateString()}
-                          </div>
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${dueBadge.color}`}>
-                            {dueBadge.text}
-                          </span>
-                        </td>
-                        <td className='px-6 py-4 whitespace-nowrap'>
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(agreement.status)}`}>
-                            {t(`serviceAgreement.status.${agreement.status}`)}
-                          </span>
-                        </td>
-                        <td className='px-6 py-4 whitespace-nowrap text-right text-sm font-medium sticky right-0 bg-white z-10'>
-                          <div className='flex items-center justify-end gap-2'>
-                            <button
-                              onClick={() => handleView(agreement)}
-                              className='text-blue-600 hover:text-blue-900'
-                              title={t('serviceAgreement.viewAgreement')}
-                              aria-label={t('serviceAgreement.viewAgreement')}
+            {filteredAgreements.length === 0 ? (
+              <EmptyState
+                title={t('serviceAgreement.noAgreements')}
+                message={t('serviceAgreement.noAgreementsMessage')}
+                actionLabel={t('serviceAgreement.addAgreement')}
+                onAction={handleCreate}
+              />
+            ) : (
+              <div className='overflow-x-auto'>
+                <table className='min-w-full divide-y divide-gray-200'>
+                  <thead className='bg-slate-50'>
+                    <tr>
+                      <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+                        {t('serviceAgreement.table.customer')}
+                      </th>
+                      <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+                        {t('serviceAgreement.table.title')}
+                      </th>
+                      <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+                        {t('serviceAgreement.table.type')}
+                      </th>
+                      <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+                        {t('serviceAgreement.table.nextService')}
+                      </th>
+                      <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+                        {t('serviceAgreement.table.status')}
+                      </th>
+                      <th className='px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider sticky right-0 bg-slate-50 z-10'>
+                        {t('serviceAgreement.table.actions')}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className='bg-white divide-y divide-gray-200'>
+                    {filteredAgreements.map(agreement => {
+                      const dueBadge = getDueDateBadge(agreement.nextServiceDate);
+                      return (
+                        <tr key={agreement.id} className='hover:bg-slate-50'>
+                          <td className='px-6 py-4 whitespace-nowrap'>
+                            <div className='text-sm font-medium text-gray-900'>
+                              {agreement.customerName}
+                            </div>
+                            <div className='text-sm text-gray-500'>{agreement.customerAddress}</div>
+                          </td>
+                          <td className='px-6 py-4'>
+                            <div className='text-sm text-gray-900'>{agreement.title}</div>
+                          </td>
+                          <td className='px-6 py-4 whitespace-nowrap'>
+                            <span className='text-sm text-gray-500'>
+                              {t(`serviceAgreement.type.${agreement.agreementType}`)}
+                            </span>
+                          </td>
+                          <td className='px-6 py-4 whitespace-nowrap'>
+                            <div className='text-sm text-gray-900'>
+                              {new Date(agreement.nextServiceDate).toLocaleDateString()}
+                            </div>
+                            <span
+                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${dueBadge.color}`}
                             >
-                              <Eye className='h-5 w-5' />
-                            </button>
-                            <button
-                              onClick={() => handleEdit(agreement)}
-                              className='text-indigo-600 hover:text-indigo-900'
-                              title={t('serviceAgreement.editAgreement')}
-                              aria-label={t('serviceAgreement.editAgreement')}
+                              {dueBadge.text}
+                            </span>
+                          </td>
+                          <td className='px-6 py-4 whitespace-nowrap'>
+                            <span
+                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(agreement.status)}`}
                             >
-                              <Edit className='h-5 w-5' />
-                            </button>
-                            <button
-                              onClick={() => handleDelete(agreement)}
-                              className='text-red-600 hover:text-red-900'
-                              title={t('serviceAgreement.deleteAgreement')}
-                              aria-label={t('serviceAgreement.deleteAgreement')}
-                            >
-                              <Trash2 className='h-5 w-5' />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-      ) : (
-        <ServiceAgreementMap
-          agreements={filteredAgreements}
-          onAgreementClick={handleView}
-        />
-      )}
+                              {t(`serviceAgreement.status.${agreement.status}`)}
+                            </span>
+                          </td>
+                          <td className='px-6 py-4 whitespace-nowrap text-right text-sm font-medium sticky right-0 bg-white z-10'>
+                            <div className='flex items-center justify-end gap-2'>
+                              <button
+                                onClick={() => handleView(agreement)}
+                                className='text-blue-600 hover:text-blue-900'
+                                title={t('serviceAgreement.viewAgreement')}
+                                aria-label={t('serviceAgreement.viewAgreement')}
+                              >
+                                <Eye className='h-5 w-5' />
+                              </button>
+                              <button
+                                onClick={() => handleEdit(agreement)}
+                                className='text-indigo-600 hover:text-indigo-900'
+                                title={t('serviceAgreement.editAgreement')}
+                                aria-label={t('serviceAgreement.editAgreement')}
+                              >
+                                <Edit className='h-5 w-5' />
+                              </button>
+                              <button
+                                onClick={() => handleDelete(agreement)}
+                                className='text-red-600 hover:text-red-900'
+                                title={t('serviceAgreement.deleteAgreement')}
+                                aria-label={t('serviceAgreement.deleteAgreement')}
+                              >
+                                <Trash2 className='h-5 w-5' />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        ) : (
+          <ServiceAgreementMap agreements={filteredAgreements} onAgreementClick={handleView} />
+        )}
 
-      {/* Modals */}
-      {showCreateModal && (
-        <ServiceAgreementForm
-          mode='create'
-          onClose={() => setShowCreateModal(false)}
-          onSuccess={handleFormSuccess}
-        />
-      )}
+        {/* Modals */}
+        {showCreateModal && (
+          <ServiceAgreementForm
+            mode='create'
+            onClose={() => setShowCreateModal(false)}
+            onSuccess={handleFormSuccess}
+          />
+        )}
 
-      {showEditModal && selectedAgreement && (
-        <ServiceAgreementForm
-          mode='edit'
-          agreement={selectedAgreement}
-          onClose={() => {
-            setShowEditModal(false);
-            setSelectedAgreement(null);
-          }}
-          onSuccess={handleFormSuccess}
-        />
-      )}
+        {showEditModal && selectedAgreement && (
+          <ServiceAgreementForm
+            mode='edit'
+            agreement={selectedAgreement}
+            onClose={() => {
+              setShowEditModal(false);
+              setSelectedAgreement(null);
+            }}
+            onSuccess={handleFormSuccess}
+          />
+        )}
 
-      {showDetailModal && selectedAgreement && (
-        <ServiceAgreementDetail
-          agreement={selectedAgreement}
-          onClose={() => {
-            setShowDetailModal(false);
-            setSelectedAgreement(null);
-          }}
-          onEdit={() => {
-            setShowDetailModal(false);
-            handleEdit(selectedAgreement);
-          }}
-          onDelete={() => {
-            setShowDetailModal(false);
-            handleDelete(selectedAgreement);
-          }}
-        />
-      )}
+        {showDetailModal && selectedAgreement && (
+          <ServiceAgreementDetail
+            agreement={selectedAgreement}
+            onClose={() => {
+              setShowDetailModal(false);
+              setSelectedAgreement(null);
+            }}
+            onEdit={() => {
+              setShowDetailModal(false);
+              handleEdit(selectedAgreement);
+            }}
+            onDelete={() => {
+              setShowDetailModal(false);
+              handleDelete(selectedAgreement);
+            }}
+          />
+        )}
 
-      {showDeleteModal && agreementToDelete && (
-        <ConfirmationDialog
-          isOpen={showDeleteModal}
-          onClose={() => {
-            setShowDeleteModal(false);
-            setAgreementToDelete(null);
-          }}
-          onConfirm={confirmDelete}
-          title={t('serviceAgreement.deleteAgreement')}
-          message={t('serviceAgreement.confirmDelete')}
-          confirmText={t('common.delete')}
-          cancelText={t('common.buttons.cancel')}
-          type='danger'
-          icon='trash'
-          isLoading={isDeleting}
-        />
-      )}
-
+        {showDeleteModal && agreementToDelete && (
+          <ConfirmationDialog
+            isOpen={showDeleteModal}
+            onClose={() => {
+              setShowDeleteModal(false);
+              setAgreementToDelete(null);
+            }}
+            onConfirm={confirmDelete}
+            title={t('serviceAgreement.deleteAgreement')}
+            message={t('serviceAgreement.confirmDelete')}
+            confirmText={t('common.delete')}
+            cancelText={t('common.buttons.cancel')}
+            type='danger'
+            icon='trash'
+            isLoading={isDeleting}
+          />
+        )}
       </div>
     </div>
   );
 };
 
 export default ServiceAgreements;
-

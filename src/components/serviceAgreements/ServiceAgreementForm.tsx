@@ -3,7 +3,17 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useIntl } from '../../hooks/useIntl';
 import { useToast } from '../../contexts/ToastContext';
 import { ServiceAgreement, Customer } from '../../types';
-import { X, AlertCircle, RefreshCw, ChevronDown, ChevronUp, Info, Upload, X as XIcon, Image as ImageIcon } from 'lucide-react';
+import {
+  X,
+  AlertCircle,
+  RefreshCw,
+  ChevronDown,
+  ChevronUp,
+  Info,
+  Upload,
+  X as XIcon,
+  Image as ImageIcon,
+} from 'lucide-react';
 import {
   createServiceAgreement,
   updateServiceAgreement,
@@ -83,7 +93,10 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
     steel: false,
     sedum: false,
   });
-  const [uploadingSignature, setUploadingSignature] = useState<{ supplier: boolean; customer: boolean }>({
+  const [uploadingSignature, setUploadingSignature] = useState<{
+    supplier: boolean;
+    customer: boolean;
+  }>({
     supplier: false,
     customer: false,
   });
@@ -92,7 +105,7 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
 
   const fetchCustomers = async () => {
     if (!currentUser) return;
-    
+
     try {
       setLoadingCustomers(true);
       setCustomerError(null);
@@ -120,7 +133,7 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
     if (mode === 'edit' && agreement && agreement.customerId) {
       // When editing, ensure the customer is in the list
       const selectedCustomer = customers.find(c => c.id === agreement.customerId);
-      
+
       // If customer not found in list, fetch it separately (might be from different branch)
       if (!selectedCustomer && agreement.customerId) {
         getCustomerById(agreement.customerId)
@@ -139,12 +152,15 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
             console.error('Error fetching customer for agreement:', error);
           });
       }
-      
+
       // Handle backwards compatibility for agreementType
-      const agreementType = (agreement.agreementType === 'inspection' || agreement.agreementType === 'repair') 
-        ? 'other' 
-        : (agreement.agreementType === 'maintenance' ? 'maintenance' : 'other');
-      
+      const agreementType =
+        agreement.agreementType === 'inspection' || agreement.agreementType === 'repair'
+          ? 'other'
+          : agreement.agreementType === 'maintenance'
+            ? 'maintenance'
+            : 'other';
+
       // Handle backwards compatibility for serviceFrequency
       let serviceFrequency: 'quarterly' | 'biannual' | 'annual' = 'annual';
       if (agreement.serviceFrequency === 'quarterly') {
@@ -161,7 +177,7 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
           serviceFrequency = 'annual';
         }
       }
-      
+
       setFormData({
         customerId: agreement.customerId,
         agreementType,
@@ -178,7 +194,12 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
         addons: agreement.addons || { skylights: [], solar: [], steel: [], sedum: [] },
         pricingStructure: agreement.pricingStructure || { perRoof: '', perSquareMeter: '' },
         billingFrequency: agreement.billingFrequency || 'annual',
-        signatures: agreement.signatures || { supplier: '', customer: '', supplierImageUrl: '', customerImageUrl: '' },
+        signatures: agreement.signatures || {
+          supplier: '',
+          customer: '',
+          supplierImageUrl: '',
+          customerImageUrl: '',
+        },
       });
     }
   }, [mode, agreement, customers]);
@@ -247,12 +268,12 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
 
   const handleSignatureImageUpload = async (type: 'supplier' | 'customer', file: File) => {
     if (!currentUser || !formData.customerId) return;
-    
+
     setUploadingSignature(prev => ({ ...prev, [type]: true }));
     try {
       // Compress image
       const compressedFile = await compressImage(file);
-      
+
       // Create storage reference for signature images
       const { ref, uploadBytes, getDownloadURL } = await import('firebase/storage');
       const { storage } = await import('../../config/firebase');
@@ -260,11 +281,11 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
       const fileName = `signature_${type}_${timestamp}_${compressedFile.name}`;
       const storagePath = `service-agreements/${formData.customerId}/signatures/${fileName}`;
       const fileRef = ref(storage, storagePath);
-      
+
       // Upload to Firebase Storage
       const snapshot = await uploadBytes(fileRef, compressedFile);
       const downloadURL = await getDownloadURL(snapshot.ref);
-      
+
       // Update form data
       setFormData({
         ...formData,
@@ -349,21 +370,49 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
         status: formData.status,
         notes: formData.notes || undefined,
         // Paper version fields - always use default purpose text
-        purpose: t('serviceAgreement.form.purpose.text') || 'Løbende service og vedligehold af taget for at sikre funktion, tæthed og lang levetid. Aftalen omfatter både udbedring af begyndende skader, forebyggende kontrol samt dokumentation til brug for drift og eventuel garantisikring.',
-        serviceVisits: formData.serviceVisits.oneAnnual || formData.serviceVisits.twoAnnual ? formData.serviceVisits : undefined,
-        standardServices: formData.standardServices.length > 0 ? formData.standardServices : undefined,
-        addons: (formData.addons.skylights?.length || formData.addons.solar?.length || formData.addons.steel?.length || formData.addons.sedum?.length) ? formData.addons : undefined,
-        pricingStructure: (formData.pricingStructure.perRoof || formData.pricingStructure.perSquareMeter) ? {
-          perRoof: formData.pricingStructure.perRoof && formData.pricingStructure.perRoof !== '0' ? parseFloat(formData.pricingStructure.perRoof) : undefined,
-          perSquareMeter: formData.pricingStructure.perSquareMeter && formData.pricingStructure.perSquareMeter !== '0' ? parseFloat(formData.pricingStructure.perSquareMeter) : undefined,
-        } : undefined,
+        purpose:
+          t('serviceAgreement.form.purpose.text') ||
+          'Løbende service og vedligehold af taget for at sikre funktion, tæthed og lang levetid. Aftalen omfatter både udbedring af begyndende skader, forebyggende kontrol samt dokumentation til brug for drift og eventuel garantisikring.',
+        serviceVisits:
+          formData.serviceVisits.oneAnnual || formData.serviceVisits.twoAnnual
+            ? formData.serviceVisits
+            : undefined,
+        standardServices:
+          formData.standardServices.length > 0 ? formData.standardServices : undefined,
+        addons:
+          formData.addons.skylights?.length ||
+          formData.addons.solar?.length ||
+          formData.addons.steel?.length ||
+          formData.addons.sedum?.length
+            ? formData.addons
+            : undefined,
+        pricingStructure:
+          formData.pricingStructure.perRoof || formData.pricingStructure.perSquareMeter
+            ? {
+                perRoof:
+                  formData.pricingStructure.perRoof && formData.pricingStructure.perRoof !== '0'
+                    ? parseFloat(formData.pricingStructure.perRoof)
+                    : undefined,
+                perSquareMeter:
+                  formData.pricingStructure.perSquareMeter &&
+                  formData.pricingStructure.perSquareMeter !== '0'
+                    ? parseFloat(formData.pricingStructure.perSquareMeter)
+                    : undefined,
+              }
+            : undefined,
         billingFrequency: formData.billingFrequency,
-        signatures: (formData.signatures.supplier || formData.signatures.customer || formData.signatures.supplierImageUrl || formData.signatures.customerImageUrl) ? {
-          supplier: formData.signatures.supplier || undefined,
-          customer: formData.signatures.customer || undefined,
-          supplierImageUrl: formData.signatures.supplierImageUrl || undefined,
-          customerImageUrl: formData.signatures.customerImageUrl || undefined,
-        } : undefined,
+        signatures:
+          formData.signatures.supplier ||
+          formData.signatures.customer ||
+          formData.signatures.supplierImageUrl ||
+          formData.signatures.customerImageUrl
+            ? {
+                supplier: formData.signatures.supplier || undefined,
+                customer: formData.signatures.customer || undefined,
+                supplierImageUrl: formData.signatures.supplierImageUrl || undefined,
+                customerImageUrl: formData.signatures.customerImageUrl || undefined,
+              }
+            : undefined,
       };
 
       if (mode === 'create') {
@@ -388,7 +437,9 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
       <div className='bg-white rounded-xl shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-slate-200'>
         <div className='sticky top-0 bg-white border-b border-slate-200 px-8 py-6 flex items-center justify-between z-10'>
           <h2 className='text-2xl font-bold text-slate-900 tracking-tight'>
-            {mode === 'create' ? t('serviceAgreement.form.create') : t('serviceAgreement.form.update')}
+            {mode === 'create'
+              ? t('serviceAgreement.form.create')
+              : t('serviceAgreement.form.update')}
           </h2>
           <button
             onClick={onClose}
@@ -407,14 +458,18 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
             {loadingCustomers ? (
               <div className='w-full px-4 py-2 border border-slate-300 rounded-lg bg-slate-50 flex items-center justify-center'>
                 <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-slate-600 mr-2'></div>
-                <span className='text-sm text-slate-600'>{t('serviceAgreement.form.loadingCustomers') || 'Loading customers...'}</span>
+                <span className='text-sm text-slate-600'>
+                  {t('serviceAgreement.form.loadingCustomers') || 'Loading customers...'}
+                </span>
               </div>
             ) : customerError === 'fetchError' ? (
               <div className='w-full px-4 py-2 border border-red-300 rounded-lg bg-red-50'>
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center'>
                     <AlertCircle className='h-4 w-4 text-red-600 mr-2' />
-                    <span className='text-sm text-red-600'>{t('serviceAgreement.form.customerError') || 'Failed to load customers'}</span>
+                    <span className='text-sm text-red-600'>
+                      {t('serviceAgreement.form.customerError') || 'Failed to load customers'}
+                    </span>
                   </div>
                   <button
                     type='button'
@@ -431,7 +486,10 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center'>
                     <AlertCircle className='h-4 w-4 text-yellow-600 mr-2' />
-                    <span className='text-sm text-yellow-600'>{t('serviceAgreement.form.noCustomers') || 'No customers found. Please create a customer first.'}</span>
+                    <span className='text-sm text-yellow-600'>
+                      {t('serviceAgreement.form.noCustomers') ||
+                        'No customers found. Please create a customer first.'}
+                    </span>
                   </div>
                   <button
                     type='button'
@@ -446,14 +504,15 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
             ) : (
               <select
                 value={formData.customerId}
-                onChange={(e) => setFormData({ ...formData, customerId: e.target.value })}
+                onChange={e => setFormData({ ...formData, customerId: e.target.value })}
                 className='w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-700 focus:border-transparent'
                 disabled={mode === 'edit'}
               >
                 <option value=''>{t('serviceAgreement.form.customerPlaceholder')}</option>
                 {customers.map(customer => (
                   <option key={customer.id} value={customer.id}>
-                    {customer.company ? `${customer.company} - ${customer.name}` : customer.name} {customer.address ? `- ${customer.address}` : ''}
+                    {customer.company ? `${customer.company} - ${customer.name}` : customer.name}{' '}
+                    {customer.address ? `- ${customer.address}` : ''}
                   </option>
                 ))}
               </select>
@@ -467,7 +526,7 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
             </label>
             <select
               value={formData.agreementType}
-              onChange={(e) => setFormData({ ...formData, agreementType: e.target.value as any })}
+              onChange={e => setFormData({ ...formData, agreementType: e.target.value as any })}
               className='w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-700 focus:border-transparent'
             >
               <option value='maintenance'>{t('serviceAgreement.type.maintenance')}</option>
@@ -483,7 +542,7 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
               <DateInput
                 id='startDate'
                 value={formData.startDate}
-                onChange={(value) => setFormData({ ...formData, startDate: value })}
+                onChange={value => setFormData({ ...formData, startDate: value })}
                 className='w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-700 focus:border-transparent'
                 required
               />
@@ -497,7 +556,7 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
               <DateInput
                 id='endDate'
                 value={formData.endDate}
-                onChange={(value) => setFormData({ ...formData, endDate: value })}
+                onChange={value => setFormData({ ...formData, endDate: value })}
                 className='w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-700 focus:border-transparent'
                 required
               />
@@ -512,11 +571,13 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
             <DateInput
               id='nextServiceDate'
               value={formData.nextServiceDate}
-              onChange={(value) => setFormData({ ...formData, nextServiceDate: value })}
+              onChange={value => setFormData({ ...formData, nextServiceDate: value })}
               className='w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-700 focus:border-transparent'
               required
             />
-            {errors.nextServiceDate && <p className='text-red-600 text-sm mt-1'>{errors.nextServiceDate}</p>}
+            {errors.nextServiceDate && (
+              <p className='text-red-600 text-sm mt-1'>{errors.nextServiceDate}</p>
+            )}
           </div>
 
           <div>
@@ -525,7 +586,7 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
             </label>
             <select
               value={formData.serviceFrequency}
-              onChange={(e) => setFormData({ ...formData, serviceFrequency: e.target.value as any })}
+              onChange={e => setFormData({ ...formData, serviceFrequency: e.target.value as any })}
               className='w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-700 focus:border-transparent'
             >
               <option value='quarterly'>{t('serviceAgreement.frequency.quarterly')}</option>
@@ -535,7 +596,7 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
           </div>
 
           {/* Paper Version Fields */}
-          
+
           {/* 1. AFTALENS FORMÅL */}
           <div className='border-t border-slate-200 pt-6'>
             <h3 className='text-lg font-semibold text-slate-900 mb-4'>
@@ -543,7 +604,8 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
             </h3>
             <div className='bg-slate-50 rounded-lg p-4 border border-slate-200'>
               <p className='text-slate-700 whitespace-pre-wrap'>
-                {t('serviceAgreement.form.purpose.text') || 'Løbende service og vedligehold af taget for at sikre funktion, tæthed og lang levetid. Aftalen omfatter både udbedring af begyndende skader, forebyggende kontrol samt dokumentation til brug for drift og eventuel garantisikring.'}
+                {t('serviceAgreement.form.purpose.text') ||
+                  'Løbende service og vedligehold af taget for at sikre funktion, tæthed og lang levetid. Aftalen omfatter både udbedring af begyndende skader, forebyggende kontrol samt dokumentation til brug for drift og eventuel garantisikring.'}
               </p>
             </div>
           </div>
@@ -553,7 +615,7 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
             <h3 className='text-lg font-semibold text-slate-900 mb-4'>
               {t('serviceAgreement.form.services.title') || '2. YDELSER – AFKRYDSNING'}
             </h3>
-            
+
             {/* SERVICEBESØG */}
             <div className='mb-6'>
               <h4 className='text-md font-medium text-slate-800 mb-3'>
@@ -592,16 +654,64 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
               </h4>
               <div className='space-y-2'>
                 {[
-                  { key: 'visualInspection', label: t('serviceAgreement.form.services.visualInspection') || 'Visuel gennemgang af tag' },
-                  { key: 'roofingControl', label: t('serviceAgreement.form.services.roofingControl') || 'Kontrol af tagpap og samlinger' },
-                  { key: 'penetrationsControl', label: t('serviceAgreement.form.services.penetrationsControl') || 'Kontrol af gennemføringer' },
-                  { key: 'flashingControl', label: t('serviceAgreement.form.services.flashingControl') || 'Kontrol af inddækninger og fuger' },
-                  { key: 'drainCleaning', label: t('serviceAgreement.form.services.drainCleaning') || 'Rensning af afløb og skotrender' },
-                  { key: 'gutterCleaning', label: t('serviceAgreement.form.services.gutterCleaning') || 'Rengøring af tagrender' },
-                  { key: 'debrisRemoval', label: t('serviceAgreement.form.services.debrisRemoval') || 'Fjernelse af blade, mos og snavs' },
-                  { key: 'drainageTest', label: t('serviceAgreement.form.services.drainageTest') || 'Funktions-/flow-test af afvanding' },
-                  { key: 'walkwayControl', label: t('serviceAgreement.form.services.walkwayControl') || 'Kontrol af gangbaner' },
-                  { key: 'photoDocumentation', label: t('serviceAgreement.form.services.photoDocumentation') || 'Fotodokumentation' },
+                  {
+                    key: 'visualInspection',
+                    label:
+                      t('serviceAgreement.form.services.visualInspection') ||
+                      'Visuel gennemgang af tag',
+                  },
+                  {
+                    key: 'roofingControl',
+                    label:
+                      t('serviceAgreement.form.services.roofingControl') ||
+                      'Kontrol af tagpap og samlinger',
+                  },
+                  {
+                    key: 'penetrationsControl',
+                    label:
+                      t('serviceAgreement.form.services.penetrationsControl') ||
+                      'Kontrol af gennemføringer',
+                  },
+                  {
+                    key: 'flashingControl',
+                    label:
+                      t('serviceAgreement.form.services.flashingControl') ||
+                      'Kontrol af inddækninger og fuger',
+                  },
+                  {
+                    key: 'drainCleaning',
+                    label:
+                      t('serviceAgreement.form.services.drainCleaning') ||
+                      'Rensning af afløb og skotrender',
+                  },
+                  {
+                    key: 'gutterCleaning',
+                    label:
+                      t('serviceAgreement.form.services.gutterCleaning') ||
+                      'Rengøring af tagrender',
+                  },
+                  {
+                    key: 'debrisRemoval',
+                    label:
+                      t('serviceAgreement.form.services.debrisRemoval') ||
+                      'Fjernelse af blade, mos og snavs',
+                  },
+                  {
+                    key: 'drainageTest',
+                    label:
+                      t('serviceAgreement.form.services.drainageTest') ||
+                      'Funktions-/flow-test af afvanding',
+                  },
+                  {
+                    key: 'walkwayControl',
+                    label:
+                      t('serviceAgreement.form.services.walkwayControl') || 'Kontrol af gangbaner',
+                  },
+                  {
+                    key: 'photoDocumentation',
+                    label:
+                      t('serviceAgreement.form.services.photoDocumentation') || 'Fotodokumentation',
+                  },
                 ].map(service => (
                   <label key={service.key} className='flex items-center cursor-pointer'>
                     <input
@@ -627,18 +737,44 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
             <div className='mb-4'>
               <button
                 type='button'
-                onClick={() => setExpandedAddons({ ...expandedAddons, skylights: !expandedAddons.skylights })}
+                onClick={() =>
+                  setExpandedAddons({ ...expandedAddons, skylights: !expandedAddons.skylights })
+                }
                 className='w-full flex items-center justify-between text-md font-medium text-slate-800 mb-2 p-2 hover:bg-slate-50 rounded-lg'
               >
-                <span>{t('serviceAgreement.form.addons.skylights.title') || 'OVENLYS & FALDSIKRING:'}</span>
-                {expandedAddons.skylights ? <ChevronUp className='w-5 h-5' /> : <ChevronDown className='w-5 h-5' />}
+                <span>
+                  {t('serviceAgreement.form.addons.skylights.title') || 'OVENLYS & FALDSIKRING:'}
+                </span>
+                {expandedAddons.skylights ? (
+                  <ChevronUp className='w-5 h-5' />
+                ) : (
+                  <ChevronDown className='w-5 h-5' />
+                )}
               </button>
               {expandedAddons.skylights && (
                 <div className='space-y-2 pl-4'>
                   {[
-                    { key: 'skylightCleaning', label: t('serviceAgreement.form.addons.skylightCleaning') || 'Rensning/inspektion af ovenlyskupler' },
-                    { key: 'annualInspection', label: t('serviceAgreement.form.addons.annualInspection') || 'Årligt eftersyn (EN 365)', tooltip: t('serviceAgreement.form.addons.en365Tooltip') || 'EN 365 er en europæisk standard for personlig værnemiddel mod fald fra højde. Eftersynet sikrer, at udstyret opfylder sikkerhedskravene.' },
-                    { key: 'safetyEquipmentControl', label: t('serviceAgreement.form.addons.safetyEquipmentControl') || 'Kontrol af liner, wires, seler og karabiner' },
+                    {
+                      key: 'skylightCleaning',
+                      label:
+                        t('serviceAgreement.form.addons.skylightCleaning') ||
+                        'Rensning/inspektion af ovenlyskupler',
+                    },
+                    {
+                      key: 'annualInspection',
+                      label:
+                        t('serviceAgreement.form.addons.annualInspection') ||
+                        'Årligt eftersyn (EN 365)',
+                      tooltip:
+                        t('serviceAgreement.form.addons.en365Tooltip') ||
+                        'EN 365 er en europæisk standard for personlig værnemiddel mod fald fra højde. Eftersynet sikrer, at udstyret opfylder sikkerhedskravene.',
+                    },
+                    {
+                      key: 'safetyEquipmentControl',
+                      label:
+                        t('serviceAgreement.form.addons.safetyEquipmentControl') ||
+                        'Kontrol af liner, wires, seler og karabiner',
+                    },
                   ].map(addon => (
                     <label key={addon.key} className='flex items-center cursor-pointer group'>
                       <input
@@ -668,11 +804,17 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
             <div className='mb-4'>
               <button
                 type='button'
-                onClick={() => setExpandedAddons({ ...expandedAddons, solar: !expandedAddons.solar })}
+                onClick={() =>
+                  setExpandedAddons({ ...expandedAddons, solar: !expandedAddons.solar })
+                }
                 className='w-full flex items-center justify-between text-md font-medium text-slate-800 mb-2 p-2 hover:bg-slate-50 rounded-lg'
               >
                 <span>{t('serviceAgreement.form.addons.solar.title') || 'SOLCELLER:'}</span>
-                {expandedAddons.solar ? <ChevronUp className='w-5 h-5' /> : <ChevronDown className='w-5 h-5' />}
+                {expandedAddons.solar ? (
+                  <ChevronUp className='w-5 h-5' />
+                ) : (
+                  <ChevronDown className='w-5 h-5' />
+                )}
               </button>
               {expandedAddons.solar && (
                 <div className='space-y-2 pl-4'>
@@ -695,17 +837,32 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
             <div className='mb-4'>
               <button
                 type='button'
-                onClick={() => setExpandedAddons({ ...expandedAddons, steel: !expandedAddons.steel })}
+                onClick={() =>
+                  setExpandedAddons({ ...expandedAddons, steel: !expandedAddons.steel })
+                }
                 className='w-full flex items-center justify-between text-md font-medium text-slate-800 mb-2 p-2 hover:bg-slate-50 rounded-lg'
               >
                 <span>{t('serviceAgreement.form.addons.steel.title') || 'STÅLTAG:'}</span>
-                {expandedAddons.steel ? <ChevronUp className='w-5 h-5' /> : <ChevronDown className='w-5 h-5' />}
+                {expandedAddons.steel ? (
+                  <ChevronUp className='w-5 h-5' />
+                ) : (
+                  <ChevronDown className='w-5 h-5' />
+                )}
               </button>
               {expandedAddons.steel && (
                 <div className='space-y-2 pl-4'>
                   {[
-                    { key: 'mossRemoval', label: t('serviceAgreement.form.addons.mossRemoval') || 'Rensning af lav og mos' },
-                    { key: 'chemicalTreatment', label: t('serviceAgreement.form.addons.chemicalTreatment') || 'Kemisk tagbehandling' },
+                    {
+                      key: 'mossRemoval',
+                      label:
+                        t('serviceAgreement.form.addons.mossRemoval') || 'Rensning af lav og mos',
+                    },
+                    {
+                      key: 'chemicalTreatment',
+                      label:
+                        t('serviceAgreement.form.addons.chemicalTreatment') ||
+                        'Kemisk tagbehandling',
+                    },
                   ].map(addon => (
                     <label key={addon.key} className='flex items-center cursor-pointer'>
                       <input
@@ -725,20 +882,48 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
             <div className='mb-4'>
               <button
                 type='button'
-                onClick={() => setExpandedAddons({ ...expandedAddons, sedum: !expandedAddons.sedum })}
+                onClick={() =>
+                  setExpandedAddons({ ...expandedAddons, sedum: !expandedAddons.sedum })
+                }
                 className='w-full flex items-center justify-between text-md font-medium text-slate-800 mb-2 p-2 hover:bg-slate-50 rounded-lg'
               >
-                <span>{t('serviceAgreement.form.addons.sedum.title') || 'SEDUMTAG (GRØNT TAG):'}</span>
-                {expandedAddons.sedum ? <ChevronUp className='w-5 h-5' /> : <ChevronDown className='w-5 h-5' />}
+                <span>
+                  {t('serviceAgreement.form.addons.sedum.title') || 'SEDUMTAG (GRØNT TAG):'}
+                </span>
+                {expandedAddons.sedum ? (
+                  <ChevronUp className='w-5 h-5' />
+                ) : (
+                  <ChevronDown className='w-5 h-5' />
+                )}
               </button>
               {expandedAddons.sedum && (
                 <div className='space-y-2 pl-4'>
                   {[
-                    { key: 'fertilization', label: t('serviceAgreement.form.addons.fertilization') || 'Gødning (forår/sommer)' },
-                    { key: 'weedControl', label: t('serviceAgreement.form.addons.weedControl') || 'Ukrudtskontrol' },
-                    { key: 'sedumRepair', label: t('serviceAgreement.form.addons.sedumRepair') || 'Reparation af sedumflader' },
-                    { key: 'substrateRefill', label: t('serviceAgreement.form.addons.substrateRefill') || 'Efterfyldning af vækstmedie' },
-                    { key: 'watering', label: t('serviceAgreement.form.addons.watering') || 'Vanding efter behov' },
+                    {
+                      key: 'fertilization',
+                      label:
+                        t('serviceAgreement.form.addons.fertilization') || 'Gødning (forår/sommer)',
+                    },
+                    {
+                      key: 'weedControl',
+                      label: t('serviceAgreement.form.addons.weedControl') || 'Ukrudtskontrol',
+                    },
+                    {
+                      key: 'sedumRepair',
+                      label:
+                        t('serviceAgreement.form.addons.sedumRepair') ||
+                        'Reparation af sedumflader',
+                    },
+                    {
+                      key: 'substrateRefill',
+                      label:
+                        t('serviceAgreement.form.addons.substrateRefill') ||
+                        'Efterfyldning af vækstmedie',
+                    },
+                    {
+                      key: 'watering',
+                      label: t('serviceAgreement.form.addons.watering') || 'Vanding efter behov',
+                    },
                   ].map(addon => (
                     <label key={addon.key} className='flex items-center cursor-pointer'>
                       <input
@@ -765,15 +950,34 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
                 <Info className='w-5 h-5 text-slate-600 mr-3 mt-0.5' />
                 <div className='text-sm text-slate-700'>
                   <p className='font-medium mb-2'>
-                    {t('serviceAgreement.form.serviceReport.description') || 'Efter hvert besøg udarbejdes en servicerapport, som indeholder:'}
+                    {t('serviceAgreement.form.serviceReport.description') ||
+                      'Efter hvert besøg udarbejdes en servicerapport, som indeholder:'}
                   </p>
                   <ul className='list-disc list-inside space-y-1 ml-2'>
-                    <li>{t('serviceAgreement.form.serviceReport.photoDocumentation') || 'Fotodokumentation'}</li>
-                    <li>{t('serviceAgreement.form.serviceReport.damageDescription') || 'Beskrivelse af eventuelle skader'}</li>
-                    <li>{t('serviceAgreement.form.serviceReport.recommendations') || 'Anbefalinger til udbedring og vedligehold'}</li>
-                    <li>{t('serviceAgreement.form.serviceReport.annualReport') || 'Årlig tilstandsrapport'}</li>
-                    <li>{t('serviceAgreement.form.serviceReport.digitalPlatform') || 'Adgang til digital platform'}</li>
-                    <li>{t('serviceAgreement.form.serviceReport.esgReport') || 'ESG-rapport (miljø, social, governance)'}</li>
+                    <li>
+                      {t('serviceAgreement.form.serviceReport.photoDocumentation') ||
+                        'Fotodokumentation'}
+                    </li>
+                    <li>
+                      {t('serviceAgreement.form.serviceReport.damageDescription') ||
+                        'Beskrivelse af eventuelle skader'}
+                    </li>
+                    <li>
+                      {t('serviceAgreement.form.serviceReport.recommendations') ||
+                        'Anbefalinger til udbedring og vedligehold'}
+                    </li>
+                    <li>
+                      {t('serviceAgreement.form.serviceReport.annualReport') ||
+                        'Årlig tilstandsrapport'}
+                    </li>
+                    <li>
+                      {t('serviceAgreement.form.serviceReport.digitalPlatform') ||
+                        'Adgang til digital platform'}
+                    </li>
+                    <li>
+                      {t('serviceAgreement.form.serviceReport.esgReport') ||
+                        'ESG-rapport (miljø, social, governance)'}
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -786,7 +990,8 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
               {t('serviceAgreement.form.agreementPeriod.title') || '5. AFTALEPERIODE'}
             </h3>
             <p className='text-sm text-slate-600 mb-4'>
-              {t('serviceAgreement.form.agreementPeriod.note') || 'Aftalen løber i 12 måneder og forlænges automatisk, medmindre den opsiges.'}
+              {t('serviceAgreement.form.agreementPeriod.note') ||
+                'Aftalen løber i 12 måneder og forlænges automatisk, medmindre den opsiges.'}
             </p>
           </div>
 
@@ -795,7 +1000,7 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
             <h3 className='text-lg font-semibold text-slate-900 mb-4'>
               {t('serviceAgreement.form.pricing.title') || '6. PRIS & FAKTURERING'}
             </h3>
-            
+
             <div className='space-y-4'>
               <div className='grid grid-cols-2 gap-4'>
                 <div>
@@ -803,8 +1008,11 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
                     <label className='flex items-center mb-2 cursor-pointer'>
                       <input
                         type='checkbox'
-                        checked={formData.pricingStructure.perRoof !== '' && formData.pricingStructure.perRoof !== undefined}
-                        onChange={(e) => {
+                        checked={
+                          formData.pricingStructure.perRoof !== '' &&
+                          formData.pricingStructure.perRoof !== undefined
+                        }
+                        onChange={e => {
                           setFormData({
                             ...formData,
                             pricingStructure: {
@@ -821,15 +1029,19 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
                     </label>
                     <input
                       type='number'
-                      value={formData.pricingStructure.perRoof === '0' ? '' : formData.pricingStructure.perRoof}
-                      onChange={(e) => {
+                      value={
+                        formData.pricingStructure.perRoof === '0'
+                          ? ''
+                          : formData.pricingStructure.perRoof
+                      }
+                      onChange={e => {
                         const value = e.target.value;
                         setFormData({
                           ...formData,
                           pricingStructure: { ...formData.pricingStructure, perRoof: value },
                         });
                       }}
-                      onBlur={(e) => {
+                      onBlur={e => {
                         // If empty on blur and checkbox is checked, set to empty string (not '0')
                         if (!e.target.value && formData.pricingStructure.perRoof !== '') {
                           setFormData({
@@ -842,7 +1054,10 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
                       className='w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-700 focus:border-transparent disabled:bg-slate-100 disabled:cursor-not-allowed'
                       min={0}
                       step={0.01}
-                      disabled={formData.pricingStructure.perRoof === '' || formData.pricingStructure.perRoof === undefined}
+                      disabled={
+                        formData.pricingStructure.perRoof === '' ||
+                        formData.pricingStructure.perRoof === undefined
+                      }
                     />
                   </div>
                 </div>
@@ -851,8 +1066,11 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
                   <label className='flex items-center mb-2 cursor-pointer'>
                     <input
                       type='checkbox'
-                      checked={formData.pricingStructure.perSquareMeter !== '' && formData.pricingStructure.perSquareMeter !== undefined}
-                      onChange={(e) => {
+                      checked={
+                        formData.pricingStructure.perSquareMeter !== '' &&
+                        formData.pricingStructure.perSquareMeter !== undefined
+                      }
+                      onChange={e => {
                         setFormData({
                           ...formData,
                           pricingStructure: {
@@ -869,15 +1087,19 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
                   </label>
                   <input
                     type='number'
-                    value={formData.pricingStructure.perSquareMeter === '0' ? '' : formData.pricingStructure.perSquareMeter}
-                    onChange={(e) => {
+                    value={
+                      formData.pricingStructure.perSquareMeter === '0'
+                        ? ''
+                        : formData.pricingStructure.perSquareMeter
+                    }
+                    onChange={e => {
                       const value = e.target.value;
                       setFormData({
                         ...formData,
                         pricingStructure: { ...formData.pricingStructure, perSquareMeter: value },
                       });
                     }}
-                    onBlur={(e) => {
+                    onBlur={e => {
                       // If empty on blur and checkbox is checked, set to empty string (not '0')
                       if (!e.target.value && formData.pricingStructure.perSquareMeter !== '') {
                         setFormData({
@@ -890,7 +1112,10 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
                     className='w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-700 focus:border-transparent disabled:bg-slate-100 disabled:cursor-not-allowed'
                     min={0}
                     step={0.01}
-                    disabled={formData.pricingStructure.perSquareMeter === '' || formData.pricingStructure.perSquareMeter === undefined}
+                    disabled={
+                      formData.pricingStructure.perSquareMeter === '' ||
+                      formData.pricingStructure.perSquareMeter === undefined
+                    }
                   />
                 </div>
               </div>
@@ -906,7 +1131,12 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
                       name='billingFrequency'
                       value='annual'
                       checked={formData.billingFrequency === 'annual'}
-                      onChange={(e) => setFormData({ ...formData, billingFrequency: e.target.value as 'annual' | 'semi-annual' })}
+                      onChange={e =>
+                        setFormData({
+                          ...formData,
+                          billingFrequency: e.target.value as 'annual' | 'semi-annual',
+                        })
+                      }
                       className='w-5 h-5 text-slate-700 border-slate-300 focus:ring-slate-700 mr-2'
                     />
                     <span className='text-sm text-slate-700'>
@@ -919,7 +1149,12 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
                       name='billingFrequency'
                       value='semi-annual'
                       checked={formData.billingFrequency === 'semi-annual'}
-                      onChange={(e) => setFormData({ ...formData, billingFrequency: e.target.value as 'annual' | 'semi-annual' })}
+                      onChange={e =>
+                        setFormData({
+                          ...formData,
+                          billingFrequency: e.target.value as 'annual' | 'semi-annual',
+                        })
+                      }
                       className='w-5 h-5 text-slate-700 border-slate-300 focus:ring-slate-700 mr-2'
                     />
                     <span className='text-sm text-slate-700'>
@@ -944,10 +1179,12 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
                 <input
                   type='text'
                   value={formData.signatures.supplier}
-                  onChange={(e) => setFormData({
-                    ...formData,
-                    signatures: { ...formData.signatures, supplier: e.target.value },
-                  })}
+                  onChange={e =>
+                    setFormData({
+                      ...formData,
+                      signatures: { ...formData.signatures, supplier: e.target.value },
+                    })
+                  }
                   placeholder={t('serviceAgreement.form.signatures.supplierPlaceholder') || 'Navn'}
                   className='w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-700 focus:border-transparent mb-2'
                 />
@@ -955,7 +1192,7 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
                   ref={supplierImageInputRef}
                   type='file'
                   accept='image/*'
-                  onChange={(e) => {
+                  onChange={e => {
                     const file = e.target.files?.[0];
                     if (file) {
                       handleSignatureImageUpload('supplier', file);
@@ -991,10 +1228,12 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
                       />
                       <button
                         type='button'
-                        onClick={() => setFormData({
-                          ...formData,
-                          signatures: { ...formData.signatures, supplierImageUrl: '' },
-                        })}
+                        onClick={() =>
+                          setFormData({
+                            ...formData,
+                            signatures: { ...formData.signatures, supplierImageUrl: '' },
+                          })
+                        }
                         className='absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600'
                       >
                         <XIcon className='w-3 h-3' />
@@ -1010,10 +1249,12 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
                 <input
                   type='text'
                   value={formData.signatures.customer}
-                  onChange={(e) => setFormData({
-                    ...formData,
-                    signatures: { ...formData.signatures, customer: e.target.value },
-                  })}
+                  onChange={e =>
+                    setFormData({
+                      ...formData,
+                      signatures: { ...formData.signatures, customer: e.target.value },
+                    })
+                  }
                   placeholder={t('serviceAgreement.form.signatures.customerPlaceholder') || 'Navn'}
                   className='w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-700 focus:border-transparent mb-2'
                 />
@@ -1021,7 +1262,7 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
                   ref={customerImageInputRef}
                   type='file'
                   accept='image/*'
-                  onChange={(e) => {
+                  onChange={e => {
                     const file = e.target.files?.[0];
                     if (file) {
                       handleSignatureImageUpload('customer', file);
@@ -1057,10 +1298,12 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
                       />
                       <button
                         type='button'
-                        onClick={() => setFormData({
-                          ...formData,
-                          signatures: { ...formData.signatures, customerImageUrl: '' },
-                        })}
+                        onClick={() =>
+                          setFormData({
+                            ...formData,
+                            signatures: { ...formData.signatures, customerImageUrl: '' },
+                          })
+                        }
                         className='absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600'
                       >
                         <XIcon className='w-3 h-3' />
@@ -1078,7 +1321,7 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
             </label>
             <textarea
               value={formData.notes}
-              onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+              onChange={e => setFormData({ ...formData, notes: e.target.value })}
               placeholder={t('serviceAgreement.form.notesPlaceholder')}
               rows={3}
               className='w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-700 focus:border-transparent'
@@ -1108,4 +1351,3 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
 };
 
 export default ServiceAgreementForm;
-

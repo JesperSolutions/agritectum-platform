@@ -1,6 +1,6 @@
 /**
  * Motion Tokens - Material Design System
- * 
+ *
  * Standardized transition timing, duration, and easing functions.
  * Material Design uses 250ms as the standard transition duration.
  */
@@ -12,7 +12,7 @@ export const duration = {
   // Fast (150ms)
   fast: 'duration-150',
   // Material Design standard (250ms)
-  material: 'duration-material',  // 250ms
+  material: 'duration-material', // 250ms
   // Default (200ms)
   default: 'duration-200',
   // Slow (300ms)

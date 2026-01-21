@@ -83,7 +83,7 @@ const OfferStatusBadge: React.FC<OfferStatusBadgeProps> = ({
       title={config.label}
     >
       {showIcon && (
-        <span className={config.iconColor} aria-hidden="true">
+        <span className={config.iconColor} aria-hidden='true'>
           {config.icon}
         </span>
       )}
@@ -93,4 +93,3 @@ const OfferStatusBadge: React.FC<OfferStatusBadgeProps> = ({
 };
 
 export default OfferStatusBadge;
-

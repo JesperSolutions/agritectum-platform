@@ -46,10 +46,7 @@ export const getAppointments = async (user: User): Promise<Appointment[]> => {
         // If composite index error, try without orderBy
         if (queryError.code === 'failed-precondition' || queryError.message?.includes('index')) {
           logger.warn('⚠️ Composite index missing, querying without orderBy:', queryError);
-          q = query(
-            appointmentsRef,
-            where('assignedInspectorId', '==', user.uid)
-          );
+          q = query(appointmentsRef, where('assignedInspectorId', '==', user.uid));
         } else {
           throw queryError;
         }
@@ -64,7 +61,7 @@ export const getAppointments = async (user: User): Promise<Appointment[]> => {
       id: doc.id,
       ...doc.data(),
     })) as Appointment[];
-    
+
     // Sort manually if we couldn't use orderBy
     if (appointments.length > 0 && !q) {
       appointments.sort((a, b) => {
@@ -73,7 +70,7 @@ export const getAppointments = async (user: User): Promise<Appointment[]> => {
         return dateB.localeCompare(dateA); // Descending
       });
     }
-    
+
     logger.log(`✅ Loaded ${appointments.length} appointments for user ${user.uid}`);
     return appointments;
   } catch (error: any) {
@@ -85,7 +82,9 @@ export const getAppointments = async (user: User): Promise<Appointment[]> => {
     });
     // Provide more helpful error message
     if (error.code === 'failed-precondition') {
-      throw new Error('Firestore index required. Please create a composite index for (assignedInspectorId, scheduledDate) in Firestore.');
+      throw new Error(
+        'Firestore index required. Please create a composite index for (assignedInspectorId, scheduledDate) in Firestore.'
+      );
     }
     throw new Error(error.message || 'Failed to fetch appointments');
   }
@@ -175,7 +174,7 @@ export const getUpcomingAppointments = async (
   try {
     const appointmentsRef = collection(db, 'appointments');
     const today = new Date().toISOString().split('T')[0];
-    
+
     const q = query(
       appointmentsRef,
       where('assignedInspectorId', '==', inspectorId),
@@ -245,7 +244,7 @@ export const createAppointment = async (
       try {
         const { createScheduledVisit } = await import('./scheduledVisitService');
         const publicToken = generatePublicToken();
-        
+
         // Map appointment type to visit type
         const visitTypeMap: Record<string, 'inspection' | 'maintenance' | 'repair' | 'other'> = {
           inspection: 'inspection',
@@ -253,7 +252,7 @@ export const createAppointment = async (
           estimate: 'other',
           other: 'other',
         };
-        
+
         const scheduledVisitData = {
           branchId: appointmentData.branchId,
           customerId: appointmentData.customerId,
@@ -279,7 +278,7 @@ export const createAppointment = async (
         };
 
         const scheduledVisitId = await createScheduledVisit(scheduledVisitData);
-        
+
         // Link scheduledVisit back to appointment
         await updateDoc(docRef, {
           scheduledVisitId: scheduledVisitId,
@@ -382,10 +381,7 @@ export const completeAppointment = async (
 /**
  * Cancel an appointment
  */
-export const cancelAppointment = async (
-  appointmentId: string,
-  reason?: string
-): Promise<void> => {
+export const cancelAppointment = async (appointmentId: string, reason?: string): Promise<void> => {
   try {
     await updateAppointment(appointmentId, {
       status: 'cancelled',
@@ -466,4 +462,3 @@ export const checkConflicts = async (
     throw new Error('Failed to check conflicts');
   }
 };
-

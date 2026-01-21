@@ -30,13 +30,15 @@ interface CreateUserWithAuthResponse {
 }
 
 // Call the Cloud Function to create a user with Firebase Auth
-export const createUserWithAuth = async (userData: CreateUserWithAuthRequest): Promise<CreateUserWithAuthResponse> => {
+export const createUserWithAuth = async (
+  userData: CreateUserWithAuthRequest
+): Promise<CreateUserWithAuthResponse> => {
   try {
     logger.log('🔍 Creating user with Firebase Auth:', userData.email);
 
     // Get the current Firebase project ID
     const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID || 'agritectum-platform';
-    
+
     // Construct the Cloud Function URL
     const functionUrl = `https://createuserwithauth-yitis2ljlq-uc.a.run.app`;
 
@@ -56,24 +58,25 @@ export const createUserWithAuth = async (userData: CreateUserWithAuthRequest): P
 
     logger.log('✅ User created with Firebase Auth:', result);
     return result;
-
   } catch (error) {
     console.error('❌ Error creating user with Firebase Auth:', error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
+      error: error instanceof Error ? error.message : 'Unknown error',
     };
   }
 };
 
 // Create customer user account
-export const createCustomerUser = async (customerData: CreateCustomerUserRequest): Promise<{ success: boolean; userId?: string; error?: string }> => {
+export const createCustomerUser = async (
+  customerData: CreateCustomerUserRequest
+): Promise<{ success: boolean; userId?: string; error?: string }> => {
   try {
     logger.log('🔍 Creating customer user:', customerData.email);
 
     // Get the current Firebase project ID
     const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID || 'agritectum-platform';
-    
+
     // Construct the Cloud Function URL
     // Note: This will need to be updated with the actual Cloud Function URL
     const functionUrl = `https://us-central1-${projectId}.cloudfunctions.net/createCustomerUser`;
@@ -94,12 +97,11 @@ export const createCustomerUser = async (customerData: CreateCustomerUserRequest
 
     logger.log('✅ Customer user created:', result);
     return result;
-
   } catch (error) {
     console.error('❌ Error creating customer user:', error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
+      error: error instanceof Error ? error.message : 'Unknown error',
     };
   }
 };
@@ -124,7 +126,7 @@ export const updateCustomerProfile = async (
     console.error('❌ Error updating customer profile:', error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
+      error: error instanceof Error ? error.message : 'Unknown error',
     };
   }
 };
@@ -144,7 +146,7 @@ export const sendUserInvitation = async (
 
     // Get the current Firebase project ID
     const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID || 'agritectum-platform';
-    
+
     // Construct the Cloud Function URL for email invitation
     const functionUrl = `https://us-central1-${projectId}.cloudfunctions.net/sendUserInvitation`;
 
@@ -168,12 +170,11 @@ export const sendUserInvitation = async (
 
     logger.log('✅ User invitation sent:', result);
     return result;
-
   } catch (error) {
     console.error('❌ Error sending user invitation:', error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
+      error: error instanceof Error ? error.message : 'Unknown error',
     };
   }
 };

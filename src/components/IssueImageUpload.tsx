@@ -1,5 +1,5 @@
-import React, { useState, useRef, useCallback } from 'react';
-import { X, Camera, FileImage, AlertCircle } from 'lucide-react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { X, Camera, FileImage, AlertCircle, Clipboard } from 'lucide-react';
 import { useIntl } from '../hooks/useIntl';
 import {
   uploadImageToStorage,
@@ -32,6 +32,77 @@ const IssueImageUpload: React.FC<IssueImageUploadProps> = ({
   const [uploadProgress, setUploadProgress] = useState<ImageUploadProgress | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [showPasteHint, setShowPasteHint] = useState(false);
+
+  // Handle paste from clipboard
+  useEffect(() => {
+    const handlePaste = async (event: ClipboardEvent) => {
+      // Only handle paste if this component is visible and not uploading
+      if (!containerRef.current || disabled || uploading) return;
+
+      const items = event.clipboardData?.items;
+      if (!items) return;
+
+      const imageFiles: File[] = [];
+
+      // Check for image items in clipboard
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].type.indexOf('image') !== -1) {
+          const blob = items[i].getAsFile();
+          if (blob) {
+            imageFiles.push(blob);
+          }
+        }
+      }
+
+      if (imageFiles.length === 0) return;
+
+      // Prevent default paste behavior
+      event.preventDefault();
+
+      // Check image limit
+      if (images.length + imageFiles.length > maxImages) {
+        setError(`Maximum ${maxImages} images allowed per issue`);
+        return;
+      }
+
+      setUploading(true);
+      setError(null);
+
+      try {
+        const uploadPromises = imageFiles.map(async file => {
+          // Validate file
+          const validationError = validateImageFile(file);
+          if (validationError) {
+            throw new Error(validationError);
+          }
+
+          // Upload image
+          const result = await uploadImageToStorage(file, reportId, issueId, progress => {
+            setUploadProgress(progress);
+          });
+
+          return result.url;
+        });
+
+        const newImageUrls = await Promise.all(uploadPromises);
+        onChange([...images, ...newImageUrls]);
+      } catch (err: any) {
+        console.error('Error uploading pasted images:', err);
+        setError(err.message || 'Failed to upload pasted images');
+      } finally {
+        setUploading(false);
+        setUploadProgress(null);
+      }
+    };
+
+    // Add listener
+    window.addEventListener('paste', handlePaste);
+    return () => {
+      window.removeEventListener('paste', handlePaste);
+    };
+  }, [images, maxImages, reportId, issueId, onChange, disabled, uploading]);
 
   const handleFileSelect = useCallback(
     async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,7 +119,7 @@ const IssueImageUpload: React.FC<IssueImageUploadProps> = ({
       setError(null);
 
       try {
-        const uploadPromises = Array.from(files).map(async (file) => {
+        const uploadPromises = Array.from(files).map(async file => {
           // Validate file
           const validationError = validateImageFile(file);
           if (validationError) {
@@ -56,7 +127,7 @@ const IssueImageUpload: React.FC<IssueImageUploadProps> = ({
           }
 
           // Upload image
-          const result = await uploadImageToStorage(file, reportId, issueId, (progress) => {
+          const result = await uploadImageToStorage(file, reportId, issueId, progress => {
             setUploadProgress(progress);
           });
 
@@ -102,7 +173,12 @@ const IssueImageUpload: React.FC<IssueImageUploadProps> = ({
   const isAtLimit = images.length >= maxImages;
 
   return (
-    <div className={`space-y-3 ${className}`}>
+    <div
+      ref={containerRef}
+      className={`space-y-3 ${className}`}
+      onMouseEnter={() => !uploading && setShowPasteHint(true)}
+      onMouseLeave={() => setShowPasteHint(false)}
+    >
       {/* Upload Controls */}
       {!isAtLimit && (
         <div className='flex gap-2'>
@@ -115,7 +191,7 @@ const IssueImageUpload: React.FC<IssueImageUploadProps> = ({
             <FileImage className='w-4 h-4' />
             {t('form.buttons.selectFromGallery')}
           </button>
-          
+
           <button
             type='button'
             onClick={handleCameraClick}
@@ -138,7 +214,7 @@ const IssueImageUpload: React.FC<IssueImageUploadProps> = ({
         className='hidden'
         disabled={disabled || uploading}
       />
-      
+
       <input
         ref={cameraInputRef}
         type='file'

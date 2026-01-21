@@ -39,10 +39,10 @@ function App() {
             .register('/sw.js', { updateViaCache: 'none' })
             .then(registration => {
               logger.log('SW registered: ', registration);
-              
+
               // Force update check
               registration.update();
-              
+
               // Listen for updates
               registration.addEventListener('updatefound', () => {
                 const newWorker = registration.installing;
@@ -79,8 +79,8 @@ function App() {
 
   return (
     <ErrorBoundary>
-      <IntlProvider>
-        <AuthProvider>
+      <AuthProvider>
+        <IntlProvider>
           <ToastProvider>
             <NotificationProvider>
               <ReportProvider>
@@ -94,8 +94,8 @@ function App() {
               </ReportProvider>
             </NotificationProvider>
           </ToastProvider>
-        </AuthProvider>
-      </IntlProvider>
+        </IntlProvider>
+      </AuthProvider>
     </ErrorBoundary>
   );
 }

@@ -3,6 +3,7 @@
 ## 📊 Permission Hierarchy
 
 ### Permission Levels (Numeric)
+
 ```
 2 = Superadmin (Full system access)
 1 = Branch Admin (Branch-level management)
@@ -14,11 +15,13 @@
 ## 👥 User Roles & Capabilities
 
 ### 🔴 **Superadmin** (permissionLevel: 2)
+
 **Role Name**: `superadmin`  
 **Branch Assignment**: `null` or `undefined` (no specific branch)  
 **BranchIds Field**: `[]` (empty array - can access all branches)
 
 **Capabilities**:
+
 - ✅ View ALL branches
 - ✅ Create/Edit/Delete branches
 - ✅ View ALL reports across all branches
@@ -28,6 +31,7 @@
 - ✅ Full system administration
 
 **Authentication Custom Claims**:
+
 ```json
 {
   "role": "superadmin",
@@ -37,6 +41,7 @@
 ```
 
 **Firestore Document** (`/users/{uid}`):
+
 ```json
 {
   "role": "superadmin",
@@ -50,11 +55,13 @@
 ---
 
 ### 🟡 **Branch Admin** (permissionLevel: 1)
+
 **Role Name**: `branchAdmin`  
 **Branch Assignment**: **MUST** have a specific branchId  
 **Example**: `stockholm`, `goteborg`, `malmo`
 
 **Capabilities**:
+
 - ✅ View ONLY their branch
 - ✅ Edit their branch details
 - ✅ View reports in their branch
@@ -65,6 +72,7 @@
 - ❌ Cannot create/delete branches
 
 **Authentication Custom Claims**:
+
 ```json
 {
   "role": "branchAdmin",
@@ -74,6 +82,7 @@
 ```
 
 **Firestore Document** (`/users/{uid}`):
+
 ```json
 {
   "role": "branchAdmin",
@@ -87,11 +96,13 @@
 ---
 
 ### 🟢 **Inspector** (permissionLevel: 0)
+
 **Role Name**: `inspector`  
 **Branch Assignment**: **MUST** have a specific branchId  
 **Example**: `stockholm`, `goteborg`, `malmo`
 
 **Capabilities**:
+
 - ✅ View reports in their branch
 - ✅ Create NEW reports
 - ✅ Edit their OWN reports (not others')
@@ -104,6 +115,7 @@
 - ❌ Cannot delete reports
 
 **Authentication Custom Claims**:
+
 ```json
 {
   "role": "inspector",
@@ -113,6 +125,7 @@
 ```
 
 **Firestore Document** (`/users/{uid}`):
+
 ```json
 {
   "role": "inspector",
@@ -151,18 +164,20 @@
 ## 🔒 Security Rules Logic
 
 ### Firestore Rules Check:
+
 ```javascript
 // Branch Admin can read their branch
-isBranchAdmin() && (resource.data.branchId == getUserBranchId())
+isBranchAdmin() && resource.data.branchId == getUserBranchId();
 
 // Inspector can read their branch
-isInspector() && (resource.data.branchId == getUserBranchId())
+isInspector() && resource.data.branchId == getUserBranchId();
 
 // Superadmin can read everything
-isSuperadmin()
+isSuperadmin();
 ```
 
 ### Authentication Custom Claims:
+
 - Set during user creation
 - Stored in Firebase Authentication
 - Used for security rules evaluation
@@ -173,31 +188,35 @@ isSuperadmin()
 ## ⚠️ Common Issues & Fixes
 
 ### Issue 1: User can't see their branch data
+
 **Cause**: `branchId` mismatch between Authentication custom claims and Firestore document
 
 **Fix**: Ensure BOTH systems have the same `branchId`:
+
 ```javascript
 // Authentication custom claims
 await auth.setCustomUserClaims(uid, {
   role: 'inspector',
   permissionLevel: 0,
-  branchId: 'stockholm'
+  branchId: 'stockholm',
 });
 
 // Firestore document
 await db.collection('users').doc(uid).set({
   role: 'inspector',
   permissionLevel: 0,
-  branchId: 'stockholm'
+  branchId: 'stockholm',
 });
 ```
 
 ### Issue 2: Branch Admin can't manage users
+
 **Cause**: `permissionLevel` is not set correctly or `branchId` is missing
 
 **Fix**: Verify both `permissionLevel: 1` AND valid `branchId` exist
 
 ### Issue 3: Inspector sees wrong branch data
+
 **Cause**: Inspector assigned to wrong branch or has multiple `branchId` values
 
 **Fix**: Inspector should have EXACTLY ONE `branchId` matching their physical location
@@ -235,6 +254,7 @@ For EVERY user, verify:
 ## 🔧 Testing Procedure
 
 ### Test as Superadmin:
+
 1. Login as `admin@taklaget.onmicrosoft.com`
 2. Navigate to "Företag" (Branches)
 3. **Expected**: See all 3 branches with their employees listed
@@ -242,6 +262,7 @@ For EVERY user, verify:
 5. **Expected**: See reports from all branches
 
 ### Test as Branch Admin:
+
 1. Login as `sthlm.admin@taklaget.se`
 2. Navigate to "Översikt" (Dashboard)
 3. **Expected**: See only Stockholm branch data
@@ -251,6 +272,7 @@ For EVERY user, verify:
 7. **Expected**: Should not see Göteborg or Malmö data
 
 ### Test as Inspector:
+
 1. Login as `erik.andersson@taklaget.se`
 2. Navigate to "Översikt" (Dashboard)
 3. **Expected**: See Stockholm branch reports
@@ -283,4 +305,3 @@ Any other accounts are test/development accounts and should be removed.
 ---
 
 This documentation should be used as the source of truth when auditing or fixing user permissions.
-

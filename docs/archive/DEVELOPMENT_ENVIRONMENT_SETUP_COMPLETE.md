@@ -32,6 +32,7 @@ firebase init emulators
 ```
 
 When prompted:
+
 - Select: **Auth, Firestore, Storage, Functions**
 - Use **default ports** (just press Enter)
 - Enable **Emulator UI** (press Enter)
@@ -46,6 +47,7 @@ npm run emulators
 ```
 
 You should see:
+
 ```
 ✔  All emulators ready! It is now safe to connect your app.
 View Emulator UI at http://127.0.0.1:4000
@@ -87,12 +89,14 @@ That's it! You're developing locally with zero Firebase costs! 🎉
 ### 1. **Automatic Environment Detection**
 
 The app automatically detects emulators:
+
 - ✅ **Dev mode** (`npm run dev`) → Connects to emulators
 - ✅ **Production** → Connects to real Firebase
 
 ### 2. **Visual Indicator**
 
 When in dev mode, you'll see:
+
 - Yellow badge: "DEVELOPMENT MODE - Using Local Emulators"
 - Console logs: "🔥 Connecting to Firebase Emulators..."
 - Console logs: "✅ Connected to Firebase Emulators"
@@ -107,12 +111,14 @@ npm run emulators:export
 ```
 
 This will:
+
 - Import previous data on start
 - Export data when you stop (Ctrl+C)
 
 ### 4. **Emulator UI**
 
 Beautiful web interface at http://localhost:4000:
+
 - View/create test users
 - Browse Firestore data
 - See uploaded files
@@ -122,25 +128,27 @@ Beautiful web interface at http://localhost:4000:
 
 ## 📊 New Commands Available
 
-| Command | Description |
-|---------|-------------|
-| `npm run emulators` | Start emulators (fresh data each time) |
-| `npm run emulators:export` | Start emulators with data persistence |
-| `npm run dev` | Start development server |
-| `npm run deploy` | Build and deploy to production |
-| `npm run deploy:rules` | Deploy only security rules |
+| Command                    | Description                            |
+| -------------------------- | -------------------------------------- |
+| `npm run emulators`        | Start emulators (fresh data each time) |
+| `npm run emulators:export` | Start emulators with data persistence  |
+| `npm run dev`              | Start development server               |
+| `npm run deploy`           | Build and deploy to production         |
+| `npm run deploy:rules`     | Deploy only security rules             |
 
 ---
 
 ## 🌍 Working on Multiple Devices
 
 ### On This Device
+
 ```bash
 npm run emulators  # Terminal 1
 npm run dev        # Terminal 2
 ```
 
 ### On Another Device
+
 ```bash
 git pull origin main
 npm install
@@ -154,11 +162,11 @@ Each device has its own local emulator data!
 
 ## 💰 Cost Breakdown
 
-| Environment | Cost | Description |
-|-------------|------|-------------|
-| **Production** | ~$10-50/month | Real Firebase (current) |
-| **Development** | **$0.00** | Local emulators (FREE!) |
-| **Total** | ~$10-50/month | No increase! |
+| Environment     | Cost          | Description             |
+| --------------- | ------------- | ----------------------- |
+| **Production**  | ~$10-50/month | Real Firebase (current) |
+| **Development** | **$0.00**     | Local emulators (FREE!) |
+| **Total**       | ~$10-50/month | No increase!            |
 
 ---
 
@@ -226,15 +234,17 @@ Get-Process -Id (Get-NetTCPConnection -LocalPort 8080).OwningProcess | Stop-Proc
 
 ## 🎉 You're All Set!
 
-Your development environment is **fully configured** and ready to use. 
+Your development environment is **fully configured** and ready to use.
 
 ### Quick Start:
+
 ```bash
 npm run emulators  # Terminal 1
 npm run dev        # Terminal 2
 ```
 
 ### First Time Only:
+
 Run `firebase init emulators` before starting (see `docs/EMULATOR_SETUP_GUIDE.md`)
 
 ---
@@ -242,4 +252,3 @@ Run `firebase init emulators` before starting (see `docs/EMULATOR_SETUP_GUIDE.md
 **Happy Coding! 🚀**
 
 You now have a professional, cost-free development environment that's completely isolated from production!
-

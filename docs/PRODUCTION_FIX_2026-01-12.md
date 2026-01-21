@@ -3,6 +3,7 @@
 ## Issues Identified
 
 From production console errors:
+
 ```
 1. SW registered: ServiceWorkerRegistration
 2. Error while trying to use icon from Manifest: icon-192x192.png
@@ -14,11 +15,13 @@ From production console errors:
 ## Root Cause Analysis
 
 ### Issue 1: Missing or Insufficient Permissions
+
 **Root Cause:** User `uf86Gwywh4UcGD3R9H1cALIaJi32` (branch.manager@agritectum.se) did not have custom claims set in Firebase Auth.
 
 **Impact:** Without custom claims (`permissionLevel`, `branchId`), Firestore security rules rejected all queries to `scheduledVisits` collection.
 
 **Firestore Rules Check:**
+
 ```javascript
 // Security rules require these claims:
 function getPermissionLevel() {
@@ -38,11 +41,13 @@ allow read: if isAuthenticated() && (
 ```
 
 ### Issue 2: PWA Icon Warnings
+
 **Root Cause:** Icons exist but browser may have cached invalid versions or had CORS issues.
 
 **Verification:** Icons are present at `/public/icon-192x192.png` (4.75 KB) and `/public/icon-512x512.png`.
 
 ### Issue 3: Missing Firestore Index Warning
+
 **Status:** False alarm - indexes are properly defined in `firestore.indexes.json` and were already deployed.
 
 The warning appears because the service tries to query with composite indexes and has fallback logic for client-side filtering.
@@ -56,6 +61,7 @@ The warning appears because the service tries to query with composite indexes an
 **Purpose:** Sync Firebase Auth custom claims with Firestore user data.
 
 **What it does:**
+
 - Reads all users from Firestore `/users` collection
 - For each user, sets custom claims in Firebase Auth:
   - `permissionLevel` (0 = inspector, 1 = branch admin, 2 = superadmin)
@@ -65,11 +71,13 @@ The warning appears because the service tries to query with composite indexes an
   - `companyId` (if applicable)
 
 **Execution:**
+
 ```bash
 node scripts/fix-user-claims.cjs
 ```
 
 **Results:**
+
 ```
 ✅ Fixed 5 users:
 - inspector2@agritectum.se (Level 0, Branch: stockholm)
@@ -82,11 +90,13 @@ node scripts/fix-user-claims.cjs
 ### 2. Deployed Firestore Rules and Indexes
 
 **Command:**
+
 ```bash
 firebase deploy --only firestore:rules,firestore:indexes
 ```
 
 **Result:** ✅ Successfully deployed
+
 - Rules file compiled successfully
 - Indexes deployed to Firestore
 - No changes needed (rules were already correct)
@@ -94,12 +104,14 @@ firebase deploy --only firestore:rules,firestore:indexes
 ### 3. Rebuilt and Deployed Application
 
 **Commands:**
+
 ```bash
 npm run build
 firebase deploy --only hosting
 ```
 
 **Result:** ✅ Successfully deployed
+
 - Built 220 files
 - Deployed to https://agritectum-platform.web.app
 - PWA icons included in deployment
@@ -107,14 +119,17 @@ firebase deploy --only hosting
 ## Verification Steps
 
 ### Users Need to Log Out and Log Back In
-⚠️ **CRITICAL:** Custom claims are only loaded when a user logs in. 
+
+⚠️ **CRITICAL:** Custom claims are only loaded when a user logs in.
 
 **For immediate fix:**
+
 1. User must log out from https://agritectum-platform.web.app
 2. Clear browser cache (optional but recommended)
 3. Log back in with same credentials
 
 **Expected behavior after re-login:**
+
 - User will receive fresh auth token with custom claims
 - `scheduledVisits` collection will be accessible
 - Dashboard will load without permission errors
@@ -134,7 +149,7 @@ Branch Manager:
 
 Inspectors:
 - inspector1@agritectum.se / Test123! (Stockholm branch)
-- inspector2@agritectum.se / Test123! (Stockholm branch)  
+- inspector2@agritectum.se / Test123! (Stockholm branch)
 - inspector3@agritectum.se / Test123! (Stockholm branch)
 - Should see: Only their assigned scheduled visits
 
@@ -147,6 +162,7 @@ Superadmin:
 ## Technical Details
 
 ### Custom Claims Structure
+
 ```typescript
 {
   permissionLevel: number;  // 0, 1, or 2
@@ -158,10 +174,11 @@ Superadmin:
 ```
 
 ### Firestore Security Rules Pattern
+
 ```javascript
 // Rules check for claims like this:
-request.auth.token.permissionLevel  // From custom claims
-request.auth.token.branchId         // From custom claims
+request.auth.token.permissionLevel; // From custom claims
+request.auth.token.branchId; // From custom claims
 
 // Without these claims, all queries fail with:
 // "Missing or insufficient permissions"
@@ -172,11 +189,13 @@ request.auth.token.branchId         // From custom claims
 The test data generation script (`reset-and-generate-comprehensive-test-data.cjs`) creates users in Firestore but does **not** set Firebase Auth custom claims.
 
 **Previous workflow:**
+
 1. Script creates Firestore `/users/{userId}` document ✅
 2. Script creates Firebase Auth user ✅
 3. Script sets custom claims ❌ **MISSING**
 
 **Fixed workflow:**
+
 1. Run test data generation script
 2. Run `fix-user-claims.cjs` to sync claims
 3. Users log out and log back in
@@ -184,6 +203,7 @@ The test data generation script (`reset-and-generate-comprehensive-test-data.cjs
 ## Future Improvements
 
 ### 1. Update Test Data Script
+
 Modify `reset-and-generate-comprehensive-test-data.cjs` to set custom claims when creating users:
 
 ```javascript
@@ -192,11 +212,12 @@ await admin.auth().setCustomUserClaims(userId, {
   permissionLevel: userData.permissionLevel,
   branchId: userData.branchId,
   userType: 'internal',
-  email: userData.email
+  email: userData.email,
 });
 ```
 
 ### 2. Add Claims Check to AuthContext
+
 Add warning in UI when user has missing claims:
 
 ```typescript
@@ -212,6 +233,7 @@ useEffect(() => {
 ```
 
 ### 3. Monitor PWA Icon Loading
+
 Add error handling for PWA icon failures in service worker.
 
 ## Deployment Summary
@@ -221,19 +243,23 @@ Add error handling for PWA icon failures in service worker.
 **Status:** ✅ All issues resolved
 
 **Deployments:**
+
 1. ✅ Firestore rules and indexes
 2. ✅ Hosting (with PWA icons)
 
 **Scripts Created:**
+
 1. ✅ `scripts/fix-user-claims.cjs` - User claims synchronization tool
 
 **Actions Required:**
+
 1. ⚠️ **Users must log out and log back in** to receive new tokens with custom claims
 2. Clear browser cache if PWA icon issues persist
 
 ## Testing Checklist
 
 After deployment:
+
 - [ ] Branch manager logs out completely
 - [ ] Branch manager logs back in
 - [ ] Dashboard loads without permission errors
@@ -245,6 +271,7 @@ After deployment:
 ## Support Information
 
 **If issues persist:**
+
 1. Check browser console for specific error messages
 2. Verify user is logged in (check auth token)
 3. Run `fix-user-claims.cjs` again if needed
@@ -252,6 +279,7 @@ After deployment:
 5. Verify custom claims in Firebase Auth Console
 
 **Useful Firebase Console Links:**
+
 - Authentication: https://console.firebase.google.com/project/agritectum-platform/authentication/users
 - Firestore Rules: https://console.firebase.google.com/project/agritectum-platform/firestore/rules
 - Firestore Data: https://console.firebase.google.com/project/agritectum-platform/firestore/data

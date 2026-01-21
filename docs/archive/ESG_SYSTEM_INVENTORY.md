@@ -9,6 +9,7 @@
 After a comprehensive search of the entire codebase (including legacy, unused, and archived files), **no fully implemented ESG system was found in the main codebase**. The codebase contains only **marketing mentions** and **placeholder references** to ESG features that are not currently functional.
 
 **However, three complete ESG-related systems were discovered in separate project folders:**
+
 1. **Bluwave_Form** - Complete ESG assessment application with 13-question scoring system
 2. **Agri_API** - Full CO2 calculation API with social/environmental metrics and SDG alignment
 3. **agritectum-roof-calculator** - ESG dashboard with GRI compliance and financial analysis
@@ -18,6 +19,7 @@ These systems provide comprehensive ESG functionality that can be integrated or 
 ## Findings Overview
 
 ### Status Categories
+
 - **Active:** Currently implemented and functional
 - **Unused:** Code exists but not referenced/imported
 - **Partial:** Incomplete implementation or stub
@@ -33,6 +35,7 @@ These systems provide comprehensive ESG functionality that can be integrated or 
 **Status:** `marketing` - UI text only, no functionality
 
 **Content:**
+
 - Section titled "ESG Reporting" (line 542)
 - Lists four ESG features as marketing points:
   - CO₂ Impact Tracking (line 548)
@@ -53,6 +56,7 @@ These systems provide comprehensive ESG functionality that can be integrated or 
 **Status:** `partial` - Text mention only, no functionality
 
 **Content:**
+
 ```typescript
 <li>{t('serviceAgreement.form.serviceReport.esgReport') || 'ESG-rapport (miljø, social, governance)'}</li>
 ```
@@ -60,6 +64,7 @@ These systems provide comprehensive ESG functionality that can be integrated or 
 **Description:** This is a bullet point in a list of service report types that are mentioned as part of a service agreement. The ESG report is listed alongside other report types (photo documentation, damage description, recommendations, etc.) but there is no actual ESG report generation functionality.
 
 **Translation Keys:** The translation key exists in all locale files:
+
 - `src/locales/en/serviceAgreements.json` (line 236)
 - `src/locales/sv/serviceAgreements.json` (line 236)
 - `src/locales/da/serviceAgreements.json` (line 236)
@@ -70,6 +75,7 @@ These systems provide comprehensive ESG functionality that can be integrated or 
 ### 3. Translation Files
 
 **Files:**
+
 - `src/locales/en/serviceAgreements.json` (line 236)
 - `src/locales/sv/serviceAgreements.json` (line 236)
 - `src/locales/da/serviceAgreements.json` (line 236)
@@ -78,6 +84,7 @@ These systems provide comprehensive ESG functionality that can be integrated or 
 **Status:** `partial` - Translation keys exist but no corresponding functionality
 
 **Content:**
+
 ```json
 "serviceAgreement.form.serviceReport.esgReport": "ESG report (environmental, social, governance)"
 ```
@@ -96,10 +103,12 @@ These systems provide comprehensive ESG functionality that can be integrated or 
 **Description:** Component that calculates roof area in square meters using polygon drawing on a Leaflet map. The calculated area could be used for ESG calculations (energy efficiency, solar potential, material usage) but is currently only used for roof size tracking.
 
 **Key Functions:**
+
 - `calculatePolygonArea()` - Calculates area in square meters from polygon coordinates
 - Stores roof area in `roofSize` field (number in m²)
 
 **Potential ESG Use:** Roof area is fundamental for:
+
 - Calculating potential solar panel coverage
 - Estimating material usage and waste
 - Energy efficiency calculations (roof area × insulation value)
@@ -114,6 +123,7 @@ These systems provide comprehensive ESG functionality that can be integrated or 
 **Status:** `active` - Contains fields that could support ESG
 
 **Interface:**
+
 ```typescript
 export interface Building {
   id: string;
@@ -132,6 +142,7 @@ export interface Building {
 ```
 
 **Description:** Building interface contains basic information that could be used for ESG calculations:
+
 - `roofSize` - Area in square meters (could calculate energy efficiency)
 - `roofType` - Material type (could assess sustainability)
 - `buildingType` - Building classification (could affect calculations)
@@ -148,6 +159,7 @@ export interface Building {
 **Status:** `active` - Contains fields that could support ESG
 
 **Relevant Fields:**
+
 ```typescript
 roofType: RoofType;
 roofAge?: number;
@@ -161,13 +173,15 @@ materialCost?: number; // Material cost in SEK
 
 #### 4.4 Material Cost Tracking
 
-**Files:** 
+**Files:**
+
 - `src/types/index.ts` (Report interface, line 234)
 - `src/types/index.ts` (Offer interface, line 348)
 
 **Status:** `active` - Material costs tracked but not analyzed for ESG
 
 **Description:** Material costs are tracked in reports and offers, which could be used to calculate:
+
 - Material usage per project
 - Recycling potential
 - Carbon footprint of materials
@@ -184,6 +198,7 @@ However, no ESG analysis or material lifecycle tracking exists.
 **Status:** `active` - Tracks roof types but no ESG analysis
 
 **Content:**
+
 - Tracks reports by roof type (line 248-262)
 - Displays roof type distribution and revenue per type
 - No environmental impact or sustainability scoring
@@ -206,6 +221,7 @@ However, no ESG analysis or material lifecycle tracking exists.
 After comprehensive searching, the following ESG-related functionality is **completely absent**:
 
 ### Missing Components
+
 - ❌ No ESG calculation functions
 - ❌ No carbon footprint calculators
 - ❌ No energy efficiency scoring
@@ -224,6 +240,7 @@ After comprehensive searching, the following ESG-related functionality is **comp
 - ❌ No partially implemented ESG modules
 
 ### Missing UI Components
+
 - ❌ No ESG dashboard sections
 - ❌ No environmental metrics displays
 - ❌ No sustainability scorecards
@@ -238,30 +255,36 @@ After comprehensive searching, the following ESG-related functionality is **comp
 ### Available Building Blocks
 
 #### 1. Roof Area Calculation
+
 - **Component:** `RoofSizeMeasurer.tsx`
 - **Functionality:** Calculates roof area in square meters
 - **ESG Potential:** Foundation for energy efficiency and solar potential calculations
 
 #### 2. Material Cost Tracking
+
 - **Location:** Report and Offer interfaces
 - **Functionality:** Tracks material costs per project
 - **ESG Potential:** Could calculate material usage, waste, and recycling potential
 
 #### 3. Roof Type Classification
+
 - **Location:** `RoofType` enum in `types/index.ts`
 - **Values:** `'tile' | 'metal' | 'shingle' | 'slate' | 'flat' | 'other'`
 - **ESG Potential:** Different materials have different environmental impacts and lifespans
 
 #### 4. Building Type Classification
+
 - **Location:** Building interface
 - **Values:** `'residential' | 'commercial' | 'industrial'`
 - **ESG Potential:** Different building types have different regulatory and environmental requirements
 
 #### 5. Location Data (Latitude/Longitude)
+
 - **Location:** Building and Report interfaces
 - **ESG Potential:** Could determine climate zone, solar potential, local regulations
 
 #### 6. Analytics Infrastructure
+
 - **Location:** `AnalyticsDashboard.tsx`
 - **ESG Potential:** Could be extended to track environmental metrics and trends
 
@@ -272,11 +295,13 @@ After comprehensive searching, the following ESG-related functionality is **comp
 ### High-Priority Opportunities
 
 #### 1. Building Profile ESG Section
+
 **File:** `src/components/portal/BuildingDetail.tsx`
 
 **Current State:** Displays building metadata, reports, service agreements, and activity timeline.
 
 **Recommendation:** Add an ESG metrics section that could include:
+
 - Roof area (already tracked)
 - Potential solar panel capacity (calculate from roof area and roof type)
 - Material sustainability score (based on roof type)
@@ -284,6 +309,7 @@ After comprehensive searching, the following ESG-related functionality is **comp
 - Energy efficiency rating (placeholder for future)
 
 **Implementation Path:**
+
 ```typescript
 // Add to Building interface
 export interface Building {
@@ -301,13 +327,16 @@ export interface Building {
 ---
 
 #### 2. ESG Report Generation
-**Files:** 
+
+**Files:**
+
 - `src/services/simplePdfService.ts`
 - `src/components/serviceAgreements/ServiceAgreementForm.tsx`
 
 **Current State:** Service Agreement form mentions ESG report, but no generation exists.
 
 **Recommendation:** Implement ESG report generation that aggregates:
+
 - Building-level metrics (roof area, type, age)
 - Material usage across all reports for a building
 - Carbon footprint calculations
@@ -315,6 +344,7 @@ export interface Building {
 - Sustainability recommendations
 
 **Implementation Path:**
+
 ```typescript
 // New service: src/services/esgService.ts
 export interface ESGReport {
@@ -339,19 +369,23 @@ export interface ESGReport {
 ---
 
 #### 3. Material Lifecycle Tracking
+
 **Files:**
+
 - `src/types/index.ts` (Report interface)
 - `src/services/reportService.ts`
 
 **Current State:** Material costs are tracked but not analyzed.
 
 **Recommendation:** Track material lifecycle data:
+
 - Material type per roof type
 - Recycling potential
 - Waste generation
 - Sustainable material percentage
 
 **Implementation Path:**
+
 ```typescript
 // Add to Report interface
 export interface Report {
@@ -369,15 +403,18 @@ export interface Report {
 ---
 
 #### 4. CO₂ Impact Tracking
+
 **Current State:** Mentioned in marketing but not implemented.
 
 **Recommendation:** Calculate CO₂ impact from:
+
 - Material production (based on material costs and types)
 - Transportation (based on travel costs)
 - Installation process (based on labor costs)
 - Waste disposal (based on roof size and material)
 
 **Implementation Path:**
+
 ```typescript
 // New utility: src/utils/esgCalculations.ts
 export const calculateCarbonFootprint = (
@@ -395,7 +432,7 @@ export const calculateCarbonFootprint = (
     flat: 10.5,
     other: 15.0,
   };
-  
+
   const baseFootprint = roofSize * (carbonFactors[roofType] || 15.0);
   const travelFootprint = travelDistance ? travelDistance * 0.12 : 0; // kg CO₂ per km
   return baseFootprint + travelFootprint;
@@ -407,10 +444,11 @@ export const calculateCarbonFootprint = (
 ## Data Model Extensions Needed
 
 ### Building Interface Extensions
+
 ```typescript
 export interface Building {
   // ... existing fields
-  
+
   // ESG Metrics (new)
   esgMetrics?: {
     sustainabilityScore?: number; // 0-100
@@ -418,7 +456,7 @@ export interface Building {
     energyRating?: string;
     lastCalculated?: string; // ISO date
   };
-  
+
   // Material Tracking (new)
   materialHistory?: Array<{
     date: string;
@@ -430,10 +468,11 @@ export interface Building {
 ```
 
 ### Report Interface Extensions
+
 ```typescript
 export interface Report {
   // ... existing fields
-  
+
   // ESG Data (new)
   environmentalImpact?: {
     carbonFootprint?: number; // kg CO₂
@@ -441,7 +480,7 @@ export interface Report {
     wasteGenerated?: number; // m² or kg
     recyclablePercentage?: number; // %
   };
-  
+
   // Material Details (new)
   materialDetails?: {
     primaryMaterial?: string;
@@ -457,9 +496,11 @@ export interface Report {
 ## Integration Opportunities
 
 ### Building Profile Dashboard Integration
+
 **File:** `src/components/portal/BuildingDetail.tsx`
 
 **Current Sections:**
+
 1. Building metadata
 2. Map view
 3. Reports list
@@ -467,6 +508,7 @@ export interface Report {
 5. Activity timeline
 
 **Recommendation:** Add new "ESG Metrics" section that displays:
+
 - Sustainability scorecard
 - Carbon footprint over time
 - Material lifecycle summary
@@ -476,15 +518,18 @@ export interface Report {
 ---
 
 ### Analytics Dashboard Integration
+
 **File:** `src/components/admin/AnalyticsDashboard.tsx`
 
 **Current Analytics:**
+
 - Revenue metrics
 - Report statistics
 - Roof type distribution
 - Customer insights
 
 **Recommendation:** Add ESG analytics section:
+
 - Total carbon footprint across all buildings
 - Material recycling rate
 - Energy efficiency trends
@@ -496,16 +541,19 @@ export interface Report {
 ## Implementation Complexity Assessment
 
 ### Low Complexity (Quick Wins)
+
 1. **Roof Type Sustainability Scoring** - Simple lookup table based on roof type
 2. **Basic Carbon Footprint** - Simple calculation based on roof size and type
 3. **ESG Display Section** - UI component to show existing data (roof size, type)
 
 ### Medium Complexity
+
 1. **Material Lifecycle Tracking** - Requires data model changes and tracking logic
 2. **Energy Efficiency Calculations** - Requires formulas and potentially external data
 3. **ESG Report Generation** - Requires PDF generation and data aggregation
 
 ### High Complexity
+
 1. **Full ESG System** - Complete tracking, calculations, and reporting
 2. **Integration with External APIs** - Solar potential APIs, certification databases
 3. **Real-time Carbon Tracking** - Live updates based on operations
@@ -515,11 +563,13 @@ export interface Report {
 ## Conclusion
 
 The codebase contains **no implemented ESG functionality**. All ESG references are:
+
 1. **Marketing text** in `MarketingPage.tsx`
 2. **Translation keys** in service agreement forms
 3. **Placeholder mentions** in service agreement descriptions
 
 However, the codebase has **solid infrastructure** that could support ESG features:
+
 - Roof area calculation (RoofSizeMeasurer)
 - Material cost tracking (Reports, Offers)
 - Building and roof type classification
@@ -543,6 +593,7 @@ However, the codebase has **solid infrastructure** that could support ESG featur
 #### Components
 
 **1. Main Assessment Component**
+
 - **File:** `src/components/ESGAssessment.jsx` (318 lines)
 - **Features:**
   - Multi-step assessment flow (landing → contact → questions → results)
@@ -551,6 +602,7 @@ However, the codebase has **solid infrastructure** that could support ESG featur
   - Level-based recommendations (beginner/intermediate/advanced)
 
 **2. Question System**
+
 - **File:** `src/components/AssessmentQuestions.jsx`
 - **Content:** 13 questions across 4 sections:
   - Section 1: Forståelse og bevidsthed (Q1-3, max 4 points)
@@ -559,6 +611,7 @@ However, the codebase has **solid infrastructure** that could support ESG featur
   - Section 4: Risici og fremtidssikring (Q10-13, max 5 points)
 
 **3. Results Display**
+
 - **File:** `src/components/ResultsDisplay.jsx`
 - **Features:**
   - Score visualization with colored circles
@@ -568,6 +621,7 @@ However, the codebase has **solid infrastructure** that could support ESG featur
   - Email sharing functionality
 
 **4. Email Service**
+
 - **File:** `src/services/emailService.js`
 - **Features:**
   - Dual email system (customer report + Bluwave lead notification)
@@ -579,11 +633,11 @@ However, the codebase has **solid infrastructure** that could support ESG featur
 ```javascript
 // Weighted scoring system
 const weights = {
-  q3: 2,   // Identified significant ESG factors
-  q5: 2,   // Data collection processes
-  q8: 2,   // Customer inquiries about ESG
-  q10: 2   // Can document ESG work
-}
+  q3: 2, // Identified significant ESG factors
+  q5: 2, // Data collection processes
+  q8: 2, // Customer inquiries about ESG
+  q10: 2, // Can document ESG work
+};
 
 // Score ranges determine recommendations:
 // 0-6: Beginner (opstartsfasen)
@@ -602,6 +656,7 @@ const weights = {
 #### Core Features
 
 **1. Standard CO2 Calculations**
+
 - **File:** `utils/calculations.js`
 - **Functions:**
   - `performCalculations()` - Standard CO2 calculations with exponential decay model
@@ -610,6 +665,7 @@ const weights = {
   - Timeline generation with 1000 points for smooth curves
 
 **2. Enhanced Social Impact Calculations**
+
 - **File:** `utils/calculations.js` - `performEnhancedCalculations()`
 - **Features:**
   - Social impact scoring (weighted average of 8 metrics)
@@ -618,6 +674,7 @@ const weights = {
   - Sustainability score: (Environmental × 0.4) + (Social × 0.3) + (Health × 0.2) + (SDG × 0.1)
 
 **3. API Endpoints**
+
 - **File:** `routes/calculations.js`, `routes/social.js`
 - **Endpoints:**
   - `POST /simple-calculate` - Basic CO2 calculation with minimal input
@@ -632,11 +689,13 @@ const weights = {
 #### Mathematical Models
 
 **Standard CO2 Calculation:**
+
 ```
 CO2(t) = Initial_CO2 × e^(-decline_rate × t × climate_factor) - Σ(improvements)
 ```
 
 **Climate Factors:**
+
 - Temperate: 1.0 (baseline)
 - Tropical: 1.2
 - Arid: 0.9
@@ -644,11 +703,13 @@ CO2(t) = Initial_CO2 × e^(-decline_rate × t × climate_factor) - Σ(improvemen
 - Polar: 0.8
 
 **Efficiency Degradation:**
+
 ```
 efficiency(t) = max(0, 1 - efficiency_degradation × years_active)
 ```
 
 **SDG Alignment:**
+
 ```
 SDG_Score = (Number_of_SDGs_Addressed ÷ 17) × 100
 ```
@@ -675,6 +736,7 @@ SDG_Score = (Number_of_SDGs_Addressed ÷ 17) × 100
 #### Components
 
 **1. ESG Dashboard Component**
+
 - **File:** `src/components/ESGDashboard.tsx` (201 lines)
 - **Features:**
   - Executive summary with key ESG metrics
@@ -684,6 +746,7 @@ SDG_Score = (Number_of_SDGs_Addressed ÷ 17) × 100
   - PDF and Excel export functionality
 
 **2. ESG Type Definitions**
+
 - **File:** `src/types/esg.ts` (121 lines)
 - **Interfaces:**
   - `ESGCompliance` - GRI standards, TCFD alignment, SDG alignment, carbon neutrality
@@ -693,6 +756,7 @@ SDG_Score = (Number_of_SDGs_Addressed ÷ 17) × 100
   - `ProfessionalReport` - Executive summary, detailed analysis, reporting tools
 
 **3. GRI Standards Compliance**
+
 - **G4-EN3:** Direct energy consumption (kWh)
 - **G4-EN15:** Direct GHG emissions (kg CO₂)
 - **G4-EN16:** Indirect GHG emissions (kg CO₂)
@@ -702,11 +766,13 @@ SDG_Score = (Number_of_SDGs_Addressed ÷ 17) × 100
 #### Financial Analysis Features
 
 **Scenario Analysis:**
+
 - Optimistic scenario
 - Realistic scenario
 - Pessimistic scenario
 
 **Metrics Calculated:**
+
 - NPV (Net Present Value)
 - IRR (Internal Rate of Return)
 - Payback Period
@@ -714,6 +780,7 @@ SDG_Score = (Number_of_SDGs_Addressed ÷ 17) × 100
 - Risk Assessment (technical, financial, regulatory, market)
 
 **Incentives Tracking:**
+
 - Government incentives
 - Utility incentives
 - Tax benefits
@@ -724,6 +791,7 @@ SDG_Score = (Number_of_SDGs_Addressed ÷ 17) × 100
 ## Integration Opportunities
 
 ### Option 1: Reference/Embed Separate Tools
+
 - Keep as standalone applications
 - Link from agritectum-platform marketing pages
 - Share infrastructure if needed (email service, etc.)
@@ -731,6 +799,7 @@ SDG_Score = (Number_of_SDGs_Addressed ÷ 17) × 100
 - **Cons:** Separate deployments, potential duplicate code
 
 ### Option 2: Integrate Core Functionality
+
 - Extract core scoring logic from Bluwave_Form to `src/utils/esgCalculations.ts`
 - Extract API integration from Agri_API to `src/services/esgService.ts`
 - Adapt ESGDashboard from roof-calculator for agritectum-platform design system
@@ -739,6 +808,7 @@ SDG_Score = (Number_of_SDGs_Addressed ÷ 17) × 100
 - **Cons:** Migration effort, potential breaking changes
 
 ### Option 3: Hybrid Approach (Recommended)
+
 - Use Agri_API as backend calculation service
 - Adapt ESGDashboard for building-specific metrics
 - Use Bluwave_Form assessment logic for building ESG scoring
@@ -747,6 +817,7 @@ SDG_Score = (Number_of_SDGs_Addressed ÷ 17) × 100
 - **Cons:** Requires API integration setup
 
 ### Option 4: Use as Blueprint
+
 - Review architecture patterns from all three systems
 - Build agritectum-specific ESG features using similar patterns
 - Leverage scoring algorithms and calculation models

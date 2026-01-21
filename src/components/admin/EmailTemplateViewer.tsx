@@ -184,7 +184,19 @@ Contact Information:
 Phone: {{branchPhone}}
 Email: {{branchEmail}}
 Address: {{branchAddress}}`,
-      variables: ['customerName', 'inspectionDate', 'inspectorName', 'reportId', 'summary', 'recommendations', 'reportLink', 'branchName', 'branchPhone', 'branchEmail', 'branchAddress']
+      variables: [
+        'customerName',
+        'inspectionDate',
+        'inspectorName',
+        'reportId',
+        'summary',
+        'recommendations',
+        'reportLink',
+        'branchName',
+        'branchPhone',
+        'branchEmail',
+        'branchAddress',
+      ],
     },
     {
       name: 'urgent-issues',
@@ -313,7 +325,17 @@ Taklaget Professional Roofing Services
 
 Emergency Contact: {{branchPhone}}
 Email: {{branchEmail}}`,
-      variables: ['customerName', 'inspectionDate', 'inspectorName', 'reportId', 'criticalIssues', 'reportLink', 'branchName', 'branchPhone', 'branchEmail']
+      variables: [
+        'customerName',
+        'inspectionDate',
+        'inspectorName',
+        'reportId',
+        'criticalIssues',
+        'reportLink',
+        'branchName',
+        'branchPhone',
+        'branchEmail',
+      ],
     },
     {
       name: 'offer-proposal',
@@ -487,7 +509,22 @@ Taklaget Professional Roofing Services
 
 Professionell licens: #{{licenseNumber}}
 Försäkring: Fullständigt täckt för ditt skydd`,
-      variables: ['customerName', 'customerAddress', 'inspectionDate', 'inspectorName', 'reportId', 'offerValue', 'offerValidUntil', 'estimatedDuration', 'workDescription', 'reportLink', 'branchName', 'branchPhone', 'branchEmail', 'licenseNumber']
+      variables: [
+        'customerName',
+        'customerAddress',
+        'inspectionDate',
+        'inspectorName',
+        'reportId',
+        'offerValue',
+        'offerValidUntil',
+        'estimatedDuration',
+        'workDescription',
+        'reportLink',
+        'branchName',
+        'branchPhone',
+        'branchEmail',
+        'licenseNumber',
+      ],
     },
     {
       name: 'password-reset',
@@ -608,8 +645,8 @@ Taklaget AB
 {{companyPhone}}
 
 Avsluta prenumeration: {{unsubscribeLink}}`,
-      variables: ['customerName', 'resetLink', 'companyAddress', 'companyPhone', 'unsubscribeLink']
-    }
+      variables: ['customerName', 'resetLink', 'companyAddress', 'companyPhone', 'unsubscribeLink'],
+    },
   ];
 
   useEffect(() => {
@@ -627,20 +664,20 @@ Avsluta prenumeration: {{unsubscribeLink}}`,
       customerName: 'Anna Andersson',
       customerAddress: 'Storgatan 123, 123 45 Stockholm',
       inspectionAddress: 'Storgatan 123, 123 45 Stockholm',
-      
+
       // Inspection Details
       inspectionDate: '2025-01-15',
       inspectorName: 'Erik Eriksson',
       reportId: 'RPT-2025-001',
       issuesCount: '3',
       estimatedCost: '25,000',
-      
+
       // Links
       reportLink: 'https://taklaget.app/report/abc123',
       contactLink: 'https://taklaget.app/contact',
       unsubscribeLink: 'https://taklaget.app/unsubscribe?email=anna@example.com',
       resetLink: 'https://taklaget.app/reset-password?token=abc123',
-      
+
       // Current Company Information (from template-config.json)
       companyAddress: 'Professional Roofing Services, Sweden',
       companyPhone: '+46 470 123 456',
@@ -649,35 +686,39 @@ Avsluta prenumeration: {{unsubscribeLink}}`,
       legalEntity: 'Taklaget AB',
       legalAddress: 'Professional Roofing Services, Sweden',
       website: 'https://taklaget.app',
-      
+
       // Branch Information
       branchPhone: '+46 470 123 456',
       branchEmail: 'support@taklaget.app',
       branchName: 'Taklaget Professional Roofing',
       branchAddress: 'Professional Roofing Services, Sweden',
-      
+
       // Email Configuration
       fromEmail: 'noreply@taklaget.app',
       replyToEmail: 'support@taklaget.app',
       supportEmail: 'support@taklaget.app',
       supportPhone: '+46 470 123 456',
-      
+
       // Report Content
-      summary: 'The inspection identified 3 issues, including 1 critical concern requiring immediate attention. Overall roof condition is fair with some areas needing repair.',
-      recommendations: '3 recommended actions, with 1 high-priority item. Estimated total cost: 25,000 SEK',
-      criticalIssues: '1. DAMAGE: Large leak in roof (Location: Bedroom)\n2. DAMAGE: Damaged roofing felt (Location: Kitchen)\n3. DAMAGE: Loose roof tile (Location: Living room)',
-      
+      summary:
+        'The inspection identified 3 issues, including 1 critical concern requiring immediate attention. Overall roof condition is fair with some areas needing repair.',
+      recommendations:
+        '3 recommended actions, with 1 high-priority item. Estimated total cost: 25,000 SEK',
+      criticalIssues:
+        '1. DAMAGE: Large leak in roof (Location: Bedroom)\n2. DAMAGE: Damaged roofing felt (Location: Kitchen)\n3. DAMAGE: Loose roof tile (Location: Living room)',
+
       // Offer Information
       offerValue: '45,000',
       offerValidUntil: '2025-02-15',
       estimatedDuration: '3-5 dagar',
-      workDescription: '1. Repair roof leak in bedroom\n2. Replace damaged roofing felt in kitchen\n3. Secure loose roof tiles\n4. Apply waterproof coating\n5. Clean gutters and downspouts',
+      workDescription:
+        '1. Repair roof leak in bedroom\n2. Replace damaged roofing felt in kitchen\n3. Secure loose roof tiles\n4. Apply waterproof coating\n5. Clean gutters and downspouts',
       licenseNumber: 'ROF-2024-001',
-      
+
       // Security Information
       requestTime: '2025-01-15 14:30:00',
       ipAddress: '192.168.1.100',
-      expirationTime: '24 hours'
+      expirationTime: '24 hours',
     };
 
     setTestData(testData);
@@ -686,7 +727,7 @@ Avsluta prenumeration: {{unsubscribeLink}}`,
   // Replace template variables with test data
   const renderTemplate = (template: EmailTemplate) => {
     let content = template.htmlContent;
-    
+
     Object.entries(testData).forEach(([key, value]) => {
       const regex = new RegExp(`{{${key}}}`, 'g');
       content = content.replace(regex, value);
@@ -696,12 +737,16 @@ Avsluta prenumeration: {{unsubscribeLink}}`,
     if (template.name === 'urgent-issues' && testData.criticalIssues) {
       // Convert newline-separated issues to HTML
       const issues = testData.criticalIssues.split('\n').filter(issue => issue.trim());
-      const issueHtml = issues.map(issue => `
+      const issueHtml = issues
+        .map(
+          issue => `
         <div style="margin-bottom: 15px; padding: 15px; background: white; border-radius: 8px; border-left: 4px solid #dc2626;">
           <p style="margin: 0; font-weight: bold; color: #dc2626; font-size: 15px;">${issue}</p>
         </div>
-      `).join('');
-      
+      `
+        )
+        .join('');
+
       // Replace the critical issues placeholder with formatted HTML
       content = content.replace('{{criticalIssues}}', issueHtml);
     }
@@ -760,7 +805,7 @@ Avsluta prenumeration: {{unsubscribeLink}}`,
           <div className='lg:col-span-1'>
             <div className='bg-white rounded-material shadow-material-2 p-6'>
               <h2 className='text-xl font-medium text-gray-900 mb-4'>Available Templates</h2>
-              
+
               {loading ? (
                 <div className='space-y-3'>
                   {[1, 2, 3].map(i => (
@@ -784,9 +829,7 @@ Avsluta prenumeration: {{unsubscribeLink}}`,
                       <h3 className='font-medium text-gray-900 capitalize'>
                         {template.name.replace('-', ' ')}
                       </h3>
-                      <p className='text-sm text-gray-600 mt-1'>
-                        {template.subject}
-                      </p>
+                      <p className='text-sm text-gray-600 mt-1'>{template.subject}</p>
                       <p className='text-xs text-gray-500 mt-2'>
                         {template.variables.length} variables
                       </p>
@@ -865,7 +908,9 @@ Avsluta prenumeration: {{unsubscribeLink}}`,
                       </div>
                     </div>
                   ) : (
-                    <div className={`${previewMode === 'mobile' ? 'max-w-sm mx-auto' : 'max-w-2xl mx-auto'}`}>
+                    <div
+                      className={`${previewMode === 'mobile' ? 'max-w-sm mx-auto' : 'max-w-2xl mx-auto'}`}
+                    >
                       <div className='border border-gray-200 rounded-lg overflow-hidden'>
                         <div className='bg-gray-100 px-4 py-2 border-b border-gray-200'>
                           <div className='flex items-center space-x-2'>
@@ -877,15 +922,15 @@ Avsluta prenumeration: {{unsubscribeLink}}`,
                             </span>
                           </div>
                         </div>
-                        <div 
+                        <div
                           className='bg-white'
-                          style={{ 
-                            maxHeight: '600px', 
+                          style={{
+                            maxHeight: '600px',
                             overflow: 'auto',
-                            ...(previewMode === 'mobile' ? { fontSize: '14px' } : {})
+                            ...(previewMode === 'mobile' ? { fontSize: '14px' } : {}),
                           }}
-                          dangerouslySetInnerHTML={{ 
-                            __html: renderTemplate(selectedTemplate) 
+                          dangerouslySetInnerHTML={{
+                            __html: renderTemplate(selectedTemplate),
                           }}
                         />
                       </div>

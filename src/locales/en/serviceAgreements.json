@@ -18,7 +18,7 @@
   "serviceAgreement.noAgreementsMessage": "Get started by adding your first service agreement.",
   "serviceAgreement.errorLoading": "Error loading service agreements",
   "serviceAgreement.errorMessage": "Could not load service agreements. Check your connection and try again.",
-  
+
   "serviceAgreement.statusFilters.almostDue": "Almost Due",
   "serviceAgreement.statusFilters.dueTomorrow": "Due Tomorrow",
   "serviceAgreement.statusFilters.dueInWeek": "Due in a Week",
@@ -28,34 +28,34 @@
   "serviceAgreement.statusFilters.expired": "Expired",
   "serviceAgreement.statusFilters.cancelled": "Cancelled",
   "serviceAgreement.statusFilters.pending": "Pending",
-  
+
   "serviceAgreement.viewMode.list": "List View",
   "serviceAgreement.viewMode.map": "Map View",
-  
+
   "serviceAgreement.table.customer": "Customer",
   "serviceAgreement.table.title": "Title",
   "serviceAgreement.table.type": "Type",
   "serviceAgreement.table.nextService": "Next Service",
   "serviceAgreement.table.status": "Status",
   "serviceAgreement.table.actions": "Actions",
-  
+
   "serviceAgreement.type.maintenance": "Maintenance",
   "serviceAgreement.type.inspection": "Inspection",
   "serviceAgreement.type.repair": "Repair",
   "serviceAgreement.type.other": "Other",
-  
+
   "serviceAgreement.status.active": "Active",
   "serviceAgreement.status.expired": "Expired",
   "serviceAgreement.status.cancelled": "Cancelled",
   "serviceAgreement.status.pending": "Pending",
-  
+
   "serviceAgreement.frequency.weekly": "Weekly",
   "serviceAgreement.frequency.monthly": "Monthly",
   "serviceAgreement.frequency.quarterly": "Quarterly",
   "serviceAgreement.frequency.biannual": "Biannual",
   "serviceAgreement.frequency.annual": "Annual",
   "serviceAgreement.frequency.custom": "Custom",
-  
+
   "serviceAgreement.form.title": "Service Agreement",
   "serviceAgreement.form.customer": "Customer",
   "serviceAgreement.form.customerPlaceholder": "Select customer",
@@ -83,7 +83,7 @@
   "serviceAgreement.form.noCustomers": "No customers found. Please create a customer first.",
   "serviceAgreement.form.retry": "Try Again",
   "serviceAgreement.form.refresh": "Refresh",
-  
+
   "serviceAgreement.validation.customerRequired": "Customer is required",
   "serviceAgreement.validation.titleRequired": "Title is required",
   "serviceAgreement.validation.startDateRequired": "Start date is required",
@@ -91,7 +91,7 @@
   "serviceAgreement.validation.nextServiceDateRequired": "Next service date is required",
   "serviceAgreement.validation.endDateAfterStart": "End date must be after start date",
   "serviceAgreement.validation.nextServiceDateValid": "Next service date must be within the agreement period",
-  
+
   "serviceAgreement.detail.title": "Service Agreement Details",
   "serviceAgreement.detail.customer": "Customer",
   "serviceAgreement.detail.address": "Address",
@@ -118,24 +118,24 @@
   "serviceAgreement.detail.linkCopied": "Link copied to clipboard",
   "serviceAgreement.detail.acceptedOn": "Accepted on",
   "serviceAgreement.detail.by": "by",
-  
+
   "serviceAgreement.map.title": "Service Agreements on Map",
   "serviceAgreement.map.noLocation": "No location available",
   "serviceAgreement.map.loading": "Loading map...",
-  
+
   "serviceAgreement.confirmDelete": "Are you sure you want to delete this service agreement?",
   "serviceAgreement.confirmDeleteDescription": "This cannot be undone.",
   "serviceAgreement.deleting": "Deleting service agreement...",
   "serviceAgreement.deleted": "Service agreement deleted",
   "serviceAgreement.created": "Service agreement created",
   "serviceAgreement.updated": "Service agreement updated",
-  
+
   "serviceAgreement.dueDate.days": "days",
   "serviceAgreement.dueDate.day": "day",
   "serviceAgreement.dueDate.overdue": "Overdue",
   "serviceAgreement.dueDate.today": "Today",
   "serviceAgreement.dueDate.tomorrow": "Tomorrow",
-  
+
   "serviceAgreement.public.title": "Service Agreement",
   "serviceAgreement.public.headerTitle": "Agritectum Service Agreement",
   "serviceAgreement.public.invalidToken": "Invalid token",
@@ -190,7 +190,7 @@
   "serviceAgreement.public.validation.emailInvalid": "Invalid email address",
   "serviceAgreement.public.validation.termsRequired": "You must agree to the terms",
   "serviceAgreement.public.validation.acceptanceRequired": "You must accept the service agreement",
-  
+
   "serviceAgreement.form.purpose.title": "1. AGREEMENT PURPOSE",
   "serviceAgreement.form.purpose.placeholder": "Ongoing service and maintenance of the roof to ensure function, tightness and long lifespan. The agreement includes both repair of initial damage, preventive inspection and documentation for operation and possible warranty insurance.",
   "serviceAgreement.form.purpose.text": "Ongoing service and maintenance of the roof to ensure function, tightness and long lifespan. The agreement includes both repair of initial damage, preventive inspection and documentation for operation and possible warranty insurance.",

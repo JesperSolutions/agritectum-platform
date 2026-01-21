@@ -1,10 +1,10 @@
 # 🗺️ Google Maps Integration Guide
 
 > **⚠️ DEPRECATED**: This guide is no longer accurate. The application now uses **Leaflet.js** with free **Nominatim** geocoding (OpenStreetMap) instead of Google Maps API.
-> 
+>
 > **Migration Date:** January 2025
 > **Reason:** Eliminate API costs, remove API key management, reduce bundle size
-> 
+>
 > **Current Implementation:** See `src/components/AddressWithMapV2.tsx` for Leaflet.js + Nominatim implementation
 
 ---
@@ -30,6 +30,7 @@ The Google Maps integration was previously implemented with Swedish address auto
 The main address input component with integrated Google Maps functionality.
 
 **Key Features:**
+
 - Uses Google Maps JavaScript API with Places Autocomplete widget (primary method)
 - Fallback to REST API with CORS proxy if JavaScript API fails
 - Swedish address filtering (`componentRestrictions: { country: 'se' }`)
@@ -41,11 +42,13 @@ The main address input component with integrated Google Maps functionality.
 ### **API Configuration**
 
 **Environment Variable:**
+
 ```bash
 VITE_GOOGLE_MAPS_API_KEY=your_google_maps_api_key_here
 ```
 
 **API Endpoints Used:**
+
 - `https://maps.googleapis.com/maps/api/js` - Google Maps JavaScript API (primary)
 - `https://maps.googleapis.com/maps/api/staticmap` - Map preview image
 - `https://www.google.com/maps/search/` - Full Google Maps link
@@ -113,7 +116,7 @@ const MyComponent = () => {
     <AddressWithMapV2
       value={address}
       onChange={setAddress}
-      placeholder="Ange kundens adress"
+      placeholder='Ange kundens adress'
       required={true}
     />
   );
@@ -133,7 +136,7 @@ const MyComponent = () => {
 ### **Address Input Flow:**
 
 ```
-User types "Storgatan 1" 
+User types "Storgatan 1"
     ↓
 API returns Swedish addresses
     ↓
@@ -169,13 +172,16 @@ User can click to open full Google Maps
 ## 🚨 **CORS Issue Resolution**
 
 ### **Problem Identified:**
+
 The original implementation used Google Places API REST endpoint directly from the browser, which caused CORS errors:
+
 ```
-Access to fetch at 'https://maps.googleapis.com/maps/api/place/autocomplete/json' 
+Access to fetch at 'https://maps.googleapis.com/maps/api/place/autocomplete/json'
 from origin 'https://taklaget-service-app.web.app' has been blocked by CORS policy
 ```
 
 ### **Solution Implemented:**
+
 1. **Primary Method**: Google Maps JavaScript API with Places Autocomplete widget
    - No CORS restrictions
    - Official Google-recommended approach
@@ -187,6 +193,7 @@ from origin 'https://taklaget-service-app.web.app' has been blocked by CORS poli
    - Ensures functionality even with API loading issues
 
 ### **Implementation Details:**
+
 ```typescript
 // Load Google Maps JavaScript API
 const script = document.createElement('script');
@@ -196,11 +203,12 @@ script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&libraries=p
 autocompleteRef.current = new window.google.maps.places.Autocomplete(inputRef.current, {
   types: ['address'],
   componentRestrictions: { country: 'se' },
-  fields: ['place_id', 'formatted_address', 'geometry']
+  fields: ['place_id', 'formatted_address', 'geometry'],
 });
 ```
 
 ### **Benefits:**
+
 - ✅ **No CORS Issues**: JavaScript API doesn't have CORS restrictions
 - ✅ **Better Performance**: Native browser integration
 - ✅ **Swedish Language**: `language=sv&region=SE` parameters
@@ -212,18 +220,22 @@ autocompleteRef.current = new window.google.maps.places.Autocomplete(inputRef.cu
 ### **Common Issues & Solutions:**
 
 **1. CORS Errors:**
+
 - **Cause**: Browser blocking cross-origin requests
 - **Solution**: API key properly configured with domain restrictions
 
 **2. API Quota Exceeded:**
+
 - **Cause**: Too many requests
 - **Solution**: Implement request throttling or upgrade quota
 
 **3. Invalid API Key:**
+
 - **Cause**: Missing or incorrect API key
 - **Solution**: Check environment variable configuration
 
 **4. Address Not Found:**
+
 - **Cause**: Invalid or incomplete address
 - **Solution**: User-friendly error message with retry option
 
@@ -231,7 +243,7 @@ autocompleteRef.current = new window.google.maps.places.Autocomplete(inputRef.cu
 
 ```tsx
 // If API fails, component still works
-const handleApiError = (error) => {
+const handleApiError = error => {
   console.error('Google Maps API error:', error);
   // Component continues to work without autocomplete
   // User can still enter address manually
@@ -291,7 +303,7 @@ describe('AddressWithMapV2', () => {
   it('should display Swedish address suggestions', async () => {
     // Test implementation
   });
-  
+
   it('should show map preview after address selection', async () => {
     // Test implementation
   });
@@ -339,7 +351,7 @@ const trackAddressSearch = (query: string, results: number) => {
   analytics.track('address_search', {
     query_length: query.length,
     results_count: results,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 };
 ```

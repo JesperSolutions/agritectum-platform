@@ -7,7 +7,7 @@ export const useServiceWorker = () => {
   useEffect(() => {
     // NOTE: Service worker registration moved to App.tsx to avoid duplicates
     // This hook only handles SW messaging and PWA features
-    
+
     // Listen for messages from service worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.addEventListener('message', event => {

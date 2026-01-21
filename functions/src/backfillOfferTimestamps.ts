@@ -61,5 +61,3 @@ export const backfillOfferTimestamps = functions.https.onCall(async (_data, cont
 
   return { success: true, updatedCount };
 });
-
-

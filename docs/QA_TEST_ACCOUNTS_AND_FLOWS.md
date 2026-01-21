@@ -9,6 +9,7 @@
 ## 🔐 QA Test Accounts
 
 ### 1. 🔍 QA INSPECTOR
+
 ```
 URL: https://agritectum-platform.web.app/login
 Email: qa.inspector@agritectum.dk
@@ -18,6 +19,7 @@ Branch: QA Test Branch
 ```
 
 **What to Test:**
+
 - ✅ Create new inspection reports
 - ✅ Edit existing reports
 - ✅ Upload images to reports
@@ -30,6 +32,7 @@ Branch: QA Test Branch
 ---
 
 ### 2. 👤 QA CUSTOMER (Portal User)
+
 ```
 URL: https://agritectum-platform.web.app/portal/login
 Email: qa.customer@agritectum.dk
@@ -39,10 +42,12 @@ Company: QA Test Company ApS
 ```
 
 **Pre-loaded Test Data:**
+
 - 2 Buildings (Office + Warehouse)
 - 1 Inspection Report with findings
 
 **What to Test:**
+
 - ✅ Login to customer portal
 - ✅ View buildings list
 - ✅ View building details
@@ -112,6 +117,7 @@ Company: QA Test Company ApS
 ## 🐛 Bug Reporting
 
 When reporting bugs, please include:
+
 - Account used (Inspector/Customer)
 - Steps to reproduce
 - Expected vs actual behavior

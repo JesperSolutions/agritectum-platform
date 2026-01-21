@@ -27,19 +27,24 @@ export interface BuildingActivity {
 }
 
 const removeUndefinedFields = <T extends Record<string, unknown>>(data: T): T => {
-  const cleanedEntries = Object.entries(data).reduce<Record<string, unknown>>((acc, [key, value]) => {
-    if (value === undefined) {
+  const cleanedEntries = Object.entries(data).reduce<Record<string, unknown>>(
+    (acc, [key, value]) => {
+      if (value === undefined) {
+        return acc;
+      }
+      acc[key] = value;
       return acc;
-    }
-    acc[key] = value;
-    return acc;
-  }, {});
+    },
+    {}
+  );
 
   return cleanedEntries as T;
 };
 
 // Geocode address using Nominatim API (OpenStreetMap)
-export const geocodeBuildingAddress = async (address: string): Promise<{ lat: number; lon: number } | null> => {
+export const geocodeBuildingAddress = async (
+  address: string
+): Promise<{ lat: number; lon: number } | null> => {
   try {
     if (!address || address.trim().length < 5) {
       return null;
@@ -70,7 +75,6 @@ export const geocodeBuildingAddress = async (address: string): Promise<{ lat: nu
 
     return null;
   } catch (error) {
-    console.error('Error geocoding building address:', error);
     return null;
   }
 };
@@ -85,13 +89,14 @@ export const getBuildingById = async (buildingId: string): Promise<Building | nu
       return null;
     }
 
-    return {
+    const result = {
       id: buildingDoc.id,
       ...buildingDoc.data(),
     } as Building;
-  } catch (error) {
-    console.error('Error fetching building:', error);
-    throw new Error('Failed to fetch building');
+
+    return result;
+  } catch (error: any) {
+    throw new Error(`Failed to fetch building: ${error?.message}`);
   }
 };
 
@@ -104,27 +109,25 @@ export const getBuildingById = async (buildingId: string): Promise<Building | nu
 export const getBuildingsByBranch = async (branchId: string): Promise<Building[]> => {
   try {
     const buildingsRef = collection(db, 'buildings');
-    const q = query(
-      buildingsRef,
-      where('branchId', '==', branchId),
-      orderBy('createdAt', 'desc')
-    );
+    const q = query(buildingsRef, where('branchId', '==', branchId), orderBy('createdAt', 'desc'));
     const snapshot = await getDocs(q);
 
-    return snapshot.docs.map((doc) => ({
+    return snapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data(),
     })) as Building[];
   } catch (error) {
-    console.error('Error fetching buildings by branch:', error);
     throw error;
   }
 };
 
-export const getBuildingsByCustomer = async (customerId: string, branchId?: string): Promise<Building[]> => {
+export const getBuildingsByCustomer = async (
+  customerId: string,
+  branchId?: string
+): Promise<Building[]> => {
   try {
     const buildingsRef = collection(db, 'buildings');
-    
+
     // Get current user's branch if not provided
     let userBranchId = branchId;
     if (!userBranchId) {
@@ -138,7 +141,7 @@ export const getBuildingsByCustomer = async (customerId: string, branchId?: stri
         }
       }
     }
-    
+
     // Query by customerId and branchId for security rules compliance
     let q;
     if (userBranchId) {
@@ -149,10 +152,7 @@ export const getBuildingsByCustomer = async (customerId: string, branchId?: stri
       );
     } else {
       // Fallback to just customerId if no branch
-      q = query(
-        buildingsRef,
-        where('customerId', '==', customerId)
-      );
+      q = query(buildingsRef, where('customerId', '==', customerId));
     }
 
     const querySnapshot = await getDocs(q);
@@ -160,13 +160,13 @@ export const getBuildingsByCustomer = async (customerId: string, branchId?: stri
       id: doc.id,
       ...doc.data(),
     })) as Building[];
-    
+
     // Filter by branchId on client side if provided differently
 
-    const filtered = branchId 
+    const filtered = branchId
       ? buildings.filter(building => building.branchId === branchId)
       : buildings;
-    
+
     // Sort by createdAt on client side (most recent first)
     return filtered.sort((a, b) => {
       const aDate = a.createdAt ? new Date(a.createdAt).getTime() : 0;
@@ -174,12 +174,12 @@ export const getBuildingsByCustomer = async (customerId: string, branchId?: stri
       return bDate - aDate;
     });
   } catch (error: any) {
-    console.error('Error fetching buildings by customer:', error);
-    
     // Handle missing index error - fallback to querying by branchId if available
     if (error.code === 'failed-precondition' || error.message?.includes('index')) {
       if (branchId) {
-        logger.warn('⚠️ Missing Firestore index detected. Falling back to branchId query + client-side filtering.');
+        logger.warn(
+          '⚠️ Missing Firestore index detected. Falling back to branchId query + client-side filtering.'
+        );
         try {
           const buildingsRef = collection(db, 'buildings');
           let q = query(
@@ -187,7 +187,7 @@ export const getBuildingsByCustomer = async (customerId: string, branchId?: stri
             where('branchId', '==', branchId),
             orderBy('createdAt', 'desc')
           );
-          
+
           try {
             const snapshot = await getDocs(q);
             const buildings = snapshot.docs.map(doc => ({
@@ -199,13 +199,13 @@ export const getBuildingsByCustomer = async (customerId: string, branchId?: stri
             return buildings.filter(building => building.customerId === customerId);
           } catch (indexError: any) {
             // If index is still building, try without orderBy
-            if (indexError.code === 'failed-precondition' || indexError.message?.includes('index')) {
+            if (
+              indexError.code === 'failed-precondition' ||
+              indexError.message?.includes('index')
+            ) {
               logger.warn('⚠️ Index still building. Querying without orderBy...');
-              q = query(
-                buildingsRef,
-                where('branchId', '==', branchId)
-              );
-              
+              q = query(buildingsRef, where('branchId', '==', branchId));
+
               const snapshot = await getDocs(q);
               const buildings = snapshot.docs.map(doc => ({
                 id: doc.id,
@@ -223,7 +223,6 @@ export const getBuildingsByCustomer = async (customerId: string, branchId?: stri
             throw indexError;
           }
         } catch (branchError: any) {
-          console.error('Error fetching buildings by branch:', branchError);
           // If permission error, return empty array
           if (branchError.code === 'permission-denied') {
             return [];
@@ -232,7 +231,7 @@ export const getBuildingsByCustomer = async (customerId: string, branchId?: stri
         }
       }
     }
-    
+
     // If permission error, return empty array instead of throwing
     if (error.code === 'permission-denied') {
       logger.warn('⚠️ Permission denied when fetching buildings. Returning empty array.');
@@ -259,8 +258,6 @@ export const getBuildingsByCompany = async (companyId: string): Promise<Building
       ...doc.data(),
     })) as Building[];
   } catch (error: any) {
-    console.error('Error fetching buildings by company:', error);
-    
     // Handle missing index error
     if (error.code === 'failed-precondition' || error.message?.includes('index')) {
       logger.warn('⚠️ Missing Firestore index detected. Falling back to client-side filtering.');
@@ -316,7 +313,6 @@ export const createBuilding = async (
     const docRef = await addDoc(buildingsRef, sanitizedBuilding);
     return docRef.id;
   } catch (error) {
-    console.error('Error creating building:', error);
     throw new Error('Failed to create building');
   }
 };
@@ -336,6 +332,43 @@ export const updateBuilding = async (
 
     const buildingRef = doc(db, 'buildings', buildingId);
 
+    // Get current building data for history snapshot
+    const currentDoc = await getDoc(buildingRef);
+    if (currentDoc.exists()) {
+      const currentData = currentDoc.data() as Building;
+
+      // Check if critical fields are being changed
+      const criticalFields = [
+        'address',
+        'buildingType',
+        'roofType',
+        'roofSize',
+        'latitude',
+        'longitude',
+      ];
+      const hasChanges = criticalFields.some(
+        field =>
+          updates[field as keyof Building] !== undefined &&
+          updates[field as keyof Building] !== currentData[field as keyof Building]
+      );
+
+      if (hasChanges) {
+        // Save snapshot to buildingHistory subcollection
+        const historyRef = collection(db, 'buildings', buildingId, 'history');
+        await addDoc(historyRef, {
+          address: currentData.address,
+          buildingType: currentData.buildingType,
+          roofType: currentData.roofType,
+          roofSize: currentData.roofSize,
+          latitude: currentData.latitude,
+          longitude: currentData.longitude,
+          changedBy: user.uid,
+          changedAt: new Date().toISOString(),
+          buildingId: buildingId,
+        });
+      }
+    }
+
     // If address is being updated, geocode it
     if (updates.address) {
       const coords = await geocodeBuildingAddress(updates.address);
@@ -345,11 +378,18 @@ export const updateBuilding = async (
       }
     }
 
+    // Update lastVerified timestamp when critical fields change
+    const criticalFieldsChanged = ['address', 'roofType', 'roofSize', 'buildingType'].some(
+      field => updates[field as keyof Building] !== undefined
+    );
+    if (criticalFieldsChanged) {
+      updates.lastVerified = new Date().toISOString();
+    }
+
     const sanitizedUpdates = removeUndefinedFields(updates);
 
     await updateDoc(buildingRef, sanitizedUpdates);
   } catch (error) {
-    console.error('Error updating building:', error);
     throw new Error('Failed to update building');
   }
 };
@@ -367,7 +407,6 @@ export const deleteBuilding = async (buildingId: string): Promise<void> => {
     const buildingRef = doc(db, 'buildings', buildingId);
     await deleteDoc(buildingRef);
   } catch (error) {
-    console.error('Error deleting building:', error);
     throw new Error('Failed to delete building');
   }
 };
@@ -390,7 +429,7 @@ export const findOrCreateBuilding = async (
 
     // First, try to find existing building by customer and address
     const buildingsRef = collection(db, 'buildings');
-    let q = query(
+    const q = query(
       buildingsRef,
       where('customerId', '==', customerId),
       where('branchId', '==', branchId)
@@ -405,8 +444,8 @@ export const findOrCreateBuilding = async (
 
       // Find building with matching address (case-insensitive, normalized)
       const normalizedAddress = address.trim().toLowerCase();
-      const existingBuilding = buildings.find(b => 
-        b.address?.trim().toLowerCase() === normalizedAddress
+      const existingBuilding = buildings.find(
+        b => b.address?.trim().toLowerCase() === normalizedAddress
       );
 
       if (existingBuilding) {
@@ -434,7 +473,6 @@ export const findOrCreateBuilding = async (
     logger.log('✅ Created new building:', buildingId);
     return buildingId;
   } catch (error) {
-    console.error('Error finding or creating building:', error);
     throw new Error('Failed to find or create building');
   }
 };
@@ -449,12 +487,18 @@ export const getBuildingActivity = async (
     const activities: BuildingActivity[] = [];
 
     // Fetch reports, service agreements, and scheduled visits in parallel
-    const [reports, serviceAgreements, scheduledVisits] = await Promise.all([
+    const [reports, serviceAgreements, scheduledVisits] = (await Promise.all([
       // Import dynamically to avoid circular dependencies
-      import('./reportService').then(module => module.getReportsByBuildingId(buildingId, branchId).catch(() => [])),
-      import('./serviceAgreementService').then(module => module.getServiceAgreementsByBuilding(buildingId).catch(() => [])),
-      import('./scheduledVisitService').then(module => module.getScheduledVisitsByBuilding(buildingId).catch(() => [])),
-    ]) as [Report[], ServiceAgreement[], ScheduledVisit[]];
+      import('./reportService').then(module =>
+        module.getReportsByBuildingId(buildingId, branchId).catch(() => [])
+      ),
+      import('./serviceAgreementService').then(module =>
+        module.getServiceAgreementsByBuilding(buildingId).catch(() => [])
+      ),
+      import('./scheduledVisitService').then(module =>
+        module.getScheduledVisitsByBuilding(buildingId).catch(() => [])
+      ),
+    ])) as [Report[], ServiceAgreement[], ScheduledVisit[]];
 
     // Convert reports to activities
     reports.forEach(report => {
@@ -547,8 +591,6 @@ export const getBuildingActivity = async (
 
     return activities;
   } catch (error) {
-    console.error('Error fetching building activity:', error);
     throw new Error('Failed to fetch building activity');
   }
 };
-

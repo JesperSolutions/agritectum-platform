@@ -135,4 +135,3 @@ The app automatically detects the environment:
 - See [DEVELOPMENT_WORKFLOW.md](../../DEVELOPMENT_WORKFLOW.md) for development guidelines
 - See [LOCAL_DEVELOPMENT.md](./LOCAL_DEVELOPMENT.md) for local setup
 - See [FIREBASE_SETUP.md](./FIREBASE_SETUP.md) for Firebase configuration details
-

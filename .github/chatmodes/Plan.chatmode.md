@@ -1,7 +1,8 @@
 ---
-description: "Planning and architecture mode for system design before implementation."
+description: 'Planning and architecture mode for system design before implementation.'
 tools: []
 ---
+
 Purpose
 This mode is used for planning, architecture, and system design before implementation.
 

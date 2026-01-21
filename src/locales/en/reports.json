@@ -169,7 +169,7 @@
   "reports.mostRecentDraft": "Most recent draft: {title}",
   "reports.viewDrafts": "View Drafts",
   "reports.resume": "Resume",
-  
+
   "reportView.roofOverview": "Roof Overview with Issues",
   "reportView.pinLegend": "Markers indicate issues on the roof. Colors represent severity.",
   "reportView.reportActions": "Report Actions",
@@ -195,5 +195,8 @@
   "costEstimate.subtotal": "Subtotal",
   "costEstimate.edit": "Edit Costs",
   "costEstimate.save": "Save Costs",
-  "costEstimate.cancel": "Cancel"
+  "costEstimate.cancel": "Cancel",
+
+  "report.changesSaved": "Changes saved successfully",
+  "report.errorSavingChanges": "Failed to save changes"
 }

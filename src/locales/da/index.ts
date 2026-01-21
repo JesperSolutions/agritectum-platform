@@ -47,4 +47,3 @@ const daMessages = {
 };
 
 export default daMessages;
-

@@ -62,7 +62,7 @@ interface AnalyticsData {
   averageReportValue: number;
   completionRate: number;
   criticalIssueRate: number;
-  
+
   // Service Agreements
   totalServiceAgreements: number;
   activeServiceAgreements: number;
@@ -169,7 +169,13 @@ const AnalyticsDashboard: React.FC = () => {
 
   // Define calculateAnalytics function first
   const calculateAnalytics = useCallback(
-    (reports: any[], serviceAgreements: ServiceAgreement[], offers: Offer[], timeframe: string, branch: string): AnalyticsData => {
+    (
+      reports: any[],
+      serviceAgreements: ServiceAgreement[],
+      offers: Offer[],
+      timeframe: string,
+      branch: string
+    ): AnalyticsData => {
       const now = new Date();
       const timeframeDays = {
         '7d': 7,
@@ -186,7 +192,7 @@ const AnalyticsDashboard: React.FC = () => {
       const filteredReports = reports.filter(report => {
         const reportDate = new Date(report.createdAt || report.inspectionDate);
         const timeMatch = reportDate >= cutoffDate;
-        
+
         // For non-superadmin users, always filter by their branch
         let branchMatch;
         if (currentUser?.role === 'superadmin') {
@@ -195,7 +201,7 @@ const AnalyticsDashboard: React.FC = () => {
           // Branch users can only see their own branch data
           branchMatch = report.branchId === currentUser?.branchId;
         }
-        
+
         return timeMatch && branchMatch;
       });
 
@@ -352,14 +358,14 @@ const AnalyticsDashboard: React.FC = () => {
       const filteredAgreements = serviceAgreements.filter(agreement => {
         const agreementDate = new Date(agreement.createdAt);
         const timeMatch = agreementDate >= cutoffDate;
-        
+
         let branchMatch;
         if (currentUser?.role === 'superadmin') {
           branchMatch = branch === 'all' || agreement.branchId === branch;
         } else {
           branchMatch = agreement.branchId === currentUser?.branchId;
         }
-        
+
         return timeMatch && branchMatch;
       });
 
@@ -404,14 +410,14 @@ const AnalyticsDashboard: React.FC = () => {
       const filteredOffers = offers.filter(offer => {
         const offerDate = new Date(offer.createdAt);
         const timeMatch = offerDate >= cutoffDate;
-        
+
         let branchMatch;
         if (currentUser?.role === 'superadmin') {
           branchMatch = branch === 'all' || offer.branchId === branch;
         } else {
           branchMatch = offer.branchId === currentUser?.branchId;
         }
-        
+
         return timeMatch && branchMatch;
       });
 
@@ -427,64 +433,85 @@ const AnalyticsDashboard: React.FC = () => {
       const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
       const monthlyReports = reports.filter(r => {
         const reportDate = new Date(r.createdAt || r.inspectionDate);
-        return reportDate >= startOfMonth && (
-          currentUser?.role === 'superadmin' ? (branch === 'all' || r.branchId === branch) : r.branchId === currentUser?.branchId
+        return (
+          reportDate >= startOfMonth &&
+          (currentUser?.role === 'superadmin'
+            ? branch === 'all' || r.branchId === branch
+            : r.branchId === currentUser?.branchId)
         );
       });
-      const monthlyReportRevenue = monthlyReports.reduce((sum, r) => sum + (r.estimatedCost || 0), 0);
-      
+      const monthlyReportRevenue = monthlyReports.reduce(
+        (sum, r) => sum + (r.estimatedCost || 0),
+        0
+      );
+
       const monthlyAgreements = serviceAgreements.filter(a => {
         const agreementDate = new Date(a.createdAt);
-        return agreementDate >= startOfMonth && (
-          currentUser?.role === 'superadmin' ? (branch === 'all' || a.branchId === branch) : a.branchId === currentUser?.branchId
+        return (
+          agreementDate >= startOfMonth &&
+          (currentUser?.role === 'superadmin'
+            ? branch === 'all' || a.branchId === branch
+            : a.branchId === currentUser?.branchId)
         );
       });
       const monthlyAgreementRevenue = monthlyAgreements
         .filter(a => a.status === 'active')
         .reduce((sum, a) => sum + (a.price || 0), 0);
-      
+
       const monthlyOffers = offers.filter(o => {
         const offerDate = new Date(o.createdAt);
-        return offerDate >= startOfMonth && (
-          currentUser?.role === 'superadmin' ? (branch === 'all' || o.branchId === branch) : o.branchId === currentUser?.branchId
+        return (
+          offerDate >= startOfMonth &&
+          (currentUser?.role === 'superadmin'
+            ? branch === 'all' || o.branchId === branch
+            : o.branchId === currentUser?.branchId)
         );
       });
       const monthlyOfferRevenue = monthlyOffers
         .filter(o => o.status === 'accepted')
         .reduce((sum, o) => sum + (o.totalAmount || 0), 0);
-      
+
       const monthlyEarnings = monthlyReportRevenue + monthlyOfferRevenue + monthlyAgreementRevenue;
 
       // Calculate yearly earnings
       const startOfYear = new Date(now.getFullYear(), 0, 1);
       const yearlyReports = reports.filter(r => {
         const reportDate = new Date(r.createdAt || r.inspectionDate);
-        return reportDate >= startOfYear && (
-          currentUser?.role === 'superadmin' ? (branch === 'all' || r.branchId === branch) : r.branchId === currentUser?.branchId
+        return (
+          reportDate >= startOfYear &&
+          (currentUser?.role === 'superadmin'
+            ? branch === 'all' || r.branchId === branch
+            : r.branchId === currentUser?.branchId)
         );
       });
       const yearlyReportRevenue = yearlyReports.reduce((sum, r) => sum + (r.estimatedCost || 0), 0);
-      
+
       const yearlyAgreements = serviceAgreements.filter(a => {
         const agreementDate = new Date(a.createdAt);
-        return agreementDate >= startOfYear && (
-          currentUser?.role === 'superadmin' ? (branch === 'all' || a.branchId === branch) : a.branchId === currentUser?.branchId
+        return (
+          agreementDate >= startOfYear &&
+          (currentUser?.role === 'superadmin'
+            ? branch === 'all' || a.branchId === branch
+            : a.branchId === currentUser?.branchId)
         );
       });
       const yearlyAgreementRevenue = yearlyAgreements
         .filter(a => a.status === 'active')
         .reduce((sum, a) => sum + (a.price || 0), 0);
-      
+
       const yearlyOffers = offers.filter(o => {
         const offerDate = new Date(o.createdAt);
-        return offerDate >= startOfYear && (
-          currentUser?.role === 'superadmin' ? (branch === 'all' || o.branchId === branch) : o.branchId === currentUser?.branchId
+        return (
+          offerDate >= startOfYear &&
+          (currentUser?.role === 'superadmin'
+            ? branch === 'all' || o.branchId === branch
+            : o.branchId === currentUser?.branchId)
         );
       });
       const yearlyOfferRevenue = yearlyOffers
         .filter(o => o.status === 'accepted')
         .reduce((sum, o) => sum + (o.totalAmount || 0), 0);
-      
+
       const yearlyEarnings = yearlyReportRevenue + yearlyOfferRevenue + yearlyAgreementRevenue;
 
       return {
@@ -555,7 +582,13 @@ const AnalyticsDashboard: React.FC = () => {
         setLoadingMessage('Calculating metrics...');
 
         // Calculate analytics directly
-        const data = calculateAnalytics(reports, serviceAgreements, offers, selectedTimeframe, selectedBranch);
+        const data = calculateAnalytics(
+          reports,
+          serviceAgreements,
+          offers,
+          selectedTimeframe,
+          selectedBranch
+        );
 
         // Debug: Log calculated data
         logger.log('🔍 Analytics Debug - Calculated data:', data);
@@ -584,7 +617,15 @@ const AnalyticsDashboard: React.FC = () => {
     };
 
     calculateAnalyticsData();
-  }, [reports, serviceAgreements, offers, selectedTimeframe, selectedBranch, calculateAnalytics, currentUser]);
+  }, [
+    reports,
+    serviceAgreements,
+    offers,
+    selectedTimeframe,
+    selectedBranch,
+    calculateAnalytics,
+    currentUser,
+  ]);
 
   // Fetch service agreements and offers
   useEffect(() => {
@@ -680,39 +721,40 @@ const AnalyticsDashboard: React.FC = () => {
             </h2>
             <p className='text-base text-slate-600 mt-2'>{t('analytics.comprehensiveInsights')}</p>
           </div>
-        <div className='flex items-center space-x-4'>
-          <div className='flex items-center space-x-2 text-sm text-slate-500'>
-            <Calendar className='w-4 h-4' />
-            <span>{t('common.lastUpdated')}: {new Date().toLocaleDateString()}</span>
-          </div>
-
-
-          <Tooltip content={t('common.filterDataByTimeframe')} id='filter-tooltip'>
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm transition-colors shadow-sm ${
-                showFilters
-                  ? 'bg-slate-200 text-slate-900 border border-slate-300'
-                  : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
-              }`}
-            >
-              <Filter className='w-4 h-4' />
-              <span>{t('common.filters')}</span>
-            </button>
-          </Tooltip>
-
-          <Tooltip content={t('common.exportAnalyticsData')} id='export-tooltip'>
-            <div className='relative'>
-              <button
-                onClick={() => exportData('csv')}
-                className='flex items-center space-x-2 px-3 py-2 bg-slate-700 hover:bg-slate-800 text-white rounded-lg text-sm transition-colors shadow-sm'
-              >
-                <Download className='w-4 h-4' />
-                <span>{t('common.buttons.export')}</span>
-              </button>
+          <div className='flex items-center space-x-4'>
+            <div className='flex items-center space-x-2 text-sm text-slate-500'>
+              <Calendar className='w-4 h-4' />
+              <span>
+                {t('common.lastUpdated')}: {new Date().toLocaleDateString()}
+              </span>
             </div>
-          </Tooltip>
-        </div>
+
+            <Tooltip content={t('common.filterDataByTimeframe')} id='filter-tooltip'>
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm transition-colors shadow-sm ${
+                  showFilters
+                    ? 'bg-slate-200 text-slate-900 border border-slate-300'
+                    : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                }`}
+              >
+                <Filter className='w-4 h-4' />
+                <span>{t('common.filters')}</span>
+              </button>
+            </Tooltip>
+
+            <Tooltip content={t('common.exportAnalyticsData')} id='export-tooltip'>
+              <div className='relative'>
+                <button
+                  onClick={() => exportData('csv')}
+                  className='flex items-center space-x-2 px-3 py-2 bg-slate-700 hover:bg-slate-800 text-white rounded-lg text-sm transition-colors shadow-sm'
+                >
+                  <Download className='w-4 h-4' />
+                  <span>{t('common.buttons.export')}</span>
+                </button>
+              </div>
+            </Tooltip>
+          </div>
         </div>
       </div>
 
@@ -721,7 +763,9 @@ const AnalyticsDashboard: React.FC = () => {
         <div className='bg-white p-4 rounded-xl shadow-sm border border-slate-200'>
           <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
             <div>
-              <label className='block text-sm font-medium text-slate-700 mb-2'>{t('common.timeframe')}</label>
+              <label className='block text-sm font-medium text-slate-700 mb-2'>
+                {t('common.timeframe')}
+              </label>
               <select
                 value={selectedTimeframe}
                 onChange={e => setSelectedTimeframe(e.target.value as any)}
@@ -734,7 +778,9 @@ const AnalyticsDashboard: React.FC = () => {
               </select>
             </div>
             <div>
-              <label className='block text-sm font-medium text-slate-700 mb-2'>{t('common.branch')}</label>
+              <label className='block text-sm font-medium text-slate-700 mb-2'>
+                {t('common.branch')}
+              </label>
               <select
                 value={selectedBranch}
                 onChange={e => setSelectedBranch(e.target.value)}
@@ -751,18 +797,20 @@ const AnalyticsDashboard: React.FC = () => {
                   </>
                 ) : (
                   <option value={currentUser?.branchId || 'malmo'}>
-                    {currentUser?.branchId === 'main' ? 'Main Office' :
-                     currentUser?.branchId === 'malmo' ? 'Malmö' :
-                     currentUser?.branchId === 'goteborg' ? 'Göteborg' :
-                     currentUser?.branchId === 'stockholm' ? 'Stockholm' :
-                     'Your Branch'}
+                    {currentUser?.branchId === 'main'
+                      ? 'Main Office'
+                      : currentUser?.branchId === 'malmo'
+                        ? 'Malmö'
+                        : currentUser?.branchId === 'goteborg'
+                          ? 'Göteborg'
+                          : currentUser?.branchId === 'stockholm'
+                            ? 'Stockholm'
+                            : 'Your Branch'}
                   </option>
                 )}
               </select>
               {currentUser?.role !== 'superadmin' && (
-                <p className='text-xs text-slate-500 mt-1'>
-                  {t('analytics.branchFilterNote')}
-                </p>
+                <p className='text-xs text-slate-500 mt-1'>{t('analytics.branchFilterNote')}</p>
               )}
             </div>
             <div className='flex items-end'>
@@ -785,7 +833,7 @@ const AnalyticsDashboard: React.FC = () => {
         >
           <h3 className='text-lg font-semibold text-slate-900 flex items-center'>
             <BarChart3 className='w-5 h-5 mr-2 text-slate-600' />
-{t('analytics.kpisMetrics')}
+            {t('analytics.kpisMetrics')}
           </h3>
           {expandedSections.has('kpis') ? (
             <ChevronUp className='w-5 h-5 text-slate-600' />
@@ -808,10 +856,12 @@ const AnalyticsDashboard: React.FC = () => {
                           <FileText className='w-4 h-4 text-slate-600' />
                         </div>
                         <p className='text-slate-600 text-sm font-medium'>
-{t('analytics.totalReports')}
+                          {t('analytics.totalReports')}
                         </p>
                       </div>
-                      <p className='text-3xl font-bold text-slate-900 mb-1'>{analyticsData.totalReports}</p>
+                      <p className='text-3xl font-bold text-slate-900 mb-1'>
+                        {analyticsData.totalReports}
+                      </p>
                       <p className='text-slate-500 text-sm flex items-center'>
                         <TrendingUp className='w-3 h-3 mr-1' />+{analyticsData.reportsThisMonth}{' '}
                         {t('analytics.thisMonth')}
@@ -833,7 +883,7 @@ const AnalyticsDashboard: React.FC = () => {
                           <DollarSign className='w-4 h-4 text-slate-600' />
                         </div>
                         <p className='text-slate-600 text-sm font-medium'>
-{t('analytics.totalRevenue')}
+                          {t('analytics.totalRevenue')}
                         </p>
                       </div>
                       <p className='text-3xl font-bold text-slate-900 mb-1'>
@@ -841,7 +891,11 @@ const AnalyticsDashboard: React.FC = () => {
                       </p>
                       <p className='text-slate-500 text-sm flex items-center'>
                         <Target className='w-3 h-3 mr-1' />
-                        Avg: {formatCurrencyAmount(Math.round(analyticsData.averageReportValue), currentLocale)}
+                        Avg:{' '}
+                        {formatCurrencyAmount(
+                          Math.round(analyticsData.averageReportValue),
+                          currentLocale
+                        )}
                       </p>
                     </div>
                   </div>
@@ -860,7 +914,7 @@ const AnalyticsDashboard: React.FC = () => {
                           <CheckCircle className='w-4 h-4 text-slate-600' />
                         </div>
                         <p className='text-slate-600 text-sm font-medium'>
-{t('analytics.completionRate')}
+                          {t('analytics.completionRate')}
                         </p>
                       </div>
                       <p className='text-3xl font-bold text-slate-900 mb-1'>
@@ -887,7 +941,7 @@ const AnalyticsDashboard: React.FC = () => {
                           <AlertTriangle className='w-4 h-4 text-slate-600' />
                         </div>
                         <p className='text-slate-600 text-sm font-medium'>
-{t('analytics.criticalIssues')}
+                          {t('analytics.criticalIssues')}
                         </p>
                       </div>
                       <p className='text-3xl font-bold text-slate-900 mb-1'>
@@ -991,18 +1045,28 @@ const AnalyticsDashboard: React.FC = () => {
             <div className='bg-slate-50 p-6 rounded-xl border border-slate-200'>
               <h4 className='text-lg font-semibold text-slate-900 mb-4 flex items-center'>
                 <LineChart className='w-5 h-5 mr-2 text-slate-600' />
-{t('analytics.reportTrends')}
+                {t('analytics.reportTrends')}
               </h4>
               <div className='h-80'>
-                <ResponsiveContainer width="100%" height="100%">
+                <ResponsiveContainer width='100%' height='100%'>
                   <RechartsLineChart data={analyticsData.monthlyTrends}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
+                    <CartesianGrid strokeDasharray='3 3' />
+                    <XAxis dataKey='month' />
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    <Line type="monotone" dataKey="reports" stroke="#3b82f6" name={t('analytics.reports')} />
-                    <Line type="monotone" dataKey="revenue" stroke="#10b981" name={t('analytics.revenue')} />
+                    <Line
+                      type='monotone'
+                      dataKey='reports'
+                      stroke='#3b82f6'
+                      name={t('analytics.reports')}
+                    />
+                    <Line
+                      type='monotone'
+                      dataKey='revenue'
+                      stroke='#10b981'
+                      name={t('analytics.revenue')}
+                    />
                   </RechartsLineChart>
                 </ResponsiveContainer>
               </div>
@@ -1019,7 +1083,9 @@ const AnalyticsDashboard: React.FC = () => {
                   <div className='flex items-center justify-between'>
                     <div>
                       <p className='text-slate-900 font-semibold text-2xl'>2</p>
-                      <p className='text-slate-700 text-sm font-medium'>{t('analytics.draftReportsInProgress')}</p>
+                      <p className='text-slate-700 text-sm font-medium'>
+                        {t('analytics.draftReportsInProgress')}
+                      </p>
                       <p className='text-slate-500 text-xs'>In progress</p>
                     </div>
                     <div className='bg-slate-100 p-3 rounded-lg'>
@@ -1032,7 +1098,9 @@ const AnalyticsDashboard: React.FC = () => {
                   <div className='flex items-center justify-between'>
                     <div>
                       <p className='text-slate-900 font-semibold text-2xl'>2</p>
-                      <p className='text-slate-700 text-sm font-medium'>{t('analytics.sentReportsCompleted')}</p>
+                      <p className='text-slate-700 text-sm font-medium'>
+                        {t('analytics.sentReportsCompleted')}
+                      </p>
                       <p className='text-slate-500 text-xs'>Completed</p>
                     </div>
                     <div className='bg-slate-100 p-3 rounded-lg'>
@@ -1045,7 +1113,9 @@ const AnalyticsDashboard: React.FC = () => {
                   <div className='flex items-center justify-between'>
                     <div>
                       <p className='text-slate-900 font-semibold text-2xl'>1</p>
-                      <p className='text-slate-700 text-sm font-medium'>{t('analytics.archivedReportsStored')}</p>
+                      <p className='text-slate-700 text-sm font-medium'>
+                        {t('analytics.archivedReportsStored')}
+                      </p>
                       <p className='text-slate-500 text-xs'>Stored</p>
                     </div>
                     <div className='bg-slate-100 p-3 rounded-lg'>
@@ -1104,7 +1174,9 @@ const AnalyticsDashboard: React.FC = () => {
                         <p className='font-semibold text-slate-900'>
                           {formatCurrencyAmount(customer.revenue, currentLocale)}
                         </p>
-                        <p className='text-sm text-slate-600'>{customer.reportCount} {t('analytics.reports')}</p>
+                        <p className='text-sm text-slate-600'>
+                          {customer.reportCount} {t('analytics.reports')}
+                        </p>
                       </div>
                     </div>
                   ))}
@@ -1112,29 +1184,39 @@ const AnalyticsDashboard: React.FC = () => {
               </div>
 
               <div>
-                <h4 className='text-lg font-semibold text-slate-900 mb-4'>{t('analytics.customerOverview')}</h4>
+                <h4 className='text-lg font-semibold text-slate-900 mb-4'>
+                  {t('analytics.customerOverview')}
+                </h4>
                 <div className='grid grid-cols-2 gap-4 mb-6'>
                   <div className='text-center p-4 bg-white rounded-xl shadow-sm border border-slate-200'>
                     <p className='text-2xl font-bold text-slate-900'>
                       {analyticsData.uniqueCustomers}
                     </p>
-                    <p className='text-sm text-slate-600 font-medium'>{t('analytics.totalCustomers')}</p>
+                    <p className='text-sm text-slate-600 font-medium'>
+                      {t('analytics.totalCustomers')}
+                    </p>
                   </div>
                   <div className='text-center p-4 bg-white rounded-xl shadow-sm border border-slate-200'>
                     <p className='text-2xl font-bold text-slate-900'>
                       {analyticsData.newCustomers}
                     </p>
-                    <p className='text-sm text-slate-600 font-medium'>{t('analytics.newThisPeriod')}</p>
+                    <p className='text-sm text-slate-600 font-medium'>
+                      {t('analytics.newThisPeriod')}
+                    </p>
                   </div>
                 </div>
 
                 <div className='bg-slate-50 p-4 rounded-xl border border-slate-200'>
-                  <h5 className='font-semibold text-slate-900 mb-2'>{t('analytics.newVsReturning')}</h5>
+                  <h5 className='font-semibold text-slate-900 mb-2'>
+                    {t('analytics.newVsReturning')}
+                  </h5>
                   <div className='flex items-center space-x-4'>
                     <div className='flex-1'>
                       <div className='flex justify-between text-sm mb-1'>
                         <span className='text-slate-700'>{t('analytics.new')}</span>
-                        <span className='text-slate-900 font-medium'>{analyticsData.newCustomers}</span>
+                        <span className='text-slate-900 font-medium'>
+                          {analyticsData.newCustomers}
+                        </span>
                       </div>
                       <div className='w-full bg-slate-200 rounded-full h-2'>
                         <div
@@ -1148,7 +1230,9 @@ const AnalyticsDashboard: React.FC = () => {
                     <div className='flex-1'>
                       <div className='flex justify-between text-sm mb-1'>
                         <span className='text-slate-700'>{t('analytics.returning')}</span>
-                        <span className='text-slate-900 font-medium'>{analyticsData.returningCustomers}</span>
+                        <span className='text-slate-900 font-medium'>
+                          {analyticsData.returningCustomers}
+                        </span>
                       </div>
                       <div className='w-full bg-slate-200 rounded-full h-2'>
                         <div
@@ -1187,16 +1271,18 @@ const AnalyticsDashboard: React.FC = () => {
           <div className='px-6 pb-6'>
             <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
               <div>
-                <h4 className='text-lg font-semibold text-slate-900 mb-4'>{t('analytics.reportsByRoofType')}</h4>
+                <h4 className='text-lg font-semibold text-slate-900 mb-4'>
+                  {t('analytics.reportsByRoofType')}
+                </h4>
                 <div className='h-80'>
-                  <ResponsiveContainer width="100%" height="100%">
+                  <ResponsiveContainer width='100%' height='100%'>
                     <RechartsPieChart>
                       <Pie
                         data={analyticsData.reportsByRoofType}
-                        dataKey="count"
-                        nameKey="type"
-                        cx="50%"
-                        cy="50%"
+                        dataKey='count'
+                        nameKey='type'
+                        cx='50%'
+                        cy='50%'
                         outerRadius={80}
                         label
                       >
@@ -1212,17 +1298,19 @@ const AnalyticsDashboard: React.FC = () => {
               </div>
 
               <div>
-                <h4 className='text-lg font-semibold text-slate-900 mb-4'>{t('analytics.branchPerformance')}</h4>
+                <h4 className='text-lg font-semibold text-slate-900 mb-4'>
+                  {t('analytics.branchPerformance')}
+                </h4>
                 <div className='h-80'>
-                  <ResponsiveContainer width="100%" height="100%">
+                  <ResponsiveContainer width='100%' height='100%'>
                     <BarChart data={analyticsData.branchPerformance}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="branch" />
+                      <CartesianGrid strokeDasharray='3 3' />
+                      <XAxis dataKey='branch' />
                       <YAxis />
                       <Tooltip />
                       <Legend />
-                      <Bar dataKey="count" fill="#3b82f6" name={t('analytics.reports')} />
-                      <Bar dataKey="revenue" fill="#10b981" name={t('analytics.revenue')} />
+                      <Bar dataKey='count' fill='#3b82f6' name={t('analytics.reports')} />
+                      <Bar dataKey='revenue' fill='#10b981' name={t('analytics.revenue')} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -1316,14 +1404,14 @@ const AnalyticsDashboard: React.FC = () => {
                   {t('analytics.serviceAgreementsByType') || 'Agreements by Type'}
                 </h4>
                 <div className='h-80'>
-                  <ResponsiveContainer width="100%" height="100%">
+                  <ResponsiveContainer width='100%' height='100%'>
                     <RechartsPieChart>
                       <Pie
                         data={analyticsData.serviceAgreementsByType}
-                        dataKey="count"
-                        nameKey="type"
-                        cx="50%"
-                        cy="50%"
+                        dataKey='count'
+                        nameKey='type'
+                        cx='50%'
+                        cy='50%'
                         outerRadius={100}
                         label
                       >
@@ -1355,7 +1443,9 @@ const AnalyticsDashboard: React.FC = () => {
                         />
                         <div>
                           <p className='font-medium text-slate-900 capitalize'>{status.status}</p>
-                          <p className='text-sm text-slate-600'>{status.count} {t('analytics.agreements') || 'agreements'}</p>
+                          <p className='text-sm text-slate-600'>
+                            {status.count} {t('analytics.agreements') || 'agreements'}
+                          </p>
                         </div>
                       </div>
                       <div className='text-right'>
@@ -1392,9 +1482,11 @@ const AnalyticsDashboard: React.FC = () => {
           <div className='px-6 pb-6'>
             <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
               <div>
-                <h4 className='text-lg font-semibold text-slate-900 mb-4'>{t('analytics.currentIssues')}</h4>
+                <h4 className='text-lg font-semibold text-slate-900 mb-4'>
+                  {t('analytics.currentIssues')}
+                </h4>
                 <div className='space-y-3'>
-                  {analyticsData.currentIssues.map((issue) => (
+                  {analyticsData.currentIssues.map(issue => (
                     <div key={issue.id} className='p-3 border border-slate-200 rounded-lg bg-white'>
                       <div className='flex items-start justify-between'>
                         <div className='flex-1'>
@@ -1436,25 +1528,33 @@ const AnalyticsDashboard: React.FC = () => {
               </div>
 
               <div>
-                <h4 className='text-lg font-semibold text-slate-900 mb-4'>{t('analytics.issueStatistics')}</h4>
+                <h4 className='text-lg font-semibold text-slate-900 mb-4'>
+                  {t('analytics.issueStatistics')}
+                </h4>
                 <div className='space-y-4'>
                   <div className='text-center p-4 bg-white rounded-xl shadow-sm border border-slate-200'>
                     <p className='text-2xl font-bold text-slate-900'>
                       {analyticsData.currentIssues.length}
                     </p>
-                    <p className='text-sm text-slate-600 font-medium'>{t('analytics.openIssues')}</p>
+                    <p className='text-sm text-slate-600 font-medium'>
+                      {t('analytics.openIssues')}
+                    </p>
                   </div>
                   <div className='text-center p-4 bg-white rounded-xl shadow-sm border border-slate-200'>
                     <p className='text-2xl font-bold text-slate-900'>
                       {Math.round(analyticsData.issueResolutionRate)}%
                     </p>
-                    <p className='text-sm text-slate-600 font-medium'>{t('analytics.resolutionRate')}</p>
+                    <p className='text-sm text-slate-600 font-medium'>
+                      {t('analytics.resolutionRate')}
+                    </p>
                   </div>
                   <div className='text-center p-4 bg-white rounded-xl shadow-sm border border-slate-200'>
                     <p className='text-2xl font-bold text-slate-900'>
                       {Math.round(analyticsData.criticalIssueRate)}%
                     </p>
-                    <p className='text-sm text-slate-600 font-medium'>{t('analytics.criticalIssueRate')}</p>
+                    <p className='text-sm text-slate-600 font-medium'>
+                      {t('analytics.criticalIssueRate')}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -1483,7 +1583,9 @@ const AnalyticsDashboard: React.FC = () => {
           <div className='px-6 pb-6'>
             <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
               <div>
-                <h4 className='text-lg font-semibold text-gray-900 mb-4'>{t('analytics.reportsPerEmployee')}</h4>
+                <h4 className='text-lg font-semibold text-gray-900 mb-4'>
+                  {t('analytics.reportsPerEmployee')}
+                </h4>
                 <div className='space-y-3'>
                   {analyticsData.reportsPerEmployee.map((employee, index) => (
                     <div
@@ -1500,7 +1602,9 @@ const AnalyticsDashboard: React.FC = () => {
                         </div>
                       </div>
                       <div className='text-right'>
-                        <p className='font-semibold text-slate-900'>{employee.count} {t('analytics.reports')}</p>
+                        <p className='font-semibold text-slate-900'>
+                          {employee.count} {t('analytics.reports')}
+                        </p>
                         <p className='text-sm text-slate-600'>
                           {formatCurrencyAmount(employee.revenue, currentLocale)}
                         </p>
@@ -1515,16 +1619,22 @@ const AnalyticsDashboard: React.FC = () => {
                   {t('analytics.branchPerformanceComparison')}
                 </h4>
                 <div className='space-y-3'>
-                  {analyticsData.branchPerformance.map((branch) => (
+                  {analyticsData.branchPerformance.map(branch => (
                     <div key={branch.branch} className='p-3 border rounded-lg'>
                       <div className='flex items-center justify-between mb-2'>
                         <span className='font-medium text-slate-900'>{branch.branch}</span>
-                        <span className='text-sm text-slate-600'>{branch.reports} {t('analytics.reports')}</span>
+                        <span className='text-sm text-slate-600'>
+                          {branch.reports} {t('analytics.reports')}
+                        </span>
                       </div>
                       <div className='flex justify-between text-sm text-slate-600 mb-2'>
-                        <span>{t('analytics.revenue')}: {formatCurrencyAmount(branch.revenue, currentLocale)}</span>
                         <span>
-                          {t('analytics.efficiency')}: {formatCurrencyAmount(Math.round(branch.efficiency), currentLocale)}
+                          {t('analytics.revenue')}:{' '}
+                          {formatCurrencyAmount(branch.revenue, currentLocale)}
+                        </span>
+                        <span>
+                          {t('analytics.efficiency')}:{' '}
+                          {formatCurrencyAmount(Math.round(branch.efficiency), currentLocale)}
                         </span>
                       </div>
                       <div className='w-full bg-slate-200 rounded-full h-2'>

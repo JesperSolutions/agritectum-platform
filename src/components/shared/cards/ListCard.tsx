@@ -11,11 +11,7 @@ interface ListCardProps {
  * Standardized list card component using Material Design tokens
  * Uses: Material Design elevation, 4dp border radius, slate colors
  */
-const ListCard: React.FC<ListCardProps> = ({
-  children,
-  className = '',
-  onClick,
-}) => {
+const ListCard: React.FC<ListCardProps> = ({ children, className = '', onClick }) => {
   return (
     <div
       className={cn(

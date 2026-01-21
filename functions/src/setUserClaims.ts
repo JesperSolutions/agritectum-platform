@@ -14,10 +14,13 @@ export const setUserClaims = functions.https.onCall(async (data, context) => {
   // Get the current user's custom claims
   const userRecord = await admin.auth().getUser(context.auth.uid);
   const currentClaims = userRecord.customClaims || {};
-  
+
   // Only superadmins can set custom claims
   if (currentClaims.role !== 'superadmin') {
-    throw new functions.https.HttpsError('permission-denied', 'Only superadmins can set custom claims');
+    throw new functions.https.HttpsError(
+      'permission-denied',
+      'Only superadmins can set custom claims'
+    );
   }
 
   const { uid, claims } = data;
@@ -29,12 +32,19 @@ export const setUserClaims = functions.https.onCall(async (data, context) => {
   try {
     // Set custom claims for the user
     await admin.auth().setCustomUserClaims(uid, claims);
-    
+
     // Also update the user document in Firestore
-    await admin.firestore().collection('users').doc(uid).set({
-      ...claims,
-      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-    }, { merge: true });
+    await admin
+      .firestore()
+      .collection('users')
+      .doc(uid)
+      .set(
+        {
+          ...claims,
+          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        },
+        { merge: true }
+      );
 
     return { success: true, message: `Custom claims set for user ${uid}` };
   } catch (error) {
@@ -65,12 +75,19 @@ export const setUserClaimsHttp = functions.https.onRequest(async (req, res) => {
   try {
     // Set custom claims for the user
     await admin.auth().setCustomUserClaims(uid, claims);
-    
+
     // Also update the user document in Firestore
-    await admin.firestore().collection('users').doc(uid).set({
-      ...claims,
-      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-    }, { merge: true });
+    await admin
+      .firestore()
+      .collection('users')
+      .doc(uid)
+      .set(
+        {
+          ...claims,
+          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        },
+        { merge: true }
+      );
 
     res.status(200).json({ success: true, message: `Custom claims set for user ${uid}` });
   } catch (error) {
@@ -78,4 +95,3 @@ export const setUserClaimsHttp = functions.https.onRequest(async (req, res) => {
     res.status(500).json({ success: false, error: 'Failed to set custom claims' });
   }
 });
-

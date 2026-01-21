@@ -3,13 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useReports } from '../../contexts/ReportContextSimple';
 import { useIntl } from '../../hooks/useIntl';
-import { useFilterPersistence, useBranchContext } from '../../hooks/usePageState';
+import { useFilterPersistence } from '../../hooks/usePageState';
 import { cleanupTempReports } from '../../utils/cleanupDraftReports';
 import { debugUserAccount, findLinusHollberg } from '../../utils/debugUserAccount';
 import { Report, Branch } from '../../types';
 import {
   Eye,
-  Pencil,
   Trash2,
   Search,
   Filter,
@@ -37,8 +36,7 @@ interface AllReportsProps {}
 const AllReports: React.FC<AllReportsProps> = () => {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
-  const { reports, loading, error, fetchReports, deleteReport } =
-    useReports();
+  const { reports, loading, error, fetchReports, deleteReport } = useReports();
   const { t, formatCurrency } = useIntl();
 
   // Fallback for currency formatting
@@ -54,7 +52,7 @@ const AllReports: React.FC<AllReportsProps> = () => {
   // Initialize filter persistence
   const { getSavedFilters, saveFilters } = useFilterPersistence();
   const savedFilters = getSavedFilters();
-  
+
   const [statusFilter, setStatusFilter] = useState<string>(savedFilters.statusFilter || 'all');
   const [branchFilter, setBranchFilter] = useState<string>(savedFilters.branchFilter || 'all');
   const [sortBy, setSortBy] = useState<string>('createdAt');
@@ -96,7 +94,9 @@ const AllReports: React.FC<AllReportsProps> = () => {
 
         // If no branches were fetched (permission issue), try to get the current user's branch
         if (branchesData.length === 0 && currentUser?.branchId) {
-          logger.debug('AllReports Debug - No branches fetched, trying to get current user branch...');
+          logger.debug(
+            'AllReports Debug - No branches fetched, trying to get current user branch...'
+          );
           try {
             const currentBranch = await getBranch(currentUser.branchId);
             if (currentBranch) {
@@ -108,16 +108,21 @@ const AllReports: React.FC<AllReportsProps> = () => {
             // Create a fallback branch object
             const fallbackBranch: Branch = {
               id: currentUser.branchId,
-              name: currentUser.branchId === 'stockholm' ? 'Stockholm' : 
-                    currentUser.branchId === 'goteborg' ? 'Göteborg' :
-                    currentUser.branchId === 'malmo' ? 'Malmö' :
-                    currentUser.branchId.charAt(0).toUpperCase() + currentUser.branchId.slice(1),
+              name:
+                currentUser.branchId === 'stockholm'
+                  ? 'Stockholm'
+                  : currentUser.branchId === 'goteborg'
+                    ? 'Göteborg'
+                    : currentUser.branchId === 'malmo'
+                      ? 'Malmö'
+                      : currentUser.branchId.charAt(0).toUpperCase() +
+                        currentUser.branchId.slice(1),
               address: '',
               phone: '',
               email: '',
               isActive: true,
               country: 'Sweden',
-              createdAt: new Date().toISOString()
+              createdAt: new Date().toISOString(),
             };
             branchesData = [fallbackBranch];
             logger.debug('AllReports Debug - Using fallback branch:', fallbackBranch.name);
@@ -144,11 +149,19 @@ const AllReports: React.FC<AllReportsProps> = () => {
       }
     };
 
-    if (currentUser && (currentUser.role === 'superadmin' || currentUser.role === 'branchAdmin' || currentUser.role === 'inspector')) {
+    if (
+      currentUser &&
+      (currentUser.role === 'superadmin' ||
+        currentUser.role === 'branchAdmin' ||
+        currentUser.role === 'inspector')
+    ) {
       logger.debug('AllReports Debug - User has appropriate permissions, fetching data...');
       fetchData();
     } else {
-      logger.debug('AllReports Debug - User does not have appropriate permissions, role:', currentUser?.role);
+      logger.debug(
+        'AllReports Debug - User does not have appropriate permissions, role:',
+        currentUser?.role
+      );
     }
   }, [currentUser]);
 
@@ -188,8 +201,12 @@ const AllReports: React.FC<AllReportsProps> = () => {
           break;
         case 'estimatedCost':
           // Calculate estimated cost from recommended actions
-          aValue = a.recommendedActions?.reduce((sum, action) => sum + (action.estimatedCost || 0), 0) || 0;
-          bValue = b.recommendedActions?.reduce((sum, action) => sum + (action.estimatedCost || 0), 0) || 0;
+          aValue =
+            a.recommendedActions?.reduce((sum, action) => sum + (action.estimatedCost || 0), 0) ||
+            0;
+          bValue =
+            b.recommendedActions?.reduce((sum, action) => sum + (action.estimatedCost || 0), 0) ||
+            0;
           break;
         case 'createdAt':
           aValue = new Date(a.createdAt || 0);
@@ -231,10 +248,13 @@ const AllReports: React.FC<AllReportsProps> = () => {
       // If we have a branchId but no branch found, try to get it from current user
       if (currentUser?.branchId === branchId) {
         // Fallback to a default name based on branchId
-        return branchId === 'stockholm' ? 'Stockholm' : 
-               branchId === 'goteborg' ? 'Göteborg' :
-               branchId === 'malmo' ? 'Malmö' :
-               branchId.charAt(0).toUpperCase() + branchId.slice(1);
+        return branchId === 'stockholm'
+          ? 'Stockholm'
+          : branchId === 'goteborg'
+            ? 'Göteborg'
+            : branchId === 'malmo'
+              ? 'Malmö'
+              : branchId.charAt(0).toUpperCase() + branchId.slice(1);
       }
       return `Branch ${branchId.slice(0, 8)}...`;
     }
@@ -245,11 +265,6 @@ const AllReports: React.FC<AllReportsProps> = () => {
   const handleViewReport = (report: Report) => {
     // Navigate to the report view page
     navigate(`/report/view/${report.id}`);
-  };
-
-  const handleEditReport = (report: Report) => {
-    // Navigate to edit page
-    navigate(`/report/edit/${report.id}`);
   };
 
   const handleDeleteReport = (report: Report) => {
@@ -301,7 +316,7 @@ const AllReports: React.FC<AllReportsProps> = () => {
     setIsBulkDeleting(true);
     try {
       const selectedReportsData = filteredAndSortedReports.filter(r => selectedReports.has(r.id));
-      
+
       // Delete each report
       for (const report of selectedReportsData) {
         try {
@@ -355,7 +370,7 @@ const AllReports: React.FC<AllReportsProps> = () => {
       (window as any).cleanupTempReports = cleanupTempReports;
       (window as any).debugUserAccount = debugUserAccount;
       (window as any).findLinusHollberg = findLinusHollberg;
-      
+
       logger.debug('Debug functions available:');
       logger.debug('  - cleanupTempReports() - Delete only temp_ reports (safer)');
       logger.debug('  - debugUserAccount() - Investigate current user account');
@@ -409,7 +424,6 @@ const AllReports: React.FC<AllReportsProps> = () => {
       setIsBulkExporting(false);
     }
   };
-
 
   // Use centralized date formatter
   const formatDate = (date: any) => {
@@ -475,7 +489,12 @@ const AllReports: React.FC<AllReportsProps> = () => {
   }
 
   // Allow super admins, branch admins, and inspectors to access reports
-  if (!currentUser || (currentUser.role !== 'superadmin' && currentUser.role !== 'branchAdmin' && currentUser.role !== 'inspector')) {
+  if (
+    !currentUser ||
+    (currentUser.role !== 'superadmin' &&
+      currentUser.role !== 'branchAdmin' &&
+      currentUser.role !== 'inspector')
+  ) {
     logger.debug('AllReports Debug - Access denied, showing access denied screen');
     return (
       <div className='min-h-screen bg-slate-50 flex items-center justify-center'>
@@ -490,10 +509,19 @@ const AllReports: React.FC<AllReportsProps> = () => {
             <p>
               <strong>{t('reports.debug.title')}</strong>
             </p>
-            <p>{t('reports.debug.user')}: {currentUser?.email || t('reports.debug.noUser')}</p>
-            <p>{t('reports.debug.role')}: {currentUser?.role || t('reports.debug.noRole')}</p>
-            <p>{t('reports.debug.permission')}: {currentUser?.permissionLevel || t('reports.debug.noPermission')}</p>
-            <p>{t('reports.debug.uid')}: {currentUser?.uid || t('reports.debug.noUid')}</p>
+            <p>
+              {t('reports.debug.user')}: {currentUser?.email || t('reports.debug.noUser')}
+            </p>
+            <p>
+              {t('reports.debug.role')}: {currentUser?.role || t('reports.debug.noRole')}
+            </p>
+            <p>
+              {t('reports.debug.permission')}:{' '}
+              {currentUser?.permissionLevel || t('reports.debug.noPermission')}
+            </p>
+            <p>
+              {t('reports.debug.uid')}: {currentUser?.uid || t('reports.debug.noUid')}
+            </p>
           </div>
         </div>
       </div>
@@ -511,15 +539,15 @@ const AllReports: React.FC<AllReportsProps> = () => {
                 {currentUser?.role === 'branchAdmin'
                   ? t('reports.branchReports')
                   : currentUser?.role === 'inspector'
-                  ? t('navigation.myReports')
-                  : t('reports.title')}
+                    ? t('navigation.myReports')
+                    : t('reports.title')}
               </h1>
               <p className='mt-2 text-slate-600'>
                 {currentUser?.role === 'branchAdmin'
                   ? `${t('reports.subtitle')} (${filteredAndSortedReports.length} total)`
                   : currentUser?.role === 'inspector'
-                  ? `${t('reports.subtitle')} (${filteredAndSortedReports.length} total)`
-                  : `${t('reports.subtitle')} (${filteredAndSortedReports.length} total)`}
+                    ? `${t('reports.subtitle')} (${filteredAndSortedReports.length} total)`
+                    : `${t('reports.subtitle')} (${filteredAndSortedReports.length} total)`}
               </p>
             </div>
             <div className='flex flex-wrap gap-3 items-center justify-end'>
@@ -576,7 +604,7 @@ const AllReports: React.FC<AllReportsProps> = () => {
                 className='inline-flex items-center px-3 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 shadow-sm'
               >
                 <User className='h-4 w-4 mr-2' />
-{showCustomerSearch ? t('customer.hideSearch') : t('customer.search')}
+                {showCustomerSearch ? t('customer.hideSearch') : t('customer.search')}
               </button>
 
               {/* View Mode Toggle */}
@@ -624,7 +652,9 @@ const AllReports: React.FC<AllReportsProps> = () => {
                     <button
                       onClick={async () => {
                         setShowToolsMenu(false);
-                        const confirmMessage = t('reports.confirmCleanTemp') || 'Delete ONLY temporary reports (IDs starting with temp_)? This is safe and only removes incomplete drafts.';
+                        const confirmMessage =
+                          t('reports.confirmCleanTemp') ||
+                          'Delete ONLY temporary reports (IDs starting with temp_)? This is safe and only removes incomplete drafts.';
                         if (confirm(confirmMessage)) {
                           await cleanupTempReports();
                           await fetchReports();
@@ -651,7 +681,12 @@ const AllReports: React.FC<AllReportsProps> = () => {
         <div className='mb-6'>
           <div className='flex flex-wrap gap-2'>
             {[
-              { label: t('reports.filters.allReports'), status: 'all', icon: FileText, count: reports.length },
+              {
+                label: t('reports.filters.allReports'),
+                status: 'all',
+                icon: FileText,
+                count: reports.length,
+              },
               {
                 label: t('reports.filters.draft'),
                 status: 'draft',
@@ -732,7 +767,7 @@ const AllReports: React.FC<AllReportsProps> = () => {
         {/* Customer Search */}
         {showCustomerSearch && (
           <div className='bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6'>
-<h3 className='text-lg font-semibold text-slate-900 mb-4'>{t('customer.search')}</h3>
+            <h3 className='text-lg font-semibold text-slate-900 mb-4'>{t('customer.search')}</h3>
             <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
               {customers.map(customer => (
                 <div
@@ -755,9 +790,7 @@ const AllReports: React.FC<AllReportsProps> = () => {
               ))}
             </div>
             {customers.length === 0 && (
-              <p className='text-slate-500 text-center py-4'>
-{t('customer.noCustomersMessage')}
-              </p>
+              <p className='text-slate-500 text-center py-4'>{t('customer.noCustomersMessage')}</p>
             )}
           </div>
         )}
@@ -783,7 +816,9 @@ const AllReports: React.FC<AllReportsProps> = () => {
 
               {/* Status Filter */}
               <div>
-<label className='block text-sm font-medium text-slate-700 mb-2'>{t('dashboard.status')}</label>
+                <label className='block text-sm font-medium text-slate-700 mb-2'>
+                  {t('dashboard.status')}
+                </label>
                 <select
                   value={statusFilter}
                   onChange={e => setStatusFilter(e.target.value)}
@@ -804,13 +839,15 @@ const AllReports: React.FC<AllReportsProps> = () => {
               {/* Branch Filter - Only show for super admins */}
               {currentUser?.role === 'superadmin' && (
                 <div>
-<label className='block text-sm font-medium text-slate-700 mb-2'>{t('navigation.branches')}</label>
+                  <label className='block text-sm font-medium text-slate-700 mb-2'>
+                    {t('navigation.branches')}
+                  </label>
                   <select
                     value={branchFilter}
                     onChange={e => setBranchFilter(e.target.value)}
                     className='w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm'
                   >
-<option value='all'>{t('reports.allBranches')}</option>
+                    <option value='all'>{t('reports.allBranches')}</option>
                     {branches.map(branch => (
                       <option key={branch.id} value={branch.id}>
                         {branch.name}
@@ -829,7 +866,7 @@ const AllReports: React.FC<AllReportsProps> = () => {
                     onChange={e => setSortBy(e.target.value)}
                     className='flex-1 border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm'
                   >
-<option value='createdAt'>{t('customer.created')}</option>
+                    <option value='createdAt'>{t('customer.created')}</option>
                     <option value='customerName'>{t('customer.name')}</option>
                     <option value='estimatedCost'>{t('dashboard.revenue')}</option>
                     <option value='status'>{t('dashboard.status')}</option>
@@ -897,238 +934,241 @@ const AllReports: React.FC<AllReportsProps> = () => {
                 {filteredAndSortedReports.length === 0 ? (
                   <EmptyState
                     icon={FileText}
-                    title={searchTerm || statusFilter !== 'all' || branchFilter !== 'all'
-                      ? t('reports.noReportsFound')
-                      : t('reports.noReports')}
-                    description={searchTerm || statusFilter !== 'all' || branchFilter !== 'all'
-                      ? t('reports.tryAdjustingFilters')
-                      : t('reports.noReportsMessage')}
-                    actionLabel={searchTerm || statusFilter !== 'all' || branchFilter !== 'all'
-                      ? undefined
-                      : t('reports.newReport')}
-                    onAction={searchTerm || statusFilter !== 'all' || branchFilter !== 'all'
-                      ? undefined
-                      : () => navigate('/report/new')}
+                    title={
+                      searchTerm || statusFilter !== 'all' || branchFilter !== 'all'
+                        ? t('reports.noReportsFound')
+                        : t('reports.noReports')
+                    }
+                    description={
+                      searchTerm || statusFilter !== 'all' || branchFilter !== 'all'
+                        ? t('reports.tryAdjustingFilters')
+                        : t('reports.noReportsMessage')
+                    }
+                    actionLabel={
+                      searchTerm || statusFilter !== 'all' || branchFilter !== 'all'
+                        ? undefined
+                        : t('reports.newReport')
+                    }
+                    onAction={
+                      searchTerm || statusFilter !== 'all' || branchFilter !== 'all'
+                        ? undefined
+                        : () => navigate('/report/new')
+                    }
                   />
                 ) : (
                   <>
                     {/* Desktop Table View */}
                     <div className='hidden lg:block overflow-x-auto'>
                       <table className='min-w-full divide-y divide-slate-200'>
-                    <thead className='bg-slate-50'>
-                      <tr>
-                        <th className='px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider w-12'>
-                          <button
-                            onClick={handleSelectAll}
-                            className='flex items-center justify-center'
-                          >
-                            {selectedReports.size === filteredAndSortedReports.length &&
-                            filteredAndSortedReports.length > 0 ? (
-                              <CheckSquare className='h-4 w-4 text-blue-600' />
-                            ) : (
-                              <Square className='h-4 w-4 text-slate-400' />
-                            )}
-                          </button>
-                        </th>
-                        <th className='px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider min-w-[200px]'>
-                          {t('customer.name')}
-                        </th>
-                        <th className='px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider min-w-[150px]'>
-                          {t('navigation.branches')}
-                        </th>
-                        <th className='px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider min-w-[100px]'>
-                          {t('dashboard.status')}
-                        </th>
-                        <th className='px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider min-w-[120px]'>
-                          {t('dashboard.revenue')}
-                        </th>
-                        <th className='px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider min-w-[120px]'>
-                          {t('customer.created')}
-                        </th>
-                        <th className='px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider min-w-[200px]'>
-                          {t('reports.actions')}
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className='bg-white divide-y divide-gray-200'>
-                      {filteredAndSortedReports.map(report => (
-                        <tr key={report.id} className='hover:bg-slate-50'>
-                          <td className='px-4 py-4 whitespace-nowrap'>
-                            <button
-                              onClick={() => handleSelectReport(report.id)}
-                              className='flex items-center justify-center'
-                            >
-                              {selectedReports.has(report.id) ? (
-                                <CheckSquare className='h-4 w-4 text-blue-600' />
-                              ) : (
-                                <Square className='h-4 w-4 text-slate-400' />
-                              )}
-                            </button>
-                          </td>
-                          <td className='px-4 py-4 whitespace-nowrap'>
-                            <div>
-                              <div className='text-sm font-medium text-slate-900'>
-                                <div className="flex items-center gap-2">
-                                  <span>{report.customerName || 'Unknown Customer'}</span>
-                                  {report.customerType === 'company' && (
-                                    <span className="px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded-full">
-                                      {t('form.fields.customerTypeCompany') || 'Company'}
-                                    </span>
+                        <thead className='bg-slate-50'>
+                          <tr>
+                            <th className='px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider w-12'>
+                              <button
+                                onClick={handleSelectAll}
+                                className='flex items-center justify-center'
+                              >
+                                {selectedReports.size === filteredAndSortedReports.length &&
+                                filteredAndSortedReports.length > 0 ? (
+                                  <CheckSquare className='h-4 w-4 text-blue-600' />
+                                ) : (
+                                  <Square className='h-4 w-4 text-slate-400' />
+                                )}
+                              </button>
+                            </th>
+                            <th className='px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider min-w-[200px]'>
+                              {t('customer.name')}
+                            </th>
+                            <th className='px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider min-w-[150px]'>
+                              {t('navigation.branches')}
+                            </th>
+                            <th className='px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider min-w-[100px]'>
+                              {t('dashboard.status')}
+                            </th>
+                            <th className='px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider min-w-[120px]'>
+                              {t('dashboard.revenue')}
+                            </th>
+                            <th className='px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider min-w-[120px]'>
+                              {t('customer.created')}
+                            </th>
+                            <th className='px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider min-w-[200px]'>
+                              {t('reports.actions')}
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className='bg-white divide-y divide-gray-200'>
+                          {filteredAndSortedReports.map(report => (
+                            <tr key={report.id} className='hover:bg-slate-50'>
+                              <td className='px-4 py-4 whitespace-nowrap'>
+                                <button
+                                  onClick={() => handleSelectReport(report.id)}
+                                  className='flex items-center justify-center'
+                                >
+                                  {selectedReports.has(report.id) ? (
+                                    <CheckSquare className='h-4 w-4 text-blue-600' />
+                                  ) : (
+                                    <Square className='h-4 w-4 text-slate-400' />
                                   )}
+                                </button>
+                              </td>
+                              <td className='px-4 py-4 whitespace-nowrap'>
+                                <div>
+                                  <div className='text-sm font-medium text-slate-900'>
+                                    <div className='flex items-center gap-2'>
+                                      <span>{report.customerName || 'Unknown Customer'}</span>
+                                      {report.customerType === 'company' && (
+                                        <span className='px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded-full'>
+                                          {t('form.fields.customerTypeCompany') || 'Company'}
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                  <div className='text-sm text-slate-500'>
+                                    {report.customerEmail || 'No email'}
+                                  </div>
                                 </div>
-                              </div>
-                              <div className='text-sm text-slate-500'>
-                                {report.customerEmail || 'No email'}
-                              </div>
-                            </div>
-                          </td>
-                          <td className='px-4 py-4 whitespace-nowrap'>
+                              </td>
+                              <td className='px-4 py-4 whitespace-nowrap'>
+                                <div className='flex items-center'>
+                                  <Building className='h-4 w-4 text-slate-400 mr-2 flex-shrink-0' />
+                                  <span className='text-sm text-slate-900 truncate'>
+                                    {getBranchName(report.branchId || '')}
+                                  </span>
+                                </div>
+                              </td>
+                              <td className='px-4 py-4 whitespace-nowrap'>
+                                <span
+                                  className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(report.status || 'draft')}`}
+                                >
+                                  {report.status || 'draft'}
+                                </span>
+                              </td>
+                              <td className='px-4 py-4 whitespace-nowrap'>
+                                <div className='flex items-center'>
+                                  <DollarSign className='h-4 w-4 text-slate-400 mr-1 flex-shrink-0' />
+                                  <span className='text-sm font-medium text-slate-900'>
+                                    {formatCurrencySafe(
+                                      report.recommendedActions?.reduce(
+                                        (sum, action) => sum + (action.estimatedCost || 0),
+                                        0
+                                      ) || 0
+                                    )}
+                                  </span>
+                                </div>
+                              </td>
+                              <td className='px-4 py-4 whitespace-nowrap'>
+                                <div className='flex items-center'>
+                                  <Calendar className='h-4 w-4 text-slate-400 mr-2 flex-shrink-0' />
+                                  <span className='text-sm text-slate-900'>
+                                    {formatDate(report.createdAt)}
+                                  </span>
+                                </div>
+                              </td>
+                              <td className='px-4 py-4 whitespace-nowrap text-sm font-medium'>
+                                <div className='flex space-x-1'>
+                                  <Tooltip content='View Report Details'>
+                                    <button
+                                      onClick={() => handleViewReport(report)}
+                                      className='text-blue-600 hover:text-blue-900 p-2 rounded hover:bg-blue-50 min-w-[40px] min-h-[40px] flex items-center justify-center'
+                                    >
+                                      <Eye className='h-4 w-4' />
+                                    </button>
+                                  </Tooltip>
+                                  <Tooltip content='Delete Report'>
+                                    <button
+                                      onClick={() => handleDeleteReport(report)}
+                                      className='text-red-600 hover:text-red-900 p-2 rounded hover:bg-red-50 min-w-[40px] min-h-[40px] flex items-center justify-center'
+                                    >
+                                      <Trash2 className='h-4 w-4' />
+                                    </button>
+                                  </Tooltip>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* Mobile Card View */}
+                    <div className='lg:hidden'>
+                      {filteredAndSortedReports.map(report => (
+                        <div
+                          key={report.id}
+                          className='border-b border-slate-200 p-4 hover:bg-slate-50'
+                        >
+                          <div className='flex items-start justify-between mb-3'>
                             <div className='flex items-center'>
-                              <Building className='h-4 w-4 text-slate-400 mr-2 flex-shrink-0' />
-                              <span className='text-sm text-slate-900 truncate'>
-                                {getBranchName(report.branchId || '')}
-                              </span>
+                              <button
+                                onClick={() => handleSelectReport(report.id)}
+                                className='mr-3'
+                              >
+                                {selectedReports.has(report.id) ? (
+                                  <CheckSquare className='h-5 w-5 text-blue-600' />
+                                ) : (
+                                  <Square className='h-5 w-5 text-gray-400' />
+                                )}
+                              </button>
+                              <div>
+                                <h3 className='text-sm font-medium text-gray-900'>
+                                  {report.customerName || 'Unknown Customer'}
+                                </h3>
+                                <p className='text-sm text-gray-500'>
+                                  {report.customerEmail || 'No email'}
+                                </p>
+                              </div>
                             </div>
-                          </td>
-                          <td className='px-4 py-4 whitespace-nowrap'>
                             <span
                               className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(report.status || 'draft')}`}
                             >
                               {report.status || 'draft'}
                             </span>
-                          </td>
-                          <td className='px-4 py-4 whitespace-nowrap'>
-                            <div className='flex items-center'>
-                              <DollarSign className='h-4 w-4 text-slate-400 mr-1 flex-shrink-0' />
-                              <span className='text-sm font-medium text-slate-900'>
-                                {formatCurrencySafe(report.recommendedActions?.reduce((sum, action) => sum + (action.estimatedCost || 0), 0) || 0)}
-                              </span>
-                            </div>
-                          </td>
-                          <td className='px-4 py-4 whitespace-nowrap'>
-                            <div className='flex items-center'>
-                              <Calendar className='h-4 w-4 text-slate-400 mr-2 flex-shrink-0' />
-                              <span className='text-sm text-slate-900'>
-                                {formatDate(report.createdAt)}
-                              </span>
-                            </div>
-                          </td>
-                          <td className='px-4 py-4 whitespace-nowrap text-sm font-medium'>
-                            <div className='flex space-x-1'>
-                              <Tooltip content='View Report Details'>
-                                <button
-                                  onClick={() => handleViewReport(report)}
-                                  className='text-blue-600 hover:text-blue-900 p-2 rounded hover:bg-blue-50 min-w-[40px] min-h-[40px] flex items-center justify-center'
-                                >
-                                  <Eye className='h-4 w-4' />
-                                </button>
-                              </Tooltip>
-                              <Tooltip content='Edit Report'>
-                                <button
-                                  onClick={() => handleEditReport(report)}
-                                  className='text-indigo-600 hover:text-indigo-900 p-2 rounded hover:bg-indigo-50 min-w-[40px] min-h-[40px] flex items-center justify-center'
-                                >
-                                  <Pencil className='h-4 w-4' />
-                                </button>
-                              </Tooltip>
-                              <Tooltip content='Delete Report'>
-                                <button
-                                  onClick={() => handleDeleteReport(report)}
-                                  className='text-red-600 hover:text-red-900 p-2 rounded hover:bg-red-50 min-w-[40px] min-h-[40px] flex items-center justify-center'
-                                >
-                                  <Trash2 className='h-4 w-4' />
-                                </button>
-                              </Tooltip>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                          </div>
 
-                {/* Mobile Card View */}
-                <div className='lg:hidden'>
-                  {filteredAndSortedReports.map(report => (
-                    <div key={report.id} className='border-b border-slate-200 p-4 hover:bg-slate-50'>
-                      <div className='flex items-start justify-between mb-3'>
-                        <div className='flex items-center'>
-                          <button
-                            onClick={() => handleSelectReport(report.id)}
-                            className='mr-3'
-                          >
-                            {selectedReports.has(report.id) ? (
-                              <CheckSquare className='h-5 w-5 text-blue-600' />
-                            ) : (
-                              <Square className='h-5 w-5 text-gray-400' />
-                            )}
-                          </button>
-                          <div>
-                            <h3 className='text-sm font-medium text-gray-900'>
-                              {report.customerName || 'Unknown Customer'}
-                            </h3>
-                            <p className='text-sm text-gray-500'>
-                              {report.customerEmail || 'No email'}
-                            </p>
+                          <div className='grid grid-cols-2 gap-4 mb-3 text-sm'>
+                            <div className='flex items-center'>
+                              <Building className='h-4 w-4 text-gray-400 mr-2' />
+                              <span className='text-gray-900 truncate'>
+                                {getBranchName(report.branchId || '')}
+                              </span>
+                            </div>
+                            <div className='flex items-center'>
+                              <DollarSign className='h-4 w-4 text-gray-400 mr-2' />
+                              <span className='text-gray-900'>
+                                {formatCurrencySafe(
+                                  report.recommendedActions?.reduce(
+                                    (sum, action) => sum + (action.estimatedCost || 0),
+                                    0
+                                  ) || 0
+                                )}
+                              </span>
+                            </div>
+                            <div className='flex items-center'>
+                              <Calendar className='h-4 w-4 text-gray-400 mr-2' />
+                              <span className='text-gray-900'>{formatDate(report.createdAt)}</span>
+                            </div>
+                          </div>
+
+                          <div className='flex space-x-2'>
+                            <Tooltip content='View Report Details'>
+                              <button
+                                onClick={() => handleViewReport(report)}
+                                className='text-blue-600 hover:text-blue-900 p-2 rounded hover:bg-blue-50'
+                              >
+                                <Eye className='h-4 w-4' />
+                              </button>
+                            </Tooltip>
+                            <Tooltip content='Delete Report'>
+                              <button
+                                onClick={() => handleDeleteReport(report)}
+                                className='text-red-600 hover:text-red-900 p-2 rounded hover:bg-red-50'
+                              >
+                                <Trash2 className='h-4 w-4' />
+                              </button>
+                            </Tooltip>
                           </div>
                         </div>
-                        <span
-                          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(report.status || 'draft')}`}
-                        >
-                          {report.status || 'draft'}
-                        </span>
-                      </div>
-                      
-                      <div className='grid grid-cols-2 gap-4 mb-3 text-sm'>
-                        <div className='flex items-center'>
-                          <Building className='h-4 w-4 text-gray-400 mr-2' />
-                          <span className='text-gray-900 truncate'>
-                            {getBranchName(report.branchId || '')}
-                          </span>
-                        </div>
-                        <div className='flex items-center'>
-                          <DollarSign className='h-4 w-4 text-gray-400 mr-2' />
-                          <span className='text-gray-900'>
-                            {formatCurrencySafe(report.recommendedActions?.reduce((sum, action) => sum + (action.estimatedCost || 0), 0) || 0)}
-                          </span>
-                        </div>
-                        <div className='flex items-center'>
-                          <Calendar className='h-4 w-4 text-gray-400 mr-2' />
-                          <span className='text-gray-900'>
-                            {formatDate(report.createdAt)}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className='flex space-x-2'>
-                        <Tooltip content='View Report Details'>
-                          <button
-                            onClick={() => handleViewReport(report)}
-                            className='text-blue-600 hover:text-blue-900 p-2 rounded hover:bg-blue-50'
-                          >
-                            <Eye className='h-4 w-4' />
-                          </button>
-                        </Tooltip>
-                        <Tooltip content='Edit Report'>
-                          <button
-                            onClick={() => handleEditReport(report)}
-                            className='text-indigo-600 hover:text-indigo-900 p-2 rounded hover:bg-indigo-50'
-                          >
-                            <Pencil className='h-4 w-4' />
-                          </button>
-                        </Tooltip>
-                        <Tooltip content='Delete Report'>
-                          <button
-                            onClick={() => handleDeleteReport(report)}
-                            className='text-red-600 hover:text-red-900 p-2 rounded hover:bg-red-50'
-                          >
-                            <Trash2 className='h-4 w-4' />
-                          </button>
-                        </Tooltip>
-                      </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
                   </>
                 )}
               </div>
@@ -1142,7 +1182,9 @@ const AllReports: React.FC<AllReportsProps> = () => {
           onClose={() => setShowDeleteModal(false)}
           onConfirm={confirmDeleteReport}
           title={t('common.delete')}
-          message={t('common.deleteReportConfirmation', { customerName: reportToDelete?.customerName })}
+          message={t('common.deleteReportConfirmation', {
+            customerName: reportToDelete?.customerName,
+          })}
           confirmText={t('common.delete')}
           cancelText={t('common.cancel')}
           type='danger'
@@ -1202,11 +1244,13 @@ const AllReports: React.FC<AllReportsProps> = () => {
                     </p>
                     <p>
                       <span className='font-medium'>Address:</span> {selectedReport.customerAddress}
-                      {selectedReport.customerType === 'company' && selectedReport.buildingAddress && (
-                        <div className='mt-1'>
-                          <span className='font-medium'>Byggnadsadress:</span> {selectedReport.buildingAddress}
-                        </div>
-                      )}
+                      {selectedReport.customerType === 'company' &&
+                        selectedReport.buildingAddress && (
+                          <div className='mt-1'>
+                            <span className='font-medium'>Byggnadsadress:</span>{' '}
+                            {selectedReport.buildingAddress}
+                          </div>
+                        )}
                     </p>
                   </div>
                 </div>
@@ -1228,7 +1272,12 @@ const AllReports: React.FC<AllReportsProps> = () => {
                     </p>
                     <p>
                       <span className='font-medium'>Revenue:</span>{' '}
-                      {formatCurrencySafe(selectedReport.recommendedActions?.reduce((sum, action) => sum + (action.estimatedCost || 0), 0) || 0)}
+                      {formatCurrencySafe(
+                        selectedReport.recommendedActions?.reduce(
+                          (sum, action) => sum + (action.estimatedCost || 0),
+                          0
+                        ) || 0
+                      )}
                     </p>
                     <p>
                       <span className='font-medium'>Created:</span>{' '}

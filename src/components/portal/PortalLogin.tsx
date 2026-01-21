@@ -74,7 +74,7 @@ const PortalLogin: React.FC = () => {
                   id='email'
                   type='email'
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={e => setEmail(e.target.value)}
                   required
                   className='pl-10 h-11'
                   placeholder={t('login.emailPlaceholder') || 'your@email.com'}
@@ -93,7 +93,7 @@ const PortalLogin: React.FC = () => {
                   id='password'
                   type={showPassword ? 'text' : 'password'}
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={e => setPassword(e.target.value)}
                   required
                   className='pl-10 pr-10 h-11'
                   placeholder={t('login.passwordPlaceholder') || '••••••••'}
@@ -103,24 +103,19 @@ const PortalLogin: React.FC = () => {
                   onClick={() => setShowPassword(!showPassword)}
                   className='absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors p-1 rounded-material hover:bg-slate-100'
                   tabIndex={-1}
-                  aria-label={showPassword ? (t('login.hidePassword') || 'Hide password') : (t('login.showPassword') || 'Show password')}
+                  aria-label={
+                    showPassword
+                      ? t('login.hidePassword') || 'Hide password'
+                      : t('login.showPassword') || 'Show password'
+                  }
                 >
-                  {showPassword ? (
-                    <EyeOff className='h-5 w-5' />
-                  ) : (
-                    <Eye className='h-5 w-5' />
-                  )}
+                  {showPassword ? <EyeOff className='h-5 w-5' /> : <Eye className='h-5 w-5' />}
                 </button>
               </div>
             </div>
 
             {/* Sign In Button */}
-            <Button
-              type='submit'
-              disabled={loading}
-              className='w-full h-11 mt-8'
-              size='lg'
-            >
+            <Button type='submit' disabled={loading} className='w-full h-11 mt-8' size='lg'>
               {loading ? (
                 <div className='flex items-center gap-2'>
                   <LoadingSpinner size='sm' />
@@ -136,8 +131,8 @@ const PortalLogin: React.FC = () => {
           <div className='mt-8 text-center'>
             <p className='text-sm text-slate-600'>
               {t('login.noAccount') || "Don't have an account?"}{' '}
-              <Link 
-                to='/portal/register' 
+              <Link
+                to='/portal/register'
                 className='text-slate-700 hover:text-slate-900 font-medium underline-offset-4 hover:underline transition-colors'
               >
                 {t('login.registerHere') || 'Register here'}
@@ -151,5 +146,3 @@ const PortalLogin: React.FC = () => {
 };
 
 export default PortalLogin;
-
-

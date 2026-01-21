@@ -163,5 +163,21 @@
   "customer.invitation.created": "Anmeldelink erstellt!",
   "customer.invitation.error": "Anmeldelink konnte nicht erstellt werden",
   "customer.invitation.copied": "Link in die Zwischenablage kopiert!",
-  "customer.invitation.copyError": "Link konnte nicht kopiert werden"
+  "customer.invitation.copyError": "Link konnte nicht kopiert werden",
+
+  "customer.type.company": "Unternehmen",
+  "customer.type.individual": "Privatperson",
+  "customer.type.parentCompany": "Mutterunternehmen",
+  "customer.type.subsidiary": "Tochterunternehmen",
+  "customer.type.subsidiaryOf": "Tochterunternehmen von",
+  "customer.type.subsidiaries": "Tochterunternehmen",
+
+  "customer.filter.parentCompany": "Mutterunternehmen",
+  "customer.filter.allCompanies": "Alle Unternehmen",
+  "customer.filter.parentCompaniesOnly": "Nur Mutterunternehmen",
+
+  "customer.hierarchy.title": "Unternehmenshierarchie",
+  "customer.hierarchy.empty": "Keine Mutterunternehmen gefunden. Erstellen Sie ein Unternehmen, um mit dem Aufbau der Hierarchie zu beginnen.",
+
+  "customer.error.unknownCompany": "Unbekanntes Unternehmen"
 }

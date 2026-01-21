@@ -31,8 +31,8 @@ const FormField: React.FC<FormFieldProps> = ({
 
   return (
     <div className={`space-y-1 ${className}`}>
-      <label 
-        htmlFor={fieldId} 
+      <label
+        htmlFor={fieldId}
         className={required ? typography.label.required : typography.label.default}
       >
         {label}
@@ -48,9 +48,7 @@ const FormField: React.FC<FormFieldProps> = ({
               ? `${fieldId}-help`
               : undefined,
           className: `${(children as React.ReactElement).props.className || ''} ${
-            hasError
-              ? getFormInputClass(true)
-              : getFormInputClass(false)
+            hasError ? getFormInputClass(true) : getFormInputClass(false)
           }`,
         })}
 

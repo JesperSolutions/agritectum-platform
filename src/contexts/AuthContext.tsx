@@ -15,7 +15,12 @@ interface AuthContextType {
   firebaseUser: FirebaseUser | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
-  registerCustomer: (email: string, password: string, displayName: string, profile?: { phone?: string; address?: string; companyName?: string }) => Promise<void>;
+  registerCustomer: (
+    email: string,
+    password: string,
+    displayName: string,
+    profile?: { phone?: string; address?: string; companyName?: string }
+  ) => Promise<void>;
   logout: () => Promise<void>;
   refreshToken: () => Promise<void>;
 }
@@ -59,9 +64,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
 
     // Map role to permission level if not provided
-    const getPermissionLevel = (role: string, permissionLevel?: number, userType?: string): number => {
+    const getPermissionLevel = (
+      role: string,
+      permissionLevel?: number,
+      userType?: string
+    ): number => {
       if (permissionLevel !== undefined) return permissionLevel;
-      
+
       // Customer users have permission level -1
       if (userType === 'customer' || role === 'customer') {
         return -1;
@@ -80,7 +89,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
 
     // Use claims first, then fallback to user document
-    const userType = claims.userType || userDocData.userType || (claims.role === 'customer' ? 'customer' : 'internal');
+    const userType =
+      claims.userType ||
+      userDocData.userType ||
+      (claims.role === 'customer' ? 'customer' : 'internal');
     const permissionLevel = getPermissionLevel(
       claims.role || userDocData.role || 'inspector',
       claims.permissionLevel ?? userDocData.permissionLevel,
@@ -94,7 +106,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       uid: firebaseUser.uid,
       email: firebaseUser.email!,
       displayName: firebaseUser.displayName || '',
-      role: (claims.role || userDocData.role || (userType === 'customer' ? 'customer' : 'inspector')) as UserRole,
+      role: (claims.role ||
+        userDocData.role ||
+        (userType === 'customer' ? 'customer' : 'inspector')) as UserRole,
       permissionLevel: permissionLevel,
       branchId: branchId,
       branchIds: branchIds,
@@ -134,7 +148,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // Create user document in Firestore with customer profile
       const { doc, setDoc } = await import('firebase/firestore');
       const { db } = await import('../config/firebase');
-      
+
       const userDoc = {
         uid: firebaseUser.uid,
         email: firebaseUser.email!,
@@ -184,15 +198,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       if (firebaseUser) {
         try {
-          // Force refresh the token to get updated claims
+          // Force refresh the token to get updated claims (wait up to 5 seconds)
           await firebaseUser.getIdToken(true);
+
+          // Add a small delay to ensure claims are propagated
+          await new Promise(resolve => setTimeout(resolve, 500));
+
           const tokenResult = await getIdTokenResult(firebaseUser);
           const claims = tokenResult.claims as CustomClaims;
-          
+
           // Check if claims are missing - force logout if so
-          const hasPermissionLevel = claims.permissionLevel !== undefined && claims.permissionLevel !== null;
+          const hasPermissionLevel =
+            claims.permissionLevel !== undefined && claims.permissionLevel !== null;
           const hasBranchId = claims.branchId !== undefined || claims.permissionLevel === 2; // Superadmin doesn't need branchId
-          
+
           if (!hasPermissionLevel) {
             console.error('⚠️ Missing permissionLevel claim. Forcing logout...');
             alert('Your account permissions need to be updated. Please log out and log back in.');
@@ -202,7 +221,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             setLoading(false);
             return;
           }
-          
+
           const user = await parseUserFromFirebase(firebaseUser);
           setCurrentUser(user);
           setFirebaseUser(firebaseUser);

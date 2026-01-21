@@ -17,21 +17,25 @@ This audit identifies hardcoded strings, missing translation keys, and locale co
 ### Current State
 
 **Swedish (sv):** ✅ **COMPLETE**
+
 - 19 translation files
 - All modules covered
 - Production-ready
 
 **Danish (da):** ⚠️ **STRUCTURE EXISTS, CONTENT UNKNOWN**
+
 - 19 translation files (same structure as sv)
 - Files exist but content completeness unknown
 - Needs verification
 
 **German (de):** ⚠️ **STRUCTURE EXISTS, CONTENT UNKNOWN**
+
 - 19 translation files (same structure as sv)
 - Files exist but content completeness unknown
 - Needs verification
 
 **English (en):** ❌ **MISSING**
+
 - No locale directory exists
 - No translation files
 - **Action Required:** Create complete English translation set
@@ -68,51 +72,62 @@ src/locales/{locale}/
 ### Router.tsx Hardcoded Strings
 
 **ErrorPage Component:**
+
 - `"Access Denied"` - Line 72
 - `"You don't have permission to access this resource."` - Line 73
 - Button text uses translation ✅
 - Button color: `bg-blue-600` (should use design system)
 
 **UnauthorizedPage Component:**
+
 - `"Access Denied"` - Line 72
 - `"You don't have permission to access this resource."` - Line 73
 - Button text uses translation ✅
 
 **NoBranchPage Component:**
+
 - `"No Branch Assigned"` - Line 88
 - `"You haven't been assigned to a branch yet. Please contact your administrator."` - Line 89-90
 - `"Back to Login"` - Line 96
 - All hardcoded, no translations
 
 **Loading State:**
+
 - Uses `bg-gray-50` (should use `bg-slate-50`)
 
 ### Component Hardcoded Strings
 
 **AllReports.tsx:**
+
 - `"Access Denied"` - Line 482
 - Uses `text-gray-900` (should use `text-slate-900`)
 
 **CustomerManagement.tsx:**
+
 - `"Access Denied"` - Line 439
 
 **BranchManagement.tsx:**
+
 - `"Access Denied"` - Line 62
 - `"You don't have permission to manage branches."` - Line 63
 - `"No branches yet"` - Line 470
 - `"No branch selected"` - Line 543
 
 **EmailTemplateViewer.tsx:**
+
 - `"Access Denied"` - Line 724
 
 **QATestingPage.tsx:**
+
 - `"🚨 ACCESS DENIED 🚨"` - Line 77
 - `"No branch assigned to user"` - Lines 185, 223, 469
 
 **AdminTestingPage.tsx:**
+
 - `"Access Denied"` - Line 41
 
 **EnhancedErrorDisplay.tsx:**
+
 - `"You don't have permission to perform this action. Please contact your administrator."` - Line 29
 
 ### Translation Keys Needed
@@ -145,18 +160,21 @@ src/locales/{locale}/
 ### Current Patterns
 
 **Common Keys:**
+
 - `common.buttons.*` ✅ Consistent
 - `common.labels.*` ✅ Consistent
 - `common.status.*` ✅ Consistent
 - `common.messages.*` ✅ Consistent
 
 **Module-Specific Keys:**
+
 - `reports.*` ✅ Consistent
 - `admin.*` ✅ Consistent
 - `dashboard.*` ✅ Consistent
 - `schedule.*` ✅ Consistent
 
 **Error Keys:**
+
 - `errors.*` - Some components use this
 - `common.errorState.*` - Some components use this
 - **Issue:** Inconsistent error key naming
@@ -164,6 +182,7 @@ src/locales/{locale}/
 ### Recommendation
 
 **Standardize Error Keys:**
+
 - Use `errors.*` for all error messages
 - Use `errors.routing.*` for routing errors
 - Use `errors.access.*` for access denied errors
@@ -225,6 +244,7 @@ src/locales/{locale}/
 ### Verification Needed
 
 **Action Required:**
+
 - Verify all keys used in components exist in `sv` locale
 - Check if keys exist in `da` and `de` locales
 - Document missing keys for each locale
@@ -236,19 +256,24 @@ src/locales/{locale}/
 ### Current Usage
 
 **Pattern 1: Direct Translation**
+
 ```tsx
 const { t } = useIntl();
 const label = t('common.buttons.save');
 ```
 
 **Pattern 2: Translation with Fallback**
+
 ```tsx
-{t('analytics.totalBusinessRevenue') || 'Total Business Revenue'}
+{
+  t('analytics.totalBusinessRevenue') || 'Total Business Revenue';
+}
 ```
 
 **Pattern 3: Translation with Parameters**
+
 ```tsx
-t('common.deleteReportConfirmation', { customerName: 'John Doe' })
+t('common.deleteReportConfirmation', { customerName: 'John Doe' });
 ```
 
 ### Issues Identified
@@ -273,6 +298,7 @@ t('common.deleteReportConfirmation', { customerName: 'John Doe' })
 ### File Structure Comparison
 
 **All Locales Have Same Structure:**
+
 - ✅ sv: 19 files
 - ✅ da: 19 files
 - ✅ de: 19 files
@@ -281,11 +307,13 @@ t('common.deleteReportConfirmation', { customerName: 'John Doe' })
 ### Content Completeness
 
 **Swedish (sv):**
+
 - `common.json`: 215 lines (complete)
 - `errors.json`: Needs verification
 - All other files: Need verification
 
 **Danish (da) & German (de):**
+
 - File structure matches Swedish
 - Content completeness unknown
 - **Action Required:** Verify content or mark as incomplete
@@ -297,6 +325,7 @@ t('common.deleteReportConfirmation', { customerName: 'John Doe' })
 ### Estimated Key Count
 
 **By Module:**
+
 - `common.json`: ~215 keys
 - `dashboard.json`: ~60 keys
 - `reports.json`: ~50 keys
@@ -367,6 +396,7 @@ t('common.deleteReportConfirmation', { customerName: 'John Doe' })
 **Format:** `{module}.{category}.{item}`
 
 **Examples:**
+
 - `common.buttons.save` ✅
 - `reports.table.status` ✅
 - `admin.users.roles.branchAdmin` ✅
@@ -387,6 +417,7 @@ t('common.deleteReportConfirmation', { customerName: 'John Doe' })
 ### Recommendation
 
 **Standardize to 3 Levels:**
+
 ```
 {module}.{category}.{item}
 
@@ -399,6 +430,7 @@ Examples:
 ```
 
 **Category Standardization:**
+
 - `buttons` - All button text
 - `labels` - Form labels, field labels
 - `messages` - User messages, notifications
@@ -428,6 +460,7 @@ Examples:
 ### Recommendation
 
 **Create English Translation Set:**
+
 1. Create `src/locales/en/` directory
 2. Copy structure from Swedish
 3. Translate all ~700 keys from Swedish to English
@@ -441,6 +474,7 @@ Examples:
 ### Current Validation
 
 **No Automated Validation:**
+
 - No script to find missing keys
 - No TypeScript types for keys
 - No CI checks for hardcoded strings
@@ -449,12 +483,14 @@ Examples:
 ### Existing Scripts
 
 **Found:**
+
 - `scripts/find-missing-translations.cjs` - Exists but may need updates
 - `scripts/generate-translation-inventory.cjs` - Exists
 
 ### Recommendation
 
 **Create Validation System:**
+
 1. **TypeScript Types:**
    - Generate types from translation files
    - Type-safe translation key usage

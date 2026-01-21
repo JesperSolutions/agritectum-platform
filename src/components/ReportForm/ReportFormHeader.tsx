@@ -27,9 +27,13 @@ const ReportFormHeader: React.FC<ReportFormHeaderProps> = ({
       <div className='flex items-center justify-between flex-wrap gap-4'>
         <div>
           <h1 className='text-2xl font-bold text-gray-900'>
-            {mode === 'create' ? t('reportForm.header.newInspection') : t('reportForm.header.editReport')}
+            {mode === 'create'
+              ? t('reportForm.header.newInspection')
+              : t('reportForm.header.editReport')}
           </h1>
-          {autoSaving && <p className='text-sm text-blue-600 mt-1'>{t('reportForm.header.autoSaving')}</p>}
+          {autoSaving && (
+            <p className='text-sm text-blue-600 mt-1'>{t('reportForm.header.autoSaving')}</p>
+          )}
         </div>
 
         <div className='flex items-center space-x-3'>
@@ -37,7 +41,7 @@ const ReportFormHeader: React.FC<ReportFormHeaderProps> = ({
             variant='ghost'
             onClick={onCancel}
             leftIcon={<ArrowLeft className='w-4 h-4' />}
-              aria-label={t('common.goBackToDashboard')}
+            aria-label={t('common.goBackToDashboard')}
           >
             {t('common.back')}
           </AccessibleButton>

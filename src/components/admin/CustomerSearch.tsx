@@ -9,9 +9,9 @@ interface CustomerSearchProps {
   placeholder?: string;
 }
 
-const CustomerSearch: React.FC<CustomerSearchProps> = ({ 
+const CustomerSearch: React.FC<CustomerSearchProps> = ({
   onCustomerSelect,
-  placeholder = 'Søg kunder efter navn, email, telefon...'
+  placeholder = 'Søg kunder efter navn, email, telefon...',
 }) => {
   const { currentUser } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
@@ -97,7 +97,7 @@ const CustomerSearch: React.FC<CustomerSearchProps> = ({
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
-        inputRef.current && 
+        inputRef.current &&
         !inputRef.current.contains(e.target as Node) &&
         dropdownRef.current &&
         !dropdownRef.current.contains(e.target as Node)
@@ -118,67 +118,63 @@ const CustomerSearch: React.FC<CustomerSearchProps> = ({
   }, [selectedIndex]);
 
   return (
-    <div className="relative mb-4">
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+    <div className='relative mb-4'>
+      <div className='relative'>
+        <Search className='absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400' />
         <input
           ref={inputRef}
-          type="text"
-          className="w-full border border-slate-300 rounded-lg pl-10 pr-10 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+          type='text'
+          className='w-full border border-slate-300 rounded-lg pl-10 pr-10 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all'
           placeholder={placeholder}
           value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
           onKeyDown={handleKeyDown}
           onFocus={() => results.length > 0 && setShowDropdown(true)}
-          aria-label="Søg efter kunde"
+          aria-label='Søg efter kunde'
           aria-expanded={showDropdown}
-          aria-autocomplete="list"
-          aria-controls="customer-search-results"
+          aria-autocomplete='list'
+          aria-controls='customer-search-results'
         />
         {loading && (
-          <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 animate-spin" />
+          <Loader2 className='absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 animate-spin' />
         )}
       </div>
-      
-      {error && (
-        <div className="text-red-500 text-sm mt-1 px-1">{error}</div>
-      )}
-      
+
+      {error && <div className='text-red-500 text-sm mt-1 px-1'>{error}</div>}
+
       {showDropdown && results.length > 0 && (
         <ul
           ref={dropdownRef}
-          id="customer-search-results"
-          role="listbox"
-          className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-60 overflow-y-auto"
+          id='customer-search-results'
+          role='listbox'
+          className='absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-60 overflow-y-auto'
         >
           {results.map((customer, index) => (
             <li
               key={customer.id}
-              role="option"
+              role='option'
               aria-selected={index === selectedIndex}
               className={`p-3 cursor-pointer border-b last:border-b-0 transition-colors ${
-                index === selectedIndex 
-                  ? 'bg-primary-50 text-primary-700' 
-                  : 'hover:bg-slate-50'
+                index === selectedIndex ? 'bg-primary-50 text-primary-700' : 'hover:bg-slate-50'
               }`}
               onClick={() => handleSelect(customer)}
               onMouseEnter={() => setSelectedIndex(index)}
             >
-              <div className="font-medium text-slate-800">{customer.name}</div>
-              <div className="text-sm text-slate-500 flex gap-2 flex-wrap">
+              <div className='font-medium text-slate-800'>{customer.name}</div>
+              <div className='text-sm text-slate-500 flex gap-2 flex-wrap'>
                 {customer.email && <span>{customer.email}</span>}
                 {customer.phone && <span>• {customer.phone}</span>}
               </div>
               {customer.address && (
-                <div className="text-xs text-slate-400 mt-0.5">{customer.address}</div>
+                <div className='text-xs text-slate-400 mt-0.5'>{customer.address}</div>
               )}
             </li>
           ))}
         </ul>
       )}
-      
+
       {showDropdown && results.length === 0 && searchTerm.length >= 2 && !loading && (
-        <div className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg p-3 text-sm text-slate-500">
+        <div className='absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg p-3 text-sm text-slate-500'>
           Ingen kunder fundet for "{searchTerm}"
         </div>
       )}

@@ -11,6 +11,7 @@ Review of QA testing report from external QA specialist. This document analyzes 
 **QA Claim:** "After filling all mandatory fields, clicking Complete Report results only in a 'Draft saved' message and the report is not created."
 
 **Analysis:**
+
 - ✅ Code Review: `handleSubmit` function in `ReportForm.tsx` (line 1045) correctly implements report completion
 - ✅ The function handles both 'draft' and 'completed' status
 - ✅ Navigation to `/report/view/${newReportId}` happens after successful creation
@@ -19,6 +20,7 @@ Review of QA testing report from external QA specialist. This document analyzes 
 
 **Root Cause:**
 The QA tester likely encountered **form validation errors** that prevented submission. The code has multiple validation checks:
+
 - Customer name required (min 2 characters)
 - Customer phone/email validation
 - Inspection date required
@@ -35,17 +37,19 @@ The QA tester likely encountered **form validation errors** that prevented submi
 **QA Claim:** "Neither the inspector nor the manager interfaces provide a button to generate or download the report as a PDF."
 
 **Analysis:**
+
 - ❌ **CONFIRMED**: `ReportView.tsx` has NO PDF export button
 - ✅ PDF generation service EXISTS (`reportService.generatePDF`)
 - ✅ PDF is used in public view (`PublicReportView.tsx` line 37)
 - ❌ Missing from internal inspector/manager view
 
 **Code Evidence:**
+
 ```tsx
 // ReportView.tsx action buttons (lines 495-550):
 // - Edit
 // - Share Link
-// - QR Code  
+// - QR Code
 // - Archive
 // ❌ NO PDF BUTTON
 ```
@@ -61,6 +65,7 @@ The QA tester likely encountered **form validation errors** that prevented submi
 **QA Claim:** "The completed report (qa-report-001) was visible to the manager but not to the customer."
 
 **Analysis:**
+
 - ✅ Report created with correct data:
   - `customerId: 'qa-customer-001'`
   - `buildingId: 'qa-building-001'`
@@ -70,6 +75,7 @@ The QA tester likely encountered **form validation errors** that prevented submi
 - ✅ Firestore rules allow customer access (line 439): `resource.data.customerId == getUserCompanyId()`
 
 **Possible Causes:**
+
 1. Customer's `companyId` doesn't match report's `customerId`
 2. Report's `isShared` flag was false during test
 3. Firestore rules blocking access (unlikely, rules look correct)
@@ -85,6 +91,7 @@ The QA tester likely encountered **form validation errors** that prevented submi
 **QA Claim:** "Inspection date shows 'Invalid Date' and currency appears as SEK instead of DKK."
 
 **Analysis:**
+
 - ⚠️ **Date Formatting**: Need to check `formatDate` function in `ReportView.tsx`
 - ⚠️ **Currency**: Default fallback is `SEK` (line 53 in ReportView.tsx):
   ```tsx
@@ -92,12 +99,14 @@ The QA tester likely encountered **form validation errors** that prevented submi
   ```
 
 **Likely Cause:**
+
 - Date: Firestore Timestamp not converted properly
 - Currency: Locale detection failing, falling back to Swedish SEK
 
 **Verdict:** ⚠️ NEEDS VERIFICATION - Likely valid, requires locale/formatting fixes
 
-**Fix Required:** 
+**Fix Required:**
+
 1. Ensure Firestore Timestamps are converted before formatting
 2. Fix currency fallback to use DKK for Danish users
 
@@ -108,6 +117,7 @@ The QA tester likely encountered **form validation errors** that prevented submi
 **QA Claim:** "Cost estimate breakdown shows read-only fields. Inspectors cannot input detailed cost estimates."
 
 **Analysis:**
+
 - This may be **intentional design** - cost estimates might be calculated from selected ranges
 - Need to check if this is a feature request vs bug
 
@@ -125,25 +135,27 @@ The QA tester likely encountered **form validation errors** that prevented submi
 
 ## Summary
 
-| Issue # | Description | Validity | Priority | Status |
-|---------|-------------|----------|----------|--------|
-| 1 | Report completion | ❌ QA Error | N/A | Invalid |
-| 2 | No PDF button | ✅ Valid | Critical | **FIX REQUIRED** |
-| 3 | Customer visibility | ⚠️ Unclear | High | Investigation needed |
-| 4 | Date/Currency | ⚠️ Likely valid | Medium | Verification needed |
-| 5 | Read-only costs | ℹ️ By design? | Low | Product decision |
-| 6 | PWA overlay | ℹ️ Minor UX | Low | Future improvement |
+| Issue # | Description         | Validity        | Priority | Status               |
+| ------- | ------------------- | --------------- | -------- | -------------------- |
+| 1       | Report completion   | ❌ QA Error     | N/A      | Invalid              |
+| 2       | No PDF button       | ✅ Valid        | Critical | **FIX REQUIRED**     |
+| 3       | Customer visibility | ⚠️ Unclear      | High     | Investigation needed |
+| 4       | Date/Currency       | ⚠️ Likely valid | Medium   | Verification needed  |
+| 5       | Read-only costs     | ℹ️ By design?   | Low      | Product decision     |
+| 6       | PWA overlay         | ℹ️ Minor UX     | Low      | Future improvement   |
 
 ---
 
 ## Action Items
 
 ### Immediate (Critical)
+
 1. ✅ **Add PDF Export Button** to ReportView.tsx
    - Use existing `generatePDF` service
    - Add download button next to Share/QR buttons
 
 ### High Priority
+
 2. 🔍 **Verify Customer Visibility**
    - Check `qa.customer@agritectum.dk` has correct `companyId` in custom claims
    - Test report visibility in portal
@@ -158,6 +170,7 @@ The QA tester likely encountered **form validation errors** that prevented submi
    - Ensure locale detection works for Danish users
 
 ### Low Priority
+
 5. 📋 **Improve Form Validation UX**
    - Add clearer error messages
    - Highlight missing required fields
@@ -177,6 +190,7 @@ The QA tester likely encountered **form validation errors** that prevented submi
 **QA Tester's Mistake:** Issue #1 was user error, not a system bug. The tester failed to properly fill required fields.
 
 **Recommendation:** Provide QA team with:
+
 - Complete field requirements documentation
 - Validation error handling guide
 - Test data templates

@@ -10,23 +10,26 @@ export const generateTemporaryPassword = (): string => {
   const numbers = '0123456789';
   const special = '!@#$%^&*';
   const allChars = uppercase + lowercase + numbers + special;
-  
+
   let password = '';
-  
+
   // Ensure at least one of each required character type
   password += uppercase[Math.floor(Math.random() * uppercase.length)]; // Uppercase
   password += lowercase[Math.floor(Math.random() * lowercase.length)]; // Lowercase
   password += numbers[Math.floor(Math.random() * numbers.length)]; // Number
   password += special[Math.floor(Math.random() * special.length)]; // Special char
-  
+
   // Fill the rest randomly to reach 16 characters minimum
   // This ensures score of 7-8 ("strong" rating)
   for (let i = 4; i < 16; i++) {
     password += allChars[Math.floor(Math.random() * allChars.length)];
   }
-  
+
   // Shuffle the password for randomness
-  return password.split('').sort(() => Math.random() - 0.5).join('');
+  return password
+    .split('')
+    .sort(() => Math.random() - 0.5)
+    .join('');
 };
 
 // Send user invitation email
@@ -71,13 +74,13 @@ export const sendUserInvitation = async (
     const mailRef = await addDoc(collection(db, 'mail'), mailDoc);
 
     logger.log('✅ User invitation email created:', mailRef.id);
-    
+
     return { success: true };
   } catch (error) {
     console.error('❌ Error sending user invitation:', error);
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Unknown error' 
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
     };
   }
 };
@@ -118,31 +121,31 @@ export const inviteUser = async (
   try {
     // Generate temporary password
     const temporaryPassword = generateTemporaryPassword();
-    
+
     // Send invitation email
     const emailResult = await sendUserInvitation(employee, temporaryPassword, invitedBy);
-    
+
     if (!emailResult.success) {
       return { success: false, error: emailResult.error };
     }
-    
+
     // Update user with invitation details
     await updateUserWithInvitation(employee.id, temporaryPassword, invitedBy);
-    
+
     logger.log('✅ User invitation completed successfully:', {
       userId: employee.id,
       email: employee.email,
     });
-    
-    return { 
-      success: true, 
-      temporaryPassword 
+
+    return {
+      success: true,
+      temporaryPassword,
     };
   } catch (error) {
     console.error('❌ Error in user invitation process:', error);
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Unknown error' 
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
     };
   }
 };
@@ -158,26 +161,26 @@ export const verifyTemporaryPassword = async (
     const usersRef = collection(db, 'users');
     const q = query(usersRef, where('email', '==', email));
     const querySnapshot = await getDocs(q);
-    
+
     if (querySnapshot.empty) {
       return { valid: false };
     }
-    
+
     const userDoc = querySnapshot.docs[0];
     const userData = userDoc.data();
-    
+
     // Check if temporary password matches and hasn't expired
     const now = new Date();
     const expiresAt = new Date(userData.passwordExpiresAt);
-    
+
     if (userData.temporaryPassword === password && expiresAt > now) {
-      return { 
-        valid: true, 
+      return {
+        valid: true,
         userId: userDoc.id,
-        needsPasswordChange: userData.needsPasswordChange || false
+        needsPasswordChange: userData.needsPasswordChange || false,
       };
     }
-    
+
     return { valid: false };
   } catch (error) {
     console.error('❌ Error verifying temporary password:', error);

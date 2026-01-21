@@ -18,6 +18,7 @@ The Offer and Acceptance Flow feature automates the entire offer lifecycle from 
 ### ✅ Completed Components
 
 #### 1. **Data Model & Types** ✅
+
 - **File:** `src/types/index.ts`
 - **Changes:**
   - Added `Offer` interface with complete fields
@@ -27,6 +28,7 @@ The Offer and Acceptance Flow feature automates the entire offer lifecycle from 
   - Added `OfferNotificationSettings` interface
 
 #### 2. **Firestore Security Rules** ✅
+
 - **File:** `firestore.rules`
 - **Changes:**
   - Added `offers` collection rules
@@ -35,6 +37,7 @@ The Offer and Acceptance Flow feature automates the entire offer lifecycle from 
   - Branch-specific access control
 
 #### 3. **Offer Service** ✅
+
 - **File:** `src/services/offerService.ts`
 - **Functions Implemented:**
   - `createOffer()` - Create offer from report
@@ -50,6 +53,7 @@ The Offer and Acceptance Flow feature automates the entire offer lifecycle from 
   - `getOffersNeedingFollowUp()` - Get overdue offers
 
 #### 4. **Cloud Function** ✅
+
 - **File:** `functions/src/offerFollowUp.ts`
 - **Changes:**
   - Completed all TODO items
@@ -62,6 +66,7 @@ The Offer and Acceptance Flow feature automates the entire offer lifecycle from 
   - Auto-expiration after 30 days
 
 #### 5. **Email Templates** ✅
+
 - **Files Created:**
   - `email/templates/offer-sent.hbs` / `.txt.hbs` - Initial offer email
   - `email/templates/offer-accepted.hbs` / `.txt.hbs` - Acceptance confirmation
@@ -72,6 +77,7 @@ The Offer and Acceptance Flow feature automates the entire offer lifecycle from 
   - `email/templates/template-config.json` - Added all template metadata
 
 #### 6. **Public Customer UI** ✅
+
 - **File:** `src/components/offers/PublicOfferView.tsx`
 - **Features:**
   - Display offer details (read-only)
@@ -85,6 +91,7 @@ The Offer and Acceptance Flow feature automates the entire offer lifecycle from 
   - Error handling for invalid/expired offers
 
 #### 7. **Offer Management UI** ✅
+
 - **Files Created:**
   - `src/components/offers/OffersPage.tsx` - Main container
   - `src/components/offers/OffersList.tsx` - Table view with filtering
@@ -103,6 +110,7 @@ The Offer and Acceptance Flow feature automates the entire offer lifecycle from 
   - Link to related report
 
 #### 8. **State Management** ✅
+
 - **File:** `src/contexts/OfferContext.tsx`
 - **Features:**
   - Offer state management
@@ -112,6 +120,7 @@ The Offer and Acceptance Flow feature automates the entire offer lifecycle from 
   - Loading states
 
 #### 9. **Navigation & Routing** ✅
+
 - **Files Updated:**
   - `src/Router.tsx` - Added offer routes
   - `src/components/layout/Layout.tsx` - Added "Offers" menu item
@@ -123,6 +132,7 @@ The Offer and Acceptance Flow feature automates the entire offer lifecycle from 
   - `/offer/public/:offerId` - Public acceptance page (no auth)
 
 #### 10. **Localization** ✅
+
 - **File:** `src/locales/sv.json`
 - **Added:** 130+ Swedish translation keys for:
   - Offer statuses
@@ -139,6 +149,7 @@ The Offer and Acceptance Flow feature automates the entire offer lifecycle from 
 ## Feature Capabilities
 
 ### ✅ Offer Creation
+
 - Create offer from existing report
 - Set pricing breakdown (labor, material, travel, overhead)
 - Configure profit margin
@@ -146,6 +157,7 @@ The Offer and Acceptance Flow feature automates the entire offer lifecycle from 
 - Auto-generate unique public link
 
 ### ✅ Customer Communication
+
 - Send offer via email (MailerSend)
 - Email includes:
   - Offer details
@@ -155,6 +167,7 @@ The Offer and Acceptance Flow feature automates the entire offer lifecycle from 
 - Professional branded templates
 
 ### ✅ Customer Acceptance
+
 - Public page (no login required)
 - Accept or reject with one click
 - Optional rejection reason
@@ -162,6 +175,7 @@ The Offer and Acceptance Flow feature automates the entire offer lifecycle from 
 - Confirmation messages
 
 ### ✅ Automatic Follow-ups
+
 - **Day 7:** Reminder to customer
 - **Day 14:** Escalation to branch admin
 - **Day 30:** Auto-expiration
@@ -169,12 +183,14 @@ The Offer and Acceptance Flow feature automates the entire offer lifecycle from 
 - Maximum 3 follow-up attempts
 
 ### ✅ Status Tracking
+
 - Complete status history
 - Audit trail (who, when, why)
 - Real-time updates
 - Status badges with colors
 
 ### ✅ Offer Management
+
 - View all offers (filtered by role)
 - Search by customer/email/title
 - Filter by status
@@ -183,6 +199,7 @@ The Offer and Acceptance Flow feature automates the entire offer lifecycle from 
 - Quick actions (reminder, extend, view)
 
 ### ✅ Analytics & Insights
+
 - Statistics dashboard
 - Total offers count
 - Status breakdown
@@ -374,7 +391,7 @@ offers/
 - **Function:** `checkOfferFollowUps`
 - **Schedule:** Daily at 9:00 AM (Copenhagen time)
 - **Timezone:** Europe/Copenhagen
-- **Triggers:** 
+- **Triggers:**
   - Follow-up reminder (7 days)
   - Escalation (14 days)
   - Expiration (30 days)
@@ -420,11 +437,13 @@ offers/
 ## Deployment Steps
 
 ### 1. Deploy Firestore Rules
+
 ```bash
 firebase deploy --only firestore:rules
 ```
 
 ### 2. Deploy Cloud Functions
+
 ```bash
 cd functions
 npm install
@@ -432,17 +451,20 @@ firebase deploy --only functions
 ```
 
 ### 3. Upload Email Templates
+
 ```bash
 # Email templates are automatically picked up by Trigger Email extension
 # Ensure templates are in: /email/templates/
 ```
 
 ### 4. Verify MailerSend Configuration
+
 - Check SMTP credentials in Firebase Console
 - Verify domain DNS records (SPF, DKIM, DMARC)
 - Test email delivery
 
 ### 5. Test in Production
+
 - Create test offer
 - Send to test email
 - Verify email delivery
@@ -459,12 +481,14 @@ firebase deploy --only functions
 **Symptoms:** Customer not receiving offer emails
 
 **Diagnosis:**
+
 1. Check `/mail` collection for error messages
 2. Check MailerSend dashboard for blocks/bounces
 3. Verify SMTP credentials in Firebase Console
 4. Check Cloud Function logs
 
 **Solutions:**
+
 - Verify SMTP credentials are correct
 - Check domain DNS records
 - Verify email is not in suppression list
@@ -475,11 +499,13 @@ firebase deploy --only functions
 **Symptoms:** No automatic follow-ups
 
 **Diagnosis:**
+
 1. Check Cloud Function logs
 2. Verify function is deployed
 3. Check schedule configuration
 
 **Solutions:**
+
 - Redeploy Cloud Functions
 - Verify timezone configuration
 - Check function permissions
@@ -490,11 +516,13 @@ firebase deploy --only functions
 **Symptoms:** Public link not working
 
 **Diagnosis:**
+
 1. Check Firestore security rules
 2. Verify offer status is 'pending' or 'awaiting_response'
 3. Check if offer is expired
 
 **Solutions:**
+
 - Verify security rules are deployed
 - Check offer validity date
 - Verify publicLink field exists
@@ -538,11 +566,13 @@ firebase deploy --only functions
 ## Documentation
 
 ### User Documentation
+
 - **Inspector Guide:** How to create and manage offers
 - **Branch Admin Guide:** How to review escalated offers
 - **Customer Guide:** How to accept/reject offers
 
 ### Technical Documentation
+
 - **API Reference:** Service functions
 - **Database Schema:** Firestore structure
 - **Email Templates:** Template variables and usage
@@ -553,12 +583,14 @@ firebase deploy --only functions
 ## Success Metrics
 
 ### Business Impact
+
 - **Time Savings:** 40% reduction in manual follow-up work
 - **Response Rate:** Expected 60% customer response rate
 - **Conversion Rate:** Expected 40% acceptance rate
 - **Customer Satisfaction:** Improved communication and transparency
 
 ### Technical Metrics
+
 - **Uptime:** 99.9%
 - **Email Delivery Rate:** > 95%
 - **Page Load Time:** < 3 seconds
@@ -584,4 +616,3 @@ The Offer and Acceptance Flow feature is **fully implemented and production-read
 **Developer:** AI Assistant  
 **Status:** ✅ Complete  
 **Version:** 1.0.0
-

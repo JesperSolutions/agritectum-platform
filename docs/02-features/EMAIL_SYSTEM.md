@@ -1,20 +1,24 @@
 # Email System Documentation
 
 ## Overview
+
 Taklaget uses MailerSend SMTP for email delivery with the Firebase Trigger Email extension.
 
 ## Configuration
 
 ### MailerSend Setup
+
 1. Create MailerSend account
 2. Verify domain: taklaget.app
 3. Generate SMTP credentials
 4. Configure DNS records (SPF, DKIM, DMARC)
 
 ### Firebase Extension
+
 Extension ID: `firestore-send-email`
 
 **Configuration**:
+
 ```
 SMTP Connection URI: smtp://smtp.mailersend.net:587
 SMTP Password: [Stored in Firebase Secret Manager]
@@ -27,11 +31,13 @@ Default REPLY-TO: support@taklaget.app
 Templates are stored in `/email/templates/` using Handlebars (.hbs).
 
 ### Available Templates:
+
 1. **password-reset** - Password reset emails
 2. **report-ready** - Notify customers when reports are ready
 3. **urgent-issues** - Alert for urgent inspection findings
 
 ### Template Structure:
+
 ```
 /email/templates/
 ├── _header.hbs          (Shared header)
@@ -45,6 +51,7 @@ Templates are stored in `/email/templates/` using Handlebars (.hbs).
 ## Sending Emails
 
 ### From Code:
+
 ```typescript
 import { db } from '../config/firebase';
 import { collection, addDoc } from 'firebase/firestore';
@@ -62,6 +69,7 @@ await addDoc(collection(db, 'mail'), {
 ```
 
 ### Email Queue Processing:
+
 1. Document added to `/mail` collection
 2. Trigger Email extension picks it up
 3. Renders template with provided data
@@ -71,11 +79,13 @@ await addDoc(collection(db, 'mail'), {
 ## Testing Emails
 
 ### Emulator Mode:
+
 - Emails are logged to console
 - No actual emails sent
 - Check `email-logs` collection for records
 
 ### Production:
+
 - Real emails sent via MailerSend
 - Track delivery in MailerSend dashboard
 - Check `mail` collection for status
@@ -83,12 +93,14 @@ await addDoc(collection(db, 'mail'), {
 ## Troubleshooting
 
 ### Email not sending?
+
 1. Check `/mail/{docId}` for error messages
 2. Verify SMTP credentials in Firebase Console
 3. Check MailerSend dashboard for blocks/bounces
 4. Verify domain DNS records are correct
 
 ### Template not rendering?
+
 1. Validate template syntax in `template-config.json`
 2. Check template file exists in `/email/templates/`
 3. Verify all template variables are provided
@@ -97,6 +109,7 @@ await addDoc(collection(db, 'mail'), {
 ## Production Setup
 
 See archived docs for historical setup details:
+
 - `archive/EMAIL_SETUP_GUIDE.md`
 - `archive/PRODUCTION_EMAIL_SETUP.md`
 - `archive/TRIGGER_EMAIL_EXTENSION_GUIDE.md`

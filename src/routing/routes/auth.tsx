@@ -18,48 +18,66 @@ import {
 export const getAuthRoutes = (currentUser: any): RouteObject[] => [
   {
     path: '/login',
-    element: currentUser 
-      ? (currentUser.role === 'customer' || currentUser.userType === 'customer' 
-        ? <Navigate to='/portal/dashboard' replace /> 
-        : <Navigate to='/dashboard' replace />)
-      : <LoginForm />,
+    element: currentUser ? (
+      currentUser.role === 'customer' || currentUser.userType === 'customer' ? (
+        <Navigate to='/portal/dashboard' replace />
+      ) : (
+        <Navigate to='/dashboard' replace />
+      )
+    ) : (
+      <LoginForm />
+    ),
   },
   {
     path: '/forgot-password',
-    element: currentUser 
-      ? (currentUser.role === 'customer' || currentUser.userType === 'customer' 
-        ? <Navigate to='/portal/dashboard' replace /> 
-        : <Navigate to='/dashboard' replace />)
-      : <ForgotPasswordForm />,
+    element: currentUser ? (
+      currentUser.role === 'customer' || currentUser.userType === 'customer' ? (
+        <Navigate to='/portal/dashboard' replace />
+      ) : (
+        <Navigate to='/dashboard' replace />
+      )
+    ) : (
+      <ForgotPasswordForm />
+    ),
   },
   {
     path: '/reset-password',
-    element: currentUser 
-      ? (currentUser.role === 'customer' || currentUser.userType === 'customer' 
-        ? <Navigate to='/portal/dashboard' replace /> 
-        : <Navigate to='/dashboard' replace />)
-      : <ResetPasswordForm />,
+    element: currentUser ? (
+      currentUser.role === 'customer' || currentUser.userType === 'customer' ? (
+        <Navigate to='/portal/dashboard' replace />
+      ) : (
+        <Navigate to='/dashboard' replace />
+      )
+    ) : (
+      <ResetPasswordForm />
+    ),
   },
   {
     path: '/portal/login',
-    element: currentUser?.userType === 'customer' ? <Navigate to='/portal/dashboard' replace /> : (
-      <ErrorBoundary>
-        <Suspense fallback={<LoadingFallback />}>
-          <LazyPortalLogin />
-        </Suspense>
-      </ErrorBoundary>
-    ),
+    element:
+      currentUser?.userType === 'customer' ? (
+        <Navigate to='/portal/dashboard' replace />
+      ) : (
+        <ErrorBoundary>
+          <Suspense fallback={<LoadingFallback />}>
+            <LazyPortalLogin />
+          </Suspense>
+        </ErrorBoundary>
+      ),
     errorElement: <RouteErrorBoundary />,
   },
   {
     path: '/portal/register',
-    element: currentUser?.userType === 'customer' ? <Navigate to='/portal/dashboard' replace /> : (
-      <ErrorBoundary>
-        <Suspense fallback={<LoadingFallback />}>
-          <LazyPortalRegister />
-        </Suspense>
-      </ErrorBoundary>
-    ),
+    element:
+      currentUser?.userType === 'customer' ? (
+        <Navigate to='/portal/dashboard' replace />
+      ) : (
+        <ErrorBoundary>
+          <Suspense fallback={<LoadingFallback />}>
+            <LazyPortalRegister />
+          </Suspense>
+        </ErrorBoundary>
+      ),
     errorElement: <RouteErrorBoundary />,
   },
 ];

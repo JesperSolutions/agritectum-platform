@@ -58,7 +58,7 @@ const ReportHeader: React.FC<ReportHeaderProps> = ({
             ) : null}
             {(!branchInfo?.logoUrl || branchInfo.logoUrl === '') && (
               <div className='fallback-logo flex items-center justify-center w-12 h-12'>
-                <AgritectumLogo size="sm" showText={false} />
+                <AgritectumLogo size='sm' showText={false} />
               </div>
             )}
           </div>

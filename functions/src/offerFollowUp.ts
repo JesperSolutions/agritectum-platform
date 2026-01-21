@@ -8,7 +8,7 @@ import * as admin from 'firebase-admin';
 export const checkOfferFollowUps = functions.pubsub
   .schedule('0 9 * * *') // Every day at 9 AM
   .timeZone('Europe/Copenhagen')
-  .onRun(async (context) => {
+  .onRun(async _context => {
     const db = admin.firestore();
     const now = new Date();
 
@@ -27,11 +27,17 @@ export const checkOfferFollowUps = functions.pubsub
       for (const doc of pendingOffersSnapshot.docs) {
         const offer = doc.data();
         // Support both Firestore Timestamp and legacy string
-        const sentDate = offer.sentAt?.toDate ? offer.sentAt.toDate() : (offer.sentAt ? new Date(offer.sentAt) : undefined);
+        const sentDate = offer.sentAt?.toDate
+          ? offer.sentAt.toDate()
+          : offer.sentAt
+            ? new Date(offer.sentAt)
+            : undefined;
 
         if (!sentDate) continue;
 
-        const daysSinceSent = Math.floor((now.getTime() - sentDate.getTime()) / (1000 * 60 * 60 * 24));
+        const daysSinceSent = Math.floor(
+          (now.getTime() - sentDate.getTime()) / (1000 * 60 * 60 * 24)
+        );
 
         // Check if needs follow-up (7 days)
         if (daysSinceSent >= 7 && offer.followUpAttempts < 3) {
@@ -50,7 +56,11 @@ export const checkOfferFollowUps = functions.pubsub
         }
 
         // Check if expired (30 days)
-        const validUntil = offer.validUntil?.toDate ? offer.validUntil.toDate() : (offer.validUntil ? new Date(offer.validUntil) : undefined);
+        const validUntil = offer.validUntil?.toDate
+          ? offer.validUntil.toDate()
+          : offer.validUntil
+            ? new Date(offer.validUntil)
+            : undefined;
         if (validUntil && validUntil < now) {
           // Mark as expired
           await doc.ref.update({
@@ -103,19 +113,23 @@ async function sendFollowUpNotification(
     const inspector = inspectorDoc.data();
 
     // Update offer
-    await admin.firestore().collection('offers').doc(offerId).update({
-      followUpAttempts: admin.firestore.FieldValue.increment(1),
-      lastFollowUpAt: admin.firestore.FieldValue.serverTimestamp(),
-      status: 'awaiting_response',
-      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-      statusHistory: admin.firestore.FieldValue.arrayUnion({
+    await admin
+      .firestore()
+      .collection('offers')
+      .doc(offerId)
+      .update({
+        followUpAttempts: admin.firestore.FieldValue.increment(1),
+        lastFollowUpAt: admin.firestore.FieldValue.serverTimestamp(),
         status: 'awaiting_response',
-        timestamp: new Date().toISOString(),
-        changedBy: 'system',
-        changedByName: 'System',
-        reason: `Automatic follow-up after ${daysSinceSent} days`,
-      }),
-    });
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        statusHistory: admin.firestore.FieldValue.arrayUnion({
+          status: 'awaiting_response',
+          timestamp: new Date().toISOString(),
+          changedBy: 'system',
+          changedByName: 'System',
+          reason: `Automatic follow-up after ${daysSinceSent} days`,
+        }),
+      });
 
     // Send email notification to inspector
     const db = admin.firestore();
@@ -358,26 +372,27 @@ export const publicRespondToOffer = functions.https.onCall(async (data, _context
     return { status: 'ok' };
   } catch (error: any) {
     console.error('publicRespondToOffer error', error);
-    
+
     // Sanitize error messages to prevent information leakage
     // Only expose safe, user-friendly error messages
     if (error instanceof functions.https.HttpsError) {
       // Re-throw HttpsErrors as-is (already sanitized)
       throw error;
     }
-    
+
     // For internal errors, provide generic message
     const errorCode = error?.code || 'internal';
-    const safeMessage = errorCode === 'invalid-argument' 
-      ? 'Invalid request. Please check your input.'
-      : errorCode === 'not-found'
-      ? 'Offer not found or no longer available.'
-      : errorCode === 'failed-precondition'
-      ? 'This offer cannot be processed at this time.'
-      : errorCode === 'permission-denied'
-      ? 'You do not have permission to perform this action.'
-      : 'An error occurred processing your request. Please try again later.';
-    
+    const safeMessage =
+      errorCode === 'invalid-argument'
+        ? 'Invalid request. Please check your input.'
+        : errorCode === 'not-found'
+          ? 'Offer not found or no longer available.'
+          : errorCode === 'failed-precondition'
+            ? 'This offer cannot be processed at this time.'
+            : errorCode === 'permission-denied'
+              ? 'You do not have permission to perform this action.'
+              : 'An error occurred processing your request. Please try again later.';
+
     throw new functions.https.HttpsError(errorCode, safeMessage);
   }
 });
@@ -392,11 +407,14 @@ export const checkEmailHealth = functions.https.onCall(async (_data, context) =>
     await db.collection('mail').add({
       to: 'test-healthcheck@taklaget.app',
       template: { name: 'healthcheck', data: { system: 'Taklaget' } },
-      meta: { createdBy: context.auth?.uid || 'system', test: true, timestamp: new Date().toISOString() }
+      meta: {
+        createdBy: context.auth?.uid || 'system',
+        test: true,
+        timestamp: new Date().toISOString(),
+      },
     });
     return { status: 'ok' };
   } catch (err: any) {
     return { status: 'fail', error: err?.message || 'unknown' };
   }
 });
-

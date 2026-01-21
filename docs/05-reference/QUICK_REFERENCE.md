@@ -7,29 +7,29 @@
 
 ## Route to Functionality Mapping
 
-| Route | Functionality | Component | Allowed Roles |
-|-------|--------------|------------|---------------|
-| `/login` | Login | `LoginForm.tsx` | Public |
-| `/dashboard` | Dashboard | `Dashboard.tsx` | Inspector, Branch Admin, Superadmin |
-| `/profile` | User Profile | `UserProfile.tsx` | Inspector, Branch Admin, Superadmin |
-| `/report/new` | Create Report | `ReportForm.tsx` | Inspector, Branch Admin |
-| `/report/edit/:id` | Edit Report | `ReportForm.tsx` | Inspector, Branch Admin |
-| `/report/view/:id` | View Report | `ReportView.tsx` | Inspector, Branch Admin, Superadmin |
-| `/report/public/:id` | Public Report | `PublicReportView.tsx` | Public |
-| `/reports` | Reports List (Inspector) | `AllReports.tsx` | Inspector |
-| `/admin/reports` | Reports List (Admin) | `AllReports.tsx` | Branch Admin, Superadmin |
-| `/offers` | Offers List | `OffersPage.tsx` | Inspector, Branch Admin, Superadmin |
-| `/offer/public/:id` | Public Offer | `PublicOfferView.tsx` | Public |
-| `/offer/thank-you` | Offer Thank You | `OfferThankYou.tsx` | Public |
-| `/schedule` | Schedule | `SchedulePage.tsx` | Inspector, Branch Admin, Superadmin |
-| `/admin/users` | User Management | `UserManagement.tsx` | Branch Admin, Superadmin |
-| `/admin/customers` | Customer Management | `CustomerManagement.tsx` | Inspector (read-only), Branch Admin, Superadmin |
-| `/admin/branches` | Branch Management | `BranchManagement.tsx` | Superadmin |
-| `/admin/analytics` | Analytics | `AnalyticsDashboard.tsx` | Branch Admin, Superadmin |
-| `/admin/email-templates` | Email Templates | `EmailTemplateViewer.tsx` | Superadmin |
-| `/admin/qa` | QA Testing | `QATestingPage.tsx` | Superadmin (Dev only) |
-| `/unsubscribe` | Unsubscribe | `UnsubscribePage.tsx` | Public |
-| `/marketing` | Marketing Page | `MarketingPage.tsx` | Superadmin |
+| Route                    | Functionality            | Component                 | Allowed Roles                                   |
+| ------------------------ | ------------------------ | ------------------------- | ----------------------------------------------- |
+| `/login`                 | Login                    | `LoginForm.tsx`           | Public                                          |
+| `/dashboard`             | Dashboard                | `Dashboard.tsx`           | Inspector, Branch Admin, Superadmin             |
+| `/profile`               | User Profile             | `UserProfile.tsx`         | Inspector, Branch Admin, Superadmin             |
+| `/report/new`            | Create Report            | `ReportForm.tsx`          | Inspector, Branch Admin                         |
+| `/report/edit/:id`       | Edit Report              | `ReportForm.tsx`          | Inspector, Branch Admin                         |
+| `/report/view/:id`       | View Report              | `ReportView.tsx`          | Inspector, Branch Admin, Superadmin             |
+| `/report/public/:id`     | Public Report            | `PublicReportView.tsx`    | Public                                          |
+| `/reports`               | Reports List (Inspector) | `AllReports.tsx`          | Inspector                                       |
+| `/admin/reports`         | Reports List (Admin)     | `AllReports.tsx`          | Branch Admin, Superadmin                        |
+| `/offers`                | Offers List              | `OffersPage.tsx`          | Inspector, Branch Admin, Superadmin             |
+| `/offer/public/:id`      | Public Offer             | `PublicOfferView.tsx`     | Public                                          |
+| `/offer/thank-you`       | Offer Thank You          | `OfferThankYou.tsx`       | Public                                          |
+| `/schedule`              | Schedule                 | `SchedulePage.tsx`        | Inspector, Branch Admin, Superadmin             |
+| `/admin/users`           | User Management          | `UserManagement.tsx`      | Branch Admin, Superadmin                        |
+| `/admin/customers`       | Customer Management      | `CustomerManagement.tsx`  | Inspector (read-only), Branch Admin, Superadmin |
+| `/admin/branches`        | Branch Management        | `BranchManagement.tsx`    | Superadmin                                      |
+| `/admin/analytics`       | Analytics                | `AnalyticsDashboard.tsx`  | Branch Admin, Superadmin                        |
+| `/admin/email-templates` | Email Templates          | `EmailTemplateViewer.tsx` | Superadmin                                      |
+| `/admin/qa`              | QA Testing               | `QATestingPage.tsx`       | Superadmin (Dev only)                           |
+| `/unsubscribe`           | Unsubscribe              | `UnsubscribePage.tsx`     | Public                                          |
+| `/marketing`             | Marketing Page           | `MarketingPage.tsx`       | Superadmin                                      |
 
 ---
 
@@ -38,6 +38,7 @@
 ### Inspector (Permission Level 0)
 
 **Can Access:**
+
 - ✅ Dashboard
 - ✅ User Profile
 - ✅ Create Report (own branch)
@@ -52,6 +53,7 @@
 - ✅ Create Report from Customer (via customer detail)
 
 **Cannot Access:**
+
 - ❌ Delete Report
 - ❌ Create Customer
 - ❌ Edit Customer
@@ -69,6 +71,7 @@
 ### Branch Admin (Permission Level 1)
 
 **Can Access:**
+
 - ✅ All Inspector features
 - ✅ Create Report (branch)
 - ✅ Edit Report (branch reports)
@@ -88,6 +91,7 @@
 - ✅ View Schedule (branch appointments)
 
 **Cannot Access:**
+
 - ❌ Branch Management
 - ❌ Email Templates
 - ❌ QA Testing (dev)
@@ -97,6 +101,7 @@
 ### Superadmin (Permission Level 2)
 
 **Can Access:**
+
 - ✅ All Branch Admin features
 - ✅ All Reports (all branches)
 - ✅ All Customers (all branches)
@@ -115,6 +120,7 @@
 ### Public (No Authentication)
 
 **Can Access:**
+
 - ✅ Login Page
 - ✅ Public Report View (if `isPublic = true`)
 - ✅ Public Offer View
@@ -141,6 +147,7 @@
 11. Redirected to → `/report/view/:reportId`
 
 **Entry Points:**
+
 - Sidebar: "New Report"
 - Dashboard: "New Report" button
 - Quick Actions FAB: "New Report"
@@ -159,6 +166,7 @@
 7. Email sent to customer
 
 **Alternative:**
+
 - View Offers → `/offers`
 - Click "New Offer"
 - Select report from dropdown
@@ -269,6 +277,7 @@
 ### Quick Actions FAB
 
 **Available on:**
+
 - Dashboard (`/dashboard`)
 - Reports List (`/reports`, `/admin/reports`)
 - Report View (`/report/view/:id`)
@@ -278,25 +287,30 @@
 **Actions by Context:**
 
 **Dashboard:**
+
 - New Report
 - New Customer
 - View Reports
 
 **Report View:**
+
 - Edit Report
 - Create Offer
 - Share Report
 - Download PDF
 
 **Reports List:**
+
 - New Report
 - Export Reports
 
 **Offers:**
+
 - New Offer
 - View Reports
 
 **Customer:**
+
 - New Report (pre-filled)
 - Create Offer (pre-filled)
 - Schedule Appointment (pre-filled)
@@ -306,6 +320,7 @@
 ### Sidebar Navigation
 
 **Always Visible:**
+
 - Dashboard
 - Profile
 - New Report (Inspector, Branch Admin)
@@ -315,6 +330,7 @@
 - Offers (All)
 
 **Admin Only:**
+
 - Users (Branch Admin, Superadmin)
 - Analytics (Branch Admin, Superadmin)
 - Reports (Admin) (Branch Admin, Superadmin)
@@ -626,17 +642,20 @@ deleteBranch(branchId: string): Promise<void>
 ## Key Constants
 
 **Report Form:**
+
 - Auto-save interval: 3 seconds (debounced)
 - Draft expiry: 24 hours
 - Max images per issue: 5
 - Notification throttle: 60 seconds
 
 **Validation:**
+
 - Customer name: 2-100 characters
 - Roof age: 0-100 years
 - Offer value: 0-10,000,000 SEK
 
 **Pagination:**
+
 - Reports per page: 20 (default)
 - Customers per page: 50 (default)
 
@@ -645,14 +664,10 @@ deleteBranch(branchId: string): Promise<void>
 ## Contact Points
 
 For questions about this documentation, refer to:
+
 - `FUNCTIONALITY_INVENTORY.md` - Complete functionality details
 - `TECHNICAL_REFERENCE.md` - Technical implementation details
 
 ---
 
 **Last Updated:** 2025-01-31
-
-
-
-
-

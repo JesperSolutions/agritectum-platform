@@ -247,7 +247,14 @@ const EnhancedReportsView: React.FC<EnhancedReportsViewProps> = ({
                     <CartesianGrid strokeDasharray='3 3' stroke='#e2e8f0' />
                     <XAxis dataKey='date' stroke='#94a3b8' />
                     <YAxis stroke='#94a3b8' />
-                    <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px', color: '#fff' }} />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: '#1e293b',
+                        border: 'none',
+                        borderRadius: '8px',
+                        color: '#fff',
+                      }}
+                    />
                     <Area
                       type='monotone'
                       dataKey='count'
@@ -269,9 +276,14 @@ const EnhancedReportsView: React.FC<EnhancedReportsViewProps> = ({
                     <CartesianGrid strokeDasharray='3 3' stroke='#e2e8f0' />
                     <XAxis dataKey='date' stroke='#94a3b8' />
                     <YAxis stroke='#94a3b8' />
-                    <Tooltip 
-                      contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px', color: '#fff' }}
-                      formatter={(value) => formatCurrency(value as number)}
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: '#1e293b',
+                        border: 'none',
+                        borderRadius: '8px',
+                        color: '#fff',
+                      }}
+                      formatter={value => formatCurrency(value as number)}
                     />
                     <Line
                       type='monotone'
@@ -303,7 +315,14 @@ const EnhancedReportsView: React.FC<EnhancedReportsViewProps> = ({
                     <CartesianGrid strokeDasharray='3 3' stroke='#e2e8f0' />
                     <XAxis dataKey='name' stroke='#94a3b8' />
                     <YAxis stroke='#94a3b8' />
-                    <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px', color: '#fff' }} />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: '#1e293b',
+                        border: 'none',
+                        borderRadius: '8px',
+                        color: '#fff',
+                      }}
+                    />
                     <Legend />
                     <Bar dataKey='completed' stackId='a' fill='#10b981' name='Completed' />
                     <Bar dataKey='sent' stackId='a' fill='#3b82f6' name='Sent' />

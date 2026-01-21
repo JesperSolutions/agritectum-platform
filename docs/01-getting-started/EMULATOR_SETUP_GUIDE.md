@@ -82,6 +82,7 @@ npm run emulators
 ```
 
 You should see:
+
 ```
 ✔  All emulators ready! It is now safe to connect your app.
 ┌─────────────────────────────────────────────────────────────┐
@@ -114,6 +115,7 @@ npm run dev
 - **Emulator UI**: http://localhost:4000
 
 You should see in the browser console:
+
 ```
 🔥 Connecting to Firebase Emulators...
 ✅ Connected to Firebase Emulators
@@ -142,6 +144,7 @@ npm run dev        # Terminal 2
 If you get "Port already in use" errors:
 
 **Windows PowerShell:**
+
 ```powershell
 # Find and kill process on port 8080 (adjust port as needed)
 Get-Process -Id (Get-NetTCPConnection -LocalPort 8080).OwningProcess | Stop-Process
@@ -185,4 +188,3 @@ rm -rf emulator-data
 ---
 
 **Need Help?** Check `docs/LOCAL_DEVELOPMENT.md` for detailed usage guide!
-

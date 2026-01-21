@@ -5,6 +5,7 @@ This directory contains the centralized design system for the Agritectum Platfor
 ## Overview
 
 The design system provides:
+
 - **Design Tokens**: Colors, spacing, typography, shadows, borders, motion
 - **Component Patterns**: Standardized class name patterns for common UI elements
 - **Utilities**: Helper functions for working with design tokens, accessibility, and responsive design
@@ -77,7 +78,7 @@ import { getStatusBadgeClass, getFormInputClass } from '@/design-system/utilitie
 </span>
 
 // Form input
-<input 
+<input
   className={getFormInputClass(hasError, isDisabled)}
   type="text"
 />
@@ -88,17 +89,20 @@ import { getStatusBadgeClass, getFormInputClass } from '@/design-system/utilitie
 ### Colors
 
 **UI Colors (Slate):**
+
 - `colors.ui.background.*` - Background colors
 - `colors.ui.border.*` - Border colors
 - `colors.ui.text.*` - Text colors
 
 **Semantic Colors:**
+
 - `colors.semantic.success.*` - Success states
 - `colors.semantic.error.*` - Error states
 - `colors.semantic.warning.*` - Warning states
 - `colors.semantic.info.*` - Info states
 
 **Button Colors:**
+
 - `colors.button.primary.*` - Primary buttons
 - `colors.button.secondary.*` - Secondary buttons
 - `colors.button.danger.*` - Danger buttons
@@ -239,7 +243,7 @@ import { getButtonClasses } from '@/design-system/components';
 - ✅ Unified Card component
 - ✅ Unified Input component
 - ✅ Unified StatusBadge component
-- ⏳ Color migration (gray-* → slate-*) - In progress
+- ⏳ Color migration (gray-_ → slate-_) - In progress
 - ⏳ Border radius standardization - In progress
 - ⏳ Shadow migration - In progress
 

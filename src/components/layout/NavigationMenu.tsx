@@ -1,16 +1,13 @@
 /**
  * Navigation Menu Component
- * 
+ *
  * Provides a collapsible navigation menu with grouped items
  * Supports nested menu items with expand/collapse functionality
  */
 
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import {
-  ChevronDown,
-  ChevronRight,
-} from 'lucide-react';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 
 export interface NavigationItem {
   label: string;
@@ -84,8 +81,8 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({
     }
 
     // Filter children by role
-    const filteredChildren = item.children?.filter(child => 
-      !child.roles || child.roles.includes(currentUserRole)
+    const filteredChildren = item.children?.filter(
+      child => !child.roles || child.roles.includes(currentUserRole)
     );
 
     const hasChildren = filteredChildren && filteredChildren.length > 0;
@@ -105,15 +102,15 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({
             }`}
             style={{ paddingLeft: `${0.75 + level * 1}rem` }}
           >
-            <span className="truncate">{item.label}</span>
+            <span className='truncate'>{item.label}</span>
             {isExpanded ? (
-              <ChevronDown className="w-4 h-4 flex-shrink-0 text-slate-400" />
+              <ChevronDown className='w-4 h-4 flex-shrink-0 text-slate-400' />
             ) : (
-              <ChevronRight className="w-4 h-4 flex-shrink-0 text-slate-400" />
+              <ChevronRight className='w-4 h-4 flex-shrink-0 text-slate-400' />
             )}
           </button>
           {isExpanded && filteredChildren && (
-            <div className="mt-1 space-y-1">
+            <div className='mt-1 space-y-1'>
               {filteredChildren.map(child => renderItem(child, level + 1))}
             </div>
           )}
@@ -133,12 +130,12 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({
         }`}
         style={{ paddingLeft: `${0.75 + level * 1}rem` }}
       >
-        <span className="truncate">{item.label}</span>
+        <span className='truncate'>{item.label}</span>
       </Link>
     );
   };
 
-  return <div className="space-y-1">{items.map(item => renderItem(item))}</div>;
+  return <div className='space-y-1'>{items.map(item => renderItem(item))}</div>;
 };
 
 export default NavigationMenu;

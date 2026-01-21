@@ -7,12 +7,14 @@ The **Roof For Good ESG Calculator** is a comprehensive multi-step wizard for ca
 ## Features
 
 ### Multi-Step Wizard Interface
+
 1. **Step 1: Role Selection** - Users select their expertise level (Homeowner, Professional, Investor)
 2. **Step 2: Location** - Define project location for accurate environmental data
 3. **Step 3: Roof Configuration** - Configure roof segments with allocation percentages and solutions
 4. **Step 4: Results** - View comprehensive environmental and financial impact analysis
 
 ### Dynamic Roof Configuration
+
 - **4 Division Areas:**
   - 🌱 Green Roof Area (Living roof systems)
   - 💨 NOₓ Reduction Area (Photocatalytic coating)
@@ -23,9 +25,10 @@ The **Roof For Good ESG Calculator** is a comprehensive multi-step wizard for ca
 - **Real-Time Calculations:** Metrics update instantly as users modify configuration
 
 ### Comprehensive Environmental Impact Metrics
+
 - **CO₂ Offset:** Annual carbon dioxide reduction in kg
 - **Energy Impact:** Combined savings and generation in kWh/year
-- **Financial Analysis:** 
+- **Financial Analysis:**
   - Total investment cost
   - Annual savings
   - Payback period in years
@@ -33,7 +36,9 @@ The **Roof For Good ESG Calculator** is a comprehensive multi-step wizard for ca
 - **NOₓ Reduction:** Air quality improvement metrics
 
 ### Multi-Language Support
+
 Translations available for:
+
 - 🇺🇸 English (en-US)
 - 🇸🇪 Swedish (sv-SE)
 - 🇩🇰 Danish (da-DK)
@@ -42,6 +47,7 @@ Translations available for:
 All translation keys automatically adapt to user's selected locale.
 
 ### Currency Localization
+
 - **Dynamic Currency Codes:** EUR (Europe), USD (USA), DKK (Denmark), SEK (Sweden), NOK (Norway)
 - **Proper Formatting:** Automatic currency formatting based on locale
 - **Cost Calculations:** All financial metrics displayed in user's local currency
@@ -76,12 +82,14 @@ src/
 
 **Access Point:** `/admin/roof-calculator`
 
-**Permissions:** 
+**Permissions:**
+
 - `superadmin`
 - `branchAdmin`
 - `inspector`
 
 **Implementation:**
+
 ```typescript
 {
   path: 'admin/roof-calculator',
@@ -100,27 +108,30 @@ src/
 ### Main Component: `RoofForGoodCalculator`
 
 **Props:**
+
 ```typescript
 interface RoofForGoodCalculatorProps {
-  building?: Building;  // Optional: Pre-fill building data
+  building?: Building; // Optional: Pre-fill building data
 }
 ```
 
 **State Management:**
+
 ```typescript
 interface CalculatorState {
-  step: number;              // Current wizard step (1-4)
-  totalRoofSize: number;     // Total roof area in m²
-  selectedRole: string;      // User's expertise level
-  location: {                // Project location
+  step: number; // Current wizard step (1-4)
+  totalRoofSize: number; // Total roof area in m²
+  selectedRole: string; // User's expertise level
+  location: {
+    // Project location
     address: string;
     latitude?: number;
     longitude?: number;
     country?: string;
   };
-  segments: RoofSegment[];   // 4 roof segments with details
+  segments: RoofSegment[]; // 4 roof segments with details
   metrics: ESGMetrics | null; // Calculated environmental metrics
-  loading: boolean;          // Calculation in progress
+  loading: boolean; // Calculation in progress
   errors: { [key: string]: string }; // Validation errors
 }
 ```
@@ -128,41 +139,44 @@ interface CalculatorState {
 ### Roof Segments
 
 Each segment includes:
+
 ```typescript
 interface RoofSegment {
   id: number;
   name: string;
-  percentage: number;        // % of total roof
-  area: number;             // Calculated area in m²
-  solution: string;         // Solution name
-  costPerSqm: number;       // Cost per square meter
-  benefits: string[];       // Key benefits
-  co2Offset: number;        // Annual CO₂ reduction
-  energy: number;           // Annual energy in kWh
-  lifespan: number;         // Solution lifespan in years
-  icon: React.ReactNode;    // Icon component
+  percentage: number; // % of total roof
+  area: number; // Calculated area in m²
+  solution: string; // Solution name
+  costPerSqm: number; // Cost per square meter
+  benefits: string[]; // Key benefits
+  co2Offset: number; // Annual CO₂ reduction
+  energy: number; // Annual energy in kWh
+  lifespan: number; // Solution lifespan in years
+  icon: React.ReactNode; // Icon component
 }
 ```
 
 ## Integration with Existing Systems
 
 ### Uses Existing Services
+
 1. **ESG Calculations:** `calculateESGFromDivisions()` from `src/utils/esgCalculations.ts`
 2. **Currency Formatting:** `formatCurrency()` from `src/utils/currency.ts`
 3. **Locale Detection:** `getCurrencyCode()` from `src/utils/currency.ts`
 4. **i18n System:** `useIntl()` hook with custom locale messages
 
 ### Building Data Integration
+
 - Accepts optional `building` prop to pre-fill:
   - Roof size
   - Project address
   - GPS coordinates (latitude/longitude)
-  
 - Works seamlessly with existing Building interface from `src/types/index.ts`
 
 ## Translation Keys
 
 ### Structure
+
 All keys are organized under `esg.calculator` namespace:
 
 ```json
@@ -190,6 +204,7 @@ All keys are organized under `esg.calculator` namespace:
 ```
 
 ### Adding New Translations
+
 1. Add keys to `src/locales/{locale}/esg.json`
 2. Update all 4 locale files (en, sv, da, de)
 3. Import in corresponding `index.ts` (automatic via spread operator)
@@ -197,29 +212,33 @@ All keys are organized under `esg.calculator` namespace:
 ## Usage Examples
 
 ### Basic Usage
+
 ```tsx
 import RoofForGoodCalculator from './components/ESGCalculator/RoofForGoodCalculator';
 
-<RoofForGoodCalculator />
+<RoofForGoodCalculator />;
 ```
 
 ### With Pre-filled Building Data
+
 ```tsx
 const building = {
   id: '123',
   address: '19, Ruevejen, Ringe, Faaborg-Midtfyn Municipality, Denmark',
   roofSize: 1000,
   latitude: 55.123,
-  longitude: 10.456
+  longitude: 10.456,
 };
 
-<RoofForGoodCalculator building={building} />
+<RoofForGoodCalculator building={building} />;
 ```
 
 ## Calculation Logic
 
 ### ESG Metrics Calculation
+
 The calculator uses `calculateESGFromDivisions()` which:
+
 1. Takes roof size and segment percentages
 2. Applies material-specific CO₂ factors
 3. Calculates energy generation/savings
@@ -227,12 +246,14 @@ The calculator uses `calculateESGFromDivisions()` which:
 5. Determines payback period
 
 **Default Segment Values (per 1000m²):**
+
 - Green Roof: 525 kg CO₂/year, 375 kWh/year
 - NOₓ Reduction: 485 kg CO₂/year, 0 kWh/year
 - Cool Roof: 1663 kg CO₂/year, 2125 kWh/year
 - Social Activities: 125 kg CO₂/year, 0 kWh/year
 
 ### Cost Calculations
+
 ```
 Total Cost = Sum of (segment_area × costPerSqm)
 Annual Savings = (Total Cost × 0.015) // 1.5% assumption
@@ -242,6 +263,7 @@ Payback Period = Total Cost / Annual Savings
 ## UI/UX Features
 
 ### Visual Design
+
 - **Gradient Backgrounds:** Green theme for sustainability
 - **Progress Indicator:** Visual step indicators (1-4)
 - **Color-Coded Sections:** Different colors for each segment type
@@ -249,6 +271,7 @@ Payback Period = Total Cost / Annual Savings
 - **Responsive Layout:** Works on mobile, tablet, and desktop
 
 ### Interactive Elements
+
 - **Dynamic Allocation:** Auto-adjust percentages when one segment changes
 - **Real-Time Updates:** Metrics recalculate as users modify values
 - **Validation Messages:** Clear error messages for invalid inputs
@@ -256,6 +279,7 @@ Payback Period = Total Cost / Annual Savings
 - **Loading States:** Spinner during calculations
 
 ### Accessibility
+
 - Semantic HTML structure
 - ARIA labels on form inputs
 - Keyboard navigation support
@@ -265,11 +289,13 @@ Payback Period = Total Cost / Annual Savings
 ## Performance Metrics
 
 ### Bundle Size
+
 - **Minified:** 23.49 kB
 - **Gzipped:** 5.27 kB
 - **Map Size:** 55.48 kB
 
 ### Load Time
+
 - Lazy loaded component
 - Chunk retry mechanism for network resilience
 - Minimal dependencies
@@ -295,6 +321,7 @@ Payback Period = Total Cost / Annual Savings
 ## Future Enhancements
 
 ### Potential Features
+
 1. **PDF Export:** Download analysis report as PDF
 2. **Public Sharing:** Generate public link for customer view
 3. **Comparison Mode:** Compare multiple roof configurations
@@ -305,6 +332,7 @@ Payback Period = Total Cost / Annual Savings
 8. **3D Visualization:** Interactive roof model
 
 ### API Integration Points
+
 1. Store reports in Firestore `esgServiceReports` collection
 2. Integrate with offer generation system
 3. Link with customer communication system
@@ -321,15 +349,19 @@ Payback Period = Total Cost / Annual Savings
 ### Common Issues
 
 **Issue:** Calculator not showing after navigation
+
 - **Solution:** Check that lazy loading is working; reload page
 
 **Issue:** Currencies showing incorrectly
+
 - **Solution:** Verify locale is detected correctly in browser console
 
 **Issue:** Translations missing
+
 - **Solution:** Ensure esg.json is imported in locale index.ts
 
 **Issue:** Calculations seem wrong
+
 - **Solution:** Check that calculateESGFromDivisions is using correct parameters
 
 ## Related Documentation

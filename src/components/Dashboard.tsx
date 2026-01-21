@@ -3,16 +3,15 @@ import SmartDashboard from './dashboards/SmartDashboard';
 
 /**
  * Dashboard Component
- * 
+ *
  * Wrapper component that delegates to SmartDashboard.
  * The original dashboard implementation has been moved to legacy.
- * 
+ *
  * @see src/components/dashboards/SmartDashboard.tsx
  * @see src/legacy/components/OriginalDashboard.tsx (legacy implementation)
  */
 
 const Dashboard: React.FC = () => {
-
   // Use Smart Dashboard for all roles - COMPLETE IMPLEMENTATION
   return <SmartDashboard />;
 };

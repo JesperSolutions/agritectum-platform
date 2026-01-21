@@ -23,7 +23,9 @@ export function RouteErrorBoundary() {
 
     if (isChunkError) {
       title = t('errors.app.updateRequired') || 'Application update required';
-      detail = t('errors.app.updateRequiredMessage') || 'A new version is available. Please reload the page to continue.';
+      detail =
+        t('errors.app.updateRequiredMessage') ||
+        'A new version is available. Please reload the page to continue.';
     } else {
       title = t('common.somethingWentWrong');
       detail = error.message || detail;
@@ -53,7 +55,9 @@ export function RouteErrorBoundary() {
                 className='w-full flex justify-center items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-slate-700 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-colors'
               >
                 <RefreshCw className='w-4 h-4 mr-2' />
-                {isChunkError ? (t('errors.app.updateApplication') || 'Update application') : (t('common.buttons.refresh') || 'Reload page')}
+                {isChunkError
+                  ? t('errors.app.updateApplication') || 'Update application'
+                  : t('common.buttons.refresh') || 'Reload page'}
               </button>
 
               <button

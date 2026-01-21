@@ -4,11 +4,9 @@
   "marketing.userRoles.superadmin.manageBranches": "Alle Filialen verwalten",
   "marketing.userRoles.superadmin.viewAllReports": "Alle Berichte anzeigen",
   "marketing.userRoles.superadmin.createUsers": "Benutzer erstellen/bearbeiten",
-  "marketing.userRoles.superadmin.systemAnalytics": "Systemanalysen"
-  ,
+  "marketing.userRoles.superadmin.systemAnalytics": "Systemanalysen",
   "marketing.userRoles.superadmin.title": "Superadmin",
-  "marketing.userRoles.superadmin.permissionLevel": "Berechtigungsstufe 2"
-  ,
+  "marketing.userRoles.superadmin.permissionLevel": "Berechtigungsstufe 2",
   "marketing.brand.name": "Taklaget Service",
   "marketing.brand.tagline": "Professionelle Dachinspektionsverwaltung",
   "marketing.backToApp": "Zurück zur App",

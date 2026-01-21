@@ -39,6 +39,14 @@
   "admin.userManagement.roles.inspector": "Inspektør",
   "admin.userManagement.roles.branchAdmin": "Filialadministrator",
   "admin.userManagement.roles.superadmin": "Superadministrator",
+  "admin.userManagement.basicInfo": "Grundlæggende information",
+  "admin.userManagement.roleAndPermissions": "Rolle og rettigheder",
+  "admin.userManagement.passwordSection": "Adgangskode",
+  "admin.userManagement.passwordStrength": "Adgangskodens styrke:",
+  "admin.userManagement.passwordStrengthLevels.weak": "Svag",
+  "admin.userManagement.passwordStrengthLevels.fair": "Middel",
+  "admin.userManagement.passwordStrengthLevels.good": "God",
+  "admin.userManagement.passwordStrengthLevels.strong": "Meget stærk",
   "admin.userManagement.activeUser": "Aktiv bruger",
   "admin.userManagement.activateUser": "Aktiver bruger",
   "admin.userManagement.deactivateUser": "Deaktiver bruger",
@@ -50,6 +58,7 @@
   "admin.userManagement.password": "Adgangskode",
   "admin.userManagement.passwordPlaceholder": "Indtast adgangskode",
   "admin.userManagement.generatePassword": "Generer adgangskode",
+  "admin.userManagement.generatingPassword": "Genererer...",
   "admin.userManagement.passwordHelp": "Adgangskoden skal være mindst 8 tegn lang",
   "admin.userManagement.emailInvitationTitle": "E-mail invitation",
   "admin.userManagement.emailInvitationDescription": "Brugeren vil modtage en e-mail med instruktioner til at indstille deres adgangskode.",
@@ -129,7 +138,7 @@
   "admin.branches.form.address": "Adresse",
   "admin.errors.failedToDeleteCustomer": "Kunne ikke slette kunde",
   "admin.errors.failedToSaveCustomer": "Kunne ikke gemme kunde",
-  
+
   "admin.customerManagement.deleteCustomerWithReports": "Denne kunde har {count} rapport(er). Sletning vil påvirke disse rapporter.",
   "admin.customerManagement.customerDeletedSuccessfully": "Kunde slettet",
   "admin.customerManagement.customerUpdatedSuccessfully": "Kunde opdateret",
@@ -366,5 +375,4 @@
   "admin.esgReports.biodiversity": "Biodiversitet",
   "admin.esgReports.sustainability": "Bæredygtighed",
   "admin.esgReports.rating": "Vurdering"
-
 }

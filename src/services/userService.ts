@@ -133,23 +133,23 @@ export const updateUser = async (
       if (!user) {
         throw new Error('User not found');
       }
-      
+
       // Branch admin can only edit users in their branch
       if (user.branchId !== currentUser.branchId) {
         throw new Error('Cannot edit user outside your branch');
       }
-      
+
       // Prevent changing branchId for branch admins
       if (updates.branchId && updates.branchId !== currentUser.branchId) {
         throw new Error('Cannot change user branch assignment');
       }
-      
+
       // Prevent promoting users to superadmin (branch admins can't do this)
       if (updates.role === 'superadmin' || updates.permissionLevel === 2) {
         throw new Error('Cannot change user role to superadmin');
       }
     }
-    
+
     const userRef = doc(db, 'users', userId);
     await updateDoc(userRef, updates);
   } catch (error: any) {
@@ -166,10 +166,7 @@ export const updateUser = async (
   }
 };
 
-export const deleteUser = async (
-  userId: string,
-  currentUser?: User
-): Promise<void> => {
+export const deleteUser = async (userId: string, currentUser?: User): Promise<void> => {
   try {
     // Force token refresh FIRST
     const { logger } = await import('../utils/logger');
@@ -180,7 +177,7 @@ export const deleteUser = async (
       logger.debug('Token refreshed');
       await new Promise(resolve => setTimeout(resolve, 100));
     }
-    
+
     // JUST DELETE IT
     logger.debug(`Deleting user: ${userId}`);
     const userRef = doc(db, 'users', userId);
@@ -230,7 +227,7 @@ export const resetUserPassword = async (
   try {
     const auth = getAuth();
     const currentUser = auth.currentUser;
-    
+
     if (!currentUser) {
       throw new Error('User must be authenticated');
     }
@@ -258,7 +255,7 @@ export const viewUserPassword = async (userId: string): Promise<ViewPasswordResp
   try {
     const auth = getAuth();
     const currentUser = auth.currentUser;
-    
+
     if (!currentUser) {
       throw new Error('User must be authenticated');
     }

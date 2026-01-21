@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Console - Agritectum</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            overflow: hidden;
+            height: 100vh;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        .header {
+            background: #2d2d2d;
+            padding: 15px;
+            border-bottom: 2px solid #007acc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 {
+            color: #4fc3f7;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .header .controls {
+            display: flex;
+            gap: 10px;
+        }
+        .header button {
+            padding: 8px 16px;
+            background: #007acc;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 12px;
+        }
+        .header button:hover {
+            background: #005a9e;
+        }
+        .console-output {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            background: #1e1e1e;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+        .log-entry {
+            margin-bottom: 8px;
+            padding: 4px 8px;
+            border-left: 3px solid #666;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .log-entry.log {
+            border-left-color: #4ec9b0;
+            color: #d4d4d4;
+        }
+        .log-entry.error {
+            border-left-color: #f48771;
+            color: #f48771;
+            background: rgba(244, 135, 113, 0.1);
+        }
+        .log-entry.warn {
+            border-left-color: #dcdcaa;
+            color: #dcdcaa;
+            background: rgba(220, 220, 170, 0.1);
+        }
+        .log-entry.info {
+            border-left-color: #4fc3f7;
+            color: #4fc3f7;
+        }
+        .log-entry.success {
+            border-left-color: #6a9955;
+            color: #6a9955;
+        }
+        .timestamp {
+            color: #858585;
+            margin-right: 10px;
+        }
+        .status {
+            padding: 10px 15px;
+            background: #2d2d2d;
+            border-top: 1px solid #444;
+            font-size: 11px;
+            color: #858585;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Debug Console - Agritectum Platform</h1>
+            <div class="controls">
+                <button onclick="clearConsole()">Clear</button>
+                <button onclick="downloadLogs()">Download Logs</button>
+                <button onclick="toggleAutoScroll()">Auto-Scroll: ON</button>
+            </div>
+        </div>
+        <div class="console-output" id="consoleOutput"></div>
+        <div class="status">
+            <span id="status">Ready. Open the portal in another tab and check logs below.</span>
+        </div>
+    </div>
+
+    <script>
+        let autoScroll = true;
+        let logs = [];
+
+        // Intercept all console methods
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        const originalInfo = console.info;
+
+        function addLogEntry(message, type = 'log') {
+            const timestamp = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit', fractionalSecondDigits: 3 });
+            const entry = { message, type, timestamp, raw: message };
+            logs.push(entry);
+
+            const consoleOutput = document.getElementById('consoleOutput');
+            const logDiv = document.createElement('div');
+            logDiv.className = `log-entry ${type}`;
+            
+            let displayMessage = message;
+            if (typeof message === 'object') {
+                displayMessage = JSON.stringify(message, null, 2);
+            }
+            
+            logDiv.innerHTML = `<span class="timestamp">[${timestamp}]</span><span>${escapeHtml(String(displayMessage))}</span>`;
+            consoleOutput.appendChild(logDiv);
+
+            if (autoScroll) {
+                consoleOutput.scrollTop = consoleOutput.scrollHeight;
+            }
+
+            // Update status
+            document.getElementById('status').textContent = `${logs.length} log entries • Last: ${timestamp}`;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            args.forEach(arg => addLogEntry(arg, 'log'));
+        };
+
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            args.forEach(arg => addLogEntry(arg, 'error'));
+        };
+
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            args.forEach(arg => addLogEntry(arg, 'warn'));
+        };
+
+        console.info = function(...args) {
+            originalInfo.apply(console, args);
+            args.forEach(arg => addLogEntry(arg, 'info'));
+        };
+
+        function clearConsole() {
+            document.getElementById('consoleOutput').innerHTML = '';
+            logs = [];
+            addLogEntry('Console cleared', 'info');
+        }
+
+        function toggleAutoScroll() {
+            autoScroll = !autoScroll;
+            event.target.textContent = `Auto-Scroll: ${autoScroll ? 'ON' : 'OFF'}`;
+            event.target.style.background = autoScroll ? '#007acc' : '#666';
+        }
+
+        function downloadLogs() {
+            const text = logs.map(l => `[${l.timestamp}] [${l.type.toUpperCase()}] ${l.message}`).join('\n');
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `debug-logs-${new Date().getTime()}.txt`;
+            a.click();
+        }
+
+        // Initial message
+        window.addEventListener('load', () => {
+            addLogEntry('🚀 Debug Console Ready', 'success');
+            addLogEntry('📝 Instructions:', 'info');
+            addLogEntry('1. Login to the portal in another tab', 'info');
+            addLogEntry('2. Navigate to your building', 'info');
+            addLogEntry('3. Watch console logs appear below', 'info');
+            addLogEntry('4. Use Download Logs button to save output', 'info');
+        });
+    </script>
+</body>
+</html>

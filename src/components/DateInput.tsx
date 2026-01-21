@@ -100,7 +100,7 @@ const DateInput: React.FC<DateInputProps> = ({
     } else if (displayValue) {
       setIsValid(false);
     }
-    
+
     // Call parent onBlur if provided
     if (onBlur) {
       onBlur();
@@ -169,18 +169,18 @@ const DateInput: React.FC<DateInputProps> = ({
           !isValid ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : ''
         }`}
       />
-      
+
       {/* Clickable calendar icon with larger click area */}
       <button
         type='button'
         className='absolute inset-y-0 left-0 pl-3 pr-2 flex items-center cursor-pointer hover:bg-gray-50 rounded-l-md transition-colors z-10 focus:outline-none focus:ring-2 focus:ring-blue-500'
         onClick={handleCalendarClick}
-        title={placeholder || "Click to open date picker"}
-        aria-label="Open date picker"
+        title={placeholder || 'Click to open date picker'}
+        aria-label='Open date picker'
       >
         <Calendar className='h-5 w-5 text-gray-400 hover:text-gray-600' />
       </button>
-      
+
       {/* Native date picker - positioned off-screen but accessible */}
       <input
         ref={datePickerRef}
@@ -192,7 +192,7 @@ const DateInput: React.FC<DateInputProps> = ({
         aria-hidden='true'
         tabIndex={-1}
       />
-      
+
       {!isValid && displayValue && (
         <p className='mt-1 text-sm text-red-600'>Please enter a valid date in DD/MM/YYYY format</p>
       )}

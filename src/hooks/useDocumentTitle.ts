@@ -10,5 +10,3 @@ export function useDocumentTitle(title: string, opts?: { suffix?: string }) {
     };
   }, [title, opts?.suffix]);
 }
-
-

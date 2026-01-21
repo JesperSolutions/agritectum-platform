@@ -18,7 +18,7 @@
   "serviceAgreement.noAgreementsMessage": "Kom igång genom att lägga till ditt första serviceavtal.",
   "serviceAgreement.errorLoading": "Fel vid laddning av serviceavtal",
   "serviceAgreement.errorMessage": "Kunde inte ladda serviceavtal. Kontrollera din anslutning och försök igen.",
-  
+
   "serviceAgreement.statusFilters.almostDue": "Nästan förfallna",
   "serviceAgreement.statusFilters.dueTomorrow": "Förfaller imorgon",
   "serviceAgreement.statusFilters.dueInWeek": "Förfaller om en vecka",
@@ -28,34 +28,34 @@
   "serviceAgreement.statusFilters.expired": "Utgångna",
   "serviceAgreement.statusFilters.cancelled": "Inställda",
   "serviceAgreement.statusFilters.pending": "Väntande",
-  
+
   "serviceAgreement.viewMode.list": "Listvy",
   "serviceAgreement.viewMode.map": "Kartvy",
-  
+
   "serviceAgreement.table.customer": "Kund",
   "serviceAgreement.table.title": "Titel",
   "serviceAgreement.table.type": "Typ",
   "serviceAgreement.table.nextService": "Nästa service",
   "serviceAgreement.table.status": "Status",
   "serviceAgreement.table.actions": "Åtgärder",
-  
+
   "serviceAgreement.type.maintenance": "Underhåll",
   "serviceAgreement.type.inspection": "Inspektion",
   "serviceAgreement.type.repair": "Reparation",
   "serviceAgreement.type.other": "Övrigt",
-  
+
   "serviceAgreement.status.active": "Aktiv",
   "serviceAgreement.status.expired": "Utgången",
   "serviceAgreement.status.cancelled": "Inställd",
   "serviceAgreement.status.pending": "Väntande",
-  
+
   "serviceAgreement.frequency.weekly": "Veckovis",
   "serviceAgreement.frequency.monthly": "Månadsvis",
   "serviceAgreement.frequency.quarterly": "Kvartalsvis",
   "serviceAgreement.frequency.biannual": "Halvårsvis",
   "serviceAgreement.frequency.annual": "Årligen",
   "serviceAgreement.frequency.custom": "Anpassad",
-  
+
   "serviceAgreement.form.title": "Serviceavtal",
   "serviceAgreement.form.customer": "Kund",
   "serviceAgreement.form.customerPlaceholder": "Välj kund",
@@ -83,7 +83,7 @@
   "serviceAgreement.form.noCustomers": "Inga kunder hittades. Vänligen skapa en kund först.",
   "serviceAgreement.form.retry": "Försök igen",
   "serviceAgreement.form.refresh": "Uppdatera",
-  
+
   "serviceAgreement.validation.customerRequired": "Kund är obligatorisk",
   "serviceAgreement.validation.titleRequired": "Titel är obligatorisk",
   "serviceAgreement.validation.startDateRequired": "Startdatum är obligatoriskt",
@@ -91,7 +91,7 @@
   "serviceAgreement.validation.nextServiceDateRequired": "Nästa servicedatum är obligatoriskt",
   "serviceAgreement.validation.endDateAfterStart": "Slutdatum måste vara efter startdatum",
   "serviceAgreement.validation.nextServiceDateValid": "Nästa servicedatum måste vara inom avtalsperioden",
-  
+
   "serviceAgreement.detail.title": "Serviceavtalsdetaljer",
   "serviceAgreement.detail.customer": "Kund",
   "serviceAgreement.detail.address": "Adress",
@@ -118,24 +118,24 @@
   "serviceAgreement.detail.linkCopied": "Länk kopierad till urklipp",
   "serviceAgreement.detail.acceptedOn": "Accepterad den",
   "serviceAgreement.detail.by": "av",
-  
+
   "serviceAgreement.map.title": "Serviceavtal på karta",
   "serviceAgreement.map.noLocation": "Ingen plats tillgänglig",
   "serviceAgreement.map.loading": "Laddar karta...",
-  
+
   "serviceAgreement.confirmDelete": "Är du säker på att du vill ta bort detta serviceavtal?",
   "serviceAgreement.confirmDeleteDescription": "Detta kan inte ångras.",
   "serviceAgreement.deleting": "Tar bort serviceavtal...",
   "serviceAgreement.deleted": "Serviceavtal borttaget",
   "serviceAgreement.created": "Serviceavtal skapat",
   "serviceAgreement.updated": "Serviceavtal uppdaterat",
-  
+
   "serviceAgreement.dueDate.days": "dagar",
   "serviceAgreement.dueDate.day": "dag",
   "serviceAgreement.dueDate.overdue": "Försenad",
   "serviceAgreement.dueDate.today": "Idag",
   "serviceAgreement.dueDate.tomorrow": "Imorgon",
-  
+
   "serviceAgreement.public.title": "Serviceavtal",
   "serviceAgreement.public.headerTitle": "Agritectum Serviceavtal",
   "serviceAgreement.public.invalidToken": "Ogiltig token",
@@ -190,7 +190,7 @@
   "serviceAgreement.public.validation.emailInvalid": "Ogiltig e-postadress",
   "serviceAgreement.public.validation.termsRequired": "Du måste godkänna villkoren",
   "serviceAgreement.public.validation.acceptanceRequired": "Du måste acceptera serviceavtalet",
-  
+
   "serviceAgreement.form.purpose.title": "1. AVTALETS SYFTE",
   "serviceAgreement.form.purpose.placeholder": "Löpande service och underhåll av taket för att säkerställa funktion, täthet och lång livslängd. Avtalet omfattar både reparation av begynnande skador, förebyggande kontroll samt dokumentation för drift och eventuell garantiförsäkring.",
   "serviceAgreement.form.purpose.text": "Löpande service och underhåll av taket för att säkerställa funktion, täthet och lång livslängd. Avtalet omfattar både reparation av begynnande skador, förebyggande kontroll samt dokumentation för drift och eventuell garantiförsäkring.",
@@ -254,4 +254,3 @@
   "serviceAgreement.detail.sendError": "Kunde inte skicka serviceavtal",
   "serviceAgreement.detail.noEmail": "Kundens e-post krävs för att skicka avtalet"
 }
-

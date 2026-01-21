@@ -1,6 +1,6 @@
 /**
  * Design System Utilities Index
- * 
+ *
  * Centralized export for all design system utility functions.
  */
 

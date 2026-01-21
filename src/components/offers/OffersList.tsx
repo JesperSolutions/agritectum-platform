@@ -75,14 +75,14 @@ const OffersList: React.FC<OffersListProps> = ({
 
     // Apply status filter
     if (statusFilter !== 'all') {
-      filtered = filtered.filter((offer) => offer.status === statusFilter);
+      filtered = filtered.filter(offer => offer.status === statusFilter);
     }
 
     // Apply search filter
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       filtered = filtered.filter(
-        (offer) =>
+        offer =>
           offer.customerName?.toLowerCase().includes(term) ||
           offer.customerEmail?.toLowerCase().includes(term) ||
           offer.title?.toLowerCase().includes(term)
@@ -127,27 +127,30 @@ const OffersList: React.FC<OffersListProps> = ({
   };
 
   return (
-    <div className="">
+    <div className=''>
       {/* Filters */}
-      <div className="mb-4">
-        <div className="flex flex-col gap-3">
+      <div className='mb-4'>
+        <div className='flex flex-col gap-3'>
           {/* Search */}
-          <div className="flex-1">
+          <div className='flex-1'>
             <input
-              type="text"
-              placeholder="Search by customer name, email, or title..."
+              type='text'
+              placeholder='Search by customer name, email, or title...'
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-4 py-3 bg-white/90 backdrop-blur border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              onChange={e => setSearchTerm(e.target.value)}
+              className='w-full px-4 py-3 bg-white/90 backdrop-blur border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all'
             />
           </div>
 
           {/* Quick Status Pills - Using FilterTabs pattern */}
-          <div className="flex flex-wrap items-center gap-2">
+          <div className='flex flex-wrap items-center gap-2'>
             {[
               { key: 'all', label: t('common.filters.all') || 'All' },
               { key: 'pending', label: t('offers.status.pending') || 'Pending' },
-              { key: 'awaiting_response', label: t('offers.status.awaitingResponse') || 'Awaiting' },
+              {
+                key: 'awaiting_response',
+                label: t('offers.status.awaitingResponse') || 'Awaiting',
+              },
               { key: 'accepted', label: t('offers.status.accepted') || 'Accepted' },
               { key: 'rejected', label: t('offers.status.rejected') || 'Rejected' },
               { key: 'expired', label: t('offers.status.expired') || 'Expired' },
@@ -164,10 +167,10 @@ const OffersList: React.FC<OffersListProps> = ({
                 {pill.label}
               </button>
             ))}
-            <div className="ml-auto">
+            <div className='ml-auto'>
               <button
                 onClick={() => navigate('/reports')}
-                className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors"
+                className='px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors'
               >
                 + {t('offers.createOffer')}
               </button>
@@ -175,18 +178,18 @@ const OffersList: React.FC<OffersListProps> = ({
           </div>
 
           {/* Select (accessible alternative) */}
-          <div className="w-full sm:w-56 hidden">
+          <div className='w-full sm:w-56 hidden'>
             <select
               value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value as OfferStatus | 'all')}
-              className="w-full px-4 py-3 bg-white/90 backdrop-blur border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              onChange={e => setStatusFilter(e.target.value as OfferStatus | 'all')}
+              className='w-full px-4 py-3 bg-white/90 backdrop-blur border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all'
             >
-              <option value="all">All Status</option>
-              <option value="pending">Pending</option>
-              <option value="awaiting_response">Awaiting Response</option>
-              <option value="accepted">Accepted</option>
-              <option value="rejected">Rejected</option>
-              <option value="expired">Expired</option>
+              <option value='all'>All Status</option>
+              <option value='pending'>Pending</option>
+              <option value='awaiting_response'>Awaiting Response</option>
+              <option value='accepted'>Accepted</option>
+              <option value='rejected'>Rejected</option>
+              <option value='expired'>Expired</option>
             </select>
           </div>
         </div>
@@ -196,68 +199,85 @@ const OffersList: React.FC<OffersListProps> = ({
       {filteredAndSortedOffers.length === 0 ? (
         <EmptyState
           icon={DollarSign}
-          title="Inga offerter än"
-          description="Skapa din första offert från en slutförd rapport."
-          actionLabel="Gå till Rapporter"
+          title='Inga offerter än'
+          description='Skapa din första offert från en slutförd rapport.'
+          actionLabel='Gå till Rapporter'
           onAction={() => navigate('/reports')}
         />
       ) : (
-        <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
-          {filteredAndSortedOffers.map((offer) => {
+        <div className='grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3'>
+          {filteredAndSortedOffers.map(offer => {
             const daysPending = getDaysPending(offer);
             const isOverdue = daysPending > 7 && offer.status === 'pending';
 
             return (
-              <ListCard key={offer.id} className="group">
-                <div className="p-5">
-                  <div className="flex items-start justify-between gap-3">
+              <ListCard key={offer.id} className='group'>
+                <div className='p-5'>
+                  <div className='flex items-start justify-between gap-3'>
                     <div>
-                      <div className="text-base font-semibold text-gray-900">{offer.customerName || 'Unknown'}</div>
-                      <div className="text-sm text-gray-500">{offer.customerEmail || 'No email'}</div>
+                      <div className='text-base font-semibold text-gray-900'>
+                        {offer.customerName || 'Unknown'}
+                      </div>
+                      <div className='text-sm text-gray-500'>
+                        {offer.customerEmail || 'No email'}
+                      </div>
                     </div>
                     <StatusBadge status={offer.status || 'pending'} />
                   </div>
 
-                  <div className="mt-4 flex items-center justify-between">
-                    <div className="text-gray-500 text-sm">
+                  <div className='mt-4 flex items-center justify-between'>
+                    <div className='text-gray-500 text-sm'>
                       <div>{formatSwedishDate(offer.createdAt)}</div>
-                      <div className="text-xs">{formatSwedishDateTime(offer.createdAt)}</div>
+                      <div className='text-xs'>{formatSwedishDateTime(offer.createdAt)}</div>
                     </div>
-                    <div className="text-right">
-                      <div className="text-2xl font-bold text-gray-900">
-                        {offer.totalAmount ? offer.totalAmount.toLocaleString('sv-SE') : '0'} {offer.currency || 'SEK'}
+                    <div className='text-right'>
+                      <div className='text-2xl font-bold text-gray-900'>
+                        {offer.totalAmount ? offer.totalAmount.toLocaleString('sv-SE') : '0'}{' '}
+                        {offer.currency || 'SEK'}
                       </div>
-                      {isOverdue && <div className="text-xs text-red-600 font-semibold mt-1">Overdue ({daysPending}d)</div>}
+                      {isOverdue && (
+                        <div className='text-xs text-red-600 font-semibold mt-1'>
+                          Overdue ({daysPending}d)
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
 
-                <div className="px-5 pb-5 flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
+                <div className='px-5 pb-5 flex items-center justify-between gap-2'>
+                  <div className='flex items-center gap-2'>
                     <DropdownMenu>
-                      <DropdownMenuTrigger className="inline-flex items-center gap-1 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 hover:bg-gray-50">
-                        <MoreHorizontal className="w-4 h-4" />
+                      <DropdownMenuTrigger className='inline-flex items-center gap-1 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 hover:bg-gray-50'>
+                        <MoreHorizontal className='w-4 h-4' />
                         Actions
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="start" className="min-w-[180px]">
+                      <DropdownMenuContent align='start' className='min-w-[180px]'>
                         <DropdownMenuItem onClick={() => onView(offer.id)}>View</DropdownMenuItem>
                         {onExportOffer && (
-                          <DropdownMenuItem onClick={() => onExportOffer(offer.id)}>Export</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => onExportOffer(offer.id)}>
+                            Export
+                          </DropdownMenuItem>
                         )}
                         {offer.status === 'pending' && onSendReminder && (
                           <DropdownMenuItem
                             disabled={emailEnabled === false}
-                            onClick={() => emailEnabled !== false ? onSendReminder(offer.id) : undefined}
+                            onClick={() =>
+                              emailEnabled !== false ? onSendReminder(offer.id) : undefined
+                            }
                           >
                             Reminder
                           </DropdownMenuItem>
                         )}
                         {offer.status === 'pending' && onExtendValidity && (
-                          <DropdownMenuItem onClick={() => onExtendValidity(offer.id)}>Extend</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => onExtendValidity(offer.id)}>
+                            Extend
+                          </DropdownMenuItem>
                         )}
                         <DropdownMenuItem
                           onClick={async () => {
-                            await navigator.clipboard.writeText(`${window.location.origin}/offer/public/${offer.id}`);
+                            await navigator.clipboard.writeText(
+                              `${window.location.origin}/offer/public/${offer.id}`
+                            );
                             setCopying(offer.id);
                             setTimeout(() => setCopying(null), 1200);
                           }}
@@ -267,7 +287,7 @@ const OffersList: React.FC<OffersListProps> = ({
                         {onDelete && (
                           <DropdownMenuItem
                             onClick={() => onDelete(offer.id)}
-                            className="text-red-600 focus:text-red-600"
+                            className='text-red-600 focus:text-red-600'
                           >
                             {t('common.delete')}
                           </DropdownMenuItem>
@@ -276,23 +296,28 @@ const OffersList: React.FC<OffersListProps> = ({
                     </DropdownMenu>
                   </div>
                   <div>
-                    {offer.status === 'pending' && onSendOffer && offer.customerEmail && emailEnabled !== false ? (
+                    {offer.status === 'pending' &&
+                    onSendOffer &&
+                    offer.customerEmail &&
+                    emailEnabled !== false ? (
                       <button
                         onClick={() => onSendOffer(offer.id)}
-                        className="px-3 py-2 rounded-lg text-sm font-medium bg-green-600 text-white hover:bg-green-700"
-                        title="Send Offer via email"
+                        className='px-3 py-2 rounded-lg text-sm font-medium bg-green-600 text-white hover:bg-green-700'
+                        title='Send Offer via email'
                       >
                         Send Email
                       </button>
                     ) : (
                       <button
                         onClick={async () => {
-                          await navigator.clipboard.writeText(`${window.location.origin}/offer/public/${offer.id}`);
+                          await navigator.clipboard.writeText(
+                            `${window.location.origin}/offer/public/${offer.id}`
+                          );
                           setCopying(offer.id);
                           setTimeout(() => setCopying(null), 1200);
                         }}
-                        className="px-3 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white hover:bg-blue-700"
-                        title="Copy public link to clipboard"
+                        className='px-3 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white hover:bg-blue-700'
+                        title='Copy public link to clipboard'
                       >
                         {copying === offer.id ? '✔ Copied!' : 'Copy Link'}
                       </button>
@@ -309,4 +334,3 @@ const OffersList: React.FC<OffersListProps> = ({
 };
 
 export default OffersList;
-

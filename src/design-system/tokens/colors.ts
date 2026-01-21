@@ -1,6 +1,6 @@
 /**
  * Color Tokens - Material Design System
- * 
+ *
  * Unified slate color palette for consistent UI styling.
  * Brand colors (orange, blue, yellow) are reserved for marketing pages only.
  */

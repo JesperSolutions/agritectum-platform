@@ -68,21 +68,21 @@ src/locales/
 
 ### **Translation Files Breakdown:**
 
-| File | Keys | Description |
-|------|------|-------------|
-| `common.json` | 80+ | Shared UI elements, buttons, status, validation |
-| `navigation.json` | 25+ | Menu items, breadcrumbs, routes |
-| `dashboard.json` | 50+ | Dashboard-specific content and stats |
-| `reports.json` | 90+ | Report listing, filters, actions |
-| `reportForm.json` | 120+ | Report creation and editing forms |
-| `offers.json` | 100+ | Offer management and public views |
-| `customers.json` | 60+ | Customer management |
-| `schedule.json` | 50+ | Appointment scheduling |
-| `admin.json` | 80+ | Admin panels and analytics |
-| `email.json` | 70+ | Email templates and delivery |
-| `validation.json` | 60+ | Form validation messages |
-| `errors.json` | 80+ | Error messages and handling |
-| `address.json` | 40+ | Address input and map components |
+| File              | Keys | Description                                     |
+| ----------------- | ---- | ----------------------------------------------- |
+| `common.json`     | 80+  | Shared UI elements, buttons, status, validation |
+| `navigation.json` | 25+  | Menu items, breadcrumbs, routes                 |
+| `dashboard.json`  | 50+  | Dashboard-specific content and stats            |
+| `reports.json`    | 90+  | Report listing, filters, actions                |
+| `reportForm.json` | 120+ | Report creation and editing forms               |
+| `offers.json`     | 100+ | Offer management and public views               |
+| `customers.json`  | 60+  | Customer management                             |
+| `schedule.json`   | 50+  | Appointment scheduling                          |
+| `admin.json`      | 80+  | Admin panels and analytics                      |
+| `email.json`      | 70+  | Email templates and delivery                    |
+| `validation.json` | 60+  | Form validation messages                        |
+| `errors.json`     | 80+  | Error messages and handling                     |
+| `address.json`    | 40+  | Address input and map components                |
 
 **Total**: 800+ translation keys organized across 13 focused files
 
@@ -111,10 +111,14 @@ src/locales/
 
    ```tsx
    // Currency
-   {formatCurrency(50000)} // "50 000,00 kr"
+   {
+     formatCurrency(50000);
+   } // "50 000,00 kr"
 
    // Dates
-   {formatDate(new Date())} // "15/09/2024"
+   {
+     formatDate(new Date());
+   } // "15/09/2024"
    ```
 
 ## 📝 **Translation Key Naming Convention**
@@ -196,13 +200,13 @@ const messages = {
 ```tsx
 const LanguageSwitcher = () => {
   const { locale, setLocale } = useIntl();
-  
+
   return (
-    <select value={locale} onChange={(e) => setLocale(e.target.value)}>
-      <option value="sv-SE">Svenska</option>
-      <option value="en-US">English</option>
-      <option value="no-NO">Norsk</option>
-      <option value="da-DK">Dansk</option>
+    <select value={locale} onChange={e => setLocale(e.target.value)}>
+      <option value='sv-SE'>Svenska</option>
+      <option value='en-US'>English</option>
+      <option value='no-NO'>Norsk</option>
+      <option value='da-DK'>Dansk</option>
     </select>
   );
 };

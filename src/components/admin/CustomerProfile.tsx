@@ -29,7 +29,10 @@ import type { SupportedLocale } from '../../utils/geolocation';
 import { getCustomerById } from '../../services/customerService';
 import { getBuildingsByCustomer } from '../../services/buildingService';
 import { getReportsByCustomerId } from '../../services/reportService';
-import { getServiceAgreementsByCustomer, getServiceAgreementsByBuilding } from '../../services/serviceAgreementService';
+import {
+  getServiceAgreementsByCustomer,
+  getServiceAgreementsByBuilding,
+} from '../../services/serviceAgreementService';
 import { getESGServiceReportsByBuilding } from '../../services/esgService';
 import StatusBadge from '../shared/badges/StatusBadge';
 
@@ -79,7 +82,9 @@ const CustomerProfile: React.FC = () => {
   const [esgReports, setEsgReports] = useState<Record<string, ESGServiceReport[]>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'overview' | 'buildings' | 'reports' | 'agreements'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'buildings' | 'reports' | 'agreements'>(
+    'overview'
+  );
 
   useEffect(() => {
     if (customerId && currentUser) {
@@ -113,34 +118,34 @@ const CustomerProfile: React.FC = () => {
 
       // Load service agreements
       const agreementsData = await getServiceAgreementsByCustomer(customerId, currentUser.branchId);
-      
+
       // Also load agreements for each building
       const buildingAgreements = await Promise.all(
-        buildingsData.map(async (building) => {
+        buildingsData.map(async building => {
           const buildingAgreements = await getServiceAgreementsByBuilding(building.id);
           return buildingAgreements;
         })
       );
-      
+
       // Combine and deduplicate agreements
-      const allAgreements = [
-        ...agreementsData,
-        ...buildingAgreements.flat(),
-      ];
-      
+      const allAgreements = [...agreementsData, ...buildingAgreements.flat()];
+
       // Remove duplicates by ID
       const uniqueAgreements = allAgreements.filter(
-        (agreement, index, self) => index === self.findIndex((a) => a.id === agreement.id)
+        (agreement, index, self) => index === self.findIndex(a => a.id === agreement.id)
       );
-      
+
       setServiceAgreements(uniqueAgreements);
 
       // Load ESG reports for each building
       const esgReportsByBuilding: Record<string, ESGServiceReport[]> = {};
       await Promise.all(
-        buildingsData.map(async (building) => {
+        buildingsData.map(async building => {
           try {
-            const buildingEsgReports = await getESGServiceReportsByBuilding(building.id, currentUser.branchId);
+            const buildingEsgReports = await getESGServiceReportsByBuilding(
+              building.id,
+              currentUser.branchId
+            );
             if (buildingEsgReports.length > 0) {
               esgReportsByBuilding[building.id] = buildingEsgReports;
             }
@@ -235,7 +240,9 @@ const CustomerProfile: React.FC = () => {
                 <div className='text-sm text-slate-500 mb-1'>
                   {t('customerProfile.totalReports') || 'Total Reports'}
                 </div>
-                <div className='text-2xl font-bold text-slate-900'>{customer.totalReports || 0}</div>
+                <div className='text-2xl font-bold text-slate-900'>
+                  {customer.totalReports || 0}
+                </div>
                 <div className='text-sm text-slate-500 mt-2 mb-1'>
                   {t('customerProfile.totalRevenue') || 'Total Revenue'}
                 </div>
@@ -253,10 +260,22 @@ const CustomerProfile: React.FC = () => {
             <nav className='flex -mb-px'>
               {[
                 { id: 'overview', label: t('customerProfile.overview') || 'Overview', icon: User },
-                { id: 'buildings', label: t('customerProfile.buildings.title') || 'Buildings', icon: BuildingIcon },
-                { id: 'reports', label: t('customerProfile.reports.title') || 'Reports', icon: FileText },
-                { id: 'agreements', label: t('customerProfile.serviceAgreements.title') || 'Service Agreements', icon: FileCheck },
-              ].map((tab) => {
+                {
+                  id: 'buildings',
+                  label: t('customerProfile.buildings.title') || 'Buildings',
+                  icon: BuildingIcon,
+                },
+                {
+                  id: 'reports',
+                  label: t('customerProfile.reports.title') || 'Reports',
+                  icon: FileText,
+                },
+                {
+                  id: 'agreements',
+                  label: t('customerProfile.serviceAgreements.title') || 'Service Agreements',
+                  icon: FileCheck,
+                },
+              ].map(tab => {
                 const Icon = tab.icon;
                 return (
                   <button
@@ -289,30 +308,40 @@ const CustomerProfile: React.FC = () => {
                   </h3>
                   <div className='space-y-3 text-sm'>
                     <div>
-                      <span className='font-medium text-slate-700'>{t('customer.name') || 'Name'}:</span>
+                      <span className='font-medium text-slate-700'>
+                        {t('customer.name') || 'Name'}:
+                      </span>
                       <span className='ml-2 text-slate-900'>{customer.name}</span>
                     </div>
                     {customer.company && (
                       <div>
-                        <span className='font-medium text-slate-700'>{t('customer.company') || 'Company'}:</span>
+                        <span className='font-medium text-slate-700'>
+                          {t('customer.company') || 'Company'}:
+                        </span>
                         <span className='ml-2 text-slate-900'>{customer.company}</span>
                       </div>
                     )}
                     {customer.email && (
                       <div>
-                        <span className='font-medium text-slate-700'>{t('customer.email') || 'Email'}:</span>
+                        <span className='font-medium text-slate-700'>
+                          {t('customer.email') || 'Email'}:
+                        </span>
                         <span className='ml-2 text-slate-900'>{customer.email}</span>
                       </div>
                     )}
                     {customer.phone && (
                       <div>
-                        <span className='font-medium text-slate-700'>{t('customer.phone') || 'Phone'}:</span>
+                        <span className='font-medium text-slate-700'>
+                          {t('customer.phone') || 'Phone'}:
+                        </span>
                         <span className='ml-2 text-slate-900'>{customer.phone}</span>
                       </div>
                     )}
                     {customer.address && (
                       <div>
-                        <span className='font-medium text-slate-700'>{t('customer.address') || 'Address'}:</span>
+                        <span className='font-medium text-slate-700'>
+                          {t('customer.address') || 'Address'}:
+                        </span>
                         <span className='ml-2 text-slate-900'>{customer.address}</span>
                       </div>
                     )}
@@ -343,7 +372,9 @@ const CustomerProfile: React.FC = () => {
                         <span className='font-medium text-slate-700'>
                           {t('customerProfile.lastReport') || 'Last Report'}:
                         </span>
-                        <span className='ml-2 text-slate-900'>{formatDate(customer.lastReportDate)}</span>
+                        <span className='ml-2 text-slate-900'>
+                          {formatDate(customer.lastReportDate)}
+                        </span>
                       </div>
                     )}
                     <div>
@@ -386,16 +417,21 @@ const CustomerProfile: React.FC = () => {
                   <EmptyState
                     icon={BuildingIcon}
                     title={t('customerProfile.buildings.empty') || 'No buildings found'}
-                    description={t('customerProfile.buildings.emptyDescription') || 'This customer has no buildings registered.'}
+                    description={
+                      t('customerProfile.buildings.emptyDescription') ||
+                      'This customer has no buildings registered.'
+                    }
                   />
                 ) : (
                   <div className='space-y-4'>
-                    {buildings.map((building) => {
+                    {buildings.map(building => {
                       const buildingReports = reports.filter(
-                        (r) => r.customerAddress === building.address || r.buildingAddress === building.address
+                        r =>
+                          r.customerAddress === building.address ||
+                          r.buildingAddress === building.address
                       );
                       const buildingAgreements = serviceAgreements.filter(
-                        (a) => a.buildingId === building.id
+                        a => a.buildingId === building.id
                       );
 
                       return (
@@ -407,66 +443,83 @@ const CustomerProfile: React.FC = () => {
                             <div className='flex-1'>
                               <div className='flex items-center gap-2 mb-2'>
                                 <BuildingIcon className='w-5 h-5 text-slate-600' />
-                                <h4 className='text-lg font-semibold text-slate-900'>{building.address}</h4>
+                                <h4 className='text-lg font-semibold text-slate-900'>
+                                  {building.address}
+                                </h4>
                               </div>
                               <div className='grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-slate-600'>
                                 {building.buildingType && (
                                   <div>
-                                    <span className='font-medium'>{t('customerProfile.buildingType') || 'Type'}:</span>{' '}
+                                    <span className='font-medium'>
+                                      {t('customerProfile.buildingType') || 'Type'}:
+                                    </span>{' '}
                                     {building.buildingType}
                                   </div>
                                 )}
                                 {building.roofType && (
                                   <div>
-                                    <span className='font-medium'>{t('form.fields.roofType') || 'Roof Type'}:</span>{' '}
+                                    <span className='font-medium'>
+                                      {t('form.fields.roofType') || 'Roof Type'}:
+                                    </span>{' '}
                                     {t(`roofTypes.${building.roofType}`) || building.roofType}
                                   </div>
                                 )}
                                 {building.roofSize && (
                                   <div>
-                                    <span className='font-medium'>{t('customerProfile.roofSize') || 'Roof Size'}:</span>{' '}
+                                    <span className='font-medium'>
+                                      {t('customerProfile.roofSize') || 'Roof Size'}:
+                                    </span>{' '}
                                     {building.roofSize} m²
                                   </div>
                                 )}
                                 <div>
-                                  <span className='font-medium'>{t('customerProfile.created') || 'Created'}:</span>{' '}
+                                  <span className='font-medium'>
+                                    {t('customerProfile.created') || 'Created'}:
+                                  </span>{' '}
                                   {formatDate(building.createdAt)}
                                 </div>
                               </div>
                               <div className='mt-3 flex flex-wrap gap-4 text-sm'>
                                 <span className='text-slate-600'>
-                                  {buildingReports.length} {t('customerProfile.reports') || 'reports'}
+                                  {buildingReports.length}{' '}
+                                  {t('customerProfile.reports') || 'reports'}
                                 </span>
                                 <span className='text-slate-600'>
-                                  {buildingAgreements.length} {t('customerProfile.agreements') || 'agreements'}
+                                  {buildingAgreements.length}{' '}
+                                  {t('customerProfile.agreements') || 'agreements'}
                                 </span>
                                 {/* ESG Reports count and link */}
                                 {esgReports[building.id]?.length > 0 ? (
                                   <span className='text-green-600 flex items-center gap-1'>
                                     <Leaf className='w-4 h-4' />
-                                    {esgReports[building.id].length} {t('customerProfile.esgReports') || 'ESG report(s)'}
+                                    {esgReports[building.id].length}{' '}
+                                    {t('customerProfile.esgReports') || 'ESG report(s)'}
                                   </span>
                                 ) : null}
                               </div>
-                              
+
                               {/* ESG Report Actions */}
                               <div className='mt-3 flex flex-wrap gap-2'>
                                 {esgReports[building.id]?.length > 0 ? (
                                   <>
-                                    {esgReports[building.id][0].isPublic && esgReports[building.id][0].publicLinkId && (
-                                      <button
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          window.open(`/esg-report/public/${esgReports[building.id][0].publicLinkId}`, '_blank');
-                                        }}
-                                        className='flex items-center gap-1 px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full hover:bg-green-200 transition-colors'
-                                      >
-                                        <ExternalLink className='w-3 h-3' />
-                                        {t('customerProfile.viewEsgReport') || 'View ESG Report'}
-                                      </button>
-                                    )}
+                                    {esgReports[building.id][0].isPublic &&
+                                      esgReports[building.id][0].publicLinkId && (
+                                        <button
+                                          onClick={e => {
+                                            e.stopPropagation();
+                                            window.open(
+                                              `/esg-report/public/${esgReports[building.id][0].publicLinkId}`,
+                                              '_blank'
+                                            );
+                                          }}
+                                          className='flex items-center gap-1 px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full hover:bg-green-200 transition-colors'
+                                        >
+                                          <ExternalLink className='w-3 h-3' />
+                                          {t('customerProfile.viewEsgReport') || 'View ESG Report'}
+                                        </button>
+                                      )}
                                     <button
-                                      onClick={(e) => {
+                                      onClick={e => {
                                         e.stopPropagation();
                                         navigate(`/admin/esg-service?buildingId=${building.id}`);
                                       }}
@@ -478,7 +531,7 @@ const CustomerProfile: React.FC = () => {
                                   </>
                                 ) : (
                                   <button
-                                    onClick={(e) => {
+                                    onClick={e => {
                                       e.stopPropagation();
                                       navigate(`/admin/esg-service?buildingId=${building.id}`);
                                     }}
@@ -505,11 +558,14 @@ const CustomerProfile: React.FC = () => {
                   <EmptyState
                     icon={FileText}
                     title={t('customerProfile.reports.empty') || 'No reports found'}
-                    description={t('customerProfile.reports.emptyDescription') || 'This customer has no reports yet.'}
+                    description={
+                      t('customerProfile.reports.emptyDescription') ||
+                      'This customer has no reports yet.'
+                    }
                   />
                 ) : (
                   <div className='space-y-4'>
-                    {reports.map((report) => (
+                    {reports.map(report => (
                       <div
                         key={report.id}
                         className='border border-slate-200 rounded-lg p-4 hover:bg-slate-50 transition-colors cursor-pointer'
@@ -520,31 +576,42 @@ const CustomerProfile: React.FC = () => {
                             <div className='flex items-center gap-2 mb-2'>
                               <FileText className='w-5 h-5 text-slate-600' />
                               <h4 className='text-lg font-semibold text-slate-900'>
-                                {t('customerProfile.report') || 'Report'} - {formatDate(report.inspectionDate)}
+                                {t('customerProfile.report') || 'Report'} -{' '}
+                                {formatDate(report.inspectionDate)}
                               </h4>
-                              <StatusBadge 
-                                status={mapReportStatus(report.status)} 
+                              <StatusBadge
+                                status={mapReportStatus(report.status)}
                                 label={getReportStatusLabel(report.status, t)}
                               />
                             </div>
                             <div className='grid grid-cols-2 md:grid-cols-3 gap-4 text-sm text-slate-600 mb-2'>
                               <div>
-                                <span className='font-medium'>{t('customerProfile.inspectionDate') || 'Inspection Date'}:</span>{' '}
+                                <span className='font-medium'>
+                                  {t('customerProfile.inspectionDate') || 'Inspection Date'}:
+                                </span>{' '}
                                 {formatDate(report.inspectionDate)}
                               </div>
                               <div>
-                                <span className='font-medium'>{t('customerProfile.address') || 'Address'}:</span>{' '}
+                                <span className='font-medium'>
+                                  {t('customerProfile.address') || 'Address'}:
+                                </span>{' '}
                                 {report.buildingAddress || report.customerAddress}
                               </div>
                               <div>
-                                <span className='font-medium'>{t('customerProfile.created') || 'Created'}:</span>{' '}
+                                <span className='font-medium'>
+                                  {t('customerProfile.created') || 'Created'}:
+                                </span>{' '}
                                 {formatDate(report.createdAt)}
                               </div>
                             </div>
                             {report.offerValue && (
                               <div className='text-sm'>
-                                <span className='font-medium text-slate-700'>{t('customerProfile.offerValue') || 'Offer Value'}:</span>{' '}
-                                <span className='text-green-600 font-semibold'>{formatCurrency(report.offerValue)}</span>
+                                <span className='font-medium text-slate-700'>
+                                  {t('customerProfile.offerValue') || 'Offer Value'}:
+                                </span>{' '}
+                                <span className='text-green-600 font-semibold'>
+                                  {formatCurrency(report.offerValue)}
+                                </span>
                               </div>
                             )}
                           </div>
@@ -566,13 +633,18 @@ const CustomerProfile: React.FC = () => {
                 {serviceAgreements.length === 0 ? (
                   <EmptyState
                     icon={FileCheck}
-                    title={t('customerProfile.serviceAgreements.empty') || 'No service agreements found'}
-                    description={t('customerProfile.serviceAgreements.emptyDescription') || 'This customer has no service agreements yet.'}
+                    title={
+                      t('customerProfile.serviceAgreements.empty') || 'No service agreements found'
+                    }
+                    description={
+                      t('customerProfile.serviceAgreements.emptyDescription') ||
+                      'This customer has no service agreements yet.'
+                    }
                   />
                 ) : (
                   <div className='space-y-4'>
-                    {serviceAgreements.map((agreement) => {
-                      const associatedBuilding = buildings.find((b) => b.id === agreement.buildingId);
+                    {serviceAgreements.map(agreement => {
+                      const associatedBuilding = buildings.find(b => b.id === agreement.buildingId);
 
                       return (
                         <div
@@ -583,46 +655,60 @@ const CustomerProfile: React.FC = () => {
                             <div className='flex-1'>
                               <div className='flex items-center gap-2 mb-2'>
                                 <FileCheck className='w-5 h-5 text-slate-600' />
-                                <h4 className='text-lg font-semibold text-slate-900'>{agreement.title}</h4>
+                                <h4 className='text-lg font-semibold text-slate-900'>
+                                  {agreement.title}
+                                </h4>
                                 <StatusBadge
                                   status={
                                     agreement.status === 'active'
                                       ? 'active'
                                       : agreement.status === 'expired'
-                                      ? 'expired'
-                                      : agreement.status === 'cancelled'
-                                      ? 'cancelled'
-                                      : 'pending'
+                                        ? 'expired'
+                                        : agreement.status === 'cancelled'
+                                          ? 'cancelled'
+                                          : 'pending'
                                   }
                                 />
                               </div>
                               <div className='grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-slate-600 mb-2'>
                                 <div>
-                                  <span className='font-medium'>{t('customerProfile.agreementType') || 'Type'}:</span>{' '}
+                                  <span className='font-medium'>
+                                    {t('customerProfile.agreementType') || 'Type'}:
+                                  </span>{' '}
                                   {agreement.agreementType}
                                 </div>
                                 <div>
-                                  <span className='font-medium'>{t('customerProfile.startDate') || 'Start Date'}:</span>{' '}
+                                  <span className='font-medium'>
+                                    {t('customerProfile.startDate') || 'Start Date'}:
+                                  </span>{' '}
                                   {formatDate(agreement.startDate)}
                                 </div>
                                 <div>
-                                  <span className='font-medium'>{t('customerProfile.endDate') || 'End Date'}:</span>{' '}
+                                  <span className='font-medium'>
+                                    {t('customerProfile.endDate') || 'End Date'}:
+                                  </span>{' '}
                                   {formatDate(agreement.endDate)}
                                 </div>
                                 <div>
-                                  <span className='font-medium'>{t('customerProfile.nextService') || 'Next Service'}:</span>{' '}
+                                  <span className='font-medium'>
+                                    {t('customerProfile.nextService') || 'Next Service'}:
+                                  </span>{' '}
                                   {formatDate(agreement.nextServiceDate)}
                                 </div>
                               </div>
                               {associatedBuilding && (
                                 <div className='text-sm text-slate-600 mb-2'>
-                                  <span className='font-medium'>{t('customerProfile.building') || 'Building'}:</span>{' '}
+                                  <span className='font-medium'>
+                                    {t('customerProfile.building') || 'Building'}:
+                                  </span>{' '}
                                   {associatedBuilding.address}
                                 </div>
                               )}
                               {agreement.price && (
                                 <div className='text-sm'>
-                                  <span className='font-medium text-slate-700'>{t('customerProfile.price') || 'Price'}:</span>{' '}
+                                  <span className='font-medium text-slate-700'>
+                                    {t('customerProfile.price') || 'Price'}:
+                                  </span>{' '}
                                   <span className='text-green-600 font-semibold'>
                                     {formatCurrency(agreement.price)} {agreement.currency || 'DKK'}
                                   </span>

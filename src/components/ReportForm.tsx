@@ -50,30 +50,33 @@ import RoofSizeMeasurer from './RoofSizeMeasurer';
 import DefectCameraCapture from './DefectCameraCapture';
 import DefectQuickDescription from './DefectQuickDescription';
 import CustomerSearchInline from './CustomerSearchInline';
+import InspectionChecklistItem, {
+  type InspectionChecklistItemData,
+} from './ReportForm/InspectionChecklistItem';
 import { IssueTemplate } from '../constants/issueTemplates';
 import { PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
 import AddressInput from './AddressInput';
 import { lazy, Suspense } from 'react';
-import { 
-  safeParseNumber, 
-  safeParseInt, 
-  sanitizeDraftData, 
-  validateCoordinates, 
+import {
+  safeParseNumber,
+  safeParseInt,
+  sanitizeDraftData,
+  validateCoordinates,
   validateDateString,
   validateStepNumber,
-  validateRoofPins 
+  validateRoofPins,
 } from '../utils/formDataValidation';
 
 // Lazy load heavy components for better initial load performance
 const RoofImageAnnotation = lazy(() => import('./RoofImageAnnotation'));
 const InteractiveRoofMap = lazy(() => import('./InteractiveRoofMap'));
-import { 
-  MaterialFormField, 
-  MaterialInput, 
-  MaterialTextarea, 
-  MaterialSelect, 
-  MaterialDateInput 
+import {
+  MaterialFormField,
+  MaterialInput,
+  MaterialTextarea,
+  MaterialSelect,
+  MaterialDateInput,
 } from './ui/material-form-field';
 
 // Form Constants - Extracted from magic numbers
@@ -102,7 +105,8 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
   // Generate a temporary reportId for image uploads in create mode
   const tempReportId = reportId || `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   const { createReport, updateReport, getReport } = useReports();
-  const { notifyReportCreated, notifyReportUpdated, notifyReportCompleted } = useReportNotifications();
+  const { notifyReportCreated, notifyReportUpdated, notifyReportCompleted } =
+    useReportNotifications();
   const navigate = useNavigate();
 
   // Helper function to get local date string in CET timezone
@@ -119,7 +123,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
   const parseLocalDate = useCallback((dateString: string | Date | undefined | null | any): Date => {
     // Handle different input types safely
     let dateStr: string;
-    
+
     // Handle Firestore Timestamp objects
     if (dateString && typeof dateString === 'object') {
       if (dateString.toDate && typeof dateString.toDate === 'function') {
@@ -149,13 +153,13 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
       // Default to today's date if no valid input
       return new Date();
     }
-    
+
     // Validate the date string format
     if (!dateStr || typeof dateStr !== 'string' || !dateStr.includes('-')) {
       logger.warn('Invalid date string provided to parseLocalDate:', dateString);
       return new Date();
     }
-    
+
     const [year, month, day] = dateStr.split('-').map(Number);
     // Create date in local timezone without time conversion
     const localDate = new Date(year, month - 1, day);
@@ -191,11 +195,11 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
   // Get customer data from URL query parameters (when coming from customer management)
   const urlCustomerData = React.useMemo(() => {
     if (mode !== 'create') return null;
-    
+
     const customerId = searchParams.get('customerId');
     const customerName = searchParams.get('customerName');
     const customerAddress = searchParams.get('customerAddress');
-    
+
     if (customerId || customerName) {
       return {
         customerId: customerId || undefined,
@@ -203,7 +207,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
         customerAddress: customerAddress ? decodeURIComponent(customerAddress) : undefined,
       };
     }
-    
+
     return null;
   }, [searchParams, mode]);
 
@@ -215,9 +219,14 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
         try {
           const { getCustomerById } = await import('../services/customerService');
           const customer = await getCustomerById(urlCustomerData.customerId!);
-          
+
           // Verify customer belongs to user's branch or main branch
-          if (customer && (customer.branchId === currentUser.branchId || currentUser.branchId === 'main' || currentUser.role === 'superadmin')) {
+          if (
+            customer &&
+            (customer.branchId === currentUser.branchId ||
+              currentUser.branchId === 'main' ||
+              currentUser.role === 'superadmin')
+          ) {
             setFormData(prev => ({
               ...prev,
               customerName: prev.customerName || customer.name || '',
@@ -233,7 +242,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
           setLoadingCustomerData(false);
         }
       };
-      
+
       loadCustomerData();
     }
   }, [urlCustomerData?.customerId, mode, currentUser]);
@@ -242,8 +251,9 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
     try {
       // Prioritize URL params (from customer management), then appointment data (from appointments)
       const customerName = urlCustomerData?.customerName || appointmentData?.customerName || '';
-      const customerAddress = urlCustomerData?.customerAddress || appointmentData?.customerAddress || '';
-      
+      const customerAddress =
+        urlCustomerData?.customerAddress || appointmentData?.customerAddress || '';
+
       // Safely extract appointment data with fallbacks
       const safeAppointmentData = {
         customerName,
@@ -261,6 +271,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
         roofType: 'flat' as RoofType,
         roofAge: undefined,
         conditionNotes: '',
+        inspectionChecklist: {},
         issuesFound: [],
         recommendedActions: [],
         status: 'draft' as ReportStatus,
@@ -302,7 +313,9 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
   });
 
   // Store address coordinates separately (not part of Report type)
-  const [addressCoordinates, setAddressCoordinates] = useState<{ lat: number; lon: number } | null>(null);
+  const [addressCoordinates, setAddressCoordinates] = useState<{ lat: number; lon: number } | null>(
+    null
+  );
   const [pendingRoofSizeMeasure, setPendingRoofSizeMeasure] = useState(false);
   const addressInputRef = useRef<HTMLInputElement>(null);
   // Store map markers
@@ -397,12 +410,12 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
   useEffect(() => {
     if (mode === 'create' && currentUser?.uid) {
       const stepKey = `reportFormStep_${currentUser.uid}`;
-                  const savedStep = localStorage.getItem(stepKey);
-                  if (savedStep) {
-                    // Validate step number to prevent invalid navigation
-                    const stepNum = validateStepNumber(savedStep, totalSteps);
-                    setCurrentStep(stepNum);
-                  }
+      const savedStep = localStorage.getItem(stepKey);
+      if (savedStep) {
+        // Validate step number to prevent invalid navigation
+        const stepNum = validateStepNumber(savedStep, totalSteps);
+        setCurrentStep(stepNum);
+      }
     }
   }, [mode, currentUser?.uid, totalSteps]);
 
@@ -414,9 +427,12 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
     }
 
     // Save draft even with partial data - better than losing work
-    const hasAnyData = formData.customerName || formData.customerAddress || formData.inspectionDate || 
-                       (formData.issuesFound && formData.issuesFound.length > 0) ||
-                       (formData.recommendedActions && formData.recommendedActions.length > 0);
+    const hasAnyData =
+      formData.customerName ||
+      formData.customerAddress ||
+      formData.inspectionDate ||
+      (formData.issuesFound && formData.issuesFound.length > 0) ||
+      (formData.recommendedActions && formData.recommendedActions.length > 0);
 
     if (!hasAnyData) {
       return;
@@ -486,38 +502,41 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
   }, [formData, mode, reportId, currentUser, loading, t, updateReport]);
 
   // Auto-completion logic for existing customers (only in create mode)
-  const checkForExistingCustomer = useCallback(async (customerName: string) => {
-    if (!customerName || customerName.length < 3 || !currentUser || mode === 'edit') return;
+  const checkForExistingCustomer = useCallback(
+    async (customerName: string) => {
+      if (!customerName || customerName.length < 3 || !currentUser || mode === 'edit') return;
 
-    try {
-      // Search for existing customers
-      const { searchCustomers } = await import('../services/customerService');
-      const existingCustomers = await searchCustomers(customerName, currentUser.branchId);
-      
-      if (existingCustomers.length > 0) {
-        const customer = existingCustomers[0]; // Take the first match
-        
-        // Get the latest report for this customer
-        const { getLatestReportForCustomer } = await import('../services/reportService');
-        const latestReport = await getLatestReportForCustomer(
-          customerName,
-          customer.email,
-          customer.phone,
-          currentUser.branchId
-        );
+      try {
+        // Search for existing customers
+        const { searchCustomers } = await import('../services/customerService');
+        const existingCustomers = await searchCustomers(customerName, currentUser.branchId);
 
-        if (latestReport) {
-          setFoundCustomer(customer);
-          setFoundReport(latestReport);
-          setShowAutoCompleteDialog(true);
-          // Load buildings for this customer
-          setCustomerIdForBuildings(customer.id);
+        if (existingCustomers.length > 0) {
+          const customer = existingCustomers[0]; // Take the first match
+
+          // Get the latest report for this customer
+          const { getLatestReportForCustomer } = await import('../services/reportService');
+          const latestReport = await getLatestReportForCustomer(
+            customerName,
+            customer.email,
+            customer.phone,
+            currentUser.branchId
+          );
+
+          if (latestReport) {
+            setFoundCustomer(customer);
+            setFoundReport(latestReport);
+            setShowAutoCompleteDialog(true);
+            // Load buildings for this customer
+            setCustomerIdForBuildings(customer.id);
+          }
         }
+      } catch (error) {
+        console.error('Error checking for existing customer:', error);
       }
-    } catch (error) {
-      console.error('Error checking for existing customer:', error);
-    }
-  }, [currentUser, mode]);
+    },
+    [currentUser, mode]
+  );
 
   // Check for existing customer when customer name changes (only in create mode)
   useEffect(() => {
@@ -537,9 +556,12 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
         setLoadingBuildings(true);
         try {
           const { getBuildingsByCustomer } = await import('../services/buildingService');
-          const buildings = await getBuildingsByCustomer(customerIdForBuildings, currentUser.branchId);
+          const buildings = await getBuildingsByCustomer(
+            customerIdForBuildings,
+            currentUser.branchId
+          );
           setCustomerBuildings(buildings);
-          
+
           // If there's only one building and no building is selected, auto-select it
           if (buildings.length === 1 && !selectedBuildingId) {
             const building = buildings[0];
@@ -558,32 +580,36 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
           setLoadingBuildings(false);
         }
       };
-      
+
       loadBuildings();
     }
   }, [customerIdForBuildings, currentUser, selectedBuildingId]);
 
   // Handle building selection - use building data as source of truth
-  const handleBuildingSelect = useCallback((buildingId: string) => {
-    const building = customerBuildings.find(b => b.id === buildingId);
-    if (building) {
-      setSelectedBuildingId(buildingId);
-      setFormData(prev => ({
-        ...prev,
-        buildingAddress: building.address,
-        buildingId: building.id,
-        roofType: building.roofType || prev.roofType,
-        roofSize: building.roofSize || prev.roofSize,
-      }));
-    }
-  }, [customerBuildings]);
+  const handleBuildingSelect = useCallback(
+    (buildingId: string) => {
+      const building = customerBuildings.find(b => b.id === buildingId);
+      if (building) {
+        setSelectedBuildingId(buildingId);
+        setFormData(prev => ({
+          ...prev,
+          buildingAddress: building.address,
+          buildingId: building.id,
+          roofType: building.roofType || prev.roofType,
+          roofSize: building.roofSize || prev.roofSize,
+        }));
+      }
+    },
+    [customerBuildings]
+  );
 
   // Handle creating a new building
   const handleCreateNewBuilding = useCallback(async () => {
     if (!formData.buildingAddress?.trim()) {
       setValidationErrors(prev => ({
         ...prev,
-        buildingAddress: t('form.validation.buildingAddressRequired') || 'Building address is required'
+        buildingAddress:
+          t('form.validation.buildingAddressRequired') || 'Building address is required',
       }));
       return;
     }
@@ -596,11 +622,15 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
     setCreatingBuildingLoading(true);
     try {
       const { createBuilding } = await import('../services/buildingService');
-      
+
+      // Infer buildingType from customerType (companies = commercial, individuals = residential)
+      const buildingType = formData.customerType === 'company' ? 'commercial' : 'residential';
+
       const newBuildingId = await createBuilding({
         customerId: customerIdForBuildings,
         branchId: currentUser?.branchId || '',
         address: formData.buildingAddress,
+        buildingType: buildingType,
         roofType: formData.roofType as RoofType,
         roofSize: formData.roofSize,
         roofAge: formData.roofAge,
@@ -621,15 +651,25 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
 
       setNotification({
         message: t('form.messages.buildingCreatedSuccess') || 'Building created successfully!',
-        type: 'success'
+        type: 'success',
       });
     } catch (err) {
       console.error('Error creating building:', err);
-      setError(t('form.errors.buildingCreationFailed') || 'Failed to create building. Please try again.');
+      setError(
+        t('form.errors.buildingCreationFailed') || 'Failed to create building. Please try again.'
+      );
     } finally {
       setCreatingBuildingLoading(false);
     }
-  }, [formData.buildingAddress, formData.roofType, formData.roofSize, formData.roofAge, customerIdForBuildings, currentUser?.branchId, t]);
+  }, [
+    formData.buildingAddress,
+    formData.roofType,
+    formData.roofSize,
+    formData.roofAge,
+    customerIdForBuildings,
+    currentUser?.branchId,
+    t,
+  ]);
 
   // Update form data when URL customer params are provided (for customer-to-report flow)
   useEffect(() => {
@@ -675,7 +715,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
           }
         }
       }
-      
+
       // Escape to go back or close dialogs
       if (e.key === 'Escape') {
         if (showCancelDialog) {
@@ -694,7 +734,14 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [currentStep, totalSteps, showCancelDialog, showDeleteDraftDialog, showAutoCompleteDialog, showTemplateSelector]);
+  }, [
+    currentStep,
+    totalSteps,
+    showCancelDialog,
+    showDeleteDraftDialog,
+    showAutoCompleteDialog,
+    showTemplateSelector,
+  ]);
 
   // Cleanup effect to prevent memory leaks
   useEffect(() => {
@@ -720,17 +767,17 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
             // Validate and sanitize data when loading report
             const validatedInspectionDate = validateDateString(report.inspectionDate);
             const validatedOfferValidUntil = validateDateString(report.offerValidUntil);
-            
+
             // If report has a customerId, set it for building loading
             if (report.customerId) {
               setCustomerIdForBuildings(report.customerId);
             }
-            
+
             // If report has a buildingId, set it as selected
             if (report.buildingId) {
               setSelectedBuildingId(report.buildingId);
             }
-            
+
             setFormData({
               customerName: report.customerName || '',
               customerAddress: report.customerAddress || '',
@@ -744,25 +791,33 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
               roofSize: report.roofSize,
               conditionNotes: report.conditionNotes || '',
               // Validate arrays are actually arrays
-              issuesFound: Array.isArray(report.issuesFound) ? report.issuesFound.filter(issue => 
-                issue && typeof issue === 'object' && typeof issue.id === 'string'
-              ) : [],
-              recommendedActions: Array.isArray(report.recommendedActions) ? report.recommendedActions.filter(action => 
-                action && typeof action === 'object' && typeof action.id === 'string'
-              ) : [],
+              issuesFound: Array.isArray(report.issuesFound)
+                ? report.issuesFound.filter(
+                    issue => issue && typeof issue === 'object' && typeof issue.id === 'string'
+                  )
+                : [],
+              recommendedActions: Array.isArray(report.recommendedActions)
+                ? report.recommendedActions.filter(
+                    action => action && typeof action === 'object' && typeof action.id === 'string'
+                  )
+                : [],
               status: report.status || 'draft',
               isShared: typeof report.isShared === 'boolean' ? report.isShared : false,
               isOffer: typeof report.isOffer === 'boolean' ? report.isOffer : true,
               offerValue: safeParseNumber(report.offerValue, 0, 10000000),
               offerValidUntil: validatedOfferValidUntil || undefined,
-              priorReportId: typeof report.priorReportId === 'string' ? report.priorReportId : undefined,
+              priorReportId:
+                typeof report.priorReportId === 'string' ? report.priorReportId : undefined,
               // Load cost fields
               laborCost: typeof report.laborCost === 'number' ? report.laborCost : undefined,
-              materialCost: typeof report.materialCost === 'number' ? report.materialCost : undefined,
+              materialCost:
+                typeof report.materialCost === 'number' ? report.materialCost : undefined,
               travelCost: typeof report.travelCost === 'number' ? report.travelCost : undefined,
-              overheadCost: typeof report.overheadCost === 'number' ? report.overheadCost : undefined,
+              overheadCost:
+                typeof report.overheadCost === 'number' ? report.overheadCost : undefined,
               // Load roof image and pins with validation
-              roofImageUrl: typeof report.roofImageUrl === 'string' ? report.roofImageUrl : undefined,
+              roofImageUrl:
+                typeof report.roofImageUrl === 'string' ? report.roofImageUrl : undefined,
               roofImagePins: validateRoofPins(report.roofImagePins || []).map(pin => ({
                 ...pin,
                 severity: (pin.severity || 'medium') as IssueSeverity,
@@ -775,7 +830,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
             if (report.roofMapMarkers) {
               setMapMarkers(report.roofMapMarkers);
             }
-            
+
             // Geocode the address to get coordinates for the map
             if (report.customerAddress) {
               try {
@@ -783,14 +838,14 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                   `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(report.customerAddress)}&limit=1`
                 );
                 if (response.ok) {
-                const data = await response.json();
-                if (data && data.length > 0) {
-                  // Validate coordinates before setting
-                  const coords = validateCoordinates(data[0].lat, data[0].lon);
-                  if (coords) {
-                    setAddressCoordinates(coords);
+                  const data = await response.json();
+                  if (data && data.length > 0) {
+                    // Validate coordinates before setting
+                    const coords = validateCoordinates(data[0].lat, data[0].lon);
+                    if (coords) {
+                      setAddressCoordinates(coords);
+                    }
                   }
-                }
                 }
               } catch (error) {
                 logger.warn('Could not geocode address for map:', error);
@@ -816,14 +871,14 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
   useEffect(() => {
     // Only load draft once on initial mount, not on every render
     if (draftLoadedRef.current) return;
-    
+
     // Load draft in create mode, or when editing a temp report
     if (mode === 'create' || (mode === 'edit' && reportId?.startsWith('temp_'))) {
       // Prefer currentUser uid, but also support anonymous drafts
       const userId = currentUser?.uid || 'anonymous';
       const draftKey = `report_draft_${userId}`;
       const savedDraft = localStorage.getItem(draftKey);
-      
+
       // Also check legacy location for backward compatibility
       const legacyDraft = !savedDraft ? localStorage.getItem('reportDraft') : null;
       const draftToLoad = savedDraft || legacyDraft;
@@ -831,7 +886,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
       if (draftToLoad) {
         try {
           const draftData = JSON.parse(draftToLoad);
-          
+
           // Validate lastSaved timestamp
           const lastSavedStr = draftData.lastSaved || draftData.lastAutoSaved;
           if (!lastSavedStr) {
@@ -856,7 +911,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
           if (hoursSinceLastSave < FORM_CONSTANTS.DRAFT_EXPIRY_HOURS) {
             // Sanitize and validate draft data before loading
             const sanitized = sanitizeDraftData(draftData);
-            
+
             // Only update formData if we have at least some valid data
             if (sanitized.customerName || sanitized.customerAddress) {
               setFormData(prev => {
@@ -865,7 +920,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                 const currentIssuesCount = prev.issuesFound?.length || 0;
                 const draftIssuesCount = sanitized.issuesFound?.length || 0;
                 const shouldUseDraftIssues = currentIssuesCount === 0 && draftIssuesCount > 0;
-                
+
                 // Preserve recommendedActions if current form has actions (user has added them)
                 // Only use draft actions if current form is empty
                 const currentActionsCount = prev.recommendedActions?.length || 0;
@@ -876,9 +931,13 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                   ...prev,
                   ...sanitized,
                   // Only overwrite issues if draft has them and current form is empty
-                  issuesFound: shouldUseDraftIssues ? sanitized.issuesFound : (prev.issuesFound || []),
+                  issuesFound: shouldUseDraftIssues
+                    ? sanitized.issuesFound
+                    : prev.issuesFound || [],
                   // Only overwrite actions if draft has them and current form is empty
-                  recommendedActions: shouldUseDraftActions ? sanitized.recommendedActions : (prev.recommendedActions || []),
+                  recommendedActions: shouldUseDraftActions
+                    ? sanitized.recommendedActions
+                    : prev.recommendedActions || [],
                 };
               });
 
@@ -958,14 +1017,17 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
           // Future dates are allowed for scheduled inspections
           const oneYearAgo = new Date(today);
           oneYearAgo.setFullYear(today.getFullYear() - 1);
-          
+
           if (inspectionDateStart < oneYearAgo) {
-            errors.inspectionDate = t('form.validation.inspectionDateTooOld') || 'Inspektionsdatumet är för långt tillbaka i tiden';
+            errors.inspectionDate =
+              t('form.validation.inspectionDateTooOld') ||
+              'Inspektionsdatumet är för långt tillbaka i tiden';
           }
           // Note: We allow future dates for scheduled inspections, so no validation needed for that
         } catch (parseError) {
           // Date parsing failed
-          errors.inspectionDate = t('form.validation.inspectionDateInvalid') || 'Ogiltigt inspektionsdatum';
+          errors.inspectionDate =
+            t('form.validation.inspectionDateInvalid') || 'Ogiltigt inspektionsdatum';
         }
       }
 
@@ -978,7 +1040,11 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
       }
 
       // Phone validation - only if provided
-      if (formData.customerPhone && formData.customerPhone.trim() && !/^[+]?[0-9\s\-()]{8,}$/.test(formData.customerPhone)) {
+      if (
+        formData.customerPhone &&
+        formData.customerPhone.trim() &&
+        !/^[+]?[0-9\s\-()]{8,}$/.test(formData.customerPhone)
+      ) {
         errors.customerPhone = t('form.validation.phoneInvalid');
       }
     }
@@ -986,7 +1052,10 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
     if (step === 2) {
       // Step 2: Inspection Details - Require roof type (must be explicitly selected)
       // Check that roofType exists and is a valid non-empty value
-      if (!formData.roofType || (typeof formData.roofType === 'string' && formData.roofType.trim() === '')) {
+      if (
+        !formData.roofType ||
+        (typeof formData.roofType === 'string' && formData.roofType.trim() === '')
+      ) {
         errors.roofType = t('form.validation.roofTypeRequired');
       }
 
@@ -994,7 +1063,6 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
       if (formData.roofAge && (formData.roofAge < 0 || formData.roofAge > 100)) {
         errors.roofAge = t('form.validation.roofAgeRange');
       }
-
     }
 
     if (step === 3) {
@@ -1061,7 +1129,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
       // Allow future dates for scheduled inspections, only reject dates more than 1 year in the past
       const oneYearAgo = new Date(today);
       oneYearAgo.setFullYear(today.getFullYear() - 1);
-      
+
       if (inspectionDateStart < oneYearAgo) {
         errors.inspectionDate = t('form.validation.inspectionDateTooOld');
       }
@@ -1074,7 +1142,11 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
       }
     }
 
-    if (formData.customerPhone && formData.customerPhone.trim() && !/^[+]?[0-9\s\-()]{8,}$/.test(formData.customerPhone)) {
+    if (
+      formData.customerPhone &&
+      formData.customerPhone.trim() &&
+      !/^[+]?[0-9\s\-()]{8,}$/.test(formData.customerPhone)
+    ) {
       errors.customerPhone = t('form.validation.phoneInvalid');
     }
 
@@ -1150,7 +1222,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
 
       if (mode === 'create') {
         const newReportId = await createReport(reportData);
-        
+
         // Construct created report object for notifications
         const createdReport: Report = {
           ...reportData,
@@ -1158,7 +1230,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
           createdAt: new Date().toISOString(),
           lastEdited: new Date().toISOString(),
         } as Report;
-        
+
         // Send notifications (non-blocking)
         try {
           await notifyReportCreated(createdReport);
@@ -1172,11 +1244,14 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
           console.error('❌ Error sending notifications (non-blocking):', notificationError);
           // Don't fail report creation if notifications fail
         }
-        
+
         // If this report was created from an appointment, complete the appointment
         if (appointmentData?.appointmentId) {
           try {
-            await appointmentService.completeAppointment(appointmentData.appointmentId, newReportId);
+            await appointmentService.completeAppointment(
+              appointmentData.appointmentId,
+              newReportId
+            );
             logger.log('✅ Report linked to appointment successfully', {
               appointmentId: appointmentData.appointmentId,
               reportId: newReportId,
@@ -1186,7 +1261,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
             // Don't fail the report creation if appointment linking fails
           }
         }
-        
+
         // Best-effort cleanup of any temporary uploads used during creation
         try {
           if (tempReportId && tempReportId.startsWith('temp_')) {
@@ -1199,25 +1274,25 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
 
         // Clear the saved draft after successful creation
         clearDraft();
-        
+
         // Also clear step persistence
         if (currentUser?.uid) {
           const stepKey = `reportFormStep_${currentUser.uid}`;
           localStorage.removeItem(stepKey);
         }
-        
+
         setNotification({
-          message: t('messages.success.saved'),
+          message: t('form.messages.saved'),
           type: 'success',
         });
-        
+
         // Increase timeout for slower networks and ensure navigation happens
         setTimeout(() => {
           navigate(`/report/view/${newReportId}`);
         }, 2000);
       } else if (mode === 'edit' && reportId) {
         await updateReport(reportId, reportData);
-        
+
         // Get updated report for notifications
         try {
           const updatedReport = await getReport(reportId);
@@ -1225,7 +1300,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
             // Check if status changed to completed
             const isNowCompleted = (reportData.status || updatedReport.status) === 'completed';
             const wasCompleted = updatedReport.status === 'completed';
-            
+
             if (isNowCompleted && !wasCompleted) {
               // Status changed to completed
               await notifyReportCompleted(updatedReport);
@@ -1235,15 +1310,17 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                 updatedReport.customerName || t('form.defaults.untitledReport'),
                 'completed'
               );
-              
+
               // Update customer status and notify customer if report is public
               if (updatedReport.isPublic || updatedReport.isShared) {
                 try {
-                  const { updateScheduledVisit, getScheduledVisitsByCustomer } = await import('../services/scheduledVisitService');
+                  const { updateScheduledVisit, getScheduledVisitsByCustomer } = await import(
+                    '../services/scheduledVisitService'
+                  );
                   const { getAppointment } = await import('../services/appointmentService');
                   const { collection, query, where, getDocs } = await import('firebase/firestore');
                   const { db } = await import('../config/firebase');
-                  
+
                   // Find scheduled visit linked to this report's appointment
                   if (updatedReport.appointmentId) {
                     const appointment = await getAppointment(updatedReport.appointmentId);
@@ -1253,14 +1330,16 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                         reportId: reportId,
                         completedAt: new Date().toISOString(),
                       });
-                      
+
                       // Notify customer
                       if (appointment.customerId || appointment.customerEmail) {
-                        const { collection: mailCollection, addDoc } = await import('firebase/firestore');
+                        const { collection: mailCollection, addDoc } = await import(
+                          'firebase/firestore'
+                        );
                         const { serverTimestamp } = await import('firebase/firestore');
                         const mailRef = mailCollection(db, 'mail');
                         const reportLink = `${window.location.origin}/report/view/${reportId}`;
-                        
+
                         if (appointment.customerEmail) {
                           await addDoc(mailRef, {
                             to: appointment.customerEmail,
@@ -1274,7 +1353,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                             },
                           });
                         }
-                        
+
                         if (appointment.customerId) {
                           const notificationsRef = mailCollection(db, 'notifications');
                           await addDoc(notificationsRef, {
@@ -1317,12 +1396,12 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
           console.error('❌ Error sending update notifications (non-blocking):', notificationError);
           // Don't fail report update if notifications fail
         }
-        
+
         setNotification({
-          message: t('messages.success.saved'),
+          message: t('form.messages.saved'),
           type: 'success',
         });
-        
+
         // Increase timeout for slower networks
         setTimeout(() => {
           navigate(`/report/view/${reportId}`);
@@ -1333,7 +1412,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
 
       // Provide more specific error messages
       const errorMessage = error instanceof Error ? error.message : String(error);
-      
+
       // Check if there are validation errors first
       const hasValidationErrors = Object.keys(validationErrors).length > 0;
       if (hasValidationErrors) {
@@ -1342,7 +1421,11 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
         setError(firstError || t('form.validation.stepValidationFailed'));
       } else if (errorMessage.includes('permission') || errorMessage.includes('denied')) {
         setError(t('form.validation.permissionDeniedDetailed'));
-      } else if (errorMessage.includes('network') || errorMessage.includes('fetch') || errorMessage.includes('Failed to fetch')) {
+      } else if (
+        errorMessage.includes('network') ||
+        errorMessage.includes('fetch') ||
+        errorMessage.includes('Failed to fetch')
+      ) {
         setError(t('form.validation.networkErrorDetailed'));
       } else if (errorMessage.includes('quota') || errorMessage.includes('Quota')) {
         setError(t('form.validation.quotaExceeded'));
@@ -1351,12 +1434,13 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
         setError(t('form.validation.stepValidationFailed'));
       } else {
         // Generic error with more context
-        const genericMessage = errorMessage && errorMessage.length > 0 
-          ? `${t('form.validation.validationErrorDetailed')} (${errorMessage.slice(0, 50)})`
-          : t('form.validation.validationErrorDetailed');
+        const genericMessage =
+          errorMessage && errorMessage.length > 0
+            ? `${t('form.validation.validationErrorDetailed')} (${errorMessage.slice(0, 50)})`
+            : t('form.validation.validationErrorDetailed');
         setError(genericMessage);
       }
-      
+
       // Clear error after 5 seconds to prevent stale errors
       setTimeout(() => {
         setError('');
@@ -1378,10 +1462,10 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
 
     setFormData(prev => {
       const updatedIssues = [...(prev.issuesFound || []), newIssue];
-      logger.log('🔍 ReportForm - Adding issue:', { 
-        newIssueId: newIssue.id, 
+      logger.log('🔍 ReportForm - Adding issue:', {
+        newIssueId: newIssue.id,
         currentIssuesCount: prev.issuesFound?.length || 0,
-        updatedIssuesCount: updatedIssues.length 
+        updatedIssuesCount: updatedIssues.length,
       });
       return {
         ...prev,
@@ -1419,29 +1503,27 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
   const removeIssue = (index: number) => {
     const issueToRemove = formData.issuesFound?.[index];
     const newIssues = (formData.issuesFound || []).filter((_, i) => i !== index);
-    
+
     // Remove linked markers when issue is deleted
     if (issueToRemove?.id) {
       // Remove roof image pins linked to this issue
       const updatedRoofImagePins = (formData.roofImagePins || []).filter(
         pin => pin.issueId !== issueToRemove.id
       );
-      
+
       // Remove map markers linked to this issue
-      const updatedMapMarkers = mapMarkers.filter(
-        marker => marker.issueId !== issueToRemove.id
-      );
-      
-      setFormData(prev => ({ 
-        ...prev, 
+      const updatedMapMarkers = mapMarkers.filter(marker => marker.issueId !== issueToRemove.id);
+
+      setFormData(prev => ({
+        ...prev,
         issuesFound: newIssues,
-        roofImagePins: updatedRoofImagePins
+        roofImagePins: updatedRoofImagePins,
       }));
       setMapMarkers(updatedMapMarkers);
     } else {
       setFormData(prev => ({ ...prev, issuesFound: newIssues }));
     }
-    
+
     clearFieldError(`issue_${index}_title`);
     clearFieldError(`issue_${index}_description`);
     clearFieldError(`issue_${index}_severity`);
@@ -1503,7 +1585,9 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
 
       // Create issue from draft
       const existingIssuesCount = formData.issuesFound?.length || 0;
-      const issueTitle = defectData.title || `${t('reports.public.problem') || 'Problem'} ${existingIssuesCount + 1}`;
+      const issueTitle =
+        defectData.title ||
+        `${t('reports.public.problem') || 'Problem'} ${existingIssuesCount + 1}`;
       const newIssue: Issue = {
         id: `issue_${Date.now()}`,
         title: issueTitle,
@@ -1659,13 +1743,17 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
         // Link to the latest report
         linkedReportId: foundReport.id,
       }));
-      
+
       setNotification({
-        message: t('form.messages.customerImported', { date: foundReport.createdAt ? new Date(foundReport.createdAt).toLocaleDateString() : t('form.labels.unknownDate') }),
-        type: 'success'
+        message: t('form.messages.customerImported', {
+          date: foundReport.createdAt
+            ? new Date(foundReport.createdAt).toLocaleDateString()
+            : t('form.labels.unknownDate'),
+        }),
+        type: 'success',
       });
     }
-    
+
     setShowAutoCompleteDialog(false);
     setFoundCustomer(null);
     setFoundReport(null);
@@ -1679,9 +1767,9 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
   };
 
   if (loading && mode === 'edit') {
-  return (
-    <div className='max-w-4xl mx-auto font-material'>
-      <div className='bg-white rounded-xl shadow-sm p-8 border border-slate-200 mb-6'>
+    return (
+      <div className='max-w-4xl mx-auto font-material'>
+        <div className='bg-white rounded-xl shadow-sm p-8 border border-slate-200 mb-6'>
           <div className='animate-pulse'>
             <div className='h-8 bg-slate-200 rounded w-1/3 mb-4'></div>
             <div className='h-4 bg-slate-200 rounded w-1/4'></div>
@@ -1717,16 +1805,18 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                     ? t('form.title.editOffer')
                     : t('form.title.edit')}
               </h1>
-              <div className="mt-1 flex items-center space-x-2">
+              <div className='mt-1 flex items-center space-x-2'>
                 {autoSaving && <p className='text-sm text-slate-700'>{t('form.autoSaving')}</p>}
-                {loadingCustomerData && <p className='text-sm text-slate-500'>{t('form.loadingCustomerData')}</p>}
+                {loadingCustomerData && (
+                  <p className='text-sm text-slate-500'>{t('form.loadingCustomerData')}</p>
+                )}
                 {/* Prior reports loading disabled */}
               </div>
             </div>
           </div>
 
           {/* ARIA Live Region for Screen Readers */}
-          <div aria-live="polite" aria-atomic="true" className="sr-only">
+          <div aria-live='polite' aria-atomic='true' className='sr-only'>
             {t('form.steps.currentStep', { step: currentStep, total: totalSteps })}
           </div>
 
@@ -1738,7 +1828,9 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                   <div key={step} className='flex items-center'>
                     <div
                       className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-medium ${
-                        step <= currentStep ? 'bg-slate-700 text-white' : 'bg-slate-200 text-slate-600'
+                        step <= currentStep
+                          ? 'bg-slate-700 text-white'
+                          : 'bg-slate-200 text-slate-600'
                       }`}
                     >
                       {step}
@@ -1783,14 +1875,20 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
               <div className='ml-3'>
                 <h3 className='text-sm font-medium text-red-800'>{error}</h3>
                 {/* Add contextual guidance based on error type */}
-                {error.includes(t('form.validation.permissionDeniedDetailed')?.substring(0, 20) || 'permission') && (
+                {error.includes(
+                  t('form.validation.permissionDeniedDetailed')?.substring(0, 20) || 'permission'
+                ) && (
                   <p className='text-xs text-red-600 mt-1'>
-                    {t('form.errors.sessionExpired') || 'Try logging out and back in, or contact your administrator.'}
+                    {t('form.errors.sessionExpired') ||
+                      'Try logging out and back in, or contact your administrator.'}
                   </p>
                 )}
-                {error.includes(t('form.validation.networkErrorDetailed')?.substring(0, 20) || 'network') && (
+                {error.includes(
+                  t('form.validation.networkErrorDetailed')?.substring(0, 20) || 'network'
+                ) && (
                   <p className='text-xs text-red-600 mt-1'>
-                    {t('form.errors.connectionLost') || 'Check your internet connection and try again.'}
+                    {t('form.errors.connectionLost') ||
+                      'Check your internet connection and try again.'}
                   </p>
                 )}
               </div>
@@ -1816,7 +1914,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                     const guidanceKey = `form.validation.${field}Guidance`;
                     const guidance = t(guidanceKey);
                     const hasGuidance = guidance && guidance !== guidanceKey;
-                    
+
                     return (
                       <li key={field} className='flex items-start'>
                         <span className='text-red-500 mr-2 mt-0.5'>•</span>
@@ -1846,55 +1944,66 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
 
               {/* Customer Search Section - for finding existing customers */}
               {/* Show in create mode, or in edit mode when report has no customerId */}
-              {(mode === 'create' || (mode === 'edit' && !formData.customerId)) && !customerIdForBuildings && (
-                <div className='mb-6 p-4 bg-slate-50 rounded-lg border border-slate-200'>
-                  <label className='block text-sm font-medium text-slate-700 mb-2'>
-                    {mode === 'edit' 
-                      ? (t('form.customerSearch.attachCustomer') || 'Tilknyt eksisterende kunde')
-                      : (t('form.customerSearch.title') || 'Søg efter eksisterende kunde')
-                    }
-                  </label>
-                  {mode === 'edit' && (
-                    <p className='text-xs text-amber-600 mb-2 flex items-center gap-1'>
-                      <svg className='w-4 h-4' fill='currentColor' viewBox='0 0 20 20'>
-                        <path fillRule='evenodd' d='M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z' clipRule='evenodd' />
-                      </svg>
-                      {t('form.customerSearch.noCustomerAttached') || 'Denne rapport har ingen kunde tilknyttet'}
+              {(mode === 'create' || (mode === 'edit' && !formData.customerId)) &&
+                !customerIdForBuildings && (
+                  <div className='mb-6 p-4 bg-slate-50 rounded-lg border border-slate-200'>
+                    <label className='block text-sm font-medium text-slate-700 mb-2'>
+                      {mode === 'edit'
+                        ? t('form.customerSearch.attachCustomer') || 'Tilknyt eksisterende kunde'
+                        : t('form.customerSearch.title') || 'Søg efter eksisterende kunde'}
+                    </label>
+                    {mode === 'edit' && (
+                      <p className='text-xs text-amber-600 mb-2 flex items-center gap-1'>
+                        <svg className='w-4 h-4' fill='currentColor' viewBox='0 0 20 20'>
+                          <path
+                            fillRule='evenodd'
+                            d='M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z'
+                            clipRule='evenodd'
+                          />
+                        </svg>
+                        {t('form.customerSearch.noCustomerAttached') ||
+                          'Denne rapport har ingen kunde tilknyttet'}
+                      </p>
+                    )}
+                    <CustomerSearchInline
+                      onCustomerSelect={customer => {
+                        // Set customer data including customerId
+                        setFormData(prev => ({
+                          ...prev,
+                          customerName: customer.name,
+                          customerAddress: customer.address,
+                          customerPhone: customer.phone || '',
+                          customerEmail: customer.email || '',
+                          customerType: customer.customerType || 'company',
+                          customerId: customer.id,
+                        }));
+                        // Set customer ID to load buildings
+                        setCustomerIdForBuildings(customer.id);
+                        // Clear any existing building selection (new customer = new building options)
+                        setSelectedBuildingId(null);
+                        setCustomerBuildings([]);
+                        // Show notification
+                        setNotification({
+                          message:
+                            mode === 'edit'
+                              ? t('form.customerSearch.customerAttached') ||
+                                'Kunde tilknyttet rapporten'
+                              : t('form.customerSearch.customerSelected') || 'Kunde valgt',
+                          type: 'success',
+                        });
+                        setTimeout(() => setNotification(null), 2000);
+                      }}
+                      placeholder={
+                        t('form.customerSearch.placeholder') ||
+                        'Søg kunde (navn, email, telefon...)'
+                      }
+                    />
+                    <p className='text-xs text-slate-500 mt-2'>
+                      {t('form.customerSearch.hint') ||
+                        'Vælg en eksisterende kunde, eller udfyld felterne nedenfor for at oprette ny'}
                     </p>
-                  )}
-                  <CustomerSearchInline
-                    onCustomerSelect={(customer) => {
-                      // Set customer data including customerId
-                      setFormData(prev => ({
-                        ...prev,
-                        customerName: customer.name,
-                        customerAddress: customer.address,
-                        customerPhone: customer.phone || '',
-                        customerEmail: customer.email || '',
-                        customerType: customer.customerType || 'company',
-                        customerId: customer.id,
-                      }));
-                      // Set customer ID to load buildings
-                      setCustomerIdForBuildings(customer.id);
-                      // Clear any existing building selection (new customer = new building options)
-                      setSelectedBuildingId(null);
-                      setCustomerBuildings([]);
-                      // Show notification
-                      setNotification({
-                        message: mode === 'edit'
-                          ? (t('form.customerSearch.customerAttached') || 'Kunde tilknyttet rapporten')
-                          : (t('form.customerSearch.customerSelected') || 'Kunde valgt'),
-                        type: 'success'
-                      });
-                      setTimeout(() => setNotification(null), 2000);
-                    }}
-                    placeholder={t('form.customerSearch.placeholder') || 'Søg kunde (navn, email, telefon...)'}
-                  />
-                  <p className='text-xs text-slate-500 mt-2'>
-                    {t('form.customerSearch.hint') || 'Vælg en eksisterende kunde, eller udfyld felterne nedenfor for at oprette ny'}
-                  </p>
-                </div>
-              )}
+                  </div>
+                )}
 
               {/* Selected Customer Info Banner */}
               {customerIdForBuildings && (
@@ -1903,7 +2012,8 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                     <div className='flex items-center'>
                       <CheckCircle className='w-5 h-5 text-green-600 mr-2' />
                       <span className='text-sm font-medium text-green-800'>
-                        {t('form.customerSearch.existingCustomer') || 'Eksisterende kunde valgt'}: {formData.customerName}
+                        {t('form.customerSearch.existingCustomer') || 'Eksisterende kunde valgt'}:{' '}
+                        {formData.customerName}
                       </span>
                     </div>
                     <button
@@ -1944,11 +2054,13 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                     minLength={2}
                     maxLength={100}
                     title={t('form.validation.fillThisField')}
-                    onInvalid={(e) => {
+                    onInvalid={e => {
                       e.preventDefault();
-                      (e.target as HTMLInputElement).setCustomValidity(t('form.validation.customerNameRequired'));
+                      (e.target as HTMLInputElement).setCustomValidity(
+                        t('form.validation.customerNameRequired')
+                      );
                     }}
-                    onInput={(e) => {
+                    onInput={e => {
                       (e.target as HTMLInputElement).setCustomValidity('');
                     }}
                     enterKeyHint='next'
@@ -1964,15 +2076,19 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                     id='customerType'
                     value={formData.customerType || 'company'}
                     onChange={e => {
-                      setFormData(prev => ({ 
-                        ...prev, 
+                      setFormData(prev => ({
+                        ...prev,
                         customerType: e.target.value as 'individual' | 'company',
-                        buildingAddress: e.target.value === 'company' ? prev.buildingAddress : undefined
+                        buildingAddress:
+                          e.target.value === 'company' ? prev.buildingAddress : undefined,
                       }));
                       clearFieldError('customerType');
                     }}
                     options={[
-                      { value: 'individual', label: t('form.fields.customerTypeIndividual') || 'Privatperson' },
+                      {
+                        value: 'individual',
+                        label: t('form.fields.customerTypeIndividual') || 'Privatperson',
+                      },
                       { value: 'company', label: t('form.fields.customerTypeCompany') || 'Firma' },
                     ]}
                   />
@@ -1987,7 +2103,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                     <PhoneInput
                       className='w-full'
                       defaultCountry={getPhoneCountryCode(locale as any)}
-                      preferredCountries={['se','no','dk','de','fi','gb','us']}
+                      preferredCountries={['se', 'no', 'dk', 'de', 'fi', 'gb', 'us']}
                       value={formData.customerPhone || ''}
                       onChange={value => {
                         setFormData(prev => ({ ...prev, customerPhone: value }));
@@ -2038,11 +2154,13 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                     <h3 className='text-sm font-semibold text-slate-900'>
                       {t('form.fields.selectExistingBuilding') || 'Select Building'}
                     </h3>
-                    
+
                     {loadingBuildings ? (
                       <div className='flex items-center justify-center py-8'>
                         <div className='w-6 h-6 border-2 border-slate-300 border-t-slate-700 rounded-full animate-spin' />
-                        <span className='ml-2 text-sm text-slate-500'>{t('form.messages.loadingBuildings')}</span>
+                        <span className='ml-2 text-sm text-slate-500'>
+                          {t('form.messages.loadingBuildings')}
+                        </span>
                       </div>
                     ) : (
                       <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
@@ -2083,8 +2201,16 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                               {selectedBuildingId === building.id && !isCreatingNewBuilding && (
                                 <div className='ml-2 flex-shrink-0'>
                                   <div className='flex items-center justify-center w-5 h-5 rounded-full bg-green-500 text-white'>
-                                    <svg className='w-3 h-3' fill='currentColor' viewBox='0 0 20 20'>
-                                      <path fillRule='evenodd' d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z' clipRule='evenodd' />
+                                    <svg
+                                      className='w-3 h-3'
+                                      fill='currentColor'
+                                      viewBox='0 0 20 20'
+                                    >
+                                      <path
+                                        fillRule='evenodd'
+                                        d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z'
+                                        clipRule='evenodd'
+                                      />
                                     </svg>
                                   </div>
                                 </div>
@@ -2106,8 +2232,12 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                               : 'border-dashed border-slate-300 bg-slate-50 hover:border-slate-400 hover:bg-slate-100'
                           }`}
                         >
-                          <Plus className={`w-6 h-6 mb-2 ${isCreatingNewBuilding ? 'text-blue-600' : 'text-slate-500'}`} />
-                          <span className={`text-sm font-medium ${isCreatingNewBuilding ? 'text-blue-700' : 'text-slate-700'}`}>
+                          <Plus
+                            className={`w-6 h-6 mb-2 ${isCreatingNewBuilding ? 'text-blue-600' : 'text-slate-500'}`}
+                          />
+                          <span
+                            className={`text-sm font-medium ${isCreatingNewBuilding ? 'text-blue-700' : 'text-slate-700'}`}
+                          >
                             {t('form.fields.createNewBuildingSection') || 'Add New Building'}
                           </span>
                         </button>
@@ -2127,7 +2257,10 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                               setFormData(prev => ({ ...prev, buildingAddress: address }));
                               clearFieldError('buildingAddress');
                             }}
-                            placeholder={t('form.fields.buildingAddressPlaceholder') || 'Enter building address'}
+                            placeholder={
+                              t('form.fields.buildingAddressPlaceholder') ||
+                              'Enter building address'
+                            }
                             error={validationErrors.buildingAddress}
                           />
                         </div>
@@ -2155,7 +2288,8 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
 
                     {customerBuildings.length === 0 && !loadingBuildings && (
                       <div className='text-sm text-amber-700 bg-amber-50 p-3 rounded-lg'>
-                        {t('form.messages.noBuildingsFound') || 'No buildings found for this customer. Create one to get started.'}
+                        {t('form.messages.noBuildingsFound') ||
+                          'No buildings found for this customer. Create one to get started.'}
                       </div>
                     )}
                   </div>
@@ -2202,7 +2336,10 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                         if (emailValue.trim()) {
                           const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                           if (!emailRegex.test(emailValue.trim())) {
-                            setValidationErrors(prev => ({ ...prev, customerEmail: t('form.validation.customerEmailInvalid') }));
+                            setValidationErrors(prev => ({
+                              ...prev,
+                              customerEmail: t('form.validation.customerEmailInvalid'),
+                            }));
                           } else {
                             clearFieldError('customerEmail');
                           }
@@ -2215,7 +2352,10 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                         if (formData.customerEmail && formData.customerEmail.trim()) {
                           const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                           if (!emailRegex.test(formData.customerEmail.trim())) {
-                            setValidationErrors(prev => ({ ...prev, customerEmail: t('form.validation.customerEmailInvalid') }));
+                            setValidationErrors(prev => ({
+                              ...prev,
+                              customerEmail: t('form.validation.customerEmailInvalid'),
+                            }));
                           } else {
                             clearFieldError('customerEmail');
                           }
@@ -2227,11 +2367,13 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                       inputMode='email'
                       pattern='[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
                       title={t('form.validation.emailHint') || 'Ange en giltig e-postadress'}
-                      onInvalid={(e) => {
+                      onInvalid={e => {
                         e.preventDefault();
-                        (e.target as HTMLInputElement).setCustomValidity(t('form.validation.customerEmailInvalid') || 'Ange en giltig e-postadress');
+                        (e.target as HTMLInputElement).setCustomValidity(
+                          t('form.validation.customerEmailInvalid') || 'Ange en giltig e-postadress'
+                        );
                       }}
-                      onInput={(e) => {
+                      onInput={e => {
                         (e.target as HTMLInputElement).setCustomValidity('');
                       }}
                       enterKeyHint='next'
@@ -2243,7 +2385,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                   <div className='flex gap-2 items-end'>
                     <div className='flex-1'>
                       <MaterialFormField
-                        label="Roof Size (m²)"
+                        label='Roof Size (m²)'
                         error={validationErrors.roofSize}
                         touched={!!validationErrors.roofSize}
                       >
@@ -2270,10 +2412,14 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                           setPendingRoofSizeMeasure(true);
                           if (addressInputRef.current) {
                             addressInputRef.current.focus();
-                            addressInputRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            addressInputRef.current.scrollIntoView({
+                              behavior: 'smooth',
+                              block: 'center',
+                            });
                           }
                           setNotification({
-                            message: 'Please enter and select an address first to use the map measurer',
+                            message:
+                              'Please enter and select an address first to use the map measurer',
                             type: 'warning',
                           });
                           return;
@@ -2317,7 +2463,10 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                     }}
                     onBlur={triggerValidation}
                     required
-                    placeholder={t('form.placeholder.date') || (currentUser && currentUser.branchId ? 'dd/mm/åååå' : 'åååå-mm-dd')}
+                    placeholder={
+                      t('form.placeholder.date') ||
+                      (currentUser && currentUser.branchId ? 'dd/mm/åååå' : 'åååå-mm-dd')
+                    }
                   />
                 </MaterialFormField>
 
@@ -2340,9 +2489,15 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                       { value: 'shingle', label: t('roofTypes.shingle') },
                       { value: 'slate', label: t('roofTypes.slate') },
                       { value: 'flat', label: t('roofTypes.flat') },
+                      { value: 'flat_bitumen_2layer', label: t('roofTypes.flat_bitumen_2layer') },
+                      { value: 'flat_bitumen_3layer', label: t('roofTypes.flat_bitumen_3layer') },
+                      { value: 'flat_rubber', label: t('roofTypes.flat_rubber') },
+                      { value: 'flat_pvc', label: t('roofTypes.flat_pvc') },
+                      { value: 'flat_tpo', label: t('roofTypes.flat_tpo') },
+                      { value: 'flat_epdm', label: t('roofTypes.flat_epdm') },
                       { value: 'other', label: t('roofTypes.other') },
                     ]}
-                    placeholder="Select roof type"
+                    placeholder='Select roof type'
                   />
                 </MaterialFormField>
 
@@ -2366,9 +2521,16 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                       }));
                       clearFieldError('roofAge');
                     }}
-                    onKeyPress={(e) => {
+                    onKeyPress={e => {
                       // Only allow numeric input
-                      if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Tab') {
+                      if (
+                        !/[0-9]/.test(e.key) &&
+                        e.key !== 'Backspace' &&
+                        e.key !== 'Delete' &&
+                        e.key !== 'ArrowLeft' &&
+                        e.key !== 'ArrowRight' &&
+                        e.key !== 'Tab'
+                      ) {
                         e.preventDefault();
                       }
                     }}
@@ -2381,7 +2543,6 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                 </MaterialFormField>
               </div>
 
-
               <div className='mt-4'>
                 <MaterialFormField
                   label={t('form.fields.conditionNotesLabel')}
@@ -2392,13 +2553,121 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                     id='conditionNotes'
                     rows={4}
                     value={formData.conditionNotes || ''}
-                    onChange={e => setFormData(prev => ({ ...prev, conditionNotes: e.target.value }))}
+                    onChange={e =>
+                      setFormData(prev => ({ ...prev, conditionNotes: e.target.value }))
+                    }
                     placeholder={t('form.fields.conditionNotesPlaceholder')}
                     minLength={10}
                     maxLength={2000}
                     title={t('form.validation.notesHint')}
                   />
                 </MaterialFormField>
+              </div>
+
+              {/* Inspection Checklist */}
+              <div className='mt-6 pt-6 border-t border-slate-200'>
+                <h3 className='text-base font-semibold text-slate-900 mb-4'>
+                  {t('inspection.checklist')}
+                </h3>
+                <div className='space-y-4'>
+                  <InspectionChecklistItem
+                    label={t('inspection.roofEdging')}
+                    value={formData.inspectionChecklist?.roofEdging}
+                    onChange={item =>
+                      setFormData(prev => ({
+                        ...prev,
+                        inspectionChecklist: { ...prev.inspectionChecklist, roofEdging: item },
+                      }))
+                    }
+                    helpText={t('inspection.roofEdgingHint')}
+                  />
+                  <InspectionChecklistItem
+                    label={t('inspection.technicalSpecifications')}
+                    value={formData.inspectionChecklist?.technicalSpecifications}
+                    onChange={item =>
+                      setFormData(prev => ({
+                        ...prev,
+                        inspectionChecklist: {
+                          ...prev.inspectionChecklist,
+                          technicalSpecifications: item,
+                        },
+                      }))
+                    }
+                    helpText={t('inspection.technicalSpecificationsHint')}
+                  />
+                  <InspectionChecklistItem
+                    label={t('inspection.welds')}
+                    value={formData.inspectionChecklist?.welds}
+                    onChange={item =>
+                      setFormData(prev => ({
+                        ...prev,
+                        inspectionChecklist: { ...prev.inspectionChecklist, welds: item },
+                      }))
+                    }
+                    helpText={t('inspection.weldsHint')}
+                  />
+                  <InspectionChecklistItem
+                    label={t('inspection.drainage')}
+                    value={formData.inspectionChecklist?.drainage}
+                    onChange={item =>
+                      setFormData(prev => ({
+                        ...prev,
+                        inspectionChecklist: { ...prev.inspectionChecklist, drainage: item },
+                      }))
+                    }
+                    helpText={t('inspection.drainageHint')}
+                  />
+                  <InspectionChecklistItem
+                    label={t('inspection.cornersCrowns')}
+                    value={formData.inspectionChecklist?.cornersCrowns}
+                    onChange={item =>
+                      setFormData(prev => ({
+                        ...prev,
+                        inspectionChecklist: { ...prev.inspectionChecklist, cornersCrowns: item },
+                      }))
+                    }
+                    helpText={t('inspection.cornersCrownsHint')}
+                  />
+                  <InspectionChecklistItem
+                    label={t('inspection.skylights')}
+                    value={formData.inspectionChecklist?.skylights}
+                    onChange={item =>
+                      setFormData(prev => ({
+                        ...prev,
+                        inspectionChecklist: { ...prev.inspectionChecklist, skylights: item },
+                      }))
+                    }
+                    helpText={t('inspection.skylightsHint')}
+                  />
+                  <InspectionChecklistItem
+                    label={t('inspection.technicalInstallations')}
+                    value={formData.inspectionChecklist?.technicalInstallations}
+                    onChange={item =>
+                      setFormData(prev => ({
+                        ...prev,
+                        inspectionChecklist: {
+                          ...prev.inspectionChecklist,
+                          technicalInstallations: item,
+                        },
+                      }))
+                    }
+                    helpText={t('inspection.technicalInstallationsHint')}
+                  />
+                  <InspectionChecklistItem
+                    label={t('inspection.insulationAssessment')}
+                    value={formData.inspectionChecklist?.insulationAssessment}
+                    onChange={item =>
+                      setFormData(prev => ({
+                        ...prev,
+                        inspectionChecklist: {
+                          ...prev.inspectionChecklist,
+                          insulationAssessment: item,
+                        },
+                      }))
+                    }
+                    helpText={t('inspection.insulationAssessmentHint')}
+                  />
+                </div>
               </div>
             </div>
           )}
@@ -2424,7 +2693,9 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                         className='inline-flex items-center justify-center px-6 sm:px-8 py-4 sm:py-3 border border-transparent text-lg sm:text-base font-semibold rounded-xl text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 min-h-[56px] sm:min-h-[52px]'
                       >
                         <Camera className='w-6 h-6 sm:w-5 sm:h-5 mr-3 sm:mr-2 flex-shrink-0' />
-                        <span className='whitespace-nowrap'>{t('form.buttons.takeDefectPhoto') || 'Take Photo of Defect'}</span>
+                        <span className='whitespace-nowrap'>
+                          {t('form.buttons.takeDefectPhoto') || 'Take Photo of Defect'}
+                        </span>
                       </button>
                     ) : (
                       <button
@@ -2436,7 +2707,9 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                         className='inline-flex items-center justify-center px-4 sm:px-3 py-3 sm:py-2 border border-slate-300 text-base sm:text-sm font-medium rounded-lg text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 shadow-sm min-h-[44px] sm:min-h-0 transition-colors'
                       >
                         <X className='w-5 h-5 sm:w-4 sm:h-4 mr-2 sm:mr-1 flex-shrink-0' />
-                        <span className='whitespace-nowrap'>{t('form.buttons.cancel') || 'Cancel'}</span>
+                        <span className='whitespace-nowrap'>
+                          {t('form.buttons.cancel') || 'Cancel'}
+                        </span>
                       </button>
                     )}
                   </div>
@@ -2448,13 +2721,15 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                     <div className='flex items-center justify-center gap-2 sm:gap-4'>
                       {/* Step 1: Camera */}
                       <div className='flex items-center gap-2'>
-                        <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all ${
-                          defectFlowStep === 'camera'
-                            ? 'bg-blue-600 border-blue-600 text-white'
-                            : defectFlowStep === 'describe'
-                            ? 'bg-green-500 border-green-500 text-white'
-                            : 'bg-slate-100 border-slate-300 text-slate-400'
-                        }`}>
+                        <div
+                          className={`flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all ${
+                            defectFlowStep === 'camera'
+                              ? 'bg-blue-600 border-blue-600 text-white'
+                              : defectFlowStep === 'describe'
+                                ? 'bg-green-500 border-green-500 text-white'
+                                : 'bg-slate-100 border-slate-300 text-slate-400'
+                          }`}
+                        >
                           {defectFlowStep === 'camera' ? (
                             <Camera className='w-5 h-5' />
                           ) : defectFlowStep === 'describe' ? (
@@ -2463,36 +2738,42 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                             <Camera className='w-5 h-5' />
                           )}
                         </div>
-                        <span className={`hidden sm:block text-sm font-medium ${
-                          defectFlowStep === 'camera' ? 'text-blue-600' : 'text-slate-600'
-                        }`}>
+                        <span
+                          className={`hidden sm:block text-sm font-medium ${
+                            defectFlowStep === 'camera' ? 'text-blue-600' : 'text-slate-600'
+                          }`}
+                        >
                           {t('form.defectFlow.step.camera') || 'Take Photo'}
                         </span>
                       </div>
 
                       {/* Connector Line */}
-                      <div className={`h-0.5 w-8 sm:w-16 transition-all ${
-                        defectFlowStep === 'describe'
-                          ? 'bg-green-500'
-                          : 'bg-slate-300'
-                      }`} />
+                      <div
+                        className={`h-0.5 w-8 sm:w-16 transition-all ${
+                          defectFlowStep === 'describe' ? 'bg-green-500' : 'bg-slate-300'
+                        }`}
+                      />
 
                       {/* Step 2: Describe */}
                       <div className='flex items-center gap-2'>
-                        <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all ${
-                          defectFlowStep === 'describe'
-                            ? 'bg-blue-600 border-blue-600 text-white'
-                            : 'bg-slate-100 border-slate-300 text-slate-400'
-                        }`}>
+                        <div
+                          className={`flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all ${
+                            defectFlowStep === 'describe'
+                              ? 'bg-blue-600 border-blue-600 text-white'
+                              : 'bg-slate-100 border-slate-300 text-slate-400'
+                          }`}
+                        >
                           {defectFlowStep === 'describe' ? (
                             <FileText className='w-5 h-5' />
                           ) : (
                             <FileText className='w-5 h-5 opacity-50' />
                           )}
                         </div>
-                        <span className={`hidden sm:block text-sm font-medium ${
-                          defectFlowStep === 'describe' ? 'text-blue-600' : 'text-slate-600'
-                        }`}>
+                        <span
+                          className={`hidden sm:block text-sm font-medium ${
+                            defectFlowStep === 'describe' ? 'text-blue-600' : 'text-slate-600'
+                          }`}
+                        >
                           {t('form.defectFlow.step.describe') || 'Describe'}
                         </span>
                       </div>
@@ -2503,7 +2784,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                 {/* Defect Flow: Camera Step */}
                 {defectFlowStep === 'camera' && (
                   <DefectCameraCapture
-                    onImageCapture={(imageDataUrl) => {
+                    onImageCapture={imageDataUrl => {
                       setDraftDefect(prev => ({ ...prev, image: imageDataUrl }));
                       setDefectFlowStep('describe');
                     }}
@@ -2518,14 +2799,15 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                 {defectFlowStep === 'map' && draftDefect?.image && (
                   <div className='mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4'>
                     <p className='text-sm text-blue-800 mb-4 text-center'>
-                      {t('form.instructions.pinPlacement') || 'Click on the roof where the problem is'}
+                      {t('form.instructions.pinPlacement') ||
+                        'Click on the roof where the problem is'}
                     </p>
 
                     {/* Show map or roof image annotation based on what exists */}
                     {!formData.roofImageUrl && addressCoordinates ? (
-                      <Suspense fallback={<LoadingSpinner size="sm" />}>
+                      <Suspense fallback={<LoadingSpinner size='sm' />}>
                         <InteractiveRoofMap
-                          key="roof-map-defect-pin"
+                          key='roof-map-defect-pin'
                           lat={addressCoordinates.lat}
                           lon={addressCoordinates.lon}
                           availableIssues={[]}
@@ -2533,7 +2815,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                           onMarkersChange={setMapMarkers}
                           pinMode={true}
                           draftImageUrl={draftDefect.image}
-                          onPinPlace={(position) => {
+                          onPinPlace={position => {
                             setDraftDefect(prev => ({ ...prev, pinPosition: position }));
                             setDefectFlowStep('describe');
                           }}
@@ -2541,18 +2823,22 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                         />
                       </Suspense>
                     ) : formData.roofImageUrl ? (
-                      <Suspense fallback={<LoadingSpinner size="sm" />}>
+                      <Suspense fallback={<LoadingSpinner size='sm' />}>
                         <RoofImageAnnotation
                           roofImageUrl={formData.roofImageUrl}
                           pins={formData.roofImagePins || []}
                           availableIssues={formData.issuesFound || []}
                           reportId={tempReportId}
-                          onImageChange={(url) => setFormData(prev => ({ ...prev, roofImageUrl: url || undefined }))}
-                          onPinsChange={(pins) => setFormData(prev => ({ ...prev, roofImagePins: pins }))}
+                          onImageChange={url =>
+                            setFormData(prev => ({ ...prev, roofImageUrl: url || undefined }))
+                          }
+                          onPinsChange={pins =>
+                            setFormData(prev => ({ ...prev, roofImagePins: pins }))
+                          }
                           disabled={false}
                           pinMode={true}
                           draftImageUrl={draftDefect.image}
-                          onPinPlace={(position) => {
+                          onPinPlace={position => {
                             setDraftDefect(prev => ({ ...prev, pinPosition: position }));
                             setDefectFlowStep('describe');
                           }}
@@ -2617,7 +2903,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                 {defectFlowStep === 'describe' && draftDefect && (
                   <DefectQuickDescription
                     draftDefect={draftDefect}
-                    onSave={(defectData) => {
+                    onSave={defectData => {
                       saveDraftDefect(defectData);
                     }}
                     onMoreDetails={async () => {
@@ -2628,7 +2914,10 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                           const response = await fetch(draftDefect.image);
                           const blob = await response.blob();
                           const fileName = `defect_${Date.now()}.${blob.type.split('/')[1] || 'jpg'}`;
-                          const storageRef = ref(storage, `reports/${tempReportId}/issues/${fileName}`);
+                          const storageRef = ref(
+                            storage,
+                            `reports/${tempReportId}/issues/${fileName}`
+                          );
                           await uploadBytes(storageRef, blob);
                           imageUrl = await getDownloadURL(storageRef);
                         } catch (error) {
@@ -2639,7 +2928,10 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
 
                       // Create issue from draft and open in full form with automatic title
                       const existingIssuesCount = formData.issuesFound?.length || 0;
-                      const issueTitle = (draftDefect?.title?.trim() || '') || `${t('reports.public.problem') || 'Problem'} ${existingIssuesCount + 1}`;
+                      const issueTitle =
+                        draftDefect?.title?.trim() ||
+                        '' ||
+                        `${t('reports.public.problem') || 'Problem'} ${existingIssuesCount + 1}`;
                       const newIssue: Issue = {
                         id: `issue_${Date.now()}`,
                         title: issueTitle,
@@ -2716,20 +3008,20 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                 {/* Interactive Roof Map - Only show if we have coordinates but no image yet */}
                 {defectFlowStep === 'idle' && !formData.roofImageUrl && addressCoordinates && (
                   <div
-                    className="mb-6"
+                    className='mb-6'
                     style={{ position: 'relative', zIndex: 1 }}
-                    onClick={(e) => {
+                    onClick={e => {
                       // Stop event propagation to prevent form submission
                       e.stopPropagation();
                     }}
-                    onMouseDown={(e) => {
+                    onMouseDown={e => {
                       // Stop event propagation to prevent form submission
                       e.stopPropagation();
                     }}
                   >
-                    <Suspense fallback={<LoadingSpinner size="sm" />}>
+                    <Suspense fallback={<LoadingSpinner size='sm' />}>
                       <InteractiveRoofMap
-                        key="roof-map-interactive"
+                        key='roof-map-interactive'
                         lat={addressCoordinates.lat}
                         lon={addressCoordinates.lon}
                         availableIssues={(formData.issuesFound || []).map((issue, index) => ({
@@ -2740,26 +3032,29 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                         }))}
                         existingMarkers={mapMarkers}
                         onMarkersChange={setMapMarkers}
-                        onImageCapture={async (dataUrl) => {
-                        try {
-                          // Upload to Firebase Storage
-                          const response = await fetch(dataUrl);
-                          const blob = await response.blob();
-                          const storageRef = ref(storage, `roof-images/${tempReportId}/${Date.now()}.png`);
-                          await uploadBytes(storageRef, blob);
-                          const url = await getDownloadURL(storageRef);
+                        onImageCapture={async dataUrl => {
+                          try {
+                            // Upload to Firebase Storage
+                            const response = await fetch(dataUrl);
+                            const blob = await response.blob();
+                            const storageRef = ref(
+                              storage,
+                              `roof-images/${tempReportId}/${Date.now()}.png`
+                            );
+                            await uploadBytes(storageRef, blob);
+                            const url = await getDownloadURL(storageRef);
 
-                          setFormData(prev => ({ ...prev, roofImageUrl: url }));
-                          setNotification({
-                            message: t('address.map.captureSuccess'),
-                            type: 'success'
-                          });
-                        } catch (error) {
-                          console.error('Error uploading roof image:', error);
-                          setNotification({
-                            message: t('address.map.captureError'),
-                            type: 'error',
-                          });
+                            setFormData(prev => ({ ...prev, roofImageUrl: url }));
+                            setNotification({
+                              message: t('address.map.captureSuccess'),
+                              type: 'success',
+                            });
+                          } catch (error) {
+                            console.error('Error uploading roof image:', error);
+                            setNotification({
+                              message: t('address.map.captureError'),
+                              type: 'error',
+                            });
                           }
                         }}
                       />
@@ -2769,15 +3064,19 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
 
                 {/* Roof Image Annotation - Show if roof image exists (only when not in defect flow) */}
                 {defectFlowStep === 'idle' && formData.roofImageUrl && (
-                  <div className="mb-6">
-                    <Suspense fallback={<LoadingSpinner size="sm" />}>
+                  <div className='mb-6'>
+                    <Suspense fallback={<LoadingSpinner size='sm' />}>
                       <RoofImageAnnotation
                         roofImageUrl={formData.roofImageUrl}
                         pins={formData.roofImagePins || []}
                         availableIssues={formData.issuesFound || []}
                         reportId={tempReportId}
-                        onImageChange={(url) => setFormData(prev => ({ ...prev, roofImageUrl: url || undefined }))}
-                        onPinsChange={(pins) => setFormData(prev => ({ ...prev, roofImagePins: pins }))}
+                        onImageChange={url =>
+                          setFormData(prev => ({ ...prev, roofImageUrl: url || undefined }))
+                        }
+                        onPinsChange={pins =>
+                          setFormData(prev => ({ ...prev, roofImagePins: pins }))
+                        }
                         disabled={false}
                       />
                     </Suspense>
@@ -2818,7 +3117,9 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                         required
                       />
                       {validationErrors[`issue_${index}_title`] && (
-                        <p className='mt-1 text-sm text-red-600'>{validationErrors[`issue_${index}_title`]}</p>
+                        <p className='mt-1 text-sm text-red-600'>
+                          {validationErrors[`issue_${index}_title`]}
+                        </p>
                       )}
                     </div>
 
@@ -2905,19 +3206,20 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                   </div>
                 ))}
 
-                {(!formData.issuesFound || formData.issuesFound.length === 0) && defectFlowStep === 'idle' && (
-                  <div className='text-center py-8 text-slate-500'>
-                    <AlertTriangle className='w-8 h-8 text-slate-400 mx-auto mb-2' />
-                    <p>{t('form.labels.noIssuesYet')}</p>
-                    <button
-                      type='button'
-                      onClick={addIssue}
-                      className='mt-2 text-slate-700 hover:text-slate-900 text-sm font-medium'
-                    >
-                      {t('form.labels.addFirstIssue')}
-                    </button>
-                  </div>
-                )}
+                {(!formData.issuesFound || formData.issuesFound.length === 0) &&
+                  defectFlowStep === 'idle' && (
+                    <div className='text-center py-8 text-slate-500'>
+                      <AlertTriangle className='w-8 h-8 text-slate-400 mx-auto mb-2' />
+                      <p>{t('form.labels.noIssuesYet')}</p>
+                      <button
+                        type='button'
+                        onClick={addIssue}
+                        className='mt-2 text-slate-700 hover:text-slate-900 text-sm font-medium'
+                      >
+                        {t('form.labels.addFirstIssue')}
+                      </button>
+                    </div>
+                  )}
               </div>
 
               {/* Recommended Actions */}
@@ -3142,10 +3444,11 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                         (sum, action) => sum + (action.estimatedCost || 0),
                         0
                       );
-                      const total = recommendedActionsTotal + 
-                        (formData.laborCost || 0) + 
-                        (formData.materialCost || 0) + 
-                        (formData.travelCost || 0) + 
+                      const total =
+                        recommendedActionsTotal +
+                        (formData.laborCost || 0) +
+                        (formData.materialCost || 0) +
+                        (formData.travelCost || 0) +
                         (formData.overheadCost || 0);
                       return formatCurrency(total);
                     })()}
@@ -3165,7 +3468,9 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
 
               <div className='space-y-4'>
                 <div>
-                  <h3 className='text-sm font-medium text-gray-700'>{t('form.labels.customerLabel')}</h3>
+                  <h3 className='text-sm font-medium text-gray-700'>
+                    {t('form.labels.customerLabel')}
+                  </h3>
                   <p className='text-sm text-gray-900'>{formData.customerName}</p>
                   <p className='text-sm text-gray-600'>{formData.customerAddress}</p>
                   {formData.customerPhone && (
@@ -3177,11 +3482,19 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                 </div>
 
                 <div>
-                  <h3 className='text-sm font-medium text-gray-700'>{t('form.labels.inspectionDetailsLabel')}</h3>
-                  <p className='text-sm text-gray-900'>{t('form.labels.dateLabel')}: {formData.inspectionDate}</p>
-                  <p className='text-sm text-gray-900'>{t('form.labels.roofTypeLabel')}: {formData.roofType}</p>
+                  <h3 className='text-sm font-medium text-gray-700'>
+                    {t('form.labels.inspectionDetailsLabel')}
+                  </h3>
+                  <p className='text-sm text-gray-900'>
+                    {t('form.labels.dateLabel')}: {formData.inspectionDate}
+                  </p>
+                  <p className='text-sm text-gray-900'>
+                    {t('form.labels.roofTypeLabel')}: {formData.roofType}
+                  </p>
                   {formData.roofAge && (
-                    <p className='text-sm text-gray-900'>{t('form.labels.ageLabel')}: {formData.roofAge} {t('form.labels.years')}</p>
+                    <p className='text-sm text-gray-900'>
+                      {t('form.labels.ageLabel')}: {formData.roofAge} {t('form.labels.years')}
+                    </p>
                   )}
                 </div>
 
@@ -3244,7 +3557,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                     onClick={() => {
                       // Validate current step before proceeding
                       const isStepValid = validateStep(currentStep);
-                      
+
                       if (isStepValid) {
                         setCurrentStep(prev => Math.min(totalSteps, prev + 1));
                       } else {
@@ -3252,7 +3565,9 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                         // Scroll to top to show error summary
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                         setNotification({
-                          message: t('form.validation.stepValidationFailed') || 'Please fix the validation errors before continuing',
+                          message:
+                            t('form.validation.stepValidationFailed') ||
+                            'Please fix the validation errors before continuing',
                           type: 'error',
                         });
                         setTimeout(() => setNotification(null), 5000);
@@ -3379,10 +3694,10 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                     {t('form.existingCustomer.message', { name: foundCustomer.name })}
                   </p>
                   <p className='text-sm text-slate-500 mb-2'>
-                    {t('form.existingCustomer.latestReport', { 
-                      date: foundReport.createdAt 
-                        ? new Date(foundReport.createdAt).toLocaleDateString('sv-SE') 
-                        : t('common.unknown') || 'Okänt datum'
+                    {t('form.existingCustomer.latestReport', {
+                      date: foundReport.createdAt
+                        ? new Date(foundReport.createdAt).toLocaleDateString('sv-SE')
+                        : t('common.unknown') || 'Okänt datum',
                     })}
                   </p>
                   <p className='text-sm text-gray-500'>

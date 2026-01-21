@@ -1,6 +1,6 @@
 /**
  * Form Data Validation Utilities
- * 
+ *
  * Comprehensive validation and sanitization utilities to prevent form breakage
  * from invalid data, corrupted localStorage, or user input errors.
  */
@@ -10,13 +10,17 @@ import { Report, Issue, RecommendedAction, RoofType, ReportStatus } from '../typ
 /**
  * Safely parse a number, returning undefined if invalid
  */
-export function safeParseNumber(value: string | number | null | undefined, min?: number, max?: number): number | undefined {
+export function safeParseNumber(
+  value: string | number | null | undefined,
+  min?: number,
+  max?: number
+): number | undefined {
   if (value === null || value === undefined || value === '') {
     return undefined;
   }
 
   const num = typeof value === 'number' ? value : Number(value);
-  
+
   if (isNaN(num) || !isFinite(num)) {
     return undefined;
   }
@@ -35,7 +39,11 @@ export function safeParseNumber(value: string | number | null | undefined, min?:
 /**
  * Safely parse an integer, returning undefined if invalid
  */
-export function safeParseInt(value: string | number | null | undefined, min?: number, max?: number): number | undefined {
+export function safeParseInt(
+  value: string | number | null | undefined,
+  min?: number,
+  max?: number
+): number | undefined {
   const num = safeParseNumber(value, min, max);
   return num !== undefined ? Math.floor(num) : undefined;
 }
@@ -43,7 +51,10 @@ export function safeParseInt(value: string | number | null | undefined, min?: nu
 /**
  * Validate coordinates are within valid ranges
  */
-export function validateCoordinates(lat: number | string | null | undefined, lon: number | string | null | undefined): { lat: number; lon: number } | null {
+export function validateCoordinates(
+  lat: number | string | null | undefined,
+  lon: number | string | null | undefined
+): { lat: number; lon: number } | null {
   const latNum = safeParseNumber(lat, -90, 90);
   const lonNum = safeParseNumber(lon, -180, 180);
 
@@ -64,7 +75,7 @@ export function validateDateString(dateString: string | Date | null | undefined)
 
   try {
     let date: Date;
-    
+
     if (dateString instanceof Date) {
       date = dateString;
     } else if (typeof dateString === 'string') {
@@ -78,7 +89,7 @@ export function validateDateString(dateString: string | Date | null | undefined)
           const year = parseInt(parts[0], 10);
           const month = parseInt(parts[1], 10) - 1;
           const day = parseInt(parts[2], 10);
-          
+
           if (!isNaN(year) && !isNaN(month) && !isNaN(day)) {
             date = new Date(year, month, day);
           } else {
@@ -154,7 +165,20 @@ function isValidRecommendedAction(obj: any): obj is RecommendedAction {
  * Validate roof type is valid
  */
 function isValidRoofType(value: any): value is RoofType {
-  const validTypes: RoofType[] = ['tile', 'metal', 'shingle', 'slate', 'flat', 'other'];
+  const validTypes: RoofType[] = [
+    'tile',
+    'metal',
+    'shingle',
+    'slate',
+    'flat',
+    'flat_bitumen_2layer',
+    'flat_bitumen_3layer',
+    'flat_rubber',
+    'flat_pvc',
+    'flat_tpo',
+    'flat_epdm',
+    'other',
+  ];
   return typeof value === 'string' && validTypes.includes(value as RoofType);
 }
 
@@ -170,7 +194,7 @@ function isValidReportStatus(value: any): value is ReportStatus {
     'offer_sent',
     'offer_accepted',
     'offer_rejected',
-    'offer_expired'
+    'offer_expired',
   ];
   return typeof value === 'string' && validStatuses.includes(value as ReportStatus);
 }
@@ -186,7 +210,10 @@ export function sanitizeDraftData(draftData: any): Partial<Report> {
     sanitized.customerName = draftData.customerName.trim();
   }
 
-  if (typeof draftData.customerAddress === 'string' && draftData.customerAddress.trim().length >= 5) {
+  if (
+    typeof draftData.customerAddress === 'string' &&
+    draftData.customerAddress.trim().length >= 5
+  ) {
     sanitized.customerAddress = draftData.customerAddress.trim();
   }
 
@@ -241,7 +268,10 @@ export function sanitizeDraftData(draftData: any): Partial<Report> {
 
   // Arrays with item validation
   sanitized.issuesFound = validateArray(draftData.issuesFound, isValidIssue);
-  sanitized.recommendedActions = validateArray(draftData.recommendedActions, isValidRecommendedAction);
+  sanitized.recommendedActions = validateArray(
+    draftData.recommendedActions,
+    isValidRecommendedAction
+  );
 
   // Image URL
   if (typeof draftData.roofImageUrl === 'string' && draftData.roofImageUrl.trim().length > 0) {
@@ -255,18 +285,19 @@ export function sanitizeDraftData(draftData: any): Partial<Report> {
 
   // Roof image pins
   if (Array.isArray(draftData.roofImagePins)) {
-    sanitized.roofImagePins = draftData.roofImagePins.filter((pin: any) =>
-      typeof pin === 'object' &&
-      pin !== null &&
-      typeof pin.id === 'string' &&
-      typeof pin.x === 'number' &&
-      !isNaN(pin.x) &&
-      pin.x >= 0 &&
-      pin.x <= 100 &&
-      typeof pin.y === 'number' &&
-      !isNaN(pin.y) &&
-      pin.y >= 0 &&
-      pin.y <= 100
+    sanitized.roofImagePins = draftData.roofImagePins.filter(
+      (pin: any) =>
+        typeof pin === 'object' &&
+        pin !== null &&
+        typeof pin.id === 'string' &&
+        typeof pin.x === 'number' &&
+        !isNaN(pin.x) &&
+        pin.x >= 0 &&
+        pin.x <= 100 &&
+        typeof pin.y === 'number' &&
+        !isNaN(pin.y) &&
+        pin.y >= 0 &&
+        pin.y <= 100
     );
   }
 
@@ -295,7 +326,10 @@ export function sanitizeDraftData(draftData: any): Partial<Report> {
 /**
  * Validate step number is within valid range
  */
-export function validateStepNumber(step: number | string | null | undefined, totalSteps: number): number {
+export function validateStepNumber(
+  step: number | string | null | undefined,
+  totalSteps: number
+): number {
   const stepNum = safeParseInt(step, 1, totalSteps);
   return stepNum !== undefined ? stepNum : 1;
 }
@@ -303,23 +337,27 @@ export function validateStepNumber(step: number | string | null | undefined, tot
 /**
  * Validate and sanitize roof image pins
  */
-export function validateRoofPins(pins: any[]): Array<{ id: string; x: number; y: number; [key: string]: any }> {
+export function validateRoofPins(
+  pins: any[]
+): Array<{ id: string; x: number; y: number; [key: string]: any }> {
   if (!Array.isArray(pins)) {
     return [];
   }
 
-  return pins.filter((pin: any) =>
-    typeof pin === 'object' &&
-    pin !== null &&
-    typeof pin.id === 'string' &&
-    typeof pin.x === 'number' &&
-    !isNaN(pin.x) &&
-    typeof pin.y === 'number' &&
-    !isNaN(pin.y)
-  ).map((pin: any) => ({
-    ...pin,
-    x: Math.max(0, Math.min(100, pin.x)),
-    y: Math.max(0, Math.min(100, pin.y)),
-  }));
+  return pins
+    .filter(
+      (pin: any) =>
+        typeof pin === 'object' &&
+        pin !== null &&
+        typeof pin.id === 'string' &&
+        typeof pin.x === 'number' &&
+        !isNaN(pin.x) &&
+        typeof pin.y === 'number' &&
+        !isNaN(pin.y)
+    )
+    .map((pin: any) => ({
+      ...pin,
+      x: Math.max(0, Math.min(100, pin.x)),
+      y: Math.max(0, Math.min(100, pin.y)),
+    }));
 }
-

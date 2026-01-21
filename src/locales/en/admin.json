@@ -129,7 +129,7 @@
   "admin.branches.form.address": "Address",
   "admin.errors.failedToDeleteCustomer": "Failed to delete customer",
   "admin.errors.failedToSaveCustomer": "Failed to save customer",
-  
+
   "admin.customerManagement.deleteCustomerWithReports": "This customer has {count} report(s). Deletion will affect these reports.",
   "admin.customerManagement.customerDeletedSuccessfully": "Customer deleted successfully",
   "admin.customerManagement.customerUpdatedSuccessfully": "Customer updated successfully",
@@ -366,5 +366,4 @@
   "admin.esgReports.biodiversity": "Biodiversity",
   "admin.esgReports.sustainability": "Sustainability",
   "admin.esgReports.rating": "Rating"
-
 }

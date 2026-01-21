@@ -28,7 +28,7 @@ export const setReportAccessControls = async (
 ): Promise<void> => {
   try {
     const reportRef = doc(db, 'reports', reportId);
-    
+
     const updateData: any = {
       accessControls: {
         isPublic: settings.isPublic ?? false,
@@ -109,11 +109,11 @@ export const checkReportAccess = async (
       }
     }
 
-    return { 
-      allowed: true, 
-      remainingAccess: accessControls.maxAccessCount 
+    return {
+      allowed: true,
+      remainingAccess: accessControls.maxAccessCount
         ? accessControls.maxAccessCount - (accessControls.currentAccessCount || 0)
-        : undefined
+        : undefined,
     };
   } catch (error) {
     console.error('Error checking report access:', error);
@@ -124,10 +124,7 @@ export const checkReportAccess = async (
 /**
  * Record report access
  */
-export const recordReportAccess = async (
-  reportId: string,
-  userEmail?: string
-): Promise<void> => {
+export const recordReportAccess = async (reportId: string, userEmail?: string): Promise<void> => {
   try {
     const reportRef = doc(db, 'reports', reportId);
     const reportDoc = await getDoc(reportRef);

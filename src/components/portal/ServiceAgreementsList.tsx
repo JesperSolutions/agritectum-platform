@@ -38,8 +38,7 @@ const ServiceAgreementsList: React.FC = () => {
     }
   };
 
-
-  const filteredAgreements = agreements.filter((agreement) => {
+  const filteredAgreements = agreements.filter(agreement => {
     if (filter === 'all') return true;
     return agreement.status === filter;
   });
@@ -69,17 +68,19 @@ const ServiceAgreementsList: React.FC = () => {
       <FilterTabs
         tabs={filterTabs}
         activeTab={filter}
-        onTabChange={(value) => setFilter(value as 'all' | 'active' | 'expired' | 'cancelled')}
+        onTabChange={value => setFilter(value as 'all' | 'active' | 'expired' | 'cancelled')}
       />
 
       {filteredAgreements.length === 0 ? (
         <div className='bg-white rounded-lg shadow p-12 text-center border border-slate-200'>
           <FileCheck className='w-16 h-16 text-gray-400 mx-auto mb-4' />
-          <p className='text-gray-600'>{t('serviceAgreement.noAgreements') || 'No service agreements found'}</p>
+          <p className='text-gray-600'>
+            {t('serviceAgreement.noAgreements') || 'No service agreements found'}
+          </p>
         </div>
       ) : (
         <div className='space-y-4'>
-          {filteredAgreements.map((agreement) => (
+          {filteredAgreements.map(agreement => (
             <ListCard key={agreement.id}>
               <div className='flex items-start justify-between mb-4'>
                 <div>
@@ -107,7 +108,9 @@ const ServiceAgreementsList: React.FC = () => {
                 />
                 {agreement.price && (
                   <div>
-                    <p className='text-sm font-medium text-gray-600'>{t('serviceAgreement.price') || 'Price'}</p>
+                    <p className='text-sm font-medium text-gray-600'>
+                      {t('serviceAgreement.price') || 'Price'}
+                    </p>
                     <p className='text-gray-900'>
                       {agreement.price} {agreement.currency || 'DKK'}
                     </p>
@@ -127,5 +130,3 @@ const ServiceAgreementsList: React.FC = () => {
 };
 
 export default ServiceAgreementsList;
-
-

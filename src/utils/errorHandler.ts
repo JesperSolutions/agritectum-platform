@@ -1,6 +1,6 @@
 /**
  * Shared Error Handler Utility
- * 
+ *
  * Provides consistent error handling and user-friendly error messages
  * across the entire application.
  */
@@ -30,23 +30,47 @@ export const getErrorMessage = (
   const lowerMessage = errorMessage.toLowerCase();
 
   // Permission errors
-  if (lowerMessage.includes('permission') || lowerMessage.includes('denied') || lowerMessage.includes('unauthorized')) {
-    return translations?.permissionDenied || 'Du saknar behörighet för denna åtgärd. Kontrollera dina användarrättigheter.';
+  if (
+    lowerMessage.includes('permission') ||
+    lowerMessage.includes('denied') ||
+    lowerMessage.includes('unauthorized')
+  ) {
+    return (
+      translations?.permissionDenied ||
+      'Du saknar behörighet för denna åtgärd. Kontrollera dina användarrättigheter.'
+    );
   }
 
   // Network errors
-  if (lowerMessage.includes('network') || lowerMessage.includes('fetch') || lowerMessage.includes('failed to fetch')) {
-    return translations?.networkError || 'Nätverksfel uppstod. Kontrollera din internetanslutning och försök igen.';
+  if (
+    lowerMessage.includes('network') ||
+    lowerMessage.includes('fetch') ||
+    lowerMessage.includes('failed to fetch')
+  ) {
+    return (
+      translations?.networkError ||
+      'Nätverksfel uppstod. Kontrollera din internetanslutning och försök igen.'
+    );
   }
 
   // Quota errors
   if (lowerMessage.includes('quota') || lowerMessage.includes('limit exceeded')) {
-    return translations?.quotaExceeded || 'Kvoten har överskridits. Kontakta administratören för mer information.';
+    return (
+      translations?.quotaExceeded ||
+      'Kvoten har överskridits. Kontakta administratören för mer information.'
+    );
   }
 
   // Validation errors
-  if (lowerMessage.includes('validation') || lowerMessage.includes('required') || lowerMessage.includes('invalid')) {
-    return translations?.validationError || 'Ett valideringsfel uppstod. Kontrollera att alla obligatoriska fält är korrekt ifyllda.';
+  if (
+    lowerMessage.includes('validation') ||
+    lowerMessage.includes('required') ||
+    lowerMessage.includes('invalid')
+  ) {
+    return (
+      translations?.validationError ||
+      'Ett valideringsfel uppstod. Kontrollera att alla obligatoriska fält är korrekt ifyllda.'
+    );
   }
 
   // Firestore not found
@@ -91,19 +115,34 @@ export const handleError = async (
 /**
  * Check if error is a specific type
  */
-export const isErrorType = (error: unknown, type: 'permission' | 'network' | 'quota' | 'validation' | 'notFound'): boolean => {
+export const isErrorType = (
+  error: unknown,
+  type: 'permission' | 'network' | 'quota' | 'validation' | 'notFound'
+): boolean => {
   const errorMessage = error instanceof Error ? error.message : String(error);
   const lowerMessage = errorMessage.toLowerCase();
 
   switch (type) {
     case 'permission':
-      return lowerMessage.includes('permission') || lowerMessage.includes('denied') || lowerMessage.includes('unauthorized');
+      return (
+        lowerMessage.includes('permission') ||
+        lowerMessage.includes('denied') ||
+        lowerMessage.includes('unauthorized')
+      );
     case 'network':
-      return lowerMessage.includes('network') || lowerMessage.includes('fetch') || lowerMessage.includes('failed to fetch');
+      return (
+        lowerMessage.includes('network') ||
+        lowerMessage.includes('fetch') ||
+        lowerMessage.includes('failed to fetch')
+      );
     case 'quota':
       return lowerMessage.includes('quota') || lowerMessage.includes('limit exceeded');
     case 'validation':
-      return lowerMessage.includes('validation') || lowerMessage.includes('required') || lowerMessage.includes('invalid');
+      return (
+        lowerMessage.includes('validation') ||
+        lowerMessage.includes('required') ||
+        lowerMessage.includes('invalid')
+      );
     case 'notFound':
       return lowerMessage.includes('not found') || lowerMessage.includes('does not exist');
     default:
@@ -144,6 +183,10 @@ export class AppError extends Error {
  * Log error with context
  */
 export const logError = (error: Error | unknown, context?: string) => {
-  const message = context ? `${context}: ${error instanceof Error ? error.message : String(error)}` : (error instanceof Error ? error.message : String(error));
+  const message = context
+    ? `${context}: ${error instanceof Error ? error.message : String(error)}`
+    : error instanceof Error
+      ? error.message
+      : String(error);
   logger.error(message, error);
 };

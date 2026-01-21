@@ -1,6 +1,6 @@
 /**
  * Accessibility Utilities
- * 
+ *
  * Helper functions for WCAG 2.1 AA compliance and accessibility best practices.
  */
 
@@ -10,10 +10,12 @@
  */
 export function getFocusRing(color: 'slate' | 'red' | 'blue' | 'green' = 'slate'): string {
   const focusColors = {
-    slate: 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:ring-offset-2',
+    slate:
+      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:ring-offset-2',
     red: 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2',
     blue: 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2',
-    green: 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2',
+    green:
+      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2',
   };
   return focusColors[color];
 }
@@ -80,7 +82,7 @@ export function meetsContrastRatio(
   // This is a simplified check - in production, use a proper contrast calculation library
   // WCAG AA: 4.5:1 for normal text, 3:1 for large text (18pt+ or 14pt+ bold)
   const minRatio = isLargeText ? 3 : 4.5;
-  
+
   // Placeholder - would need actual color contrast calculation
   // For now, return true for known good combinations
   const goodCombinations = [
@@ -91,10 +93,8 @@ export function meetsContrastRatio(
     ['white', 'slate-800'],
     ['white', 'slate-900'],
   ];
-  
-  return goodCombinations.some(
-    ([fg, bg]) => foreground.includes(fg) && background.includes(bg)
-  );
+
+  return goodCombinations.some(([fg, bg]) => foreground.includes(fg) && background.includes(bg));
 }
 
 /**

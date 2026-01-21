@@ -100,6 +100,7 @@
   "form.messages.uploadingImages": "Uploader billeder",
   "form.messages.noImagesUploaded": "Ingen billeder uploadet endnu",
   "form.messages.clickButtonsToAddImages": "Klik på knapperne ovenfor for at tilføje billeder",
+  "form.messages.pasteImageHint": "Du kan også indsætte billeder ved hjælp af Ctrl+V (Cmd+V på Mac)",
   "form.messages.reportNotFound": "Rapport ikke fundet",
   "form.messages.failedToLoadReport": "Kunne ikke indlæse rapport",
   "form.messages.failedToSaveReport": "Kunne ikke gemme rapport",
@@ -297,12 +298,12 @@
   "form.customerSearch.clearSelection": "Ryd valg",
   "form.customerSearch.noResults": "Ingen kunder fundet",
   "common.buttons.close": "Luk",
-  
+
   "form.messages.errorSavingDefect": "Kunne ikke gemme defekt. Prøv igen.",
   "form.messages.errorUploadingImage": "Kunne ikke uploade billede. Tjek din forbindelse og prøv igen.",
   "form.messages.reportSaveSuccess": "Rapport gemt!",
   "form.messages.reportCompletedSuccess": "Rapport afsluttet og indsendt!",
-  
+
   "form.validation.summaryGuidance": "Gennemgå de markerede felter og ret fejlene, før du fortsætter.",
   "form.validation.customerNameGuidance": "Indtast kundens fulde navn (mindst 2 tegn).",
   "form.validation.customerAddressGuidance": "Indtast den fulde adresse, hvor inspektionen blev udført.",
@@ -313,12 +314,12 @@
   "form.validation.phoneGuidance": "Indtast et gyldigt telefonnummer med landekode.",
   "form.validation.issueGuidance": "Hver defekt skal have en titel, beskrivelse og alvorlighedsgrad.",
   "form.validation.offerGuidance": "Indtast en positiv værdi for tilbudsbeløbet.",
-  
+
   "form.help.step1": "Begynd med at indtaste kundens kontaktoplysninger. Du kan søge efter eksisterende kunder eller oprette en ny.",
   "form.help.step2": "Beskriv tagets tilstand, herunder type, alder og generelle observationer.",
   "form.help.step3": "Dokumenter alle defekter fundet under inspektionen. Du kan tilføje billeder og markere placeringer på tagbilledet.",
   "form.help.step4": "Tilføj anbefalede handlinger og opret et tilbud baseret på de fundne defekter.",
-  
+
   "form.errors.saveFailed": "Kunne ikke gemme rapporten. Tjek din forbindelse og prøv igen.",
   "form.errors.imageUploadFailed": "Kunne ikke uploade billedet. Filen kan være for stor eller din forbindelse ustabil.",
   "form.errors.connectionLost": "Forbindelse mistet. Dine ændringer gemmes automatisk, når forbindelsen genetableres.",

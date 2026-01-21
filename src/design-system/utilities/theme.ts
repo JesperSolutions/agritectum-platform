@@ -1,6 +1,6 @@
 /**
  * Theme Utilities
- * 
+ *
  * Helper functions for working with design tokens and theme values.
  */
 
@@ -25,8 +25,9 @@ export function getButtonClasses(
   variant: 'primary' | 'secondary' | 'danger' | 'ghost' | 'link' = 'primary',
   size: 'sm' | 'md' | 'lg' = 'md'
 ): string {
-  const baseClasses = 'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-material font-medium transition-all duration-material focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 uppercase tracking-wide';
-  
+  const baseClasses =
+    'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-material font-medium transition-all duration-material focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 uppercase tracking-wide';
+
   const variantClasses = {
     primary: `${colors.button.primary.bg} ${colors.button.primary.text} ${colors.button.primary.bgHover} ${colors.button.primary.focus} ${shadows.shadows.button}`,
     secondary: `${colors.button.secondary.bg} ${colors.button.secondary.text} ${colors.button.secondary.border} ${colors.button.secondary.bgHover} ${colors.button.secondary.focus} ${shadows.shadows.button}`,
@@ -34,13 +35,13 @@ export function getButtonClasses(
     ghost: `${colors.button.ghost.bg} ${colors.button.ghost.text} ${colors.button.ghost.bgHover} ${colors.button.ghost.focus}`,
     link: `${colors.button.link.bg} ${colors.button.link.text} ${colors.button.link.textHover} ${colors.button.link.underline} ${colors.button.link.focus}`,
   };
-  
+
   const sizeClasses = {
     sm: 'h-8 px-3 text-xs',
     md: 'h-10 px-4 py-2 text-sm',
     lg: 'h-12 px-6 py-3 text-base',
   };
-  
+
   return cn(baseClasses, variantClasses[variant], sizeClasses[size]);
 }
 
@@ -52,31 +53,29 @@ export function getCardClasses(
   padding: 'compact' | 'default' | 'spacious' = 'default'
 ): string {
   const baseClasses = 'rounded-material border transition-shadow duration-material';
-  
+
   const variantClasses = {
     elevated: `${colors.card.bg} ${colors.card.border} ${shadows.shadows.card} hover:${shadows.shadows.cardHover}`,
     outlined: `${colors.card.bg} ${colors.card.border}`,
     filled: `${colors.card.bgFilled} ${colors.card.border} ${shadows.shadows.surface}`,
   };
-  
+
   const paddingClasses = {
     compact: spacing.componentSpacing.card.compact,
     default: spacing.componentSpacing.card.default,
     spacious: spacing.componentSpacing.card.spacious,
   };
-  
+
   return cn(baseClasses, variantClasses[variant], paddingClasses[padding]);
 }
 
 /**
  * Get input classes with state
  */
-export function getInputClasses(
-  hasError: boolean = false,
-  isDisabled: boolean = false
-): string {
-  const baseClasses = 'w-full rounded-material border transition-all duration-material focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2';
-  
+export function getInputClasses(hasError: boolean = false, isDisabled: boolean = false): string {
+  const baseClasses =
+    'w-full rounded-material border transition-all duration-material focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2';
+
   if (isDisabled) {
     return cn(
       baseClasses,
@@ -87,7 +86,7 @@ export function getInputClasses(
       spacing.componentSpacing.input.default
     );
   }
-  
+
   if (hasError) {
     return cn(
       baseClasses,
@@ -98,7 +97,7 @@ export function getInputClasses(
       spacing.componentSpacing.input.default
     );
   }
-  
+
   return cn(
     baseClasses,
     colors.input.bg,
@@ -116,7 +115,7 @@ export function getBadgeClasses(
   variant: 'success' | 'error' | 'warning' | 'info' | 'default' = 'default'
 ): string {
   const baseClasses = 'px-2 py-1 text-xs font-medium rounded-full';
-  
+
   const variantClasses = {
     success: colors.semantic.success.badge,
     error: colors.semantic.error.badge,
@@ -124,7 +123,7 @@ export function getBadgeClasses(
     info: colors.semantic.info.badge,
     default: 'bg-slate-100 text-slate-800',
   };
-  
+
   return cn(baseClasses, variantClasses[variant]);
 }
 
@@ -166,13 +165,13 @@ export function migrateBlueToSlate(className: string): string {
     'blue-800': 'slate-900',
     'blue-900': 'slate-900',
   };
-  
+
   let migrated = className;
   Object.entries(blueToSlate).forEach(([blue, slate]) => {
     const regex = new RegExp(`\\b${blue}\\b`, 'g');
     migrated = migrated.replace(regex, slate);
   });
-  
+
   return migrated;
 }
 

@@ -27,8 +27,12 @@ export const LazyPublicOfferView = lazyWithRetry(() => import('./offers/PublicOf
 export const LazyUserProfile = lazyWithRetry(() => import('./UserProfile'));
 export const LazyOfferThankYou = lazyWithRetry(() => import('./offers/OfferThankYou'));
 export const LazyServiceAgreements = lazyWithRetry(() => import('./admin/ServiceAgreements'));
-export const LazyPublicServiceAgreementView = lazyWithRetry(() => import('./serviceAgreements/PublicServiceAgreementView'));
-export const LazyBuildingESGImprovements = lazyWithRetry(() => import('./admin/BuildingESGImprovements'));
+export const LazyPublicServiceAgreementView = lazyWithRetry(
+  () => import('./serviceAgreements/PublicServiceAgreementView')
+);
+export const LazyBuildingESGImprovements = lazyWithRetry(
+  () => import('./admin/BuildingESGImprovements')
+);
 export const LazyESGService = lazyWithRetry(() => import('./admin/ESGService'));
 export const LazyESGReportsList = lazyWithRetry(() => import('./admin/ESGReportsList'));
 export const LazyPublicESGReportView = lazyWithRetry(() => import('./public/PublicESGReportView'));
@@ -40,9 +44,13 @@ export const LazyPortalLogin = lazyWithRetry(() => import('./portal/PortalLogin'
 export const LazyPortalRegister = lazyWithRetry(() => import('./portal/PortalRegister'));
 export const LazyBuildingsList = lazyWithRetry(() => import('./portal/BuildingsList'));
 export const LazyBuildingDetail = lazyWithRetry(() => import('./portal/BuildingDetail'));
-export const LazyServiceAgreementsList = lazyWithRetry(() => import('./portal/ServiceAgreementsList'));
+export const LazyServiceAgreementsList = lazyWithRetry(
+  () => import('./portal/ServiceAgreementsList')
+);
 export const LazyScheduledVisitsList = lazyWithRetry(() => import('./portal/ScheduledVisitsList'));
-export const LazyAcceptAppointmentView = lazyWithRetry(() => import('./portal/AcceptAppointmentView'));
+export const LazyAcceptAppointmentView = lazyWithRetry(
+  () => import('./portal/AcceptAppointmentView')
+);
 export const LazyPortalCustomerProfile = lazyWithRetry(() => import('./portal/CustomerProfile'));
 
 // Lazy load utility components

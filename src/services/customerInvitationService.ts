@@ -100,7 +100,9 @@ export const getInvitationByToken = async (token: string): Promise<CustomerInvit
 /**
  * Validate invitation token
  */
-export const validateInvitation = async (token: string): Promise<{
+export const validateInvitation = async (
+  token: string
+): Promise<{
   valid: boolean;
   invitation?: CustomerInvitation;
   error?: string;
@@ -141,12 +143,11 @@ export const markInvitationUsed = async (token: string, userId: string): Promise
 /**
  * Get all invitations for a customer
  */
-export const getInvitationsForCustomer = async (customerId: string): Promise<CustomerInvitation[]> => {
-  const q = query(
-    collection(db, INVITATIONS_COLLECTION),
-    where('customerId', '==', customerId)
-  );
-  
+export const getInvitationsForCustomer = async (
+  customerId: string
+): Promise<CustomerInvitation[]> => {
+  const q = query(collection(db, INVITATIONS_COLLECTION), where('customerId', '==', customerId));
+
   const snapshot = await getDocs(q);
   return snapshot.docs.map(doc => {
     const data = doc.data();
@@ -185,14 +186,18 @@ export const cleanupExpiredInvitations = async (): Promise<number> => {
     where('status', '==', 'pending'),
     where('expiresAt', '<', now)
   );
-  
+
   const snapshot = await getDocs(q);
   let count = 0;
-  
+
   for (const docSnap of snapshot.docs) {
-    await setDoc(doc(db, INVITATIONS_COLLECTION, docSnap.id), { status: 'expired' }, { merge: true });
+    await setDoc(
+      doc(db, INVITATIONS_COLLECTION, docSnap.id),
+      { status: 'expired' },
+      { merge: true }
+    );
     count++;
   }
-  
+
   return count;
 };

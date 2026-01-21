@@ -29,42 +29,45 @@ export const usePageState = (options: UsePageStateOptions = {}) => {
   // Generate a unique key for this page/route
   const pageKey = key || location.pathname.replace(/\//g, '_').replace(/^_/, '') || 'home';
   const storageKey = `pageState_${pageKey}`;
-  
+
   const scrollTimeoutRef = useRef<NodeJS.Timeout>();
   const isRestoringRef = useRef(false);
 
   // Save page state to sessionStorage
-  const saveState = useCallback((state: Partial<PageState>) => {
-    if (isRestoringRef.current) return;
-    
-    try {
-      const currentState = getState();
-      const newState: PageState = {
-        ...currentState,
-        ...state,
-        timestamp: Date.now(),
-      };
-      
-      sessionStorage.setItem(storageKey, JSON.stringify(newState));
-    } catch (error) {
-      console.warn('Failed to save page state:', error);
-    }
-  }, [storageKey]);
+  const saveState = useCallback(
+    (state: Partial<PageState>) => {
+      if (isRestoringRef.current) return;
+
+      try {
+        const currentState = getState();
+        const newState: PageState = {
+          ...currentState,
+          ...state,
+          timestamp: Date.now(),
+        };
+
+        sessionStorage.setItem(storageKey, JSON.stringify(newState));
+      } catch (error) {
+        console.warn('Failed to save page state:', error);
+      }
+    },
+    [storageKey]
+  );
 
   // Get page state from sessionStorage
   const getState = useCallback((): PageState => {
     try {
       const stored = sessionStorage.getItem(storageKey);
       if (!stored) return {};
-      
+
       const parsed = JSON.parse(stored);
-      
+
       // Check if state is not too old (24 hours)
       if (parsed.timestamp && Date.now() - parsed.timestamp > 24 * 60 * 60 * 1000) {
         sessionStorage.removeItem(storageKey);
         return {};
       }
-      
+
       return parsed;
     } catch (error) {
       console.warn('Failed to get page state:', error);
@@ -78,7 +81,7 @@ export const usePageState = (options: UsePageStateOptions = {}) => {
     if (state.scrollPosition && typeof state.scrollPosition === 'number') {
       isRestoringRef.current = true;
       window.scrollTo(0, state.scrollPosition);
-      
+
       // Reset flag after a short delay
       setTimeout(() => {
         isRestoringRef.current = false;
@@ -89,11 +92,11 @@ export const usePageState = (options: UsePageStateOptions = {}) => {
   // Save scroll position with debouncing
   const handleScroll = useCallback(() => {
     if (isRestoringRef.current) return;
-    
+
     if (scrollTimeoutRef.current) {
       clearTimeout(scrollTimeoutRef.current);
     }
-    
+
     scrollTimeoutRef.current = setTimeout(() => {
       saveState({ scrollPosition: window.scrollY });
     }, 150);
@@ -102,7 +105,7 @@ export const usePageState = (options: UsePageStateOptions = {}) => {
   // Set up scroll listener
   useEffect(() => {
     window.addEventListener('scroll', handleScroll, { passive: true });
-    
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
       if (scrollTimeoutRef.current) {
@@ -136,7 +139,7 @@ export const usePageState = (options: UsePageStateOptions = {}) => {
 // Specialized hook for branch context persistence
 export const useBranchContext = (currentBranchId?: string) => {
   const { saveState, getState } = usePageState({ persistBranch: true });
-  
+
   // Save branch context when it changes
   useEffect(() => {
     if (currentBranchId) {
@@ -159,7 +162,7 @@ export const useBranchContext = (currentBranchId?: string) => {
 // Specialized hook for filter persistence
 export const useFilterPersistence = (filters: Record<string, any> = {}) => {
   const { saveState, getState } = usePageState({ persistFilters: true });
-  
+
   // Save filters when they change
   useEffect(() => {
     if (Object.keys(filters).length > 0) {

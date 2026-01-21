@@ -1,6 +1,6 @@
 /**
  * Design System Utilities
- * 
+ *
  * Utility functions for working with design tokens and consistent styling.
  */
 
@@ -11,23 +11,39 @@ import { colors, statusBadge, card, formInput } from './tokens';
  */
 export function getStatusBadgeClass(status: string): string {
   const statusLower = status.toLowerCase();
-  
-  if (statusLower.includes('success') || statusLower.includes('completed') || statusLower.includes('active')) {
+
+  if (
+    statusLower.includes('success') ||
+    statusLower.includes('completed') ||
+    statusLower.includes('active')
+  ) {
     return statusBadge.success;
   }
-  if (statusLower.includes('error') || statusLower.includes('failed') || statusLower.includes('critical')) {
+  if (
+    statusLower.includes('error') ||
+    statusLower.includes('failed') ||
+    statusLower.includes('critical')
+  ) {
     return statusBadge.error;
   }
-  if (statusLower.includes('warning') || statusLower.includes('pending') || statusLower.includes('draft')) {
+  if (
+    statusLower.includes('warning') ||
+    statusLower.includes('pending') ||
+    statusLower.includes('draft')
+  ) {
     return statusBadge.warning;
   }
-  if (statusLower.includes('info') || statusLower.includes('sent') || statusLower.includes('shared')) {
+  if (
+    statusLower.includes('info') ||
+    statusLower.includes('sent') ||
+    statusLower.includes('shared')
+  ) {
     return statusBadge.info;
   }
   if (statusLower.includes('purple') || statusLower.includes('offer')) {
     return statusBadge.purple;
   }
-  
+
   // Default to info
   return statusBadge.info;
 }
@@ -66,11 +82,9 @@ export function getButtonClass(
   // Replace size in base class with size variant
   const baseClass = baseClasses[variant];
   const sizeClass = sizeClasses[size];
-  
+
   // Remove existing size classes and add new ones
-  return baseClass
-    .replace(/px-\d+ py-\d+ text-(xs|sm|base)/, '')
-    .trim() + ' ' + sizeClass;
+  return baseClass.replace(/px-\d+ py-\d+ text-(xs|sm|base)/, '').trim() + ' ' + sizeClass;
 }
 
 /**

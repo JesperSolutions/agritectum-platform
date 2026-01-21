@@ -14,6 +14,7 @@ This directory contains completed feature documentation and archived specificati
 ## Purpose
 
 This directory serves as the repository for:
+
 1. **Completed Features** - Documentation of features that have been implemented
 2. **Archived Specifications** - Original specifications moved from NEW_FEATURES_SPECIFICATION.md
 
@@ -42,24 +43,29 @@ This directory serves as the repository for:
 ### File Naming Convention
 
 **Completed Features:**
+
 - `OFFER_AND_ACCEPTANCE_FLOW.md`
 - `PRICING_AND_VARIABLE_CALCULATIONS.md`
 - `AUTOMATIC_REMINDERS_AND_WEATHER_LOGIC.md`
 
 **Archived Specifications:**
+
 - `OFFER_AND_ACCEPTANCE_FLOW_SPECIFICATION_2025-01-15.md`
 - `PRICING_AND_VARIABLE_CALCULATIONS_SPECIFICATION_2025-01-20.md`
 
 ## Current Status
 
 ### Completed Features
-*None yet - features will be added as they are completed*
+
+_None yet - features will be added as they are completed_
 
 ### In Progress
+
 - **Offer and Acceptance Flow** - Phase 1, Week 1-2
 - **Pricing and Variable Calculations** - Phase 1, Week 3-4
 
 ### Pending
+
 - Automatic Reminders and Weather Logic
 - Local Tasks and Radius System
 - Inspection Follow-up
@@ -77,5 +83,4 @@ This directory serves as the repository for:
 
 ---
 
-*Last updated: January 2025*
-
+_Last updated: January 2025_

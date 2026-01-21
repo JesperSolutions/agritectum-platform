@@ -63,13 +63,13 @@
   "dashboard.charts.customerGrowth": "Kundtillväxt",
   "dashboard.charts.issueTypes": "Typ av brister",
   "dashboard.charts.roofTypes": "Taktyper",
-  
+
   "DASHBOARD.TOTALREPORTS": "Totalt antal rapporter",
   "DASHBOARD.COMPLETIONRATE": "Slutförandegrad",
   "DASHBOARD.PENDINGREPORTS": "Väntande rapporter",
   "DASHBOARD.TEAMPRODUCTIVITY": "Teamproduktivitet",
   "DASHBOARD.LASTUPDATED": "Senast uppdaterad",
-  
+
   "dashboard.teamActivity": "Teamaktivitet",
   "dashboard.vsLastWeek": "jämfört med förra veckan",
   "dashboard.aboveTarget": "Över målet",
@@ -81,12 +81,12 @@
   "dashboard.completionRate": "Slutförandegrad",
   "dashboard.pendingReports": "Väntande rapporter",
   "dashboard.teamProductivity": "Teamproduktivitet",
-  
+
   "dashboard.roles.inspector": "Inspektör",
   "dashboard.roles.branchAdmin": "Filialadministratör",
   "dashboard.roles.admin": "Administratör",
   "dashboard.inspector": "Inspektör",
-  
+
   "dashboard.active": "Aktiva",
   "dashboard.completed": "Slutförda",
   "dashboard.status": "Status",
@@ -115,7 +115,7 @@
   "quickActions.backToTop": "Till toppen",
   "quickActions.hide": "Göm snabbmeny",
   "quickActions.restore": "Visa snabbmeny igen",
-  
+
   "dashboard.superadmin": "Superadministratör",
   "dashboard.comprehensiveOverview": "Omfattande översikt",
   "dashboard.branches": "filialer",
@@ -127,30 +127,30 @@
   "dashboard.totalRevenue": "Total omsättning",
   "dashboard.reports": "rapporter",
   "dashboard.pending": "Väntande",
-  
+
   "dashboard.serviceAgreements.activeAgreements": "Aktiva avtal",
   "dashboard.serviceAgreements.ofTotal": "av {total} totalt",
   "dashboard.serviceAgreements.monthlyRevenue": "Månadsomsättning",
   "dashboard.serviceAgreements.expiringSoon": "Går snart ut",
   "dashboard.serviceAgreements.next30Days": "Nästa 30 dagar",
-  
+
   "dashboard.scheduledVisits.title": "Schemalagda besök",
   "dashboard.scheduledVisits.viewCalendar": "Visa kalender",
   "dashboard.scheduledVisits.upcoming7Days": "Kommande (7 dagar)",
   "dashboard.scheduledVisits.scheduledVisits": "Schemalagda besök",
   "dashboard.scheduledVisits.overdue": "Försenade",
-  
+
   "dashboard.financialOverview.title": "Ekonomisk översikt",
   "dashboard.financialOverview.viewAnalytics": "Visa analyser",
   "dashboard.financialOverview.oneTimeRevenue": "Engångsintäkter",
   "dashboard.financialOverview.recurringRevenue": "Återkommande intäkter",
   "dashboard.financialOverview.recurringPercent": "Återkommande %",
   "dashboard.financialOverview.ofTotalRevenue": "av total omsättning",
-  
+
   "dashboard.todayTasks": "Dagens uppgifter",
   "dashboard.noTasksToday": "Inga uppgifter idag",
   "dashboard.personalWorkspace": "Personligt arbetsområde",
-  
+
   "dashboard.pendingCustomerResponses.title": "Väntande kundsvar",
   "dashboard.rejectedOrders.title": "Avvisade order",
   "dashboard.rejectedOrders.rejectedOn": "Avvisad den",
@@ -158,7 +158,7 @@
   "dashboard.viewAll": "Visa alla",
   "dashboard.viewCalendar": "Visa kalender",
   "dashboard.andMore": "+{count} fler",
-  
+
   "dashboard.quickActions.title": "Snabbåtgärder",
   "dashboard.quickActions.createAppointment": "Skapa besök",
   "dashboard.quickActions.scheduleInspection": "Schemalägg inspektion",
@@ -168,12 +168,19 @@
   "dashboard.quickActions.createReport": "Skapa rapport",
   "dashboard.quickActions.serviceAgreement": "Serviceavtal",
   "dashboard.quickActions.createAgreement": "Skapa avtal",
-  
+
   "dashboard.completedThisWeek": "Slutförda denna vecka",
   "dashboard.scheduledThisWeek": "Schemalagda denna vecka",
   "dashboard.averageTime": "Genomsnittlig tid",
   "dashboard.hours": "timmar",
   "dashboard.allTime": "totalt",
   "dashboard.upcoming": "kommande",
-  "dashboard.activeUsers": "Aktiva användare"
+  "dashboard.activeUsers": "Aktiva användare",
+
+  "dashboard.map.title": "Fastighetskarta",
+  "dashboard.map.subtitle": "Geografisk översikt över alla fastigheter",
+  "dashboard.map.noLocations": "Inga fastighetsplatser tillgängliga",
+  "dashboard.map.addLocations": "Lägg till koordinater till dina fastigheter för att se dem på kartan.",
+  "dashboard.map.buildingsShown": "fastigheter visas",
+  "dashboard.viewDetails": "Visa detaljer"
 }

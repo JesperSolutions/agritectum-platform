@@ -68,13 +68,18 @@ const LoginForm: React.FC = () => {
       <div className='max-w-md w-full space-y-8'>
         <div className='text-center'>
           <div className='flex justify-center mb-8'>
-            <AgritectumLogo size="xl" className="justify-center" />
+            <AgritectumLogo size='xl' className='justify-center' />
           </div>
-          <h2 className='mt-4 text-4xl font-light text-gray-900 tracking-tight'>{t('login.subtitle')}</h2>
+          <h2 className='mt-4 text-4xl font-light text-gray-900 tracking-tight'>
+            {t('login.subtitle')}
+          </h2>
           <p className='mt-3 text-base text-gray-600 font-light'>{t('login.title')}</p>
         </div>
 
-        <form className='mt-8 space-y-6 bg-white p-8 rounded-material shadow-material-4' onSubmit={handleSubmit}>
+        <form
+          className='mt-8 space-y-6 bg-white p-8 rounded-material shadow-material-4'
+          onSubmit={handleSubmit}
+        >
           {error && (
             <div className='rounded-material bg-red-50 p-4 border-l-4 border-red-500'>
               <div className='flex items-center'>
@@ -88,7 +93,10 @@ const LoginForm: React.FC = () => {
 
           <div className='space-y-6'>
             <div>
-              <label htmlFor='email' className='block text-xs font-medium text-gray-700 uppercase tracking-wide mb-2'>
+              <label
+                htmlFor='email'
+                className='block text-xs font-medium text-gray-700 uppercase tracking-wide mb-2'
+              >
                 {t('login.email')}
               </label>
               <div className='relative'>
@@ -110,7 +118,10 @@ const LoginForm: React.FC = () => {
             </div>
 
             <div>
-              <label htmlFor='password' className='block text-xs font-medium text-gray-700 uppercase tracking-wide mb-2'>
+              <label
+                htmlFor='password'
+                className='block text-xs font-medium text-gray-700 uppercase tracking-wide mb-2'
+              >
                 {t('login.password')}
               </label>
               <div className='relative'>
@@ -166,7 +177,7 @@ const LoginForm: React.FC = () => {
                 src='/agritectum-logo.png'
                 alt='Agritectum'
                 className='h-5 w-auto'
-                onError={(e) => {
+                onError={e => {
                   // Hide image and show text fallback
                   const img = e.currentTarget;
                   img.style.display = 'none';
@@ -179,7 +190,12 @@ const LoginForm: React.FC = () => {
                   }
                 }}
               />
-              <span className='fallback-text ml-1.5 font-medium text-gray-700' style={{ display: 'none' }}>Agritectum</span>
+              <span
+                className='fallback-text ml-1.5 font-medium text-gray-700'
+                style={{ display: 'none' }}
+              >
+                Agritectum
+              </span>
             </a>
           </div>
         </div>

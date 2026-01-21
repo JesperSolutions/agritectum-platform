@@ -74,12 +74,12 @@ import { sendReportEmail } from '../services/triggerEmailService';
 
 // Send a report email
 const result = await sendReportEmail(
-  report,           // Report object
-  'customer@email.com',  // Customer email
+  report, // Report object
+  'customer@email.com', // Customer email
   'inspection-complete', // Template ID
-  branchInfo,       // Branch information
-  'https://...',    // Report link
-  'user-id'         // Sender ID
+  branchInfo, // Branch information
+  'https://...', // Report link
+  'user-id' // Sender ID
 );
 
 if (result.success) {
@@ -116,8 +116,8 @@ const mailDoc = {
   to: 'customer@email.com',
   template: {
     name: 'inspection-complete',
-    data: templateData
-  }
+    data: templateData,
+  },
 };
 ```
 
@@ -183,11 +183,7 @@ When successful, the delivery object contains:
 import { EmailDeliveryStatus } from '../components/EmailDeliveryStatus';
 
 // In your component
-<EmailDeliveryStatus 
-  reportId={report.id}
-  messageId={emailMessageId}
-  showDetails={true}
-/>
+<EmailDeliveryStatus reportId={report.id} messageId={emailMessageId} showDetails={true} />;
 ```
 
 ## Error Handling
@@ -339,6 +335,7 @@ node scripts/migrate-to-trigger-email.cjs
 #### `EmailDeliveryStatus`
 
 Props:
+
 - `reportId: string` - Report ID to check
 - `messageId?: string` - Specific message ID
 - `showDetails?: boolean` - Show detailed information
@@ -361,6 +358,7 @@ Props:
 ### Contact
 
 For issues or questions:
+
 1. Check the troubleshooting section above
 2. Review Firebase console logs
 3. Test using the provided scripts

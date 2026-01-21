@@ -1,6 +1,6 @@
 /**
  * Role Guard Higher-Order Component
- * 
+ *
  * Prevents UI flicker on route load by checking permissions before rendering.
  * Works in conjunction with ProtectedRoute but provides earlier access control.
  */
@@ -24,27 +24,23 @@ export const withRoleGuard = <P extends object>(
   Component: ComponentType<P>,
   options: WithRoleGuardOptions = {}
 ) => {
-  const {
-    allowedRoles,
-    requiredBranch = false,
-    redirectTo = '/unauthorized',
-  } = options;
+  const { allowedRoles, requiredBranch = false, redirectTo = '/unauthorized' } = options;
 
-  const GuardedComponent: React.FC<P> = (props) => {
+  const GuardedComponent: React.FC<P> = props => {
     const { currentUser, loading } = useAuth();
 
     // Show loading spinner while checking auth
     if (loading) {
       return (
-        <div className="min-h-screen flex items-center justify-center">
-          <LoadingSpinner size="lg" />
+        <div className='min-h-screen flex items-center justify-center'>
+          <LoadingSpinner size='lg' />
         </div>
       );
     }
 
     // Redirect to login if not authenticated
     if (!currentUser) {
-      return <Navigate to="/login" replace />;
+      return <Navigate to='/login' replace />;
     }
 
     // Check role permissions
@@ -59,7 +55,7 @@ export const withRoleGuard = <P extends object>(
 
     // Check branch requirement
     if (requiredBranch && !currentUser.branchId && currentUser.role !== 'superadmin') {
-      return <Navigate to="/no-branch" replace />;
+      return <Navigate to='/no-branch' replace />;
     }
 
     // Render component if all checks pass
@@ -70,6 +66,3 @@ export const withRoleGuard = <P extends object>(
 
   return GuardedComponent;
 };
-
-
-

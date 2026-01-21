@@ -202,9 +202,9 @@ const BuildingMap: React.FC<BuildingMapProps> = ({
         className={`bg-slate-50 rounded-lg border border-slate-200 p-8 flex flex-col items-center justify-center ${className}`}
         style={{ minHeight: '400px' }}
       >
-        <AlertCircle className="w-12 h-12 text-slate-400 mb-4" />
-        <p className="text-slate-600 text-center">{error}</p>
-        <p className="text-sm text-slate-500 mt-2 text-center">{address}</p>
+        <AlertCircle className='w-12 h-12 text-slate-400 mb-4' />
+        <p className='text-slate-600 text-center'>{error}</p>
+        <p className='text-sm text-slate-500 mt-2 text-center'>{address}</p>
       </div>
     );
   }
@@ -215,7 +215,7 @@ const BuildingMap: React.FC<BuildingMapProps> = ({
         className={`bg-slate-50 rounded-lg border border-slate-200 p-8 flex items-center justify-center ${className}`}
         style={{ minHeight: '400px' }}
       >
-        <Loader2 className="w-8 h-8 text-slate-400 animate-spin" />
+        <Loader2 className='w-8 h-8 text-slate-400 animate-spin' />
       </div>
     );
   }
@@ -223,25 +223,25 @@ const BuildingMap: React.FC<BuildingMapProps> = ({
   return (
     <div className={`relative ${className}`}>
       {isLoading && (
-        <div className="absolute inset-0 bg-white/50 flex items-center justify-center z-10 rounded-lg">
-          <Loader2 className="w-8 h-8 text-slate-400 animate-spin" />
+        <div className='absolute inset-0 bg-white/50 flex items-center justify-center z-10 rounded-lg'>
+          <Loader2 className='w-8 h-8 text-slate-400 animate-spin' />
         </div>
       )}
       <div
         ref={mapRef}
-        className="w-full rounded-lg border border-slate-200 overflow-hidden"
+        className='w-full rounded-lg border border-slate-200 overflow-hidden'
         style={{ minHeight: '400px', height: '400px' }}
       />
-      <div className="mt-2 flex items-center justify-between text-sm text-slate-600">
-        <div className="flex items-center gap-2">
-          <MapPin className="w-4 h-4" />
+      <div className='mt-2 flex items-center justify-between text-sm text-slate-600'>
+        <div className='flex items-center gap-2'>
+          <MapPin className='w-4 h-4' />
           <span>{address}</span>
         </div>
         <a
           href={`https://www.openstreetmap.org/?mlat=${coords.lat}&mlon=${coords.lon}&zoom=16`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-600 hover:text-blue-700 hover:underline"
+          target='_blank'
+          rel='noopener noreferrer'
+          className='text-blue-600 hover:text-blue-700 hover:underline'
         >
           {t('buildings.map.viewOnMap') || 'View on OpenStreetMap'}
         </a>

@@ -1,5 +1,14 @@
 import { db } from '../config/firebase';
-import { collection, addDoc, getDocs, query, where, orderBy, limit, serverTimestamp } from 'firebase/firestore';
+import {
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  where,
+  orderBy,
+  limit,
+  serverTimestamp,
+} from 'firebase/firestore';
 import { logger } from '../utils/logger';
 
 export interface SecurityEvent {
@@ -41,7 +50,9 @@ export interface SecurityMetrics {
 /**
  * Log a security event
  */
-export const logSecurityEvent = async (event: Omit<SecurityEvent, 'id' | 'timestamp' | 'resolved'>): Promise<string> => {
+export const logSecurityEvent = async (
+  event: Omit<SecurityEvent, 'id' | 'timestamp' | 'resolved'>
+): Promise<string> => {
   try {
     const securityEvent: Omit<SecurityEvent, 'id'> = {
       ...event,
@@ -99,7 +110,7 @@ export const detectSuspiciousLogin = async (
 ): Promise<{ suspicious: boolean; reasons: string[] }> => {
   try {
     const reasons: string[] = [];
-    
+
     // Check for multiple failed login attempts
     const recentFailedLogins = await getRecentFailedLogins(email, 15); // Last 15 minutes
     if (recentFailedLogins > 3) {
@@ -309,10 +320,10 @@ export const getSecurityMetrics = async (days: number = 7): Promise<SecurityMetr
 
     // Calculate security score (0-100, higher is better)
     let securityScore = 100;
-    securityScore -= (failedLogins * 2); // -2 points per failed login
-    securityScore -= (suspiciousActivities * 5); // -5 points per suspicious activity
-    securityScore -= (eventsBySeverity.critical * 10); // -10 points per critical event
-    securityScore -= (eventsBySeverity.high * 5); // -5 points per high severity event
+    securityScore -= failedLogins * 2; // -2 points per failed login
+    securityScore -= suspiciousActivities * 5; // -5 points per suspicious activity
+    securityScore -= eventsBySeverity.critical * 10; // -10 points per critical event
+    securityScore -= eventsBySeverity.high * 5; // -5 points per high severity event
     securityScore = Math.max(0, securityScore);
 
     return {
@@ -344,10 +355,7 @@ export const cleanupOldSecurityLogs = async (): Promise<void> => {
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - 90);
 
-    const q = query(
-      collection(db, 'securityEvents'),
-      where('timestamp', '<', cutoffDate)
-    );
+    const q = query(collection(db, 'securityEvents'), where('timestamp', '<', cutoffDate));
 
     const snapshot = await getDocs(q);
     const batch = db.batch();

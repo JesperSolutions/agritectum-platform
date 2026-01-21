@@ -22,7 +22,7 @@ export const notifyCustomerOfAppointment = async (
     if (appointment.customerEmail) {
       const mailRef = collection(db, 'mail');
       const publicLink = `${window.location.origin}/portal/appointment/${scheduledVisit.id}/respond?token=${scheduledVisit.publicToken}`;
-      
+
       await addDoc(mailRef, {
         to: appointment.customerEmail,
         template: {
@@ -43,7 +43,7 @@ export const notifyCustomerOfAppointment = async (
     if (appointment.customerId) {
       const notificationsRef = collection(db, 'notifications');
       const publicLink = `/portal/appointment/${scheduledVisit.id}/respond?token=${scheduledVisit.publicToken}`;
-      
+
       await addDoc(notificationsRef, {
         userId: appointment.customerId,
         type: 'appointment_created',
@@ -79,7 +79,7 @@ export const notifyCustomerOfAcceptance = async (
     // Send confirmation email
     if (appointment.customerEmail) {
       const mailRef = collection(db, 'mail');
-      
+
       await addDoc(mailRef, {
         to: appointment.customerEmail,
         template: {
@@ -98,7 +98,7 @@ export const notifyCustomerOfAcceptance = async (
     // Create in-app notification
     if (appointment.customerId) {
       const notificationsRef = collection(db, 'notifications');
-      
+
       await addDoc(notificationsRef, {
         userId: appointment.customerId,
         type: 'appointment_accepted',

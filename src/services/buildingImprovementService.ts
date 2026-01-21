@@ -1,6 +1,6 @@
 /**
  * Building Improvement Service
- * 
+ *
  * Provides functions to save, load, and calculate building ESG improvements
  */
 
@@ -18,12 +18,7 @@ import {
   Timestamp,
 } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
-import {
-  Building,
-  BuildingImprovements,
-  RoofImprovement,
-  ImprovementType,
-} from '../types';
+import { Building, BuildingImprovements, RoofImprovement, ImprovementType } from '../types';
 import { calculateImprovementImpact } from '../utils/improvementCalculations';
 import { IMPROVEMENT_COST_FACTORS } from '../utils/improvementCalculations';
 
@@ -32,19 +27,13 @@ import { IMPROVEMENT_COST_FACTORS } from '../utils/improvementCalculations';
  * @param branchId - Branch ID
  * @returns Array of buildings
  */
-export async function getBuildingsByBranch(
-  branchId: string
-): Promise<Building[]> {
+export async function getBuildingsByBranch(branchId: string): Promise<Building[]> {
   try {
     const buildingsRef = collection(db, 'buildings');
-    const q = query(
-      buildingsRef,
-      where('branchId', '==', branchId),
-      orderBy('createdAt', 'desc')
-    );
+    const q = query(buildingsRef, where('branchId', '==', branchId), orderBy('createdAt', 'desc'));
     const snapshot = await getDocs(q);
 
-    return snapshot.docs.map((doc) => ({
+    return snapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data(),
     })) as Building[];
@@ -118,10 +107,7 @@ export async function saveBuildingImprovements(
 
     // Check if improvements already exist for this building
     const improvementsRef = collection(db, 'buildingImprovements');
-    const existingQuery = query(
-      improvementsRef,
-      where('buildingId', '==', buildingId)
-    );
+    const existingQuery = query(improvementsRef, where('buildingId', '==', buildingId));
     const existingSnap = await getDocs(existingQuery);
 
     if (!existingSnap.empty) {
@@ -180,9 +166,7 @@ export async function getBuildingImprovements(
  * @param building - Building object
  * @returns Array of recommended improvements
  */
-export function getImprovementRecommendations(
-  building: Building
-): Array<{
+export function getImprovementRecommendations(building: Building): Array<{
   type: ImprovementType;
   priority: 'high' | 'medium' | 'low';
   reason: string;
@@ -210,8 +194,7 @@ export function getImprovementRecommendations(
 
   // Solar panel recommendations
   if (roofSize > 30) {
-    const solarPriority =
-      roofType === 'flat' || roofType === 'metal' ? 'high' : 'medium';
+    const solarPriority = roofType === 'flat' || roofType === 'metal' ? 'high' : 'medium';
     recommendations.push({
       type: 'solar_panels',
       priority: solarPriority,
@@ -251,9 +234,7 @@ export function getImprovementRecommendations(
  * @param building - Building object
  * @returns Array of default roof improvements
  */
-export function createDefaultImprovements(
-  building: Building
-): RoofImprovement[] {
+export function createDefaultImprovements(building: Building): RoofImprovement[] {
   const recommendations = getImprovementRecommendations(building);
   const improvements: RoofImprovement[] = [];
 

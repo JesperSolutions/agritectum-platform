@@ -45,10 +45,7 @@ export const getScheduledVisits = async (user: User): Promise<ScheduledVisit[]> 
         // If composite index error, try without orderBy
         if (queryError.code === 'failed-precondition' || queryError.message?.includes('index')) {
           logger.warn('⚠️ Composite index missing, querying without orderBy:', queryError);
-          q = query(
-            visitsRef,
-            where('branchId', '==', user.branchId)
-          );
+          q = query(visitsRef, where('branchId', '==', user.branchId));
         } else {
           throw queryError;
         }
@@ -64,10 +61,7 @@ export const getScheduledVisits = async (user: User): Promise<ScheduledVisit[]> 
       } catch (queryError: any) {
         if (queryError.code === 'failed-precondition' || queryError.message?.includes('index')) {
           logger.warn('⚠️ Composite index missing, querying without orderBy:', queryError);
-          q = query(
-            visitsRef,
-            where('assignedInspectorId', '==', user.uid)
-          );
+          q = query(visitsRef, where('assignedInspectorId', '==', user.uid));
         } else {
           throw queryError;
         }
@@ -136,18 +130,24 @@ export const getScheduledVisits = async (user: User): Promise<ScheduledVisit[]> 
     return visits;
   } catch (error: any) {
     console.error('❌ Error fetching scheduled visits:', error);
-    
+
     // Log detailed error for debugging
     if (import.meta.env.DEV) {
       logger.warn('[scheduledVisitService] Full error:', error);
-      logger.warn('[scheduledVisitService] User:', { uid: error.uid, branchId: error.branchId, permissionLevel: error.permissionLevel });
+      logger.warn('[scheduledVisitService] User:', {
+        uid: error.uid,
+        branchId: error.branchId,
+        permissionLevel: error.permissionLevel,
+      });
     }
-    
+
     // Check if it's an index issue, not a permissions issue
     if (error.code === 'failed-precondition' || error.message?.includes('index')) {
       // Final fallback: try to fetch all and filter client-side
       try {
-        logger.warn('⚠️ Missing Firestore index. Attempting final fallback: fetching all visits and filtering client-side');
+        logger.warn(
+          '⚠️ Missing Firestore index. Attempting final fallback: fetching all visits and filtering client-side'
+        );
         const visitsRef = collection(db, 'scheduledVisits');
         const snapshot = await getDocs(visitsRef);
         let allVisits = snapshot.docs.map(doc => ({
@@ -179,17 +179,23 @@ export const getScheduledVisits = async (user: User): Promise<ScheduledVisit[]> 
         console.error('❌ Fallback also failed:', fallbackError);
         // If the fallback fails with permissions, it's a real permissions issue
         if (fallbackError.code === 'permission-denied') {
-          throw new Error('Missing or insufficient permissions to access scheduled visits. Please ensure your account has the correct permissions.');
+          throw new Error(
+            'Missing or insufficient permissions to access scheduled visits. Please ensure your account has the correct permissions.'
+          );
         }
-        throw new Error('Firestore index required. Please create composite indexes for scheduledVisits in Firestore.');
+        throw new Error(
+          'Firestore index required. Please create composite indexes for scheduledVisits in Firestore.'
+        );
       }
     }
-    
+
     // Only throw permission error if it's actually a permission issue
     if (error.code === 'permission-denied') {
-      throw new Error('Missing or insufficient permissions to access scheduled visits. Please ensure your account has the correct custom claims set (branchId and permissionLevel).');
+      throw new Error(
+        'Missing or insufficient permissions to access scheduled visits. Please ensure your account has the correct custom claims set (branchId and permissionLevel).'
+      );
     }
-    
+
     throw new Error(error.message || 'Failed to fetch scheduled visits');
   }
 };
@@ -197,7 +203,10 @@ export const getScheduledVisits = async (user: User): Promise<ScheduledVisit[]> 
 /**
  * Filter visits for customer based on their buildings/companies
  */
-async function filterVisitsForCustomer(visits: ScheduledVisit[], user: User): Promise<ScheduledVisit[]> {
+async function filterVisitsForCustomer(
+  visits: ScheduledVisit[],
+  user: User
+): Promise<ScheduledVisit[]> {
   const filtered: ScheduledVisit[] = [];
 
   for (const visit of visits) {
@@ -205,7 +214,10 @@ async function filterVisitsForCustomer(visits: ScheduledVisit[], user: User): Pr
     if (visit.buildingId) {
       try {
         const building = await getBuildingById(visit.buildingId);
-        if (building && (building.customerId === user.uid || building.companyId === user.companyId)) {
+        if (
+          building &&
+          (building.customerId === user.uid || building.companyId === user.companyId)
+        ) {
           filtered.push(visit);
           continue;
         }
@@ -232,7 +244,9 @@ async function filterVisitsForCustomer(visits: ScheduledVisit[], user: User): Pr
 /**
  * Get scheduled visits by customer ID
  */
-export const getScheduledVisitsByCustomer = async (customerId: string): Promise<ScheduledVisit[]> => {
+export const getScheduledVisitsByCustomer = async (
+  customerId: string
+): Promise<ScheduledVisit[]> => {
   try {
     const visitsRef = collection(db, 'scheduledVisits');
     const q = query(
@@ -248,7 +262,7 @@ export const getScheduledVisitsByCustomer = async (customerId: string): Promise<
     })) as ScheduledVisit[];
   } catch (error: any) {
     console.error('Error fetching scheduled visits by customer:', error);
-    
+
     if (error.code === 'failed-precondition' || error.message?.includes('index')) {
       logger.warn('⚠️ Missing Firestore index detected. Falling back to client-side filtering.');
       const visitsRef = collection(db, 'scheduledVisits');
@@ -268,7 +282,9 @@ export const getScheduledVisitsByCustomer = async (customerId: string): Promise<
 /**
  * Get scheduled visits by building ID
  */
-export const getScheduledVisitsByBuilding = async (buildingId: string): Promise<ScheduledVisit[]> => {
+export const getScheduledVisitsByBuilding = async (
+  buildingId: string
+): Promise<ScheduledVisit[]> => {
   try {
     const visitsRef = collection(db, 'scheduledVisits');
     const q = query(
@@ -284,7 +300,7 @@ export const getScheduledVisitsByBuilding = async (buildingId: string): Promise<
     })) as ScheduledVisit[];
   } catch (error: any) {
     console.error('Error fetching scheduled visits by building:', error);
-    
+
     if (error.code === 'failed-precondition' || error.message?.includes('index')) {
       logger.warn('⚠️ Missing Firestore index detected. Falling back to client-side filtering.');
       const visitsRef = collection(db, 'scheduledVisits');
@@ -320,7 +336,7 @@ export const getScheduledVisitsByCompany = async (companyId: string): Promise<Sc
     })) as ScheduledVisit[];
   } catch (error: any) {
     console.error('Error fetching scheduled visits by company:', error);
-    
+
     if (error.code === 'failed-precondition' || error.message?.includes('index')) {
       logger.warn('⚠️ Missing Firestore index detected. Falling back to client-side filtering.');
       const visitsRef = collection(db, 'scheduledVisits');
@@ -382,11 +398,7 @@ export const getScheduledVisitsByDate = async (
         where('assignedInspectorId', '==', inspectorId)
       );
     } else if (branchId) {
-      q = query(
-        visitsRef,
-        where('scheduledDate', '==', date),
-        where('branchId', '==', branchId)
-      );
+      q = query(visitsRef, where('scheduledDate', '==', date), where('branchId', '==', branchId));
     } else {
       q = query(visitsRef, where('scheduledDate', '==', date));
     }
@@ -472,7 +484,7 @@ export const acceptScheduledVisit = async (
   try {
     const visitRef = doc(db, 'scheduledVisits', visitId);
     const visitSnap = await getDoc(visitRef);
-    
+
     if (!visitSnap.exists()) {
       throw new Error('Scheduled visit not found');
     }
@@ -504,7 +516,11 @@ export const acceptScheduledVisit = async (
       const appointment = await getAppointment(visit.appointmentId);
       if (appointment) {
         const { notifyCustomerOfAcceptance } = await import('./appointmentNotificationService');
-        await notifyCustomerOfAcceptance(appointment, { ...visit, customerResponse: 'accepted', customerResponseAt: now });
+        await notifyCustomerOfAcceptance(appointment, {
+          ...visit,
+          customerResponse: 'accepted',
+          customerResponseAt: now,
+        });
       }
     }
 
@@ -526,7 +542,7 @@ export const rejectScheduledVisit = async (
   try {
     const visitRef = doc(db, 'scheduledVisits', visitId);
     const visitSnap = await getDoc(visitRef);
-    
+
     if (!visitSnap.exists()) {
       throw new Error('Scheduled visit not found');
     }
@@ -549,7 +565,7 @@ export const rejectScheduledVisit = async (
     if (visit.appointmentId) {
       const { cancelAppointment } = await import('./appointmentService');
       await cancelAppointment(visit.appointmentId, reason || 'Rejected by customer');
-      
+
       // Create rejected order record
       const { createRejectedOrder } = await import('./rejectedOrderService');
       await createRejectedOrder({
@@ -582,5 +598,3 @@ export const rejectScheduledVisit = async (
     throw new Error('Failed to reject scheduled visit');
   }
 };
-
-

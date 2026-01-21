@@ -209,11 +209,13 @@ import { getStatusBadgeClass } from '@/design-system/utilities';
 ### 1. Always Use Design Tokens
 
 ❌ **Don't:**
+
 ```typescript
 <div className="bg-gray-100 text-gray-800">
 ```
 
 ✅ **Do:**
+
 ```typescript
 import { colors } from '@/design-system/tokens';
 <div className={colors.ui.background.inner}>
@@ -222,11 +224,13 @@ import { colors } from '@/design-system/tokens';
 ### 2. Use Component Patterns
 
 ❌ **Don't:**
+
 ```typescript
 <button className="px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800">
 ```
 
 ✅ **Do:**
+
 ```typescript
 import { getButtonClasses } from '@/design-system/components';
 <button className={getButtonClasses('primary')}>
@@ -241,6 +245,7 @@ import { getButtonClasses } from '@/design-system/components';
 ### 4. Consistent Focus States
 
 All form inputs should use:
+
 ```typescript
 focus:ring-2 focus:ring-slate-500 focus:border-slate-500
 ```
@@ -286,12 +291,14 @@ Some components use Material Design patterns (e.g., `SchedulePage.tsx`). These a
 ### Color Contrast
 
 All color combinations meet WCAG AA standards:
+
 - Text on backgrounds: Minimum 4.5:1 contrast ratio
 - Large text: Minimum 3:1 contrast ratio
 
 ### Focus States
 
 All interactive elements have visible focus states:
+
 - Form inputs: `focus:ring-2 focus:ring-slate-500`
 - Buttons: Visible hover and focus states
 

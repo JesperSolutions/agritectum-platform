@@ -7,10 +7,7 @@ interface DefectCameraCaptureProps {
   onCancel: () => void;
 }
 
-const DefectCameraCapture: React.FC<DefectCameraCaptureProps> = ({
-  onImageCapture,
-  onCancel,
-}) => {
+const DefectCameraCapture: React.FC<DefectCameraCaptureProps> = ({ onImageCapture, onCancel }) => {
   const { t } = useIntl();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
@@ -36,7 +33,7 @@ const DefectCameraCapture: React.FC<DefectCameraCaptureProps> = ({
 
       // Read file as data URL
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = e => {
         const dataUrl = e.target?.result as string;
         setCapturedImage(dataUrl);
         setError(null);
@@ -120,7 +117,9 @@ const DefectCameraCapture: React.FC<DefectCameraCaptureProps> = ({
               className='flex-1 flex items-center justify-center gap-2 px-4 py-4 border border-slate-300 text-slate-700 bg-white rounded-lg hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 shadow-sm min-h-[44px] transition-colors'
             >
               <RotateCcw className='w-5 h-5' />
-              <span className='font-medium'>{t('form.buttons.selectFromGallery') || 'Select from Gallery'}</span>
+              <span className='font-medium'>
+                {t('form.buttons.selectFromGallery') || 'Select from Gallery'}
+              </span>
             </button>
           </div>
 

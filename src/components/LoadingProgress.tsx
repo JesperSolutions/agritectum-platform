@@ -125,7 +125,9 @@ const LoadingProgress: React.FC<LoadingProgressProps> = ({
       {/* Loading Message */}
       <p className='text-gray-600 text-sm mt-4 text-center'>
         {showSteps && currentStep < steps.length
-          ? t('analytics.loadingSteps.processing', { step: t(steps[currentStep].labelKey).toLowerCase() })
+          ? t('analytics.loadingSteps.processing', {
+              step: t(steps[currentStep].labelKey).toLowerCase(),
+            })
           : t('analytics.loadingSteps.pleaseWait')}
       </p>
     </div>

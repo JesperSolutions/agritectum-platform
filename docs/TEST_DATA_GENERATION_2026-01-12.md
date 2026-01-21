@@ -10,6 +10,7 @@ Complete Firebase database reset and comprehensive test data generation for repo
 ## ✅ Actions Completed
 
 ### 1. Database Reset
+
 - ✅ Cleared all Firestore collections (71 documents deleted)
 - ✅ Removed all Firebase Auth users (12 users deleted)
 - ✅ Cleaned up Firebase Storage files
@@ -19,12 +20,14 @@ Complete Firebase database reset and comprehensive test data generation for repo
 Created a comprehensive, realistic test dataset with proper entity relationships:
 
 #### Branch
+
 - **1 Branch:** Stockholm Branch (ID: `stockholm`)
   - Address: Vasagatan 10, 111 20 Stockholm
   - Phone: +46 8 123 45 67
   - Email: stockholm@agritectum.se
 
 #### Users
+
 - **1 Super Admin**
   - Email: `admin@agritectum.se`
   - Password: `Admin123!@#`
@@ -43,9 +46,11 @@ Created a comprehensive, realistic test dataset with proper entity relationships
      - Password: `Inspector123!@#`
 
 #### Customers
+
 - **6 Customers** (3 individual, 3 company)
 
 **Individual Customers:**
+
 1. Anna Andersson
    - Email: anna.andersson@example.com
    - Address: Storgatan 15, 123 45 Stockholm
@@ -61,11 +66,11 @@ Created a comprehensive, realistic test dataset with proper entity relationships
    - Address: Drottninggatan 8, 111 51 Stockholm
    - Buildings: 1
 
-**Company Customers:**
-4. Fastighets AB Stockholm
-   - Email: info@fastighetsstockholm.se
-   - Address: Birger Jarlsgatan 5, 114 34 Stockholm
-   - Buildings: 3
+**Company Customers:** 4. Fastighets AB Stockholm
+
+- Email: info@fastighetsstockholm.se
+- Address: Birger Jarlsgatan 5, 114 34 Stockholm
+- Buildings: 3
 
 5. Byggkoncernen Nord AB
    - Email: kontakt@byggkoncernen.se
@@ -78,6 +83,7 @@ Created a comprehensive, realistic test dataset with proper entity relationships
    - Buildings: 3
 
 #### Buildings
+
 - **11 Buildings** total across all customers
 - Each building has:
   - Roof type (tile, metal, shingle, slate, flat)
@@ -87,6 +93,7 @@ Created a comprehensive, realistic test dataset with proper entity relationships
   - Link to customer
 
 #### Reports
+
 - **23 Reports** distributed across all buildings
 - Each report includes:
   - Link to specific building (required)
@@ -98,28 +105,30 @@ Created a comprehensive, realistic test dataset with proper entity relationships
   - 2 recommended actions with priority and costs
   - Status: `completed`, `sent`, or `offer_sent`
   - Inspector assignment
-  
+
 #### Service Agreements
+
 - **3 Service Agreements** for company customers
 - Annual agreements with quarterly service frequency
 - Next service dates scheduled 2-4 months out
 
 #### Scheduled Visits
+
 - **8 Scheduled Visits** planned for the next 1-2 months
 - Distributed across different buildings
 - Assigned to various inspectors
 
 ## 📊 Final Data Summary
 
-| Collection | Count | Details |
-|------------|-------|---------|
-| **Branches** | 1 | Stockholm Branch |
-| **Users** | 4 | 1 Super Admin + 3 Inspectors |
-| **Customers** | 6 | 3 Individual + 3 Company |
-| **Buildings** | 11 | 1-3 per customer |
-| **Reports** | 23 | All linked to buildings |
-| **Service Agreements** | 3 | For company customers |
-| **Scheduled Visits** | 8 | Future appointments |
+| Collection             | Count | Details                      |
+| ---------------------- | ----- | ---------------------------- |
+| **Branches**           | 1     | Stockholm Branch             |
+| **Users**              | 4     | 1 Super Admin + 3 Inspectors |
+| **Customers**          | 6     | 3 Individual + 3 Company     |
+| **Buildings**          | 11    | 1-3 per customer             |
+| **Reports**            | 23    | All linked to buildings      |
+| **Service Agreements** | 3     | For company customers        |
+| **Scheduled Visits**   | 8     | Future appointments          |
 
 ## 🔗 Data Relationships
 
@@ -138,6 +147,7 @@ Branch (stockholm)
 ```
 
 **Key Relationship Rules:**
+
 - ✅ All reports are linked to buildings (via `buildingId`)
 - ✅ All buildings are linked to customers (via `customerId`)
 - ✅ All entities are linked to the Stockholm branch (via `branchId`)
@@ -146,12 +156,14 @@ Branch (stockholm)
 ## 🔑 Login Credentials
 
 ### Super Admin
+
 ```
 Email: admin@agritectum.se
 Password: Admin123!@#
 ```
 
 ### Inspectors
+
 ```
 1. inspector1@agritectum.se / Inspector123!@#
 2. inspector2@agritectum.se / Inspector123!@#
@@ -161,11 +173,13 @@ Password: Admin123!@#
 ## 📝 Scripts Created
 
 ### 1. `reset-and-generate-comprehensive-test-data.cjs`
+
 **Location:** `scripts/setup/`
 
 **Purpose:** Complete database reset and test data generation
 
 **Features:**
+
 - Clears all Firestore collections
 - Deletes all Firebase Auth users
 - Removes Storage files
@@ -174,16 +188,19 @@ Password: Admin123!@#
 - Creates varied report statuses and scenarios
 
 **Usage:**
+
 ```bash
 node scripts/setup/reset-and-generate-comprehensive-test-data.cjs
 ```
 
 ### 2. `verify-test-data.cjs`
+
 **Location:** `scripts/setup/`
 
 **Purpose:** Verify database contents after generation
 
 **Usage:**
+
 ```bash
 node scripts/setup/verify-test-data.cjs
 ```
@@ -219,6 +236,7 @@ Now that the database is populated with comprehensive test data, you can:
 ## 🔍 Database Verification Results
 
 All collections verified successfully:
+
 - ✅ 1 Branch created
 - ✅ 4 Users created (1 admin + 3 inspectors)
 - ✅ 6 Customers created

@@ -8,9 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.2b] - 2025-01-28
 
 ### Added
+
 - Comprehensive service agreement form enhancements based on Danish paper version
 - **Service Agreement Purpose Field**: Added textarea for agreement purpose/description
-- **Service Visits Checkboxes**: 
+- **Service Visits Checkboxes**:
   - 1 annual service visit option
   - 2 annual service visits option
 - **Standard Services Checkboxes** (10 services):
@@ -38,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Agreement Period Information**: Notes about 12-month automatic renewal
 
 ### Changed
+
 - Expanded ServiceAgreement TypeScript interface with new fields:
   - `purpose`, `serviceVisits`, `standardServices`, `addons`, `pricingStructure`, `billingFrequency`, `signatures`
 - Enhanced form state management to handle all new checkbox and field types
@@ -45,6 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added comprehensive translations for all new form fields in Danish, Swedish, and German
 
 ### Technical Details
+
 - Implemented toggle functions for service visits, standard services, and addons
 - Added expandable/collapsible sections for addon categories using ChevronUp/ChevronDown icons
 - Conditional rendering for pricing structure inputs based on checkbox selection
@@ -53,6 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.2a] - 2025-01-28
 
 ### Fixed
+
 - Fixed missing translation keys in dashboard for Swedish, Danish, and German locales
 - Improved language auto-detection to re-detect locale on each visit for auto-detected locales
 - Fixed language not automatically switching for users in different regions (e.g., Denmark)
@@ -61,12 +65,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added client-side fallback for service agreement queries when Firestore index is missing
 
 ### Changed
+
 - Enhanced locale detection system to preserve manual language selections while allowing auto-detection updates
 - Improved branch service to query only accessible branches based on user permissions
 
 ## [2.0.0] - 2025-01-22
 
 ### Added
+
 - Smart PDF Export System with optimized header/footer layout
 - Minimum content height enforcement to prevent cramped layouts
 - Enhanced UX design optimized for roofing industry professionals
@@ -92,6 +98,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Page state persistence across sessions
 
 ### Changed
+
 - Updated copyright year to 2025 across all components
 - Improved PDF generation using Puppeteer for HTML-to-PDF conversion
 - Enhanced report status system with additional states
@@ -102,6 +109,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved error handling and user feedback
 
 ### Fixed
+
 - Resolved PDF generation 500 errors with correct Firebase Functions v2 syntax
 - Fixed offer permission errors with branch-specific filtering
 - Corrected translation key issues in dashboard components
@@ -113,6 +121,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Resolved inspector dashboard data loading issues
 
 ### Removed
+
 - Weather conditions field from report creation process
 - Access statistics feature due to privacy concerns
 - Debug and testing tools from production builds
@@ -121,7 +130,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2024-12-01
 
 ### Added
-- Initial release of Taklaget Service App
+
+- Initial release of Agritectum Platform
 - Multi-branch support with independent operations
 - Role-based access control (Superadmin, Branch Admin, Inspector)
 - Report management system with CRUD operations
@@ -137,6 +147,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Basic security rules and permissions
 
 ### Technical Details
+
 - Built with React 18 and TypeScript
 - Firebase backend with Firestore database
 - Tailwind CSS for styling
@@ -155,6 +166,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Future Roadmap
 
 ### Planned Features
+
 - Advanced analytics and reporting
 - Native mobile applications
 - Third-party service integrations

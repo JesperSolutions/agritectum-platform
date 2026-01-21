@@ -4,6 +4,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import { Report } from '../../types';
 import { useIntl } from '../../hooks/useIntl';
+import { migrateReport } from '../../utils/reportMigration';
 import LoadingSpinner from '../common/LoadingSpinner';
 import EnhancedErrorDisplay from '../EnhancedErrorDisplay';
 import CostSummaryCard from '../ReportView/CostSummaryCard';
@@ -24,6 +25,8 @@ import {
   Route,
   DollarSign,
   AlertCircle,
+  Eye,
+  X,
 } from 'lucide-react';
 
 const PublicReportView: React.FC = () => {
@@ -32,7 +35,13 @@ const PublicReportView: React.FC = () => {
   const [report, setReport] = useState<Report | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [branchInfo, setBranchInfo] = useState<{ name: string; logoUrl?: string } | null>(null);
+  const [branchInfo, setBranchInfo] = useState<{
+    name: string;
+    logoUrl?: string;
+    currency?: string;
+    country?: string;
+  } | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const handleExportPDF = () => {
     window.print();
@@ -55,14 +64,14 @@ const PublicReportView: React.FC = () => {
           return;
         }
 
-        const reportData = { id: reportDoc.id, ...reportDoc.data() } as Report;
-        
+        const reportData = migrateReport({ id: reportDoc.id, ...reportDoc.data() }) as Report;
+
         if (!reportData.isPublic && !reportData.isShared) {
           setError('This report is not publicly accessible');
           setLoading(false);
           return;
         }
-        
+
         setReport(reportData);
 
         // Load branch information if branchId exists
@@ -74,13 +83,14 @@ const PublicReportView: React.FC = () => {
               setBranchInfo({
                 name: branch.name,
                 logoUrl: branch.logoUrl,
+                currency: branch.currency,
+                country: branch.country,
               });
             }
           } catch (error) {
             console.warn('Could not load branch information:', error);
           }
         }
-
       } catch (err) {
         console.error('Error fetching report:', err);
         setError('Failed to load report');
@@ -126,12 +136,34 @@ const PublicReportView: React.FC = () => {
   };
 
   const formatCurrency = (amount: number) => {
+    // Determine currency from branch or default to SEK
+    let currencyCode = 'SEK';
+
+    if (branchInfo?.currency) {
+      currencyCode = branchInfo.currency;
+    } else if (branchInfo?.country) {
+      // Fallback: Map country to currency if not explicitly set
+      const countryToCurrency: Record<string, string> = {
+        Denmark: 'DKK',
+        DK: 'DKK',
+        Sweden: 'SEK',
+        SE: 'SEK',
+        Norway: 'NOK',
+        NO: 'NOK',
+        Germany: 'EUR',
+        DE: 'EUR',
+        USA: 'USD',
+        US: 'USD',
+      };
+      currencyCode = countryToCurrency[branchInfo.country] || 'SEK';
+    }
+
     // Format number with US/English style (comma as thousand separator, period as decimal)
-    const formatted = amount.toLocaleString('en-US', { 
-      minimumFractionDigits: 2, 
-      maximumFractionDigits: 2 
+    const formatted = amount.toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
     });
-    return `${formatted} SEK`;
+    return `${formatted} ${currencyCode}`;
   };
 
   const getSeverityColor = (severity: string) => {
@@ -169,10 +201,11 @@ const PublicReportView: React.FC = () => {
   );
 
   // Calculate total cost
-  const totalCost = recommendedActionsTotal + 
-    (report.laborCost || 0) + 
-    (report.materialCost || 0) + 
-    (report.travelCost || 0) + 
+  const totalCost =
+    recommendedActionsTotal +
+    (report.laborCost || 0) +
+    (report.materialCost || 0) +
+    (report.travelCost || 0) +
     (report.overheadCost || 0);
 
   return (
@@ -220,17 +253,24 @@ const PublicReportView: React.FC = () => {
           <div className='bg-gradient-to-r from-slate-900 to-slate-700 rounded-2xl p-8 mb-6 shadow-lg'>
             <div className='flex items-start justify-between'>
               <div>
-                <h1 className='text-3xl font-bold text-white mb-2'>{t('reports.public.title') || 'Takservice rapport'}</h1>
+                <h1 className='text-3xl font-bold text-white mb-2'>
+                  {t('reports.public.title') || 'Takservice rapport'}
+                </h1>
                 <p className='text-slate-300 text-sm'>
-                  {t('reports.public.reportId')}: <span className='font-mono bg-slate-800 px-2 py-1 rounded'>{report.id}</span>
+                  {t('reports.public.reportId')}:{' '}
+                  <span className='font-mono bg-slate-800 px-2 py-1 rounded'>{report.id}</span>
                 </p>
               </div>
               <div className='bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 px-5 py-3'>
                 <div className='flex items-center gap-2 mb-1'>
                   <Calendar className='w-4 h-4 text-white' />
-                  <span className='text-xs font-medium text-white uppercase tracking-wide'>{t('reports.public.inspectionDate')}</span>
+                  <span className='text-xs font-medium text-white uppercase tracking-wide'>
+                    {t('reports.public.inspectionDate')}
+                  </span>
                 </div>
-                <div className='text-xl font-bold text-white'>{formatDate(report.inspectionDate)}</div>
+                <div className='text-xl font-bold text-white'>
+                  {formatDate(report.inspectionDate)}
+                </div>
               </div>
             </div>
           </div>
@@ -239,7 +279,9 @@ const PublicReportView: React.FC = () => {
           <div className='grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6'>
             {/* Customer Card */}
             <div className='bg-white rounded-xl shadow-sm border border-slate-200 p-6'>
-              <h2 className='text-lg font-semibold text-slate-900 mb-4'>{t('reports.public.customerInformation')}</h2>
+              <h2 className='text-lg font-semibold text-slate-900 mb-4'>
+                {t('reports.public.customerInformation')}
+              </h2>
               <div className='space-y-4'>
                 <div>
                   <div className='text-sm text-slate-500 mb-1'>{t('common.labels.name')}</div>
@@ -262,13 +304,17 @@ const PublicReportView: React.FC = () => {
 
             {/* Property Card - Spans 2 columns */}
             <div className='lg:col-span-2 bg-white rounded-xl shadow-sm border border-slate-200 p-6'>
-              <h2 className='text-lg font-semibold text-slate-900 mb-4'>{t('reports.public.propertyLocation')}</h2>
+              <h2 className='text-lg font-semibold text-slate-900 mb-4'>
+                {t('reports.public.propertyLocation')}
+              </h2>
               <div className='flex items-start gap-3'>
                 <div className='w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0'>
                   <MapPin className='w-5 h-5 text-slate-600' />
                 </div>
                 <div className='flex-1'>
-                  <div className='text-base font-medium text-slate-900'>{report.customerAddress}</div>
+                  <div className='text-base font-medium text-slate-900'>
+                    {report.customerAddress}
+                  </div>
                   {report.buildingAddress && (
                     <div className='text-sm text-slate-500 mt-1'>{report.buildingAddress}</div>
                   )}
@@ -288,10 +334,14 @@ const PublicReportView: React.FC = () => {
                 <div className='w-10 h-10 bg-white/10 backdrop-blur-sm rounded-lg flex items-center justify-center'>
                   <DollarSign className='w-6 h-6 text-white' />
                 </div>
-                <h2 className='text-xl font-bold text-white'>Kostnadsuppskattning</h2>
+                <h2 className='text-xl font-bold text-white'>
+                  {t('costEstimate.title') || 'Cost Estimate'}
+                </h2>
               </div>
               <div className='mt-4'>
-                <div className='text-sm text-slate-300 mb-2 uppercase tracking-wide font-medium'>TOTAL UPPSKATTNING</div>
+                <div className='text-sm text-slate-300 mb-2 uppercase tracking-wide font-medium'>
+                  {t('costEstimate.total') || 'TOTAL ESTIMATE'}
+                </div>
                 <div className='text-5xl font-bold text-white'>{formatCurrency(totalCost)}</div>
               </div>
             </div>
@@ -305,7 +355,9 @@ const PublicReportView: React.FC = () => {
                     <AlertCircle className='w-5 h-5 text-slate-600' />
                     <span className='font-semibold text-slate-800'>Rekommenderade åtgärder</span>
                   </div>
-                  <span className='text-xl font-bold text-slate-900'>{formatCurrency(recommendedActionsTotal)}</span>
+                  <span className='text-xl font-bold text-slate-900'>
+                    {formatCurrency(recommendedActionsTotal)}
+                  </span>
                 </div>
               )}
 
@@ -318,8 +370,12 @@ const PublicReportView: React.FC = () => {
                       <Wrench className='w-5 h-5 text-slate-700' />
                     </div>
                     <div>
-                      <div className='text-sm font-medium text-slate-700'>Arbetskostnad</div>
-                      <div className='text-xl font-bold text-slate-900'>{formatCurrency(report.laborCost || 0)}</div>
+                      <div className='text-sm font-medium text-slate-700'>
+                        {t('costEstimate.labor') || 'Labor Cost'}
+                      </div>
+                      <div className='text-xl font-bold text-slate-900'>
+                        {formatCurrency(report.laborCost || 0)}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -331,8 +387,12 @@ const PublicReportView: React.FC = () => {
                       <Package className='w-5 h-5 text-slate-700' />
                     </div>
                     <div>
-                      <div className='text-sm font-medium text-slate-700'>Materialkostnad</div>
-                      <div className='text-xl font-bold text-slate-900'>{formatCurrency(report.materialCost || 0)}</div>
+                      <div className='text-sm font-medium text-slate-700'>
+                        {t('costEstimate.material') || 'Material Cost'}
+                      </div>
+                      <div className='text-xl font-bold text-slate-900'>
+                        {formatCurrency(report.materialCost || 0)}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -344,8 +404,12 @@ const PublicReportView: React.FC = () => {
                       <Route className='w-5 h-5 text-slate-700' />
                     </div>
                     <div>
-                      <div className='text-sm font-medium text-slate-700'>Resekostnad</div>
-                      <div className='text-xl font-bold text-slate-900'>{formatCurrency(report.travelCost || 0)}</div>
+                      <div className='text-sm font-medium text-slate-700'>
+                        {t('costEstimate.travel') || 'Travel Cost'}
+                      </div>
+                      <div className='text-xl font-bold text-slate-900'>
+                        {formatCurrency(report.travelCost || 0)}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -357,8 +421,12 @@ const PublicReportView: React.FC = () => {
                       <DollarSign className='w-5 h-5 text-slate-700' />
                     </div>
                     <div>
-                      <div className='text-sm font-medium text-slate-700'>{t('costEstimate.overhead') || 'Andet'}</div>
-                      <div className='text-xl font-bold text-slate-900'>{formatCurrency(report.overheadCost || 0)}</div>
+                      <div className='text-sm font-medium text-slate-700'>
+                        {t('costEstimate.overhead') || 'Andet'}
+                      </div>
+                      <div className='text-xl font-bold text-slate-900'>
+                        {formatCurrency(report.overheadCost || 0)}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -375,12 +443,16 @@ const PublicReportView: React.FC = () => {
             <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
               <div>
                 <div className='text-sm text-slate-500 mb-1'>{t('reports.public.roofType')}</div>
-                <div className='font-medium text-slate-900 capitalize'>{t(`roofTypes.${report.roofType}`) || report.roofType}</div>
+                <div className='font-medium text-slate-900 capitalize'>
+                  {t(`roofTypes.${report.roofType}`) || report.roofType}
+                </div>
               </div>
               {report.roofAge && (
                 <div>
                   <div className='text-sm text-slate-500 mb-1'>{t('reports.public.roofAge')}</div>
-                  <div className='font-medium text-slate-900'>{report.roofAge} {t('reports.public.years')}</div>
+                  <div className='font-medium text-slate-900'>
+                    {report.roofAge} {t('reports.public.years')}
+                  </div>
                 </div>
               )}
               {report.roofSize && (
@@ -392,8 +464,12 @@ const PublicReportView: React.FC = () => {
             </div>
             {report.conditionNotes && (
               <div className='mt-4 pt-4 border-t border-slate-200'>
-                <div className='text-sm text-slate-500 mb-2'>{t('reports.public.generalConditionNotes')}</div>
-                <div className='text-slate-900 bg-slate-50 p-3 rounded-lg'>{report.conditionNotes}</div>
+                <div className='text-sm text-slate-500 mb-2'>
+                  {t('reports.public.generalConditionNotes')}
+                </div>
+                <div className='text-slate-900 bg-slate-50 p-3 rounded-lg'>
+                  {report.conditionNotes}
+                </div>
               </div>
             )}
           </div>
@@ -405,42 +481,46 @@ const PublicReportView: React.FC = () => {
                 <MapPin className='w-5 h-5 text-slate-600' />
                 {t('reports.public.roofOverview')}
               </h3>
-              <div className='relative bg-slate-50 rounded-lg overflow-hidden' style={{ position: 'relative', paddingTop: '56.25%' }}>
+              <div
+                className='relative bg-slate-50 rounded-lg overflow-hidden'
+                style={{ position: 'relative', paddingTop: '56.25%' }}
+              >
                 <img
                   src={report.roofImageUrl}
                   alt={t('reports.public.roofOverview')}
                   className='absolute inset-0 w-full h-full object-contain'
                 />
-                {report.roofImagePins && report.roofImagePins.map((pin, index) => {
-                  const getPinColor = (severity: string) => {
-                    switch (severity) {
-                      case 'critical':
-                        return 'bg-slate-800 border-slate-900';
-                      case 'high':
-                        return 'bg-slate-700 border-slate-800';
-                      case 'medium':
-                        return 'bg-slate-600 border-slate-700';
-                      case 'low':
-                        return 'bg-slate-500 border-slate-600';
-                      default:
-                        return 'bg-slate-600 border-slate-700';
-                    }
-                  };
-                  return (
-                    <div
-                      key={pin.id || index}
-                      className={`absolute w-6 h-6 ${getPinColor(pin.severity)} border-2 rounded-full transform -translate-x-1/2 -translate-y-1/2 pointer-events-none`}
-                      style={{
-                        left: `${pin.x}%`,
-                        top: `${pin.y}%`,
-                      }}
-                    >
-                      <span className='absolute inset-0 flex items-center justify-center text-white text-xs font-bold'>
-                        {index + 1}
-                      </span>
-                    </div>
-                  );
-                })}
+                {report.roofImagePins &&
+                  report.roofImagePins.map((pin, index) => {
+                    const getPinColor = (severity: string) => {
+                      switch (severity) {
+                        case 'critical':
+                          return 'bg-slate-800 border-slate-900';
+                        case 'high':
+                          return 'bg-slate-700 border-slate-800';
+                        case 'medium':
+                          return 'bg-slate-600 border-slate-700';
+                        case 'low':
+                          return 'bg-slate-500 border-slate-600';
+                        default:
+                          return 'bg-slate-600 border-slate-700';
+                      }
+                    };
+                    return (
+                      <div
+                        key={pin.id || index}
+                        className={`absolute w-6 h-6 ${getPinColor(pin.severity)} border-2 rounded-full transform -translate-x-1/2 -translate-y-1/2 pointer-events-none`}
+                        style={{
+                          left: `${pin.x}%`,
+                          top: `${pin.y}%`,
+                        }}
+                      >
+                        <span className='absolute inset-0 flex items-center justify-center text-white text-xs font-bold'>
+                          {index + 1}
+                        </span>
+                      </div>
+                    );
+                  })}
               </div>
               {report.roofImagePins && report.roofImagePins.length > 0 && (
                 <div className='mt-4 text-sm text-slate-600'>
@@ -464,7 +544,9 @@ const PublicReportView: React.FC = () => {
                     className={`p-4 rounded-lg border ${getSeverityColor(issue.severity)}`}
                   >
                     <div className='flex items-start justify-between mb-2'>
-                      <div className='font-medium capitalize'>{t(`issueTypes.${issue.type}`) || issue.type}</div>
+                      <div className='font-medium capitalize'>
+                        {t(`issueTypes.${issue.type}`) || issue.type}
+                      </div>
                       <span
                         className={`px-2 py-1 rounded-full text-xs font-medium ${getSeverityColor(issue.severity)}`}
                       >
@@ -473,7 +555,29 @@ const PublicReportView: React.FC = () => {
                     </div>
                     <div className='text-sm mb-2'>{issue.description}</div>
                     {issue.location && (
-                      <div className='text-xs opacity-75'>{t('reports.public.location')}: {issue.location}</div>
+                      <div className='text-xs opacity-75'>
+                        {t('reports.public.location')}: {issue.location}
+                      </div>
+                    )}
+                    {issue.images && issue.images.length > 0 && (
+                      <div className='mt-3 grid grid-cols-2 sm:grid-cols-3 gap-2'>
+                        {issue.images.map((imageUrl: string, imgIndex: number) => (
+                          <div key={imgIndex} className='relative group'>
+                            <img
+                              src={imageUrl}
+                              alt={`Issue image ${imgIndex + 1}`}
+                              className='w-full h-24 object-cover rounded-lg border border-slate-300'
+                            />
+                            <button
+                              onClick={() => setSelectedImage(imageUrl)}
+                              className='absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200'
+                              title='View full image'
+                            >
+                              <Eye className='w-6 h-6 text-white' />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
                     )}
                   </div>
                 ))}
@@ -496,10 +600,13 @@ const PublicReportView: React.FC = () => {
                   >
                     <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
                       <div className='flex-1 min-w-0'>
-                        <div className='font-semibold text-slate-900 mb-1'>{action.description}</div>
+                        <div className='font-semibold text-slate-900 mb-1'>
+                          {action.description}
+                        </div>
                         {action.urgency && (
                           <div className='text-sm text-slate-600'>
-                            {t('reports.public.urgency')}: {t(`urgency.${action.urgency}`) || action.urgency.replace('_', ' ')}
+                            {t('reports.public.urgency')}:{' '}
+                            {t(`urgency.${action.urgency}`) || action.urgency.replace('_', ' ')}
                           </div>
                         )}
                       </div>
@@ -556,6 +663,32 @@ const PublicReportView: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Image Lightbox Modal */}
+      {selectedImage && (
+        <div
+          className='fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4'
+          onClick={() => setSelectedImage(null)}
+        >
+          <div
+            className='relative max-w-4xl max-h-[90vh] flex items-center justify-center'
+            onClick={e => e.stopPropagation()}
+          >
+            <img
+              src={selectedImage}
+              alt='Full size issue image'
+              className='max-w-full max-h-[90vh] object-contain rounded-lg'
+            />
+            <button
+              onClick={() => setSelectedImage(null)}
+              className='absolute top-4 right-4 bg-white rounded-full p-2 shadow-lg hover:bg-slate-100 transition-colors'
+              title='Close'
+            >
+              <X className='w-6 h-6 text-slate-800' />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

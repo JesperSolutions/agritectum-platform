@@ -4,12 +4,12 @@
  * @movedDate 2025-01-11
  * @reason Unused dashboard implementation - not imported anywhere
  * @deprecated Do not use in new code. Kept for reference only.
- * 
+ *
  * This component was moved to legacy on 2025-01-11 because:
  * - Not imported or used anywhere in the codebase
  * - SmartDashboard is the canonical dashboard implementation
  * - This appears to be an alternate implementation that was never integrated
- * 
+ *
  * Migration: Use SmartDashboard from src/components/dashboards/SmartDashboard.tsx
  * See src/legacy/ARCHIVE_MANIFEST.md for details
  */

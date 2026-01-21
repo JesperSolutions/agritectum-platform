@@ -100,6 +100,7 @@
   "form.messages.uploadingImages": "Bilder werden hochgeladen",
   "form.messages.noImagesUploaded": "Noch keine Bilder hochgeladen",
   "form.messages.clickButtonsToAddImages": "Klicken Sie auf die Schaltflächen oben, um Bilder hinzuzufügen",
+  "form.messages.pasteImageHint": "Sie können Bilder auch mit Ctrl+V (Cmd+V auf Mac) einfügen",
   "form.messages.reportNotFound": "Bericht nicht gefunden",
   "form.messages.failedToLoadReport": "Bericht konnte nicht geladen werden",
   "form.messages.failedToSaveReport": "Bericht konnte nicht gespeichert werden",
@@ -299,12 +300,12 @@
   "form.customerSearch.existingCustomer": "Bestehender Kunde ausgewählt",
   "form.customerSearch.clearSelection": "Auswahl löschen",
   "form.customerSearch.selectCustomer": "Wählen Sie einen Kunden aus, um seine Details zu laden",
-  
+
   "form.messages.errorSavingDefect": "Mangel konnte nicht gespeichert werden. Bitte versuchen Sie es erneut.",
   "form.messages.errorUploadingImage": "Bild konnte nicht hochgeladen werden. Überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
   "form.messages.reportSaveSuccess": "Bericht erfolgreich gespeichert!",
   "form.messages.reportCompletedSuccess": "Bericht abgeschlossen und erfolgreich eingereicht!",
-  
+
   "form.validation.summaryGuidance": "Überprüfen Sie die markierten Felder und korrigieren Sie die Probleme, bevor Sie fortfahren.",
   "form.validation.customerNameGuidance": "Geben Sie den vollständigen Namen des Kunden ein (mindestens 2 Zeichen).",
   "form.validation.customerAddressGuidance": "Geben Sie die vollständige Adresse ein, an der die Inspektion durchgeführt wurde.",
@@ -315,12 +316,12 @@
   "form.validation.phoneGuidance": "Geben Sie eine gültige Telefonnummer mit Ländervorwahl ein.",
   "form.validation.issueGuidance": "Jeder Mangel benötigt einen Titel, eine Beschreibung und einen Schweregrad.",
   "form.validation.offerGuidance": "Geben Sie einen positiven Wert für den Angebotsbetrag ein.",
-  
+
   "form.help.step1": "Beginnen Sie mit der Eingabe der Kundenkontaktdaten. Sie können nach bestehenden Kunden suchen oder einen neuen erstellen.",
   "form.help.step2": "Beschreiben Sie den Zustand des Daches einschließlich Typ, Alter und allgemeiner Beobachtungen.",
   "form.help.step3": "Dokumentieren Sie alle während der Inspektion gefundenen Mängel. Sie können Fotos hinzufügen und Stellen auf dem Dachbild markieren.",
   "form.help.step4": "Fügen Sie empfohlene Maßnahmen hinzu und erstellen Sie ein Angebot basierend auf den gefundenen Mängeln.",
-  
+
   "form.errors.saveFailed": "Der Bericht konnte nicht gespeichert werden. Überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
   "form.errors.imageUploadFailed": "Das Bild konnte nicht hochgeladen werden. Die Datei ist möglicherweise zu groß oder Ihre Verbindung instabil.",
   "form.errors.connectionLost": "Verbindung verloren. Ihre Änderungen werden automatisch gespeichert, wenn die Verbindung wiederhergestellt wird.",

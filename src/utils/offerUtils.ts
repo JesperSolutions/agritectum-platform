@@ -86,7 +86,7 @@ export const validateOffer = (report: Partial<Report>): string[] => {
 export const formatSvDate = (value: any): string => {
   if (!value) return '-';
   try {
-    const d = (value && typeof value.toDate === 'function') ? value.toDate() : new Date(value);
+    const d = value && typeof value.toDate === 'function' ? value.toDate() : new Date(value);
     if (isNaN(d.getTime())) return '-';
     return d.toLocaleDateString('sv-SE');
   } catch {
@@ -97,7 +97,7 @@ export const formatSvDate = (value: any): string => {
 export const formatSvDateTime = (value: any): string => {
   if (!value) return '-';
   try {
-    const d = (value && typeof value.toDate === 'function') ? value.toDate() : new Date(value);
+    const d = value && typeof value.toDate === 'function' ? value.toDate() : new Date(value);
     if (isNaN(d.getTime())) return '-';
     return d.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' });
   } catch {

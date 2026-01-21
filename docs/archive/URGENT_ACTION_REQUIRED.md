@@ -5,6 +5,7 @@
 **Status**: 🔴 **CRITICAL** - Branch admins cannot access any data
 
 **Affected Users**:
+
 - Linus Hollberg (linus.hollberg@taklagetentreprenad.se)
 - Bengt Widstrand (Bengt.widstrand@binne.se)
 - Magnus Eriksson (Magnus.eriksson@binne.se)
@@ -14,6 +15,7 @@
 ## What's Wrong?
 
 Branch admin users can log in, but they get **"Missing or insufficient permissions"** errors when trying to access:
+
 - Dashboard
 - Reports
 - Users
@@ -65,11 +67,13 @@ When prompted, type `yes` to confirm.
 ## After Running the Script
 
 ✅ **Completed Fixes**:
+
 - Custom claims set for all branch admins
 - 150+ Swedish translations added
 - All major localization issues fixed
 
 ⏳ **Next Steps** (Plan D):
+
 1. ✅ Fix critical custom claims issue (YOU ARE HERE)
 2. Finish remaining QA fixes (6 pending)
 3. Plan new features (offer flow, pricing, reminders, etc.)
@@ -79,6 +83,7 @@ When prompted, type `yes` to confirm.
 ## Need Help?
 
 See `docs/CUSTOM_CLAIMS_EXPLAINED.md` for detailed explanation of:
+
 - What custom claims are
 - Why they're needed
 - How they work
@@ -102,9 +107,9 @@ See `docs/CUSTOM_CLAIMS_EXPLAINED.md` for detailed explanation of:
 **Script location**: `scripts/set-branch-admin-claims.cjs`
 
 **Documentation**:
+
 - `docs/CUSTOM_CLAIMS_EXPLAINED.md` - Full explanation
 - `docs/QA_FIXES_IMPLEMENTED.md` - All fixes completed so far
 - `docs/ISSUES_FOUND_DURING_FIX.md` - Issues discovered
 
 **Support**: If you have questions, check the documentation above or ask! 🙋‍♂️
-

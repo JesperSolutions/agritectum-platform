@@ -126,7 +126,11 @@ const ValidatedInput = forwardRef<HTMLInputElement, ValidatedInputProps>(
       <div className={`space-y-1.5 ${className}`}>
         <label htmlFor={fieldId} className='block text-sm font-medium text-gray-700 truncate-smart'>
           {label}
-          {required && <span className='text-red-500 ml-1 flex-shrink-0' aria-hidden='true'>*</span>}
+          {required && (
+            <span className='text-red-500 ml-1 flex-shrink-0' aria-hidden='true'>
+              *
+            </span>
+          )}
         </label>
 
         <div className='relative'>

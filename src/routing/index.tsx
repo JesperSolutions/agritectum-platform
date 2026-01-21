@@ -25,13 +25,17 @@ const AppRouter: React.FC = () => {
   }
 
   // Memoize router to prevent recreation on every render
-  const router = useMemo(() => createBrowserRouter([
-    ...publicRoutes,
-    ...getAuthRoutes(currentUser),
-    ...portalRoutes,
-    ...mainRoutes,
-    ...errorRoutes,
-  ]), [currentUser]);
+  const router = useMemo(
+    () =>
+      createBrowserRouter([
+        ...publicRoutes,
+        ...getAuthRoutes(currentUser),
+        ...portalRoutes,
+        ...mainRoutes,
+        ...errorRoutes,
+      ]),
+    [currentUser]
+  );
 
   return (
     <ErrorBoundary>

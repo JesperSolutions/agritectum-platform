@@ -17,8 +17,8 @@ import { db, storage } from '../config/firebase';
 import { logger } from '../utils/logger';
 import { serverTimestamp } from 'firebase/firestore';
 import { Report, User, canAccessAllBranches, canAccessBranch } from '../types';
-import { generateReportPDF } from './simplePdfService';
 import * as branchService from './branchService';
+import { migrateReport, migrateReports } from '../utils/reportMigration';
 
 // Get the latest report for a specific customer
 export const getLatestReportForCustomer = async (
@@ -38,22 +38,26 @@ export const getLatestReportForCustomer = async (
     }
 
     const querySnapshot = await getDocs(q);
-    const reports = querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as Report[];
+    const reports = querySnapshot.docs.map(doc =>
+      migrateReport({
+        id: doc.id,
+        ...doc.data(),
+      })
+    ) as Report[];
 
     // Filter reports by customer name and optionally by email/phone
     const customerReports = reports.filter(report => {
       const nameMatch = report.customerName?.toLowerCase() === customerName.toLowerCase();
-      
+
       if (nameMatch && (customerEmail || customerPhone)) {
         // If we have additional identifiers, use them for more precise matching
-        const emailMatch = customerEmail ? report.customerEmail?.toLowerCase() === customerEmail.toLowerCase() : true;
+        const emailMatch = customerEmail
+          ? report.customerEmail?.toLowerCase() === customerEmail.toLowerCase()
+          : true;
         const phoneMatch = customerPhone ? report.customerPhone === customerPhone : true;
         return emailMatch && phoneMatch;
       }
-      
+
       return nameMatch;
     });
 
@@ -70,7 +74,6 @@ export const getLatestReportForCustomer = async (
 
     return customerReports[0];
   } catch (error) {
-    console.error('Error getting latest report for customer:', error);
     return null;
   }
 };
@@ -97,25 +100,23 @@ export const getReports = async (user: User): Promise<Report[]> => {
     }
 
     const querySnapshot = await getDocs(q);
-    const reports = querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as Report[];
-    
-    // For inspectors, filter to show only their own reports
-    let filteredReports = reports;
-    if (user.permissionLevel === 0) {
-      filteredReports = reports.filter(report => report.createdBy === user.uid);
-    }
-    
+    const reports = querySnapshot.docs.map(doc =>
+      migrateReport({
+        id: doc.id,
+        ...doc.data(),
+      })
+    ) as Report[];
+
+    // Inspectors can see all reports in their branch (no additional filtering)
+    // This allows them to see customer history and relate reports
+
     // Sort manually in JavaScript (newest first)
-    return filteredReports.sort((a, b) => {
+    return reports.sort((a, b) => {
       const aDate = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt || 0);
       const bDate = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || 0);
       return bDate.getTime() - aDate.getTime();
     });
   } catch (error) {
-    console.error('Error fetching reports:', error);
     throw new Error('Failed to fetch reports');
   }
 };
@@ -129,9 +130,8 @@ export const getReport = async (reportId: string, branchId?: string): Promise<Re
       return null;
     }
 
-    return { id: reportSnap.id, ...reportSnap.data() } as Report;
+    return migrateReport({ id: reportSnap.id, ...reportSnap.data() }) as Report;
   } catch (error) {
-    console.error('Error fetching report:', error);
     throw new Error('Failed to fetch report');
   }
 };
@@ -139,63 +139,35 @@ export const getReport = async (reportId: string, branchId?: string): Promise<Re
 // Get reports by building ID
 export const getReportsByBuildingId = async (
   buildingId: string,
-  branchId?: string
+  branchId?: string,
+  companyId?: string
 ): Promise<Report[]> => {
   try {
     const reportsRef = collection(db, 'reports');
-    let q;
 
-    // Try to query by buildingId first
-    try {
-      if (branchId) {
-        q = query(
-          reportsRef,
-          where('buildingId', '==', buildingId),
-          where('branchId', '==', branchId),
-          orderBy('createdAt', 'desc')
-        );
-      } else {
-        q = query(
-          reportsRef,
-          where('buildingId', '==', buildingId),
-          orderBy('createdAt', 'desc')
-        );
-      }
+    // Simple query: just filter by buildingId
+    // Firestore security rules will handle access control
+    const q = query(reportsRef, where('buildingId', '==', buildingId));
 
-      const querySnapshot = await getDocs(q);
-      return querySnapshot.docs.map(doc => ({
+    const querySnapshot = await getDocs(q);
+
+    const results = querySnapshot.docs.map(doc =>
+      migrateReport({
         id: doc.id,
         ...doc.data(),
-      })) as Report[];
-    } catch (indexError: any) {
-      // If index doesn't exist, fall back to client-side filtering
-      if (indexError.code === 'failed-precondition' || indexError.message?.includes('index')) {
-        logger.warn('⚠️ Missing Firestore index for buildingId. Falling back to client-side filtering.');
-        
-        // Fetch all reports (with branch filter if provided)
-        let allReportsQuery = reportsRef;
-        if (branchId) {
-          allReportsQuery = query(reportsRef, where('branchId', '==', branchId));
-        }
-        const allReportsSnapshot = await getDocs(allReportsQuery);
-        const allReports = allReportsSnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as Report[];
+      })
+    ) as Report[];
 
-        // Client-side filter by buildingId
-        return allReports.filter(report => report.buildingId === buildingId)
-          .sort((a, b) => {
-            const aDate = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt || 0);
-            const bDate = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || 0);
-            return bDate.getTime() - aDate.getTime();
-          });
-      }
-      throw indexError;
-    }
-  } catch (error) {
-    console.error('Error fetching reports by building ID:', error);
-    throw new Error('Failed to fetch reports by building ID');
+    // Sort by createdAt descending (client-side)
+    const sortedResults = results.sort((a, b) => {
+      const aDate = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt || 0);
+      const bDate = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || 0);
+      return bDate.getTime() - aDate.getTime();
+    });
+
+    return sortedResults;
+  } catch (error: any) {
+    throw error;
   }
 };
 
@@ -213,31 +185,41 @@ export const getReportsByCustomerId = async (
         q = query(
           reportsRef,
           where('customerId', '==', customerId),
-          where('branchId', '==', branchId),
-          orderBy('createdAt', 'desc')
+          where('branchId', '==', branchId)
         );
       } else {
-        q = query(
-          reportsRef,
-          where('customerId', '==', customerId),
-          orderBy('createdAt', 'desc')
-        );
+        q = query(reportsRef, where('customerId', '==', customerId));
       }
 
       const querySnapshot = await getDocs(q);
-      const reports = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Report[];
+      const reports = querySnapshot.docs.map(doc =>
+        migrateReport({
+          id: doc.id,
+          ...doc.data(),
+        })
+      ) as Report[];
+
+      // Sort by createdAt descending (client-side)
+      const sortedReports = reports.sort((a, b) => {
+        const aDate = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt || 0);
+        const bDate = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || 0);
+        return bDate.getTime() - aDate.getTime();
+      });
 
       // If we found reports with customerId, return them
-      if (reports.length > 0) {
-        return reports;
+      if (sortedReports.length > 0) {
+        return sortedReports;
       }
     } catch (indexError: any) {
       // If index doesn't exist, fall back to client-side filtering
-      if (indexError.code === 'failed-precondition' || indexError.message?.includes('index')) {
-        logger.warn('⚠️ Missing Firestore index for customerId. Falling back to client-side filtering.');
+      if (
+        indexError.code === 'failed-precondition' ||
+        indexError.code === 9 ||
+        indexError.message?.includes('index')
+      ) {
+        logger.warn(
+          '⚠️ Missing Firestore index for customerId. Falling back to client-side filtering.'
+        );
       }
     }
 
@@ -245,7 +227,7 @@ export const getReportsByCustomerId = async (
     // First, get the customer to match by name
     const { getCustomerById } = await import('./customerService');
     const customer = await getCustomerById(customerId);
-    
+
     if (!customer) {
       return [];
     }
@@ -283,7 +265,6 @@ export const getReportsByCustomerId = async (
       return bDate.getTime() - aDate.getTime();
     });
   } catch (error) {
-    console.error('Error fetching reports by customer ID:', error);
     throw new Error('Failed to fetch reports by customer ID');
   }
 };
@@ -315,9 +296,9 @@ export const createReport = async (
     // Find or create building - all reports must be linked to a building
     logger.log('🔍 ReportService Debug - Finding/creating building...');
     const { findOrCreateBuilding, getBuildingById } = await import('./buildingService');
-    
+
     let buildingId: string;
-    
+
     // If buildingId is provided, use it (user selected existing building)
     if (reportData.buildingId) {
       buildingId = reportData.buildingId;
@@ -325,7 +306,7 @@ export const createReport = async (
     } else {
       // Otherwise, find or create building based on address
       const buildingAddress = reportData.buildingAddress || reportData.customerAddress;
-      
+
       if (!buildingAddress) {
         throw new Error('Building address is required to create a report');
       }
@@ -344,26 +325,48 @@ export const createReport = async (
 
     // Get building details to use as source of truth
     const building = await getBuildingById(buildingId);
-    
+
+    // Get customer's company ID if they belong to a company
+    const { getCustomerById } = await import('./customerService');
+    const customer = await getCustomerById(customerId);
+    const companyId = customer?.companyId;
+
     // Create the report document
     logger.log('🔍 ReportService Debug - Creating report document...');
     const reportsRef = collection(db, 'reports');
-    
+
     // Use building data as source of truth for roof information
     const reportWithBuilding = {
       ...reportData,
       buildingId: buildingId, // Required: Link to building
       customerId: customerId,
+      companyId: companyId, // Add company ID for easier filtering by customers in companies
+      buildingName: building?.name || 'N/A', // Add building name from linked building
       buildingAddress: building?.address || buildingAddress, // Use building address as source of truth
       roofType: building?.roofType || reportData.roofType, // Prefer building's roof type
       roofSize: building?.roofSize || reportData.roofSize, // Prefer building's roof size
+      // Add building snapshot for audit trail
+      buildingSnapshot: building
+        ? {
+            id: building.id,
+            buildingId: building.id,
+            address: building.address,
+            buildingType: building.buildingType,
+            roofType: building.roofType,
+            roofSize: building.roofSize,
+            latitude: building.latitude,
+            longitude: building.longitude,
+            changedBy: reportData.createdBy,
+            changedAt: new Date().toISOString(),
+          }
+        : undefined,
     };
-    
+
     // Filter out undefined values to prevent Firestore errors
     const cleanReportData = Object.fromEntries(
       Object.entries(reportWithBuilding).filter(([_, value]) => value !== undefined)
     );
-    
+
     const docRef = await addDoc(reportsRef, {
       ...cleanReportData,
       branchId: branchId,
@@ -377,15 +380,54 @@ export const createReport = async (
     await updateCustomerStats(customerId, reportData.estimatedCost || 0, false);
     logger.log('🔍 ReportService Debug - Customer stats updated');
 
+    // Send notification to customer when report is completed
+    if (reportData.status === 'completed' && customer?.email) {
+      try {
+        const { createNotification, sendEmailNotification } = await import('./notificationService');
+
+        // Get user document to find userId
+        const usersRef = collection(db, 'users');
+        const userQuery = query(usersRef, where('email', '==', customer.email));
+        const userSnapshot = await getDocs(userQuery);
+
+        if (!userSnapshot.empty) {
+          const userId = userSnapshot.docs[0].id;
+
+          // Create in-app notification
+          await createNotification({
+            userId,
+            customerId: customerId,
+            type: 'report_completed',
+            title: 'Inspection Report Ready',
+            message: `Your inspection report for ${building?.address || buildingAddress} is now available.`,
+            link: `/portal/buildings/${buildingId}`,
+            metadata: {
+              reportId: docRef.id,
+              buildingId: buildingId,
+            },
+          });
+
+          // 📧 EMAIL NOTIFICATIONS - Currently disabled for testing
+          // TODO: Enable email notifications once testing is complete
+          // Uncomment the block below to send email notifications to customers
+          /*
+          if (customer.notificationPreferences?.email !== false) {
+            await sendEmailNotification(
+              customer.email,
+              'Your Inspection Report is Ready',
+              `Hello ${customer.name},\n\nYour inspection report for the property at ${building?.address || buildingAddress} has been completed and is now available for review.\n\nPlease log in to your customer portal to view the full report.\n\nBest regards,\nAgritectum Team`
+            );
+          }
+          */
+        }
+      } catch (notificationError) {
+        logger.error('Failed to send notification:', notificationError);
+        // Don't throw - report creation should succeed even if notification fails
+      }
+    }
+
     return docRef.id;
   } catch (error) {
-    console.error('🔍 ReportService Debug - Error creating report:', error);
-    console.error('🔍 ReportService Debug - Error details:', {
-      message: error.message,
-      stack: error.stack,
-      branchId,
-      reportData,
-    });
     throw new Error(`Failed to create report: ${error.message}`);
   }
 };
@@ -397,19 +439,23 @@ export const updateReport = async (
 ): Promise<void> => {
   try {
     const reportRef = doc(db, 'reports', reportId);
-    
+
     // Filter out undefined values to prevent Firestore errors
     const cleanUpdates = Object.fromEntries(
       Object.entries(updates).filter(([_, value]) => value !== undefined)
     );
-    
+
     await updateDoc(reportRef, {
       ...cleanUpdates,
       lastEdited: serverTimestamp(),
     });
   } catch (error) {
-    console.error('Error updating report:', error);
-    throw new Error('Failed to update report');
+    // Check if it's a permission error
+    if (error.code === 'permission-denied') {
+      throw new Error('Permission denied: You do not have access to update this report');
+    }
+
+    throw new Error('Failed to update report: ' + error.message);
   }
 };
 
@@ -437,11 +483,9 @@ export const deleteReport = async (reportId: string, branchId?: string): Promise
         await updateCustomerStats(customer.id, reportData.estimatedCost || 0, true);
       }
     } catch (customerError) {
-      console.error('Error updating customer stats on delete:', customerError);
       // Don't throw error as this is a background operation
     }
   } catch (error) {
-    console.error('Error deleting report:', error);
     throw new Error('Failed to delete report');
   }
 };
@@ -469,6 +513,9 @@ export const generatePDF = async (reportId: string, branchId?: string): Promise<
       }
     }
 
+    // Lazy load PDF generation service
+    const { generateReportPDF } = await import('./simplePdfService');
+
     // Generate PDF using simplified service
     const result = await generateReportPDF(reportId, {
       format: 'A4',
@@ -476,8 +523,8 @@ export const generatePDF = async (reportId: string, branchId?: string): Promise<
         top: '20px',
         bottom: '20px',
         left: '20px',
-        right: '20px'
-      }
+        right: '20px',
+      },
     });
 
     if (!result.success) {
@@ -498,7 +545,6 @@ export const generatePDF = async (reportId: string, branchId?: string): Promise<
 
     return downloadURL;
   } catch (error) {
-    console.error('Error generating PDF:', error);
     throw new Error('Failed to generate PDF');
   }
 };
@@ -506,12 +552,7 @@ export const generatePDF = async (reportId: string, branchId?: string): Promise<
 export const getBranchReports = async (branchId: string, limitCount = 50): Promise<Report[]> => {
   try {
     const reportsRef = collection(db, 'reports');
-    const q = query(
-      reportsRef,
-      where('branchId', '==', branchId),
-      orderBy('createdAt', 'desc'),
-      limit(limitCount)
-    );
+    const q = query(reportsRef, where('branchId', '==', branchId), limit(limitCount));
 
     const querySnapshot = await getDocs(q);
     const reports: Report[] = [];
@@ -520,9 +561,13 @@ export const getBranchReports = async (branchId: string, limitCount = 50): Promi
       reports.push({ id: doc.id, ...doc.data() } as Report);
     });
 
-    return reports;
+    // Sort client-side since we removed orderBy to avoid requiring composite indexes
+    return reports.sort((a, b) => {
+      const aDate = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt || 0);
+      const bDate = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || 0);
+      return bDate.getTime() - aDate.getTime();
+    });
   } catch (error) {
-    console.error('Error fetching branch reports:', error);
     throw new Error('Failed to fetch branch reports');
   }
 };

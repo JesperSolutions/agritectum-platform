@@ -7,6 +7,7 @@ The password reset functionality has been implemented and allows users to reset 
 ## Implementation Details
 
 ### Components Created
+
 1. **ForgotPasswordForm** (`src/components/forms/ForgotPasswordForm.tsx`)
    - User enters their email address
    - Sends password reset email via Firebase
@@ -17,10 +18,12 @@ The password reset functionality has been implemented and allows users to reset 
    - Confirms password reset
 
 ### Routes Added
+
 - `/forgot-password` - Forgot password form
 - `/reset-password` - Reset password form (accessed via email link)
 
 ### Services Updated
+
 - `src/services/authService.ts` - Added:
   - `sendPasswordReset()` - Sends password reset email
   - `verifyResetCode()` - Verifies reset code from email
@@ -31,21 +34,25 @@ The password reset functionality has been implemented and allows users to reset 
 ### 1. Action URL Settings
 
 The password reset email will redirect users to:
+
 ```
 https://your-domain.com/reset-password
 ```
 
 **For Production:**
+
 - Go to Firebase Console > Authentication > Templates > Password reset
 - Set the action URL to: `https://taklaget-service-app.web.app/reset-password`
 - Or use your custom domain if configured
 
 **For Test:**
+
 - Set action URL to: `https://taklaget-service-app-test.web.app/reset-password`
 
 ### 2. Email Template Customization (Optional)
 
 Firebase uses default email templates, but you can customize them:
+
 1. Go to Firebase Console > Authentication > Templates
 2. Select "Password reset"
 3. Customize the email subject and body
@@ -54,6 +61,7 @@ Firebase uses default email templates, but you can customize them:
 ### 3. Authorized Domains
 
 Ensure your domain is authorized:
+
 1. Go to Firebase Console > Authentication > Settings > Authorized domains
 2. Add your production domain (e.g., `taklaget-service-app.web.app`)
 3. Add your custom domain if you have one
@@ -86,6 +94,7 @@ Ensure your domain is authorized:
 ## Testing
 
 ### Test Password Reset Flow:
+
 1. Go to `/login`
 2. Click "Forgot password?"
 3. Enter a valid user email
@@ -94,6 +103,7 @@ Ensure your domain is authorized:
 6. Login with new password
 
 ### Test Error Cases:
+
 - Invalid email format
 - Expired reset link
 - Weak password
@@ -102,17 +112,20 @@ Ensure your domain is authorized:
 ## Troubleshooting
 
 ### Reset link doesn't work:
+
 - Check Firebase action URL is set correctly
 - Verify domain is authorized in Firebase
 - Check that link hasn't expired (1 hour limit)
 
 ### Email not received:
+
 - Check spam folder
 - Verify email address is correct
 - Check Firebase email sending limits
 - Verify SMTP settings in Firebase (if using custom SMTP)
 
 ### Reset password page shows error:
+
 - Verify reset code is valid and not expired
 - Check browser console for errors
 - Ensure Firebase project is correctly configured
@@ -123,5 +136,3 @@ Ensure your domain is authorized:
 - Firebase automatically handles the reset code validation
 - The action URL in `sendPasswordReset()` is set dynamically based on `window.location.origin`
 - For production, ensure the action URL matches your deployed domain
-
-

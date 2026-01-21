@@ -15,12 +15,7 @@
         "branchPhone",
         "branchEmail"
       ],
-      "optionalFields": [
-        "recommendations",
-        "branchAddress",
-        "totalIssues",
-        "estimatedCost"
-      ],
+      "optionalFields": ["recommendations", "branchAddress", "totalIssues", "estimatedCost"],
       "sharedVariables": [
         "brandName",
         "legalEntity",
@@ -58,9 +53,7 @@
         "branchPhone",
         "branchEmail"
       ],
-      "optionalFields": [
-        "branchAddress"
-      ],
+      "optionalFields": ["branchAddress"],
       "sharedVariables": [
         "brandName",
         "legalEntity",
@@ -96,9 +89,7 @@
         "branchPhone",
         "branchEmail"
       ],
-      "optionalFields": [
-        "branchAddress"
-      ],
+      "optionalFields": ["branchAddress"],
       "sharedVariables": [
         "brandName",
         "legalEntity",
@@ -134,9 +125,7 @@
         "branchPhone",
         "branchEmail"
       ],
-      "optionalFields": [
-        "branchAddress"
-      ],
+      "optionalFields": ["branchAddress"],
       "sharedVariables": [
         "brandName",
         "legalEntity",
@@ -172,9 +161,7 @@
         "branchPhone",
         "branchEmail"
       ],
-      "optionalFields": [
-        "branchAddress"
-      ],
+      "optionalFields": ["branchAddress"],
       "sharedVariables": [
         "brandName",
         "legalEntity",
@@ -208,9 +195,7 @@
         "branchPhone",
         "branchEmail"
       ],
-      "optionalFields": [
-        "branchAddress"
-      ],
+      "optionalFields": ["branchAddress"],
       "sharedVariables": [
         "brandName",
         "legalEntity",
@@ -245,9 +230,7 @@
         "branchPhone",
         "branchEmail"
       ],
-      "optionalFields": [
-        "branchAddress"
-      ],
+      "optionalFields": ["branchAddress"],
       "sharedVariables": [
         "brandName",
         "legalEntity",
@@ -282,9 +265,7 @@
         "branchPhone",
         "branchEmail"
       ],
-      "optionalFields": [
-        "branchAddress"
-      ],
+      "optionalFields": ["branchAddress"],
       "sharedVariables": [
         "brandName",
         "legalEntity",

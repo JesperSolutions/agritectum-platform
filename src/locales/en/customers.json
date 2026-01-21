@@ -163,5 +163,21 @@
   "customer.invitation.created": "Sign-up link created!",
   "customer.invitation.error": "Could not create sign-up link",
   "customer.invitation.copied": "Link copied to clipboard!",
-  "customer.invitation.copyError": "Could not copy link"
+  "customer.invitation.copyError": "Could not copy link",
+
+  "customer.type.company": "Company",
+  "customer.type.individual": "Individual",
+  "customer.type.parentCompany": "Parent Company",
+  "customer.type.subsidiary": "Subsidiary",
+  "customer.type.subsidiaryOf": "Subsidiary of",
+  "customer.type.subsidiaries": "subsidiaries",
+
+  "customer.filter.parentCompany": "Parent Company",
+  "customer.filter.allCompanies": "All companies",
+  "customer.filter.parentCompaniesOnly": "Parent companies only",
+
+  "customer.hierarchy.title": "Company Hierarchy",
+  "customer.hierarchy.empty": "No parent companies found. Create a company to start building the hierarchy.",
+
+  "customer.error.unknownCompany": "Unknown company"
 }

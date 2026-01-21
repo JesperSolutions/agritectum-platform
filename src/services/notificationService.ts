@@ -1,84 +1,86 @@
 /**
  * Notification Service
- * 
+ *
  * Handles all notification-related operations including:
  * - Creating, reading, updating, and deleting notifications
  * - Real-time notification subscriptions
  * - Notification statistics and analytics
  * - Event-triggered notifications for reports, users, emails, and system events
- * 
+ *
  * @author Agritectum Development Team
  * @version 1.0.0
  * @since 2024-09-22
  */
 
-import { 
-  db, 
-  auth 
-} from '../config/firebase';
+import { db, auth } from '../config/firebase';
 import { logger } from '../utils/logger';
-import { 
-  collection, 
-  doc, 
-  addDoc, 
-  updateDoc, 
-  deleteDoc, 
-  getDocs, 
+import {
+  collection,
+  doc,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  getDocs,
   getDoc,
-  query, 
-  where, 
-  orderBy, 
-  limit, 
-  onSnapshot, 
+  query,
+  where,
+  orderBy,
+  limit,
+  onSnapshot,
   serverTimestamp,
   Timestamp,
   writeBatch,
   QuerySnapshot,
-  DocumentData
+  DocumentData,
 } from 'firebase/firestore';
 import { User } from 'firebase/auth';
 
 const removeUndefinedFields = <T extends Record<string, unknown>>(data: T): T => {
-  const cleanedEntries = Object.entries(data).reduce<Record<string, unknown>>((acc, [key, value]) => {
-    if (value === undefined) {
+  const cleanedEntries = Object.entries(data).reduce<Record<string, unknown>>(
+    (acc, [key, value]) => {
+      if (value === undefined) {
+        return acc;
+      }
+      acc[key] = value;
       return acc;
-    }
-    acc[key] = value;
-    return acc;
-  }, {});
+    },
+    {}
+  );
 
   return cleanedEntries as T;
 };
 
 /**
  * Notification Interface
- * 
+ *
  * Defines the structure of a notification object stored in Firestore
  */
 export interface Notification {
-  id: string;                    // Unique notification identifier
-  userId: string;                // ID of the user who owns this notification
-  type: 'info' | 'warning' | 'success' | 'error' | 'urgent';  // Notification type for styling
-  title: string;                 // Notification title (displayed in bold)
-  message: string;               // Notification message content
-  timestamp: Date;               // When the notification was created
-  read: boolean;                 // Whether the user has read this notification
-  action?: {                     // Optional action button
-    label: string;               // Text for the action button
-    onClick: string;             // URL or action identifier
-    type: 'navigate' | 'api' | 'modal';  // Type of action
+  id: string; // Unique notification identifier
+  userId: string; // ID of the user who owns this notification
+  type: 'info' | 'warning' | 'success' | 'error' | 'urgent'; // Notification type for styling
+  title: string; // Notification title (displayed in bold)
+  message: string; // Notification message content
+  timestamp: Date; // When the notification was created
+  read: boolean; // Whether the user has read this notification
+  action?: {
+    // Optional action button
+    label: string; // Text for the action button
+    onClick: string; // URL or action identifier
+    type: 'navigate' | 'api' | 'modal'; // Type of action
   };
-  metadata?: {                   // Additional notification metadata
-    reportId?: string;           // Associated report ID
-    userId?: string;             // Associated user ID
-    branchId?: string;           // Associated branch ID
-    customerId?: string;         // Associated customer ID
-    priority?: 'low' | 'medium' | 'high' | 'urgent';  // Notification priority
-    category?: 'report' | 'user' | 'system' | 'email' | 'security';  // Notification category
+  metadata?: {
+    // Additional notification metadata
+    reportId?: string; // Associated report ID
+    userId?: string; // Associated user ID
+    branchId?: string; // Associated branch ID
+    customerId?: string; // Associated customer ID
+    priority?: 'low' | 'medium' | 'high' | 'urgent'; // Notification priority
+    category?: 'report' | 'user' | 'system' | 'email' | 'security'; // Notification category
   };
-  expiresAt?: Date;              // Optional expiration date for the notification
-  createdAt: Date;              // When the notification was created in the database
-  updatedAt: Date;              // When the notification was last updated
+  expiresAt?: Date; // Optional expiration date for the notification
+  createdAt: Date; // When the notification was created in the database
+  updatedAt: Date; // When the notification was last updated
 }
 
 export interface NotificationFilters {
@@ -103,14 +105,15 @@ export interface NotificationStats {
  */
 export const createNotification = async (
   userId: string,
-  notification: Omit<Notification, 'id' | 'userId' | 'timestamp' | 'createdAt' | 'updatedAt' | 'read'>
+  notification: Omit<
+    Notification,
+    'id' | 'userId' | 'timestamp' | 'createdAt' | 'updatedAt' | 'read'
+  >
 ): Promise<string> => {
   try {
     const sanitizedNotification = removeUndefinedFields({
       ...notification,
-      ...(notification.metadata
-        ? { metadata: removeUndefinedFields(notification.metadata) }
-        : {}),
+      ...(notification.metadata ? { metadata: removeUndefinedFields(notification.metadata) } : {}),
     });
 
     const notificationData = {
@@ -137,7 +140,10 @@ export const createNotification = async (
 export const createBatchNotifications = async (
   notifications: Array<{
     userId: string;
-    notification: Omit<Notification, 'id' | 'userId' | 'timestamp' | 'createdAt' | 'updatedAt' | 'read'>;
+    notification: Omit<
+      Notification,
+      'id' | 'userId' | 'timestamp' | 'createdAt' | 'updatedAt' | 'read'
+    >;
   }>
 ): Promise<string[]> => {
   try {
@@ -147,7 +153,7 @@ export const createBatchNotifications = async (
     notifications.forEach(({ userId, notification }) => {
       const docRef = doc(collection(db, 'notifications'));
       notificationIds.push(docRef.id);
-      
+
       const sanitizedNotification = removeUndefinedFields({
         ...notification,
         ...(notification.metadata
@@ -184,10 +190,7 @@ export const getNotifications = async (
   filters: NotificationFilters = {}
 ): Promise<Notification[]> => {
   try {
-    let q = query(
-      collection(db, 'notifications'),
-      where('userId', '==', userId)
-    );
+    let q = query(collection(db, 'notifications'), where('userId', '==', userId));
 
     if (filters.type) {
       q = query(q, where('type', '==', filters.type));
@@ -212,7 +215,7 @@ export const getNotifications = async (
     const snapshot = await getDocs(q);
     const notifications: Notification[] = [];
 
-    snapshot.forEach((doc) => {
+    snapshot.forEach(doc => {
       const data = doc.data();
       notifications.push({
         id: doc.id,
@@ -279,7 +282,7 @@ export const subscribeToNotifications = (
     const unsubscribe = onSnapshot(q, (snapshot: QuerySnapshot<DocumentData>) => {
       const notifications: Notification[] = [];
 
-      snapshot.forEach((doc) => {
+      snapshot.forEach(doc => {
         const data = doc.data();
         notifications.push({
           id: doc.id,
@@ -336,7 +339,7 @@ export const markNotificationsAsRead = async (notificationIds: string[]): Promis
   try {
     const batch = writeBatch(db);
 
-    notificationIds.forEach((id) => {
+    notificationIds.forEach(id => {
       const docRef = doc(db, 'notifications', id);
       batch.update(docRef, {
         read: true,
@@ -359,11 +362,11 @@ export const markAllNotificationsAsRead = async (userId: string): Promise<void> 
   try {
     const notifications = await getNotifications(userId, { read: false });
     const notificationIds = notifications.map(n => n.id);
-    
+
     if (notificationIds.length > 0) {
       await markNotificationsAsRead(notificationIds);
     }
-    
+
     logger.log('✅ All notifications marked as read for user:', userId);
   } catch (error) {
     console.error('❌ Error marking all notifications as read:', error);
@@ -391,7 +394,7 @@ export const deleteNotifications = async (notificationIds: string[]): Promise<vo
   try {
     const batch = writeBatch(db);
 
-    notificationIds.forEach((id) => {
+    notificationIds.forEach(id => {
       const docRef = doc(db, 'notifications', id);
       batch.delete(docRef);
     });
@@ -420,7 +423,7 @@ export const deleteOldNotifications = async (olderThanDays: number = 30): Promis
     const snapshot = await getDocs(q);
     const notificationIds: string[] = [];
 
-    snapshot.forEach((doc) => {
+    snapshot.forEach(doc => {
       notificationIds.push(doc.id);
     });
 
@@ -442,7 +445,7 @@ export const deleteOldNotifications = async (olderThanDays: number = 30): Promis
 export const getNotificationStats = async (userId: string): Promise<NotificationStats> => {
   try {
     const allNotifications = await getNotifications(userId);
-    
+
     const stats: NotificationStats = {
       total: allNotifications.length,
       unread: allNotifications.filter(n => !n.read).length,
@@ -454,9 +457,9 @@ export const getNotificationStats = async (userId: string): Promise<Notification
     // Count by type
     allNotifications.forEach(notification => {
       stats.byType[notification.type] = (stats.byType[notification.type] || 0) + 1;
-      
+
       if (notification.metadata?.category) {
-        stats.byCategory[notification.metadata.category] = 
+        stats.byCategory[notification.metadata.category] =
           (stats.byCategory[notification.metadata.category] || 0) + 1;
       }
     });

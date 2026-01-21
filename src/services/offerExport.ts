@@ -5,8 +5,3 @@ export function openOfferPrintWindow(offerId: string): void {
   const url = `${window.location.origin}/offer/public/${offerId}?print=1`;
   window.open(url, '_blank');
 }
-
-
-
-
-

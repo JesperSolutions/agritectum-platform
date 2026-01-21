@@ -5,6 +5,7 @@ This guide explains how to develop locally using Firebase Emulators - a complete
 ## ✅ What's Already Set Up
 
 All configuration files have been updated:
+
 - ✅ `firebase.json` - Emulator configuration added
 - ✅ `src/config/firebase.ts` - Auto-connects to emulators in dev mode
 - ✅ `.gitignore` - Emulator data excluded from Git
@@ -29,6 +30,7 @@ npm run emulators
 ```
 
 This will start:
+
 - **Auth Emulator** on port 9099
 - **Firestore Emulator** on port 8080
 - **Storage Emulator** on port 9199
@@ -116,12 +118,14 @@ firebase emulators:start --import=./emulator-data
 ## 🔄 Switching Between Environments
 
 ### Local Development (Emulators)
+
 ```bash
 npm run emulators  # Terminal 1
 npm run dev        # Terminal 2
 ```
 
 ### Production Testing
+
 ```bash
 # Stop emulators (Ctrl+C)
 npm run dev        # Connects to production
@@ -131,23 +135,25 @@ The app automatically detects if emulators are running!
 
 ## 📊 Available Commands
 
-| Command | Description |
-|---------|-------------|
-| `npm run emulators` | Start emulators (no data persistence) |
-| `npm run emulators:export` | Start emulators with data save/load |
-| `npm run dev` | Start dev server |
-| `npm run build` | Build for production |
-| `npm run deploy` | Deploy to production Firebase |
-| `npm run deploy:rules` | Deploy only security rules |
+| Command                    | Description                           |
+| -------------------------- | ------------------------------------- |
+| `npm run emulators`        | Start emulators (no data persistence) |
+| `npm run emulators:export` | Start emulators with data save/load   |
+| `npm run dev`              | Start dev server                      |
+| `npm run build`            | Build for production                  |
+| `npm run deploy`           | Deploy to production Firebase         |
+| `npm run deploy:rules`     | Deploy only security rules            |
 
 ## 🎨 Visual Indicators
 
 When running in development mode, you'll see:
+
 - Console logs: "🔥 Connecting to Firebase Emulators..."
 - Console logs: "✅ Connected to Firebase Emulators"
 - Console logs: "📊 Emulator UI: http://localhost:4000"
 
 If emulators aren't running, you'll see:
+
 - Warning: "⚠️ Could not connect to emulators"
 
 ## 🔧 Troubleshooting
@@ -182,6 +188,7 @@ npm run emulators
 ## 🚀 Working on Any Device
 
 ### On This Device
+
 ```bash
 git pull origin main
 npm install
@@ -190,6 +197,7 @@ npm run dev          # Terminal 2
 ```
 
 ### On Another Device
+
 ```bash
 # Clone/pull latest
 git clone <repo-url>
@@ -236,19 +244,21 @@ firebase deploy --only hosting
 ## 💡 Quick Reference
 
 ### Starting Development
+
 ```bash
 npm run emulators  # Start emulators
 npm run dev        # Start dev server (new terminal)
 ```
 
 ### URLs
+
 - App: http://localhost:5173
 - Emulator UI: http://localhost:4000
 
 ### Stop Everything
+
 - Press `Ctrl+C` in both terminals
 
 ---
 
 **Happy Coding!** 🚀 You now have a completely free local development environment!
-

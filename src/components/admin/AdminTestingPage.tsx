@@ -40,7 +40,9 @@ const AdminTestingPage: React.FC = () => {
           <CardContent className='pt-6'>
             <div className='text-center'>
               <XCircle className='h-12 w-12 text-red-500 mx-auto mb-4' />
-              <h2 className='text-xl font-semibold text-slate-900 mb-2'>{t('errors.access.denied')}</h2>
+              <h2 className='text-xl font-semibold text-slate-900 mb-2'>
+                {t('errors.access.denied')}
+              </h2>
               <p className='text-slate-600'>{t('errors.access.deniedMessage')}</p>
             </div>
           </CardContent>

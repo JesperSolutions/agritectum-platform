@@ -1,6 +1,6 @@
 /**
  * Building ESG Improvements Admin Page
- * 
+ *
  * Allows branch admins to select buildings and configure ESG improvements
  * (green roofs, solar panels, water management, etc.)
  */
@@ -21,15 +21,8 @@ import {
 import { useAuth } from '../../contexts/AuthContext';
 import { useIntl } from '../../hooks/useIntl';
 import { useToast } from '../../contexts/ToastContext';
-import {
-  Building,
-  RoofImprovement,
-  ImprovementType,
-} from '../../types';
-import {
-  getBuildingsByCustomer,
-  getBuildingById,
-} from '../../services/buildingService';
+import { Building, RoofImprovement, ImprovementType } from '../../types';
+import { getBuildingsByCustomer, getBuildingById } from '../../services/buildingService';
 import {
   calculateBuildingImprovementImpact,
   saveBuildingImprovements,
@@ -75,12 +68,12 @@ const BuildingESGImprovements: React.FC = () => {
   // Check permissions
   if (!currentUser || (currentUser.role !== 'branchAdmin' && currentUser.role !== 'superadmin')) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
-        <div className="bg-white p-8 rounded-xl shadow-sm border border-slate-200 text-center">
-          <h1 className="text-2xl font-bold text-slate-900 mb-4">
+      <div className='min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center'>
+        <div className='bg-white p-8 rounded-xl shadow-sm border border-slate-200 text-center'>
+          <h1 className='text-2xl font-bold text-slate-900 mb-4'>
             {t('errors.access.denied') || 'Access Denied'}
           </h1>
-          <p className="text-slate-600 mb-6">
+          <p className='text-slate-600 mb-6'>
             {t('admin.improvements.accessDenied') ||
               'You do not have permission to access this page'}
           </p>
@@ -102,8 +95,8 @@ const BuildingESGImprovements: React.FC = () => {
   const loadBuildingsForCustomer = async (customerId: string) => {
     setLoadingBuildings(true);
     try {
-  const buildingsForCustomer = await getBuildingsByCustomer(customerId, currentUser?.branchId);
-  setBuildings(buildingsForCustomer || []);
+      const buildingsForCustomer = await getBuildingsByCustomer(customerId, currentUser?.branchId);
+      setBuildings(buildingsForCustomer || []);
     } catch (error) {
       console.error('Error loading buildings:', error);
       showError(t('admin.improvements.errorLoadingBuildings') || 'Failed to load buildings');
@@ -182,11 +175,11 @@ const BuildingESGImprovements: React.FC = () => {
   };
 
   const handleImprovementUpdate = (improvement: RoofImprovement) => {
-  const newImprovements = new Map(improvements);
-  newImprovements.set(improvement.type, improvement);
-  setImprovements(newImprovements);
-  setCalculatedMetrics(null); // Clear previous calculations
-  setInlineError(null);
+    const newImprovements = new Map(improvements);
+    newImprovements.set(improvement.type, improvement);
+    setImprovements(newImprovements);
+    setCalculatedMetrics(null); // Clear previous calculations
+    setInlineError(null);
   };
 
   const handleCalculate = async () => {
@@ -208,18 +201,21 @@ const BuildingESGImprovements: React.FC = () => {
     );
 
     if (activeImprovements.length === 0) {
-      setInlineError(t('admin.improvements.noImprovementsSelected') || 'Please select at least one improvement');
-      showError(t('admin.improvements.noImprovementsSelected') || 'Please select at least one improvement');
+      setInlineError(
+        t('admin.improvements.noImprovementsSelected') || 'Please select at least one improvement'
+      );
+      showError(
+        t('admin.improvements.noImprovementsSelected') || 'Please select at least one improvement'
+      );
       return;
     }
 
     // Validate total percentage
-    const totalPercentage = activeImprovements.reduce(
-      (sum, imp) => sum + imp.percentage,
-      0
-    );
+    const totalPercentage = activeImprovements.reduce((sum, imp) => sum + imp.percentage, 0);
     if (totalPercentage > 100) {
-      setInlineError(t('admin.improvements.overAllocated') || 'Total percentage cannot exceed 100%');
+      setInlineError(
+        t('admin.improvements.overAllocated') || 'Total percentage cannot exceed 100%'
+      );
       showError(t('admin.improvements.overAllocated') || 'Total percentage cannot exceed 100%');
       return;
     }
@@ -233,17 +229,11 @@ const BuildingESGImprovements: React.FC = () => {
     try {
       // Ensure building has ESG metrics
       if (!selectedBuilding.esgMetrics) {
-        const esgMetrics = await getBuildingESGMetrics(
-          selectedBuilding,
-          currentUser.branchId
-        );
+        const esgMetrics = await getBuildingESGMetrics(selectedBuilding, currentUser.branchId);
         selectedBuilding.esgMetrics = esgMetrics;
       }
 
-      const metrics = calculateBuildingImprovementImpact(
-        selectedBuilding,
-        activeImprovements
-      );
+      const metrics = calculateBuildingImprovementImpact(selectedBuilding, activeImprovements);
       setCalculatedMetrics(metrics);
     } catch (error) {
       console.error('Error calculating impact:', error);
@@ -273,18 +263,21 @@ const BuildingESGImprovements: React.FC = () => {
     );
 
     if (activeImprovements.length === 0) {
-      setInlineError(t('admin.improvements.noImprovementsSelected') || 'Please select at least one improvement');
-      showError(t('admin.improvements.noImprovementsSelected') || 'Please select at least one improvement');
+      setInlineError(
+        t('admin.improvements.noImprovementsSelected') || 'Please select at least one improvement'
+      );
+      showError(
+        t('admin.improvements.noImprovementsSelected') || 'Please select at least one improvement'
+      );
       return;
     }
 
     // Validate total percentage
-    const totalPercentage = activeImprovements.reduce(
-      (sum, imp) => sum + imp.percentage,
-      0
-    );
+    const totalPercentage = activeImprovements.reduce((sum, imp) => sum + imp.percentage, 0);
     if (totalPercentage > 100) {
-      setInlineError(t('admin.improvements.overAllocated') || 'Total percentage cannot exceed 100%');
+      setInlineError(
+        t('admin.improvements.overAllocated') || 'Total percentage cannot exceed 100%'
+      );
       showError(t('admin.improvements.overAllocated') || 'Total percentage cannot exceed 100%');
       return;
     }
@@ -296,17 +289,10 @@ const BuildingESGImprovements: React.FC = () => {
 
     setSaving(true);
     try {
-      await saveBuildingImprovements(
-        selectedBuilding.id,
-        activeImprovements,
-        calculatedMetrics
-      );
+      await saveBuildingImprovements(selectedBuilding.id, activeImprovements, calculatedMetrics);
 
-      showSuccess(
-        t('admin.improvements.savedSuccessfully') ||
-          'Improvements saved successfully'
-      );
-      
+      showSuccess(t('admin.improvements.savedSuccessfully') || 'Improvements saved successfully');
+
       // Reload saved improvements to show updated state
       await loadSavedImprovements();
       setSavedImprovements({
@@ -323,18 +309,16 @@ const BuildingESGImprovements: React.FC = () => {
     }
   };
 
-  const filteredBuildings = buildings.filter((building) =>
+  const filteredBuildings = buildings.filter(building =>
     building.address.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const activeImprovements = Array.from(improvements.values()).filter(
     (imp): imp is RoofImprovement => imp !== null && imp.percentage > 0
   );
-  const totalPercentage = activeImprovements.reduce(
-    (sum, imp) => sum + imp.percentage,
-    0
-  );
-  const maxPercentage = 100 - (totalPercentage - (activeImprovements.find(imp => imp.percentage > 0)?.percentage || 0));
+  const totalPercentage = activeImprovements.reduce((sum, imp) => sum + imp.percentage, 0);
+  const maxPercentage =
+    100 - (totalPercentage - (activeImprovements.find(imp => imp.percentage > 0)?.percentage || 0));
 
   const improvementTypes: ImprovementType[] = [
     'green_roof',
@@ -346,7 +330,7 @@ const BuildingESGImprovements: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className='space-y-6'>
       {/* Page Header */}
       <PageHeader
         title={t('admin.improvements.title') || 'Building ESG Improvements'}
@@ -357,72 +341,73 @@ const BuildingESGImprovements: React.FC = () => {
       />
 
       {/* Customer Search/Selection */}
-      <div className="bg-white rounded-lg shadow p-6 border border-slate-200">
-        <h2 className="text-lg font-semibold mb-4 flex items-center">
-          <Search className="w-5 h-5 mr-2" />
+      <div className='bg-white rounded-lg shadow p-6 border border-slate-200'>
+        <h2 className='text-lg font-semibold mb-4 flex items-center'>
+          <Search className='w-5 h-5 mr-2' />
           {t('admin.improvements.selectCustomer') || 'Select Customer'}
         </h2>
         <CustomerSearch onCustomerSelect={setSelectedCustomer} />
         {selectedCustomer && (
-          <div className="mt-2 text-green-700 font-semibold">
-            {selectedCustomer.name} {selectedCustomer.email && <span className="text-xs text-slate-500">({selectedCustomer.email})</span>}
+          <div className='mt-2 text-green-700 font-semibold'>
+            {selectedCustomer.name}{' '}
+            {selectedCustomer.email && (
+              <span className='text-xs text-slate-500'>({selectedCustomer.email})</span>
+            )}
           </div>
         )}
       </div>
 
       {/* Building Selection (only after customer is selected) */}
       {selectedCustomer && (
-        <div className="bg-white rounded-lg shadow p-6 border border-slate-200">
-          <h2 className="text-lg font-semibold mb-4 flex items-center">
-            <BuildingIcon className="w-5 h-5 mr-2" />
+        <div className='bg-white rounded-lg shadow p-6 border border-slate-200'>
+          <h2 className='text-lg font-semibold mb-4 flex items-center'>
+            <BuildingIcon className='w-5 h-5 mr-2' />
             {t('admin.improvements.selectBuilding') || 'Select Building'}
           </h2>
 
           {loadingBuildings ? (
-            <div className="flex items-center justify-center py-8">
+            <div className='flex items-center justify-center py-8'>
               <LoadingSpinner />
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className='space-y-4'>
               {/* Search */}
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <div className='relative'>
+                <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5' />
                 <input
-                  type="text"
+                  type='text'
                   placeholder={t('admin.improvements.searchBuildings') || 'Search buildings...'}
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500"
+                  onChange={e => setSearchTerm(e.target.value)}
+                  className='w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500'
                 />
               </div>
 
               {/* Building List */}
-              <div className="max-h-64 overflow-y-auto border border-gray-200 rounded-md">
+              <div className='max-h-64 overflow-y-auto border border-gray-200 rounded-md'>
                 {filteredBuildings.length === 0 ? (
-                  <div className="p-4 text-center text-gray-500">
+                  <div className='p-4 text-center text-gray-500'>
                     {t('admin.improvements.noBuildings') || 'No buildings found'}
                   </div>
                 ) : (
-                  filteredBuildings.map((building) => (
+                  filteredBuildings.map(building => (
                     <button
                       key={building.id}
                       onClick={() => handleBuildingSelect(building.id)}
                       className={`w-full text-left p-4 border-b border-gray-200 hover:bg-gray-50 transition-colors ${
-                        selectedBuilding?.id === building.id
-                          ? 'bg-green-50 border-green-200'
-                          : ''
+                        selectedBuilding?.id === building.id ? 'bg-green-50 border-green-200' : ''
                       }`}
                     >
-                      <div className="flex items-center justify-between">
+                      <div className='flex items-center justify-between'>
                         <div>
-                          <p className="font-medium text-gray-900">{building.address}</p>
-                          <p className="text-sm text-gray-600">
+                          <p className='font-medium text-gray-900'>{building.address}</p>
+                          <p className='text-sm text-gray-600'>
                             {building.roofType && t(`roofTypes.${building.roofType}`)}
                             {building.roofSize && ` • ${building.roofSize} m²`}
                           </p>
                         </div>
                         {selectedBuilding?.id === building.id && (
-                          <CheckCircle className="w-5 h-5 text-green-600" />
+                          <CheckCircle className='w-5 h-5 text-green-600' />
                         )}
                       </div>
                     </button>
@@ -437,9 +422,7 @@ const BuildingESGImprovements: React.FC = () => {
       {/* Selected Building Info and Improvements */}
       {selectedBuilding && (
         // ...existing code for the improvement configuration and results...
-        <>
-          {/* ...existing code... */}
-        </>
+        <>{/* ...existing code... */}</>
       )}
     </div>
   );

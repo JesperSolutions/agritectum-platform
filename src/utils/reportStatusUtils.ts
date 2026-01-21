@@ -8,19 +8,19 @@ import { ReportStatus } from '../types';
 export const VALID_TRANSITIONS: Record<ReportStatus, ReportStatus[]> = {
   // Draft can become completed, archived
   draft: ['completed', 'archived'],
-  
+
   // Completed can become sent, shared, archived
   completed: ['sent', 'shared', 'archived'],
-  
+
   // Sent can become shared, archived (but not back to completed/draft)
   sent: ['shared', 'archived'],
-  
+
   // Shared can become sent, archived (allows toggling public access)
   shared: ['sent', 'archived'],
-  
+
   // Archived is terminal - no transitions allowed
   archived: [],
-  
+
   // Offer statuses
   offer_sent: ['offer_accepted', 'offer_rejected', 'offer_expired', 'archived'],
   offer_accepted: ['archived'],
@@ -75,7 +75,7 @@ export const getStatusLabel = (status: ReportStatus): string => {
     offer_rejected: 'Offer Rejected',
     offer_expired: 'Offer Expired',
   };
-  
+
   return labels[status] || status;
 };
 
@@ -94,7 +94,6 @@ export const getStatusColor = (status: ReportStatus): string => {
     offer_rejected: 'red',
     offer_expired: 'orange',
   };
-  
+
   return colors[status] || 'gray';
 };
-

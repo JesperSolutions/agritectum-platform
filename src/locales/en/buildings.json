@@ -69,5 +69,13 @@
   "buildings.esg.recommendation.solar": "This building has significant solar potential. Consider installing solar panels to reduce carbon footprint.",
   "buildings.esg.recommendation.recycling": "Your roofing material has high recycling potential. Ensure proper recycling at end of life.",
   "buildings.esg.recommendation.neutrality": "CO₂ neutrality is projected in {years} years. Consider additional improvements to accelerate this timeline.",
-  "buildings.esg.lastCalculated": "Last calculated"
+  "buildings.esg.lastCalculated": "Last calculated",
+  "buildings.esgReports.title": "ESG Reports",
+  "buildings.esgReports.report": "ESG Service Report",
+  "buildings.esgReports.roofSize": "Roof Size",
+  "buildings.esgReports.greenRoof": "Green Roof",
+  "buildings.esgReports.coolRoof": "Cool Roof",
+  "buildings.esgReports.noxReduction": "NOₓ Reduction",
+  "buildings.esgReports.private": "ESG Report (Private)",
+  "buildings.esgReports.privateDesc": "This report is not publicly available yet"
 }

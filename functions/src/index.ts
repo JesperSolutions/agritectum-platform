@@ -1,4 +1,3 @@
-
 /**
  * Import function triggers from their respective submodules:
  *
@@ -25,7 +24,12 @@ import { createUserWithAuth } from './createUserWithAuth';
 import { resetUserPassword, viewUserPassword } from './userPasswordManagement';
 
 // Offer follow-up functions
-import { checkOfferFollowUps, testOfferFollowUp, publicRespondToOffer, checkEmailHealth } from './offerFollowUp';
+import {
+  checkOfferFollowUps,
+  testOfferFollowUp,
+  publicRespondToOffer,
+  checkEmailHealth,
+} from './offerFollowUp';
 
 // Appointment reminder functions
 import { sendAppointmentReminders } from './appointmentReminders';
@@ -43,14 +47,13 @@ import { generateReportPDF } from './simplePdfService';
 import { onCustomerUserCreate } from './onCustomerUserCreate';
 import { onBuildingCreate } from './onBuildingCreate';
 
-
-
 // Start writing functions
 // https://firebase.google.com/docs/functions/typescript
 
 // Set global options for EU region
 setGlobalOptions({
   maxInstances: 10,
+  region: 'europe-west1',
 });
 
 // Export email functions
@@ -82,8 +85,6 @@ export { generateReportPDF };
 // Export customer and building functions
 export { onCustomerUserCreate };
 export { onBuildingCreate };
-
-
 
 // export const helloWorld = onRequest((request, response) => {
 //   logger.info("Hello logs!", {structuredData: true});

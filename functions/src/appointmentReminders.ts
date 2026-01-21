@@ -9,7 +9,7 @@ export const sendAppointmentReminders = functions
   .region('europe-west1')
   .pubsub.schedule('0 6 * * *') // Every day at 6 AM UTC
   .timeZone('Europe/Copenhagen')
-  .onRun(async (context) => {
+  .onRun(async _context => {
     console.log('🔄 Starting appointment reminder job...');
 
     try {
@@ -61,7 +61,10 @@ export const sendAppointmentReminders = functions
         let scheduledVisit = null;
         if (appointment.scheduledVisitId) {
           try {
-            const visitDoc = await db.collection('scheduledVisits').doc(appointment.scheduledVisitId).get();
+            const visitDoc = await db
+              .collection('scheduledVisits')
+              .doc(appointment.scheduledVisitId)
+              .get();
             if (visitDoc.exists) {
               scheduledVisit = visitDoc.data();
             }
@@ -77,7 +80,9 @@ export const sendAppointmentReminders = functions
             type: 'appointment_reminder',
             title: 'Reminder: Roof Inspection Tomorrow',
             message: `Your roof inspection is scheduled for tomorrow (${appointment.scheduledDate}) at ${appointment.scheduledTime}.`,
-            link: scheduledVisit ? `/portal/appointment/${appointment.scheduledVisitId}/respond` : '/portal/scheduled-visits',
+            link: scheduledVisit
+              ? `/portal/appointment/${appointment.scheduledVisitId}/respond`
+              : '/portal/scheduled-visits',
             read: false,
             metadata: {
               appointmentId: appointmentId,
@@ -90,62 +95,24 @@ export const sendAppointmentReminders = functions
 
           if (appointment.customerId) {
             reminderPromises.push(
-              db.collection('notifications').add(customerNotification).then(() => {
-                console.log(`✅ Customer reminder notification created for appointment ${appointmentId}`);
-              })
+              db
+                .collection('notifications')
+                .add(customerNotification)
+                .then(() => {
+                  console.log(
+                    `✅ Customer reminder notification created for appointment ${appointmentId}`
+                  );
+                })
             );
           }
 
           // Send email reminder to customer
           if (appointment.customerEmail) {
             reminderPromises.push(
-              db.collection('mail').add({
-                to: appointment.customerEmail,
-                template: {
-                  name: 'appointment-reminder',
-                  data: {
-                    customerName: appointment.customerName,
-                    appointmentDate: appointment.scheduledDate,
-                    appointmentTime: appointment.scheduledTime,
-                    inspectorName: appointment.assignedInspectorName,
-                    address: appointment.customerAddress,
-                  },
-                },
-              }).then(() => {
-                console.log(`✅ Customer reminder email queued for appointment ${appointmentId}`);
-              })
-            );
-          }
-        }
-
-        // Send reminder to roofer
-        if (appointment.assignedInspectorId) {
-          reminderPromises.push(
-            db.collection('notifications').add({
-              userId: appointment.assignedInspectorId,
-              type: 'appointment_reminder',
-              title: 'Reminder: Inspection Tomorrow',
-              message: `You have an inspection scheduled for tomorrow (${appointment.scheduledDate}) at ${appointment.scheduledTime} - ${appointment.customerName}, ${appointment.customerAddress}`,
-              link: '/schedule',
-              read: false,
-              metadata: {
-                appointmentId: appointmentId,
-                category: 'appointment',
-                priority: 'medium',
-              },
-              createdAt: admin.firestore.FieldValue.serverTimestamp(),
-            }).then(() => {
-              console.log(`✅ Roofer reminder notification created for appointment ${appointmentId}`);
-            })
-          );
-
-          // Send email reminder to roofer
-          try {
-            const rooferDoc = await db.collection('users').doc(appointment.assignedInspectorId).get();
-            if (rooferDoc.exists && rooferDoc.data()?.email) {
-              reminderPromises.push(
-                db.collection('mail').add({
-                  to: rooferDoc.data()!.email,
+              db
+                .collection('mail')
+                .add({
+                  to: appointment.customerEmail,
                   template: {
                     name: 'appointment-reminder',
                     data: {
@@ -156,9 +123,66 @@ export const sendAppointmentReminders = functions
                       address: appointment.customerAddress,
                     },
                   },
-                }).then(() => {
-                  console.log(`✅ Roofer reminder email queued for appointment ${appointmentId}`);
                 })
+                .then(() => {
+                  console.log(`✅ Customer reminder email queued for appointment ${appointmentId}`);
+                })
+            );
+          }
+        }
+
+        // Send reminder to roofer
+        if (appointment.assignedInspectorId) {
+          reminderPromises.push(
+            db
+              .collection('notifications')
+              .add({
+                userId: appointment.assignedInspectorId,
+                type: 'appointment_reminder',
+                title: 'Reminder: Inspection Tomorrow',
+                message: `You have an inspection scheduled for tomorrow (${appointment.scheduledDate}) at ${appointment.scheduledTime} - ${appointment.customerName}, ${appointment.customerAddress}`,
+                link: '/schedule',
+                read: false,
+                metadata: {
+                  appointmentId: appointmentId,
+                  category: 'appointment',
+                  priority: 'medium',
+                },
+                createdAt: admin.firestore.FieldValue.serverTimestamp(),
+              })
+              .then(() => {
+                console.log(
+                  `✅ Roofer reminder notification created for appointment ${appointmentId}`
+                );
+              })
+          );
+
+          // Send email reminder to roofer
+          try {
+            const rooferDoc = await db
+              .collection('users')
+              .doc(appointment.assignedInspectorId)
+              .get();
+            if (rooferDoc.exists && rooferDoc.data()?.email) {
+              reminderPromises.push(
+                db
+                  .collection('mail')
+                  .add({
+                    to: rooferDoc.data()!.email,
+                    template: {
+                      name: 'appointment-reminder',
+                      data: {
+                        customerName: appointment.customerName,
+                        appointmentDate: appointment.scheduledDate,
+                        appointmentTime: appointment.scheduledTime,
+                        inspectorName: appointment.assignedInspectorName,
+                        address: appointment.customerAddress,
+                      },
+                    },
+                  })
+                  .then(() => {
+                    console.log(`✅ Roofer reminder email queued for appointment ${appointmentId}`);
+                  })
               );
             }
           } catch (error) {
@@ -168,16 +192,22 @@ export const sendAppointmentReminders = functions
 
         // Mark reminder as sent
         reminderPromises.push(
-          db.collection('appointments').doc(appointmentId).update({
-            reminderSentAt: admin.firestore.FieldValue.serverTimestamp(),
-          }).then(() => {
-            console.log(`✅ Reminder marked as sent for appointment ${appointmentId}`);
-          })
+          db
+            .collection('appointments')
+            .doc(appointmentId)
+            .update({
+              reminderSentAt: admin.firestore.FieldValue.serverTimestamp(),
+            })
+            .then(() => {
+              console.log(`✅ Reminder marked as sent for appointment ${appointmentId}`);
+            })
         );
       }
 
       await Promise.all(reminderPromises);
-      console.log(`✅ Reminder job completed. Processed ${appointmentsSnapshot.size} appointments.`);
+      console.log(
+        `✅ Reminder job completed. Processed ${appointmentsSnapshot.size} appointments.`
+      );
       return null;
     } catch (error) {
       console.error('❌ Error in appointment reminder job:', error);

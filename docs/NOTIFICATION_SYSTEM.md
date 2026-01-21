@@ -41,6 +41,7 @@ The Taklaget Service App has a **notification infrastructure in place** but it's
 **Critical Gap:** The notification hooks are **never called** when reports are created.
 
 **Current Behavior:**
+
 - When an inspector creates a report → No notification is generated
 - Branch managers do **NOT** receive notifications about new reports from their employees
 - The notification infrastructure is "dormant" - built but not wired up
@@ -74,10 +75,7 @@ export const notifyBranchManagerOfNewReport = async (
 ): Promise<void> => {
   try {
     // 1. Find all branch managers for this branch
-    const branchManagers = await getUserListByRole(
-      report.branchId, 
-      'branchAdmin'
-    );
+    const branchManagers = await getUserListByRole(report.branchId, 'branchAdmin');
 
     // 2. Create notifications for each manager
     const notifications = branchManagers.map(manager => ({
@@ -102,7 +100,7 @@ export const notifyBranchManagerOfNewReport = async (
 
     // 3. Batch create notifications
     await createBatchNotifications(notifications);
-    
+
     console.log(`✅ Notifications sent to ${branchManagers.length} managers`);
   } catch (error) {
     console.error('❌ Error notifying branch managers:', error);
@@ -119,13 +117,10 @@ const handleSubmit = async (e: React.FormEvent, status?: ReportStatus) => {
 
   if (mode === 'create') {
     const newReportId = await createReport(reportData);
-    
+
     // ✅ ADD THIS: Notify branch managers
-    await notifyBranchManagerOfNewReport(
-      { ...reportData, id: newReportId },
-      currentUser
-    );
-    
+    await notifyBranchManagerOfNewReport({ ...reportData, id: newReportId }, currentUser);
+
     showSuccess(t('messages.success.saved'));
     // ...
   }
@@ -143,6 +138,7 @@ const handleSubmit = async (e: React.FormEvent, status?: ReportStatus) => {
 ### Why It's Not Working
 
 Looking at the code flow:
+
 - `ReportForm.tsx` creates a report via `reportService.createReport()`
 - `reportService` just saves to Firestore
 - **No call to notification hooks**
@@ -151,6 +147,7 @@ Looking at the code flow:
 ## Translation Status
 
 ✅ **Fixed October 28, 2025**
+
 - Created `src/locales/sv/notifications.json` with 17 translation keys
 - All notification UI elements now properly translated
 
@@ -162,7 +159,7 @@ db.collection('notifications')
   .where('userId', '==', 'BRANCH_ADMIN_USER_ID')
   .orderBy('timestamp', 'desc')
   .limit(10)
-  .get()
+  .get();
 ```
 
 ## Recommended Next Steps
@@ -205,6 +202,7 @@ db.collection('notifications')
 ## Conclusion
 
 **Answer to Your Question:**
+
 > "As the branch manager, when a new report is created by one of my employees... do I get a notification?"
 
 **Current Answer:** ❌ **No**, you do NOT receive notifications. The infrastructure exists but isn't connected.
@@ -216,4 +214,3 @@ db.collection('notifications')
 **Priority:** High - This is a significant missing feature that affects workflow efficiency.
 
 **Estimated Implementation Time:** 2-4 hours (including testing)
-

@@ -17,6 +17,7 @@ const BuildingsList: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
+    name: '',
     address: '',
     buildingType: 'residential' as Building['buildingType'],
     roofType: 'tile' as Building['roofType'],
@@ -49,9 +50,14 @@ const BuildingsList: React.FC = () => {
     if (!currentUser) return;
 
     try {
+      if (!formData.address || !formData.name) {
+        alert('Please fill in all required fields (Name and Address)');
+        return;
+      }
       // Use companyId (linked customer/company document) not user uid
       const customerId = currentUser.companyId || currentUser.uid;
       await createBuilding({
+        name: formData.name,
         customerId: customerId,
         address: formData.address,
         buildingType: formData.buildingType,
@@ -59,7 +65,13 @@ const BuildingsList: React.FC = () => {
         roofSize: formData.roofSize ? parseFloat(formData.roofSize) : undefined,
       });
       setShowForm(false);
-      setFormData({ address: '', buildingType: 'residential', roofType: 'tile', roofSize: '' });
+      setFormData({
+        name: '',
+        address: '',
+        buildingType: 'residential',
+        roofType: 'tile',
+        roofSize: '',
+      });
       loadBuildings();
     } catch (error) {
       console.error('Error creating building:', error);
@@ -95,21 +107,43 @@ const BuildingsList: React.FC = () => {
           <h2 className='text-xl font-semibold mb-4'>{t('buildings.addBuilding')}</h2>
           <form onSubmit={handleSubmit} className='space-y-4'>
             <div>
-              <label className='block text-sm font-medium text-gray-700 mb-2'>{t('buildings.address')} *</label>
+              <label className='block text-sm font-medium text-gray-700 mb-2'>
+                Building Name *
+              </label>
+              <input
+                type='text'
+                placeholder='e.g., Main Office, Warehouse A'
+                value={formData.name}
+                onChange={e => setFormData({ ...formData, name: e.target.value })}
+                required
+                className='w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500'
+              />
+            </div>
+            <div>
+              <label className='block text-sm font-medium text-gray-700 mb-2'>
+                {t('buildings.address')} *
+              </label>
               <input
                 type='text'
                 value={formData.address}
-                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                onChange={e => setFormData({ ...formData, address: e.target.value })}
                 required
                 className='w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500'
               />
             </div>
             <div className='grid grid-cols-2 gap-4'>
               <div>
-                <label className='block text-sm font-medium text-gray-700 mb-2'>{t('buildings.buildingType')}</label>
+                <label className='block text-sm font-medium text-gray-700 mb-2'>
+                  {t('buildings.buildingType')}
+                </label>
                 <select
                   value={formData.buildingType}
-                  onChange={(e) => setFormData({ ...formData, buildingType: e.target.value as Building['buildingType'] })}
+                  onChange={e =>
+                    setFormData({
+                      ...formData,
+                      buildingType: e.target.value as Building['buildingType'],
+                    })
+                  }
                   className='w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500'
                 >
                   <option value='residential'>{t('buildings.residential')}</option>
@@ -118,10 +152,14 @@ const BuildingsList: React.FC = () => {
                 </select>
               </div>
               <div>
-                <label className='block text-sm font-medium text-gray-700 mb-2'>{t('buildings.roofType')}</label>
+                <label className='block text-sm font-medium text-gray-700 mb-2'>
+                  {t('buildings.roofType')}
+                </label>
                 <select
                   value={formData.roofType}
-                  onChange={(e) => setFormData({ ...formData, roofType: e.target.value as Building['roofType'] })}
+                  onChange={e =>
+                    setFormData({ ...formData, roofType: e.target.value as Building['roofType'] })
+                  }
                   className='w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500'
                 >
                   <option value='tile'>{t('roofTypes.tile')}</option>
@@ -129,16 +167,24 @@ const BuildingsList: React.FC = () => {
                   <option value='shingle'>{t('roofTypes.shingle')}</option>
                   <option value='slate'>{t('roofTypes.slate')}</option>
                   <option value='flat'>{t('roofTypes.flat')}</option>
+                  <option value='flat_bitumen_2layer'>{t('roofTypes.flat_bitumen_2layer')}</option>
+                  <option value='flat_bitumen_3layer'>{t('roofTypes.flat_bitumen_3layer')}</option>
+                  <option value='flat_rubber'>{t('roofTypes.flat_rubber')}</option>
+                  <option value='flat_pvc'>{t('roofTypes.flat_pvc')}</option>
+                  <option value='flat_tpo'>{t('roofTypes.flat_tpo')}</option>
+                  <option value='flat_epdm'>{t('roofTypes.flat_epdm')}</option>
                   <option value='other'>{t('roofTypes.other')}</option>
                 </select>
               </div>
             </div>
             <div>
-              <label className='block text-sm font-medium text-gray-700 mb-2'>{t('buildings.roofSize')}</label>
+              <label className='block text-sm font-medium text-gray-700 mb-2'>
+                {t('buildings.roofSize')}
+              </label>
               <input
                 type='number'
                 value={formData.roofSize}
-                onChange={(e) => setFormData({ ...formData, roofSize: e.target.value })}
+                onChange={e => setFormData({ ...formData, roofSize: e.target.value })}
                 className='w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500'
               />
             </div>
@@ -174,12 +220,8 @@ const BuildingsList: React.FC = () => {
         </div>
       ) : (
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-          {buildings.map((building) => (
-            <Link
-              key={building.id}
-              to={`/portal/buildings/${building.id}`}
-              className='block'
-            >
+          {buildings.map(building => (
+            <Link key={building.id} to={`/portal/buildings/${building.id}`} className='block'>
               <ListCard>
                 <div className='flex items-start justify-between mb-4'>
                   <BuildingIcon className='w-8 h-8 text-slate-700' />
@@ -187,7 +229,8 @@ const BuildingsList: React.FC = () => {
                     {building.buildingType ? t(`buildings.${building.buildingType}`) : 'N/A'}
                   </span>
                 </div>
-                <h3 className='font-semibold text-gray-900 mb-4'>{building.address}</h3>
+                <h3 className='font-semibold text-gray-900 mb-2'>{building.name || 'N/A'}</h3>
+                <p className='text-sm text-gray-600 mb-4'>{building.address}</p>
                 <div className='space-y-2'>
                   {building.roofType && (
                     <IconLabel
@@ -213,5 +256,3 @@ const BuildingsList: React.FC = () => {
 };
 
 export default BuildingsList;
-
-

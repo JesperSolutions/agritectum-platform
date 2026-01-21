@@ -13,7 +13,7 @@ const DraftReportsList: React.FC = () => {
   const { t } = useIntl();
   const { showSuccess, showError } = useToast();
   const navigate = useNavigate();
-  
+
   const [reportToDelete, setReportToDelete] = React.useState<Report | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
   const [isDeleting, setIsDeleting] = React.useState(false);
@@ -100,22 +100,22 @@ const DraftReportsList: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className='flex items-center justify-center min-h-screen'>
         <LoadingSpinner />
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-6 space-y-6">
+    <div className='max-w-7xl mx-auto p-6 space-y-6'>
       {/* Header */}
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <div className="flex items-center justify-between">
+      <div className='bg-white rounded-lg shadow-sm p-6'>
+        <div className='flex items-center justify-between'>
           <div>
-            <h1 className="text-3xl font-light text-gray-900 mb-2">
+            <h1 className='text-3xl font-light text-gray-900 mb-2'>
               {t('reports.draftReports') || 'Draft Reports'}
             </h1>
-            <p className="text-gray-600">
+            <p className='text-gray-600'>
               {draftReports.length === 0
                 ? t('reports.noDrafts') || 'No draft reports'
                 : t('reports.draftCount', { count: draftReports.length }) ||
@@ -127,24 +127,24 @@ const DraftReportsList: React.FC = () => {
 
       {/* Draft Reports List */}
       {draftReports.length === 0 ? (
-        <div className="bg-white rounded-lg shadow-sm p-12 text-center">
-          <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-xl font-medium text-gray-900 mb-2">
+        <div className='bg-white rounded-lg shadow-sm p-12 text-center'>
+          <FileText className='w-16 h-16 text-gray-400 mx-auto mb-4' />
+          <h3 className='text-xl font-medium text-gray-900 mb-2'>
             {t('reports.noDrafts') || 'No Draft Reports'}
           </h3>
-          <p className="text-gray-600 mb-6">
+          <p className='text-gray-600 mb-6'>
             {t('reports.noDraftsDescription') ||
-              'You don\'t have any draft reports. Start creating a new report to save drafts.'}
+              "You don't have any draft reports. Start creating a new report to save drafts."}
           </p>
           <button
             onClick={() => navigate('/report/new')}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            className='px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors'
           >
             {t('reports.createNewReport') || 'Create New Report'}
           </button>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className='space-y-4'>
           {draftReports
             .sort((a, b) => {
               const dateA = a.lastEdited ? new Date(a.lastEdited).getTime() : 0;
@@ -156,61 +156,63 @@ const DraftReportsList: React.FC = () => {
               return (
                 <div
                   key={report.id}
-                  className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"
+                  className='bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow'
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
+                  <div className='flex items-start justify-between'>
+                    <div className='flex-1'>
                       {/* Customer Info */}
-                      <div className="flex items-center gap-3 mb-3">
-                        <User className="w-5 h-5 text-gray-400" />
-                        <h3 className="text-lg font-medium text-gray-900">
-                          {report.customerName || t('reports.unnamedCustomer') || 'Unnamed Customer'}
+                      <div className='flex items-center gap-3 mb-3'>
+                        <User className='w-5 h-5 text-gray-400' />
+                        <h3 className='text-lg font-medium text-gray-900'>
+                          {report.customerName ||
+                            t('reports.unnamedCustomer') ||
+                            'Unnamed Customer'}
                         </h3>
                       </div>
 
                       {/* Address */}
                       {report.customerAddress && (
-                        <div className="flex items-start gap-2 mb-3 text-gray-600">
-                          <MapPin className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
-                          <span className="text-sm">{report.customerAddress}</span>
+                        <div className='flex items-start gap-2 mb-3 text-gray-600'>
+                          <MapPin className='w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0' />
+                          <span className='text-sm'>{report.customerAddress}</span>
                         </div>
                       )}
 
                       {/* Progress and Last Edited */}
-                      <div className="flex items-center gap-6 mt-4">
-                        <div className="flex items-center gap-2">
-                          <Clock className="w-4 h-4 text-gray-400" />
-                          <span className="text-sm text-gray-600">
+                      <div className='flex items-center gap-6 mt-4'>
+                        <div className='flex items-center gap-2'>
+                          <Clock className='w-4 h-4 text-gray-400' />
+                          <span className='text-sm text-gray-600'>
                             {t('reports.lastEdited') || 'Last edited'}:{' '}
                             {formatDate(report.lastEdited || report.createdAt)}
                           </span>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <div className="flex-1 w-32 bg-gray-200 rounded-full h-2">
+                        <div className='flex items-center gap-2'>
+                          <div className='flex-1 w-32 bg-gray-200 rounded-full h-2'>
                             <div
-                              className="bg-blue-600 h-2 rounded-full"
+                              className='bg-blue-600 h-2 rounded-full'
                               style={{ width: `${progress}%` }}
                             />
                           </div>
-                          <span className="text-sm font-medium text-gray-700">{progress}%</span>
+                          <span className='text-sm font-medium text-gray-700'>{progress}%</span>
                         </div>
                       </div>
                     </div>
 
                     {/* Actions */}
-                    <div className="flex items-center gap-2 ml-6">
+                    <div className='flex items-center gap-2 ml-6'>
                       <button
                         onClick={() => handleResumeDraft(report)}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center gap-2"
+                        className='px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center gap-2'
                       >
-                        <Edit className="w-4 h-4" />
+                        <Edit className='w-4 h-4' />
                         {t('reports.resume') || 'Resume'}
                       </button>
                       <button
                         onClick={() => handleDeleteDraft(report)}
-                        className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors flex items-center gap-2"
+                        className='px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors flex items-center gap-2'
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className='w-4 h-4' />
                         {t('common.delete') || 'Delete'}
                       </button>
                     </div>
@@ -233,8 +235,8 @@ const DraftReportsList: React.FC = () => {
         }
         confirmText={t('common.delete') || 'Delete'}
         cancelText={t('common.cancel') || 'Cancel'}
-        type="danger"
-        icon="trash"
+        type='danger'
+        icon='trash'
         isLoading={isDeleting}
       />
     </div>
@@ -242,4 +244,3 @@ const DraftReportsList: React.FC = () => {
 };
 
 export default DraftReportsList;
-

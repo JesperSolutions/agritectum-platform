@@ -1,9 +1,9 @@
 /**
  * Notification Helper Service
- * 
+ *
  * Helper functions for notification operations, including finding branch managers
  * to notify about report events.
- * 
+ *
  * @author Agritectum Development Team
  * @version 1.0.0
  * @since 2025-01-XX
@@ -33,10 +33,12 @@ export const getBranchManagersForNotification = async (branchId: string): Promis
     );
 
     const snapshot = await getDocs(q);
-    const userIds = snapshot.docs.map(doc => {
-      const data = doc.data();
-      return data.uid || doc.id;
-    }).filter((uid): uid is string => !!uid); // Filter out undefined/null values
+    const userIds = snapshot.docs
+      .map(doc => {
+        const data = doc.data();
+        return data.uid || doc.id;
+      })
+      .filter((uid): uid is string => !!uid); // Filter out undefined/null values
 
     logger.log(`✅ Found ${userIds.length} branch manager(s) for branch ${branchId}`, userIds);
     return userIds;
@@ -46,4 +48,3 @@ export const getBranchManagersForNotification = async (branchId: string): Promis
     return [];
   }
 };
-

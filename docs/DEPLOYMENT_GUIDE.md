@@ -3,6 +3,7 @@
 ## Firebase Hosting Deployment
 
 ### Overview
+
 This guide documents the process for deploying the Agritectum Platform to Firebase Hosting. **IMPORTANT:** Always clear the build cache before deploying to ensure browsers receive the latest version without needing manual cache clearing.
 
 ---
@@ -30,6 +31,7 @@ Write-Host "Build cache cleared successfully"
 ```
 
 Or for Mac/Linux:
+
 ```bash
 rm -rf dist
 rm -rf node_modules/.vite
@@ -37,6 +39,7 @@ echo "Build cache cleared successfully"
 ```
 
 **Why this is important:**
+
 - Vite caches build artifacts which can prevent browsers from receiving updates
 - Without clearing the cache, users may see stale content even after fresh deployments
 - This eliminates the need for users to manually clear their browser cache
@@ -48,6 +51,7 @@ npm run build
 ```
 
 The build process will:
+
 - Transform all modules (typically 2805+ modules)
 - Output production-ready files to the `dist/` directory
 - Generate hashed filenames for cache busting
@@ -62,6 +66,7 @@ Add a one-liner replacement step (PowerShell):
 ```
 
 Expected output confirms successful build:
+
 ```
 ✓ built in X.XXs
 ```
@@ -75,11 +80,13 @@ firebase deploy --only firestore:indexes
 ```
 
 Firebase will:
+
 - Upload all files from the `dist/` directory
 - Finalize the version
 - Release the new version to live hosting
 
 **Expected output:**
+
 ```
 +  Deploy complete!
 
@@ -99,6 +106,7 @@ Remove-Item -Path "dist" -Recurse -Force -ErrorAction SilentlyContinue; Remove-I
 ```
 
 Or for Mac/Linux:
+
 ```bash
 rm -rf dist && rm -rf node_modules/.vite && npm run build && firebase deploy --only hosting
 ```
@@ -108,15 +116,18 @@ rm -rf dist && rm -rf node_modules/.vite && npm run build && firebase deploy --o
 ## Verifying the Deployment
 
 ### 1. Check Firebase Console
+
 - Visit: https://console.firebase.google.com/project/agritectum-app/overview
 - Navigate to **Hosting** tab to see deployment history and status
 
 ### 2. Test the Live App
+
 - Open: https://agritectum-app.web.app
 - Hard refresh the page (Ctrl+Shift+R on Windows/Linux, Cmd+Shift+R on Mac)
 - Verify new changes are visible
 
 ### 3. Confirm Cache Busting
+
 - Open browser DevTools (F12)
 - Navigate to **Network** tab
 - Reload the page and verify that JavaScript chunks have new hashes
@@ -129,6 +140,7 @@ rm -rf dist && rm -rf node_modules/.vite && npm run build && firebase deploy --o
 ### Issue: Seeing Old Content After Deployment
 
 **Solution:**
+
 1. Check Firebase Hosting console to confirm deployment completed successfully
 2. Hard refresh your browser (Ctrl+Shift+R / Cmd+Shift+R)
 3. Clear browser cache completely:
@@ -139,11 +151,13 @@ rm -rf dist && rm -rf node_modules/.vite && npm run build && firebase deploy --o
 ### Issue: Firebase Authentication Error
 
 **Possible causes:**
+
 - Not logged into Firebase CLI: Run `firebase login`
 - Wrong project selected: Verify `.firebaserc` has `"default": "agritectum-app"`
 - Missing permissions: Ensure your account has access to the Firebase project
 
 **Solution:**
+
 ```powershell
 firebase login
 firebase use agritectum-app
@@ -153,11 +167,13 @@ firebase deploy --only hosting
 ### Issue: Build Fails
 
 **Common causes:**
+
 - TypeScript/ESLint errors: Review error messages in build output
 - Missing dependencies: Run `npm install` to ensure all packages are installed
 - Node version mismatch: Verify Node.js version (use `node --version`)
 
 **Solution:**
+
 ```powershell
 npm install
 npm run build
@@ -166,6 +182,7 @@ npm run build
 ### Issue: "Unable to find a valid endpoint for function generateReportPDF"
 
 **Status:** This is a non-critical warning and can be safely ignored
+
 - The warning appears because the PDF generation function is not deployed as a Cloud Function
 - The hosting deployment completes successfully despite this warning
 
@@ -185,6 +202,7 @@ VITE_FIREBASE_APP_ID=<your-app-id>
 ```
 
 **Important:**
+
 - Ensure `.env` is **NOT** committed to version control (should be in `.gitignore`)
 - Update `.env` on deployment machine before building if credentials change
 - These are frontend credentials and are meant to be public
@@ -214,4 +232,3 @@ VITE_FIREBASE_APP_ID=<your-app-id>
 ✅ **Hard refresh your browser after deployment to verify changes**
 ✅ **Check Firebase console for deployment history**
 ✅ **Users should NOT need to manually clear cache if this process is followed**
-

@@ -7,7 +7,11 @@ import 'leaflet/dist/leaflet.css';
 interface RoofSizeMeasurerProps {
   lat: number;
   lon: number;
-  onAreaCalculated: (areaInSquareMeters: number, snapshotDataUrl?: string, polygonPoints?: L.LatLng[]) => void;
+  onAreaCalculated: (
+    areaInSquareMeters: number,
+    snapshotDataUrl?: string,
+    polygonPoints?: L.LatLng[]
+  ) => void;
   onClose: () => void;
   initialArea?: number; // Optional initial area value
   initialSnapshot?: string; // Optional initial snapshot data URL
@@ -150,12 +154,15 @@ const RoofSizeMeasurer: React.FC<RoofSizeMeasurerProps> = ({
           map.removeLayer(polygonRef.current);
         }
 
-        const polygon = L.polygon(newPoints.map(p => [p.lat, p.lng]), {
-          color: '#3b82f6',
-          fillColor: '#3b82f6',
-          fillOpacity: 0.3,
-          weight: 2,
-        }).addTo(map);
+        const polygon = L.polygon(
+          newPoints.map(p => [p.lat, p.lng]),
+          {
+            color: '#3b82f6',
+            fillColor: '#3b82f6',
+            fillOpacity: 0.3,
+            weight: 2,
+          }
+        ).addTo(map);
 
         polygonRef.current = polygon;
 
@@ -251,7 +258,7 @@ const RoofSizeMeasurer: React.FC<RoofSizeMeasurerProps> = ({
 
       // Draw raster canvas layers first (tile layers)
       const canvases = container.querySelectorAll('canvas');
-      canvases.forEach((canvas) => {
+      canvases.forEach(canvas => {
         try {
           ctx.drawImage(canvas as HTMLCanvasElement, 0, 0);
         } catch (e) {
@@ -268,8 +275,8 @@ const RoofSizeMeasurer: React.FC<RoofSizeMeasurerProps> = ({
           const svg64 = btoa(unescape(encodeURIComponent(xml)));
           const img = new Image();
           img.src = `data:image/svg+xml;base64,${svg64}`;
-          // eslint-disable-next-line no-await-in-loop
-          await new Promise<void>((resolve) => {
+
+          await new Promise<void>(resolve => {
             img.onload = () => {
               try {
                 ctx.drawImage(img, 0, 0);
@@ -287,7 +294,7 @@ const RoofSizeMeasurer: React.FC<RoofSizeMeasurerProps> = ({
 
       // Attempt to draw marker DOM elements approximately
       const markerEls = container.querySelectorAll('.roof-point-marker, .leaflet-marker-icon');
-      markerEls.forEach((el) => {
+      markerEls.forEach(el => {
         try {
           const rect = (el as HTMLElement).getBoundingClientRect();
           const containerRect = container.getBoundingClientRect();
@@ -297,7 +304,13 @@ const RoofSizeMeasurer: React.FC<RoofSizeMeasurerProps> = ({
           ctx.fillStyle = '#3b82f6';
           ctx.strokeStyle = '#ffffff';
           ctx.lineWidth = 3;
-          ctx.arc(x + rect.width / 2, y + rect.height / 2, Math.max(6, rect.width / 2), 0, Math.PI * 2);
+          ctx.arc(
+            x + rect.width / 2,
+            y + rect.height / 2,
+            Math.max(6, rect.width / 2),
+            0,
+            Math.PI * 2
+          );
           ctx.fill();
           ctx.stroke();
         } catch (err) {
@@ -318,45 +331,50 @@ const RoofSizeMeasurer: React.FC<RoofSizeMeasurerProps> = ({
       // Capture snapshot before confirming
       const snapshot = await captureSnapshot();
       setSnapshotUrl(snapshot || null);
-      
+
       onAreaCalculated(area, snapshot, pointsRef.current);
       onClose();
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-2 sm:p-4 z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-hidden flex flex-col">
+    <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-2 sm:p-4 z-50'>
+      <div className='bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-hidden flex flex-col'>
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
-          <div className="flex items-center gap-2">
-            <Ruler className="w-5 h-5 text-blue-600" />
-            <h2 className="text-xl font-bold text-gray-900">{t('reportForm.roofMeasurer.title') || 'Measure Roof Size'}</h2>
+        <div className='flex items-center justify-between p-4 border-b border-gray-200'>
+          <div className='flex items-center gap-2'>
+            <Ruler className='w-5 h-5 text-blue-600' />
+            <h2 className='text-xl font-bold text-gray-900'>
+              {t('reportForm.roofMeasurer.title') || 'Measure Roof Size'}
+            </h2>
           </div>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            <X className="w-6 h-6" />
+          <button onClick={onClose} className='text-gray-400 hover:text-gray-600 transition-colors'>
+            <X className='w-6 h-6' />
           </button>
         </div>
 
         {/* Instructions */}
-        <div className="p-4 bg-blue-50 border-b border-gray-200">
-          <p className="text-sm text-gray-700">
+        <div className='p-4 bg-blue-50 border-b border-gray-200'>
+          <p className='text-sm text-gray-700'>
             {isDrawing ? (
-                <>{t('reportForm.roofMeasurer.instructions.drawing') || 'Drawing mode: Click on the map to add points around the roof perimeter. You need at least 3 points to form a polygon. The area will be calculated automatically.'}</>
+              <>
+                {t('reportForm.roofMeasurer.instructions.drawing') ||
+                  'Drawing mode: Click on the map to add points around the roof perimeter. You need at least 3 points to form a polygon. The area will be calculated automatically.'}
+              </>
             ) : (
-              <>{t('reportForm.roofMeasurer.instructions.start') || 'Click "Start Drawing" to begin measuring. Then click on the map to mark the corners of the roof.'}</>
+              <>
+                {t('reportForm.roofMeasurer.instructions.start') ||
+                  'Click "Start Drawing" to begin measuring. Then click on the map to mark the corners of the roof.'}
+              </>
             )}
           </p>
         </div>
 
         {/* Map */}
-        <div className="flex-1 relative" style={{ zIndex: 1 }}>
+        <div className='flex-1 relative' style={{ zIndex: 1 }}>
           <div
             ref={mapRef}
-            className="w-full h-full min-h-[400px]"
+            className='w-full h-full min-h-[400px]'
             style={{
               zIndex: 1,
               touchAction: isDrawing ? 'none' : 'pan-x pan-y pinch-zoom', // Prevent panning when drawing
@@ -390,13 +408,13 @@ const RoofSizeMeasurer: React.FC<RoofSizeMeasurerProps> = ({
         </div>
 
         {/* Controls */}
-        <div className="p-3 sm:p-4 border-t border-gray-200 bg-gray-50">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 sm:mb-4 gap-3">
-            <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
+        <div className='p-3 sm:p-4 border-t border-gray-200 bg-gray-50'>
+          <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 sm:mb-4 gap-3'>
+            <div className='flex items-center gap-2 sm:gap-4 flex-wrap'>
               {!isDrawing ? (
                 <button
                   onClick={handleStartDrawing}
-                  className="px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800 transition-colors font-medium text-sm sm:text-base touch-manipulation"
+                  className='px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800 transition-colors font-medium text-sm sm:text-base touch-manipulation'
                   style={{ minHeight: '44px' }} // iOS touch target minimum
                 >
                   {t('reportForm.roofMeasurer.startDrawing') || 'Start Drawing'}
@@ -405,26 +423,31 @@ const RoofSizeMeasurer: React.FC<RoofSizeMeasurerProps> = ({
                 <>
                   <button
                     onClick={handleClear}
-                    className="px-3 sm:px-4 py-2.5 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 active:bg-gray-400 transition-colors font-medium flex items-center gap-2 text-sm sm:text-base touch-manipulation"
+                    className='px-3 sm:px-4 py-2.5 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 active:bg-gray-400 transition-colors font-medium flex items-center gap-2 text-sm sm:text-base touch-manipulation'
                     style={{ minHeight: '44px' }}
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className='w-4 h-4' />
                     {t('reportForm.roofMeasurer.clear') || 'Clear'}
                   </button>
-                  <span className="text-xs sm:text-sm text-gray-600 self-center">
-                    {t('reportForm.roofMeasurer.points', { count: points.length }) || `Points: ${points.length}`} {points.length >= 3 && ` (${t('reportForm.roofMeasurer.minimumReached') || 'Minimum reached'})`}
+                  <span className='text-xs sm:text-sm text-gray-600 self-center'>
+                    {t('reportForm.roofMeasurer.points', { count: points.length }) ||
+                      `Points: ${points.length}`}{' '}
+                    {points.length >= 3 &&
+                      ` (${t('reportForm.roofMeasurer.minimumReached') || 'Minimum reached'})`}
                   </span>
                 </>
               )}
             </div>
 
             {area !== null && (
-              <div className="text-left sm:text-right w-full sm:w-auto">
-                <div className="text-xs sm:text-sm text-gray-600">{t('reportForm.roofMeasurer.calculatedArea') || 'Calculated Area'}</div>
-                <div className="text-xl sm:text-2xl font-bold text-blue-600">
+              <div className='text-left sm:text-right w-full sm:w-auto'>
+                <div className='text-xs sm:text-sm text-gray-600'>
+                  {t('reportForm.roofMeasurer.calculatedArea') || 'Calculated Area'}
+                </div>
+                <div className='text-xl sm:text-2xl font-bold text-blue-600'>
                   {area.toFixed(2)} m²
                 </div>
-                <div className="text-xs text-gray-500">
+                <div className='text-xs text-gray-500'>
                   {(area * 10.764).toFixed(2)} {t('reportForm.roofMeasurer.sqft') || 'sq ft'}
                 </div>
               </div>
@@ -432,10 +455,10 @@ const RoofSizeMeasurer: React.FC<RoofSizeMeasurerProps> = ({
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-2 sm:gap-3">
+          <div className='flex gap-2 sm:gap-3'>
             <button
               onClick={onClose}
-              className="flex-1 px-4 sm:px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-colors font-semibold text-sm sm:text-base touch-manipulation"
+              className='flex-1 px-4 sm:px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-colors font-semibold text-sm sm:text-base touch-manipulation'
               style={{ minHeight: '44px' }}
             >
               {t('form.buttons.cancel')}
@@ -443,7 +466,7 @@ const RoofSizeMeasurer: React.FC<RoofSizeMeasurerProps> = ({
             <button
               onClick={handleConfirm}
               disabled={area === null || area === 0}
-              className="flex-1 px-4 sm:px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base touch-manipulation"
+              className='flex-1 px-4 sm:px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base touch-manipulation'
               style={{ minHeight: '44px' }}
             >
               {t('reportForm.roofMeasurer.useThisArea') || 'Use This Area'}

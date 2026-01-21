@@ -39,19 +39,20 @@ export const createUserWithAuth = onRequest(async (req, res) => {
   if (req.method !== 'POST') {
     res.status(405).json({
       success: false,
-      error: 'Method not allowed'
+      error: 'Method not allowed',
     });
     return;
   }
 
   try {
-    const { email, password, displayName, role, branchId, isActive, invitedBy }: CreateUserRequest = req.body;
+    const { email, password, displayName, role, branchId, isActive, invitedBy }: CreateUserRequest =
+      req.body;
 
     // Validate required fields
     if (!email || !password || !displayName || !role || !branchId) {
       res.status(400).json({
         success: false,
-        error: 'Missing required fields: email, password, displayName, role, branchId'
+        error: 'Missing required fields: email, password, displayName, role, branchId',
       });
       return;
     }
@@ -60,7 +61,7 @@ export const createUserWithAuth = onRequest(async (req, res) => {
     if (password.length < 8) {
       res.status(400).json({
         success: false,
-        error: 'Password must be at least 8 characters long'
+        error: 'Password must be at least 8 characters long',
       });
       return;
     }
@@ -120,9 +121,8 @@ export const createUserWithAuth = onRequest(async (req, res) => {
       success: true,
       userId: userRef.id,
       firebaseUid: firebaseUser.uid,
-      message: 'User created successfully'
+      message: 'User created successfully',
     });
-
   } catch (error: any) {
     console.error('❌ Error creating user:', error);
 
@@ -130,7 +130,7 @@ export const createUserWithAuth = onRequest(async (req, res) => {
     if (error.code === 'auth/email-already-exists') {
       res.status(400).json({
         success: false,
-        error: 'An account with this email already exists'
+        error: 'An account with this email already exists',
       });
       return;
     }
@@ -138,7 +138,7 @@ export const createUserWithAuth = onRequest(async (req, res) => {
     if (error.code === 'auth/invalid-email') {
       res.status(400).json({
         success: false,
-        error: 'Invalid email address'
+        error: 'Invalid email address',
       });
       return;
     }
@@ -146,7 +146,7 @@ export const createUserWithAuth = onRequest(async (req, res) => {
     if (error.code === 'auth/weak-password') {
       res.status(400).json({
         success: false,
-        error: 'Password is too weak'
+        error: 'Password is too weak',
       });
       return;
     }
@@ -154,7 +154,7 @@ export const createUserWithAuth = onRequest(async (req, res) => {
     // Generic error response
     res.status(500).json({
       success: false,
-      error: error.message || 'Failed to create user'
+      error: error.message || 'Failed to create user',
     });
   }
 });

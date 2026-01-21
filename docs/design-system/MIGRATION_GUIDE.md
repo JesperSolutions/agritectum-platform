@@ -10,10 +10,12 @@ This guide provides step-by-step instructions for migrating existing components 
 ## Migration Strategy
 
 ### Phase 1: Design Tokens (Completed)
+
 ✅ Enhanced design token system created  
 ✅ All tokens organized in `src/design-system/tokens/`
 
 ### Phase 2: Component Unification (Completed)
+
 ✅ Unified Button component  
 ✅ Unified Card component  
 ✅ Unified Input component  
@@ -24,6 +26,7 @@ This guide provides step-by-step instructions for migrating existing components 
 #### Step 1: Identify Legacy Colors
 
 Search for legacy color usage:
+
 ```bash
 # Find gray colors
 grep -r "gray-\d\+" src/components
@@ -35,6 +38,7 @@ grep -r "blue-\d\+" src/components
 #### Step 2: Replace Gray with Slate
 
 **Before:**
+
 ```typescript
 <div className="bg-gray-100 text-gray-800 border-gray-200">
   Content
@@ -42,6 +46,7 @@ grep -r "blue-\d\+" src/components
 ```
 
 **After:**
+
 ```typescript
 <div className="bg-slate-100 text-slate-800 border-slate-200">
   Content
@@ -51,6 +56,7 @@ grep -r "blue-\d\+" src/components
 #### Step 3: Replace Blue (UI) with Slate
 
 **Before:**
+
 ```typescript
 <button className="bg-blue-600 hover:bg-blue-700 text-white">
   Click Me
@@ -58,6 +64,7 @@ grep -r "blue-\d\+" src/components
 ```
 
 **After:**
+
 ```typescript
 <button className="bg-slate-700 hover:bg-slate-800 text-white">
   Click Me
@@ -71,6 +78,7 @@ grep -r "blue-\d\+" src/components
 #### Replace Inconsistent Border Radius
 
 **Before:**
+
 ```typescript
 <div className="rounded-lg">  // 0.75rem
 <div className="rounded-xl">  // 1rem
@@ -78,11 +86,13 @@ grep -r "blue-\d\+" src/components
 ```
 
 **After:**
+
 ```typescript
 <div className="rounded-material">  // 4px - Material Design standard
 ```
 
 **Exceptions:**
+
 - Badges: Keep `rounded-full` for pill-shaped badges
 - Legacy components: Migrate gradually
 
@@ -91,6 +101,7 @@ grep -r "blue-\d\+" src/components
 #### Replace Tailwind Shadows with Material Elevation
 
 **Before:**
+
 ```typescript
 <div className="shadow-sm">   // Tailwind small shadow
 <div className="shadow-md">   // Tailwind medium shadow
@@ -98,6 +109,7 @@ grep -r "blue-\d\+" src/components
 ```
 
 **After:**
+
 ```typescript
 <div className="shadow-material-1">  // Material elevation 1
 <div className="shadow-material-2">  // Material elevation 2
@@ -105,6 +117,7 @@ grep -r "blue-\d\+" src/components
 ```
 
 **Semantic Usage:**
+
 ```typescript
 // Use semantic names from design tokens
 import { shadows } from '@/design-system/tokens/shadows';
@@ -120,12 +133,14 @@ import { shadows } from '@/design-system/tokens/shadows';
 #### Use Roboto Typography Scale
 
 **Before:**
+
 ```typescript
 <h1 className="text-4xl font-bold">Heading</h1>
 <p className="text-base">Body text</p>
 ```
 
 **After:**
+
 ```typescript
 import { typography } from '@/design-system/tokens/typography';
 
@@ -138,12 +153,14 @@ import { typography } from '@/design-system/tokens/typography';
 #### Use 8dp Grid System
 
 **Before:**
+
 ```typescript
 <div className="p-5">  // 20px - not on 8dp grid
 <div className="m-3">   // 12px - not on 8dp grid
 ```
 
 **After:**
+
 ```typescript
 <div className="p-4">  // 16px (2dp)
 <div className="p-6">  // 24px (3dp)
@@ -151,6 +168,7 @@ import { typography } from '@/design-system/tokens/typography';
 ```
 
 **Component Spacing:**
+
 ```typescript
 import { spacing } from '@/design-system/tokens/spacing';
 
@@ -163,6 +181,7 @@ import { spacing } from '@/design-system/tokens/spacing';
 ### Button Migration
 
 **Before (Legacy):**
+
 ```typescript
 import { buttonStyles } from '@/utils/buttonStyles';
 
@@ -172,6 +191,7 @@ import { buttonStyles } from '@/utils/buttonStyles';
 ```
 
 **After (Unified):**
+
 ```typescript
 import { Button } from '@/components/ui/button';
 
@@ -181,6 +201,7 @@ import { Button } from '@/components/ui/button';
 ### Card Migration
 
 **Before (Legacy):**
+
 ```typescript
 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
   Content
@@ -188,6 +209,7 @@ import { Button } from '@/components/ui/button';
 ```
 
 **After (Unified):**
+
 ```typescript
 import { Card, CardContent } from '@/components/ui/card';
 
@@ -199,6 +221,7 @@ import { Card, CardContent } from '@/components/ui/card';
 ### Input Migration
 
 **Before (Legacy):**
+
 ```typescript
 import { FormField } from '@/components/FormField';
 
@@ -208,6 +231,7 @@ import { FormField } from '@/components/FormField';
 ```
 
 **After (Unified):**
+
 ```typescript
 import { Input } from '@/components/ui/input';
 
@@ -219,6 +243,7 @@ import { Input } from '@/components/ui/input';
 ### ESLint Rules (Planned)
 
 ESLint rules will be created to detect:
+
 - Legacy color usage (`gray-*`, `blue-*` for UI)
 - Inconsistent border radius
 - Legacy shadow usage
@@ -227,6 +252,7 @@ ESLint rules will be created to detect:
 ### Codemod Scripts (Planned)
 
 Codemod scripts will be created for:
+
 - Bulk color replacement (gray → slate)
 - Border radius standardization
 - Shadow migration

@@ -59,10 +59,12 @@ export const getRejectedOrdersByBranch = async (branchId: string): Promise<Rejec
   } catch (error: any) {
     // Handle permission errors gracefully - return empty array instead of throwing
     if (error.code === 'permission-denied' || error.message?.includes('permission')) {
-      logger.warn('⚠️ Permission denied for rejected orders. User may not have access to this collection.');
+      logger.warn(
+        '⚠️ Permission denied for rejected orders. User may not have access to this collection.'
+      );
       return [];
     }
-    
+
     if (error.code === 'failed-precondition' || error.message?.includes('index')) {
       logger.warn('⚠️ Missing Firestore index detected. Falling back to client-side filtering.');
       try {
@@ -112,7 +114,7 @@ export const getRejectedOrdersByCustomer = async (customerId: string): Promise<R
     })) as RejectedOrder[];
   } catch (error: any) {
     console.error('Error fetching rejected orders by customer:', error);
-    
+
     if (error.code === 'failed-precondition' || error.message?.includes('index')) {
       logger.warn('⚠️ Missing Firestore index detected. Falling back to client-side filtering.');
       const rejectedOrdersRef = collection(db, 'rejectedOrders');

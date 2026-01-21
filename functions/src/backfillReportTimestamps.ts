@@ -17,7 +17,10 @@ export const backfillReportTimestamps = functions.https.onRequest(async (req, re
 
     // Page through all reports
     while (true) {
-      let query = db.collection('reports').orderBy(admin.firestore.FieldPath.documentId()).limit(pageSize);
+      let query = db
+        .collection('reports')
+        .orderBy(admin.firestore.FieldPath.documentId())
+        .limit(pageSize);
       if (lastDoc) query = query.startAfter(lastDoc.id);
 
       const snap = await query.get();
@@ -65,8 +68,3 @@ export const backfillReportTimestamps = functions.https.onRequest(async (req, re
     res.status(500).json({ success: false, error: err?.message || 'Unknown error' });
   }
 });
-
-
-
-
-

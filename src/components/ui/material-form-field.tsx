@@ -43,7 +43,7 @@ const MaterialFormField: React.FC<MaterialFormFieldProps> = ({
               : 'border-gray-300 focus:border-blue-600 focus:ring-blue-600'
           }`,
         })}
-        
+
         {/* Static Label */}
         <label
           htmlFor={fieldId}
@@ -52,28 +52,28 @@ const MaterialFormField: React.FC<MaterialFormFieldProps> = ({
           }`}
         >
           {label}
-          {required && <span className="text-red-500 ml-1">*</span>}
+          {required && <span className='text-red-500 ml-1'>*</span>}
         </label>
 
         {/* Error Icon */}
         {hasError && (
-          <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-            <AlertCircle className="h-5 w-5 text-red-500" />
+          <div className='absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none'>
+            <AlertCircle className='h-5 w-5 text-red-500' />
           </div>
         )}
       </div>
 
       {/* Error Message */}
       {hasError && (
-        <p id={`${fieldId}-error`} className="mt-1 text-sm text-red-600 flex items-center">
-          <AlertCircle className="h-4 w-4 mr-1" />
+        <p id={`${fieldId}-error`} className='mt-1 text-sm text-red-600 flex items-center'>
+          <AlertCircle className='h-4 w-4 mr-1' />
           {error}
         </p>
       )}
 
       {/* Help Text */}
       {helpText && !hasError && (
-        <p id={`${fieldId}-help`} className="mt-1 text-sm text-gray-500">
+        <p id={`${fieldId}-help`} className='mt-1 text-sm text-gray-500'>
           {helpText}
         </p>
       )}
@@ -161,7 +161,10 @@ interface MaterialSelectProps extends React.SelectHTMLAttributes<HTMLSelectEleme
 }
 
 const MaterialSelect = forwardRef<HTMLSelectElement, MaterialSelectProps>(
-  ({ error, touched, options, placeholder, variant = 'outlined', className = '', ...props }, ref) => {
+  (
+    { error, touched, options, placeholder, variant = 'outlined', className = '', ...props },
+    ref
+  ) => {
     const hasError = touched && error;
 
     return (
@@ -183,11 +186,11 @@ const MaterialSelect = forwardRef<HTMLSelectElement, MaterialSelectProps>(
         {...props}
       >
         {placeholder && (
-          <option value="" disabled>
+          <option value='' disabled>
             {placeholder}
           </option>
         )}
-        {options.map((option) => (
+        {options.map(option => (
           <option key={option.value} value={option.value} disabled={option.disabled}>
             {option.label}
           </option>
@@ -200,7 +203,8 @@ const MaterialSelect = forwardRef<HTMLSelectElement, MaterialSelectProps>(
 MaterialSelect.displayName = 'MaterialSelect';
 
 // Material Design 3 Password Input Component
-interface MaterialPasswordInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type'> {
+interface MaterialPasswordInputProps
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type'> {
   error?: string;
   touched?: boolean;
   variant?: 'outlined' | 'filled';
@@ -212,7 +216,7 @@ const MaterialPasswordInput = forwardRef<HTMLInputElement, MaterialPasswordInput
     const hasError = touched && error;
 
     return (
-      <div className="relative">
+      <div className='relative'>
         <input
           ref={ref}
           type={showPassword ? 'text' : 'password'}
@@ -232,14 +236,14 @@ const MaterialPasswordInput = forwardRef<HTMLInputElement, MaterialPasswordInput
           {...props}
         />
         <button
-          type="button"
-          className="absolute inset-y-0 right-0 pr-3 flex items-center"
+          type='button'
+          className='absolute inset-y-0 right-0 pr-3 flex items-center'
           onClick={() => setShowPassword(!showPassword)}
         >
           {showPassword ? (
-            <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+            <EyeOff className='h-5 w-5 text-gray-400 hover:text-gray-600' />
           ) : (
-            <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+            <Eye className='h-5 w-5 text-gray-400 hover:text-gray-600' />
           )}
         </button>
       </div>
@@ -263,7 +267,7 @@ const MaterialDateInput = forwardRef<HTMLInputElement, MaterialDateInputProps>(
     return (
       <input
         ref={ref}
-        type="date"
+        type='date'
         className={`
           block w-full px-3 py-3 text-gray-900
           border rounded-lg shadow-sm transition-all duration-200

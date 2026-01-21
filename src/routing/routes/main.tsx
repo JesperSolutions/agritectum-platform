@@ -181,7 +181,7 @@ export const mainRoutes: RouteObject[] = [
       },
       {
         path: 'admin/building-esg-improvements',
-        element: <Navigate to="/admin/esg-service" replace />,
+        element: <Navigate to='/admin/esg-service' replace />,
       },
       {
         path: 'admin/esg-service',

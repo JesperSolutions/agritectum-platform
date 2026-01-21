@@ -122,6 +122,7 @@ Third-Party:
 ### Authentication & Authorization
 
 **Authentication Flow:**
+
 1. User enters email/password → `LoginForm.tsx`
 2. Firebase Auth validates → `authService.ts`
 3. Custom claims fetched (role, permissionLevel, branchId)
@@ -129,6 +130,7 @@ Third-Party:
 5. AuthContext updated → User redirected to dashboard
 
 **Permission System:**
+
 - **Level 0:** Inspector (field worker)
 - **Level 1:** Branch Admin (branch management)
 - **Level 2:** Superadmin (full system access)
@@ -164,6 +166,7 @@ Third-Party:
 ### Routing Structure
 
 **Protected Routes** (require authentication):
+
 - `/dashboard` - Role-based dashboard
 - `/report/new` - Create report
 - `/report/edit/:id` - Edit report
@@ -178,6 +181,7 @@ Third-Party:
 - `/admin/analytics` - Analytics dashboard
 
 **Public Routes** (no auth):
+
 - `/login` - Login page
 - `/report/public/:id` - Public report view (if `isPublic=true`)
 - `/offer/public/:id` - Public offer view/acceptance
@@ -189,14 +193,17 @@ Third-Party:
 ### State Management
 
 **React Context API:**
+
 - `AuthContext` - Global authentication state
 - `ReportContextSimple` - Report state (if used)
 
 **Local State:**
+
 - `useState` for component state
 - `useReducer` for complex state (ReportForm)
 
 **Persistence:**
+
 - Firestore for persistent data
 - localStorage for drafts and preferences
 - IndexedDB for offline support (if implemented)
@@ -208,6 +215,7 @@ Third-Party:
 **Pattern:** Pure functions (no classes), async/await, error handling
 
 **Example:**
+
 ```typescript
 // src/services/reportService.ts
 export const createReport = async (
@@ -219,14 +227,14 @@ export const createReport = async (
     if (!reportData.customerName) {
       throw new Error('Customer name required');
     }
-    
+
     // Firestore operation
     const docRef = await addDoc(collection(db, 'reports'), {
       ...reportData,
       branchId,
-      createdAt: serverTimestamp()
+      createdAt: serverTimestamp(),
     });
-    
+
     return docRef.id;
   } catch (error) {
     console.error('Error creating report:', error);
@@ -242,6 +250,7 @@ export const createReport = async (
 ### Prerequisites
 
 1. **Firebase CLI installed:**
+
    ```bash
    npm install -g firebase-tools
    ```
@@ -251,6 +260,7 @@ export const createReport = async (
    - Create project: `taklaget-service-app`
 
 3. **Firebase login:**
+
    ```bash
    firebase login
    ```
@@ -269,6 +279,7 @@ npm run build
 ```
 
 This:
+
 - Compiles TypeScript → JavaScript
 - Bundles React app with Vite
 - Outputs to `dist/` directory
@@ -279,20 +290,24 @@ This:
 #### 2. Deploy to Firebase Hosting
 
 **Option A: Full deployment (recommended)**
+
 ```bash
 npm run deploy
 ```
 
 This runs:
+
 1. `npm run build` (builds frontend)
 2. `firebase deploy --only hosting` (deploys to Firebase)
 
 **Option B: Deploy hosting only**
+
 ```bash
 firebase deploy --only hosting
 ```
 
 **Option C: Deploy specific targets**
+
 ```bash
 # Deploy only hosting
 firebase deploy --only hosting
@@ -321,6 +336,7 @@ firebase deploy --only functions
 ```
 
 **Or:**
+
 ```bash
 npm run deploy --prefix functions
 ```
@@ -332,6 +348,7 @@ firebase deploy --only firestore:rules
 ```
 
 **Or:**
+
 ```bash
 npm run deploy:rules  # Deploys rules + storage rules
 ```
@@ -341,10 +358,11 @@ npm run deploy:rules  # Deploys rules + storage rules
 **File:** `firebase.json`
 
 **Hosting Configuration:**
+
 ```json
 {
   "hosting": {
-    "public": "dist",           // Build output directory
+    "public": "dist", // Build output directory
     "rewrites": [
       {
         "source": "/api/generateReportPDF",
@@ -352,7 +370,7 @@ npm run deploy:rules  # Deploys rules + storage rules
       },
       {
         "source": "**",
-        "destination": "/index.html"  // SPA routing
+        "destination": "/index.html" // SPA routing
       }
     ],
     "headers": [
@@ -363,6 +381,7 @@ npm run deploy:rules  # Deploys rules + storage rules
 ```
 
 **Functions Configuration:**
+
 ```json
 {
   "functions": {
@@ -398,6 +417,7 @@ firebase functions:config:set mailersend.api_key="..."
 ### Deployment Checklist
 
 **Before Deploying:**
+
 - [ ] Run `npm run build` successfully
 - [ ] Test locally with `npm run preview`
 - [ ] Check `dist/` directory has all assets
@@ -407,6 +427,7 @@ firebase functions:config:set mailersend.api_key="..."
 - [ ] Functions compile without errors
 
 **After Deploying:**
+
 - [ ] Visit deployed URL (check Firebase console)
 - [ ] Test login functionality
 - [ ] Verify Firestore rules are active
@@ -437,6 +458,7 @@ firebase hosting:clone SOURCE_SITE_ID:SOURCE_CHANNEL_ID TARGET_SITE_ID:channel-i
 **Project ID:** `taklaget-service-app` (from `.firebaserc`)
 
 **Services Enabled:**
+
 - ✅ Authentication (Email/Password only)
 - ✅ Firestore Database
 - ✅ Firebase Storage
@@ -445,6 +467,7 @@ firebase hosting:clone SOURCE_SITE_ID:SOURCE_CHANNEL_ID TARGET_SITE_ID:channel-i
 - ✅ Firebase Extension: Trigger Email (MailerSend)
 
 **Regions:**
+
 - Functions: `europe-west1` (Belgium)
 - Firestore: Multi-region or `europe-west1`
 - Storage: `europe-west1`
@@ -476,11 +499,13 @@ Prior agents maintained comprehensive documentation:
 ### Work Patterns Observed
 
 #### 1. Comprehensive Documentation
+
 - Agents document every feature implementation
 - Clear separation of completed vs. in-progress work
 - Historical records preserved in `docs/archive/`
 
 #### 2. Feature Management Workflow
+
 ```
 NEW_FEATURES_SPECIFICATION.md
     ↓ [Feature Completed]
@@ -492,17 +517,20 @@ Update status in docs/09-requirements/
 ```
 
 #### 3. Testing & Validation
+
 - Production testing before marking complete
 - User acceptance verification
 - Documentation of issues found and fixes
 
 #### 4. Code Organization
+
 - Consistent naming conventions
 - Service layer pattern (pure functions)
 - TypeScript strict mode
 - Error handling in all async functions
 
 #### 5. Legacy Code Management
+
 - Legacy code organized in `src/legacy/` directories
 - See `src/legacy/ARCHIVE_MANIFEST.md` for complete inventory
 - Legacy code kept for reference and potential rollback
@@ -510,6 +538,7 @@ Update status in docs/09-requirements/
 - Document rationale when archiving new code
 
 #### 6. Incremental Improvements
+
 - Medium priority items tracked separately
 - Progress summaries maintained
 - Clear distinction between must-have and nice-to-have
@@ -517,24 +546,28 @@ Update status in docs/09-requirements/
 ### Common Agent Tasks
 
 **1. Implementing Features**
+
 - Start from `docs/09-requirements/NEW_FEATURES_SPECIFICATION.md`
 - Follow existing patterns in codebase
 - Update documentation as work progresses
 - Move to completed when done
 
 **2. Bug Fixes**
+
 - Document issue in relevant docs folder
 - Implement fix with tests (if applicable)
 - Document resolution in history
 - Update `KNOWN_ISSUES.md` if needed
 
 **3. Code Refactoring**
+
 - Maintain backward compatibility
 - Update all references
 - Document changes in history
 - Update technical reference if needed
 
 **4. Documentation Updates**
+
 - Keep `QUICK_REFERENCE.md` current
 - Update `FUNCTIONALITY_INVENTORY.md` for new features
 - Maintain feature descriptions
@@ -543,12 +576,14 @@ Update status in docs/09-requirements/
 ### Agent Communication Patterns
 
 **Session Summaries:**
+
 - Document what was accomplished
 - Note any pending actions
 - Update completion summaries
 - Maintain clear status indicators
 
 **Example Structure:**
+
 ```markdown
 # [Feature Name] - Complete
 
@@ -556,17 +591,21 @@ Update status in docs/09-requirements/
 **Status:** ✅ Complete
 
 ## What Was Done
+
 - Feature 1
 - Feature 2
 
 ## Files Modified
+
 - path/to/file.tsx
 
 ## Testing
+
 - ✅ Tested in production
 - ✅ Verified user flows
 
 ## Next Steps
+
 - [ ] Pending action 1
 - [ ] Pending action 2
 ```
@@ -578,12 +617,14 @@ Update status in docs/09-requirements/
 ### Local Development Setup
 
 **1. Install Dependencies**
+
 ```bash
 npm install
 cd functions && npm install && cd ..
 ```
 
 **2. Environment Setup**
+
 ```bash
 # Copy example env file
 cp env.example .env
@@ -595,6 +636,7 @@ cp env.example .env
 **3. Start Development**
 
 **Option A: Using Firebase Emulators (Recommended - FREE)**
+
 ```bash
 # Terminal 1: Start emulators
 npm run emulators
@@ -604,12 +646,14 @@ npm run dev
 ```
 
 **Option B: Connect to Production Firebase**
+
 ```bash
 # Just start dev server (no emulators)
 npm run dev
 ```
 
 **URLs:**
+
 - App: http://localhost:5173
 - Emulator UI: http://localhost:4000
 
@@ -667,11 +711,13 @@ src/
 ### Testing Strategy
 
 **Current State:**
+
 - Manual testing in production
 - Firebase emulators for local testing
 - No automated test suite (yet)
 
 **Recommended:**
+
 - Unit tests for services
 - Integration tests for critical flows
 - E2E tests for user journeys
@@ -679,15 +725,18 @@ src/
 ### Git Workflow
 
 **Branch Strategy:**
+
 - `main` - Production-ready code
 - Feature branches (if collaborating)
 
 **Commit Patterns:**
+
 - Descriptive commit messages
 - Reference issue numbers if applicable
 - Group related changes
 
 **Example:**
+
 ```
 feat: Add offer preview modal
 
@@ -715,12 +764,14 @@ feat: Add offer preview modal
 ### Documentation Files
 
 **Root Level:**
+
 - `README.md` - Project overview
 - `QUICK_REFERENCE.md` - Route mappings and workflows
 - `TECHNICAL_REFERENCE.md` - Technical implementation details
 - `FUNCTIONALITY_INVENTORY.md` - Complete feature inventory
 
 **Documentation Directory:**
+
 - `docs/01-getting-started/` - Setup guides
 - `docs/02-features/` - Feature documentation
 - `docs/03-deployment/` - Deployment guides
@@ -764,6 +815,7 @@ feat: Add offer preview modal
 The codebase maintains legacy code in `src/legacy/` for reference:
 
 **Structure:**
+
 ```
 src/legacy/
 ├── components/     # Unused components
@@ -773,12 +825,14 @@ src/legacy/
 ```
 
 **Guidelines:**
+
 - Check `src/legacy/ARCHIVE_MANIFEST.md` before referencing legacy code
 - Do not import from `src/legacy/` in new implementations
 - Legacy code is kept for reference and potential rollback only
 - When archiving new code, add metadata headers and update ARCHIVE_MANIFEST.md
 
 **Common Legacy Patterns:**
+
 - Wrapper components that delegate to new implementations
 - Deprecated functions kept for backward compatibility
 - Unused alternate implementations
@@ -831,6 +885,7 @@ src/legacy/
 ### Adding a New Route
 
 1. **Add Route:**
+
    ```typescript
    // In src/Router.tsx
    <Route
@@ -858,17 +913,20 @@ src/legacy/
 ### Deploying Changes
 
 1. **Build:**
+
    ```bash
    npm run build
    ```
 
 2. **Preview:**
+
    ```bash
    npm run preview
    # Test at http://localhost:4173
    ```
 
 3. **Deploy:**
+
    ```bash
    npm run deploy
    # Or: firebase deploy --only hosting
@@ -882,11 +940,13 @@ src/legacy/
 ### Working with Firebase Emulators
 
 **Start Emulators:**
+
 ```bash
 npm run emulators
 ```
 
 **Benefits:**
+
 - No Firebase costs
 - Safe testing (no production data)
 - Offline development
@@ -992,4 +1052,3 @@ firebase functions:log         # View function logs
 
 **Last Updated:** 2025-01-31  
 **Maintained By:** AI Agents Working on Taklaget Project
-

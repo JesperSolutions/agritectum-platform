@@ -1,6 +1,7 @@
 # Omnissiah Protocol v2.1 - Quick Reference
 
 ## 🎯 How to Activate
+
 Say: **"machine spirit"** or **"omnissiah"** to invoke full diagnostic protocol
 
 ## 📋 All Module Files
@@ -41,14 +42,17 @@ Say: **"machine spirit"** or **"omnissiah"** to invoke full diagnostic protocol
    - Provides output template
 
 ## 🚀 Quick Usage
+
 When debugging ANY issue:
-1. Say: "machine spirit" 
+
+1. Say: "machine spirit"
 2. I'll structure analysis with DIAGNOSTIC_REPORT
 3. I'll generate 3+ hypotheses
 4. I'll quantify confidence
 5. I'll provide rollback plan
 
 Example output:
+
 ```
 🔧 MACHINE SPIRIT PROTOCOL ACTIVATED
 
@@ -68,5 +72,4 @@ pattern_found: [what learned]
 
 ---
 
-*All modules synchronized. Prime logic, purge weakness.*
-
+_All modules synchronized. Prime logic, purge weakness._

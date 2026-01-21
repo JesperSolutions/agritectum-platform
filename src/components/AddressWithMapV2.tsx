@@ -48,7 +48,7 @@ const AddressWithMapV2: React.FC<AddressWithMapV2Props> = ({
   const [capturingImage, setCapturingImage] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [tilesLoading, setTilesLoading] = useState(false);
-  
+
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<HTMLDivElement>(null);
@@ -58,66 +58,72 @@ const AddressWithMapV2: React.FC<AddressWithMapV2Props> = ({
   const debounceRef = useRef<NodeJS.Timeout>();
 
   // Nominatim geocoding function
-  const searchAddress = useCallback(async (query: string) => {
-    if (!query || query.length < 3) {
-      setPredictions([]);
-      return;
-    }
-
-    setIsLoading(true);
-    setErrorMessage(null);
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1&limit=5`
-      );
-      
-      if (!response.ok) {
-        throw new Error('Network error');
+  const searchAddress = useCallback(
+    async (query: string) => {
+      if (!query || query.length < 3) {
+        setPredictions([]);
+        return;
       }
-      
-      const data = await response.json();
-      setPredictions(data || []);
-    } catch (err) {
-      console.error('Error fetching address predictions:', err);
-      setPredictions([]);
-      setErrorMessage(t('address.errors.network'));
-    } finally {
-      setIsLoading(false);
-    }
-  }, [t]);
+
+      setIsLoading(true);
+      setErrorMessage(null);
+      try {
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1&limit=5`
+        );
+
+        if (!response.ok) {
+          throw new Error('Network error');
+        }
+
+        const data = await response.json();
+        setPredictions(data || []);
+      } catch (err) {
+        console.error('Error fetching address predictions:', err);
+        setPredictions([]);
+        setErrorMessage(t('address.errors.network'));
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [t]
+  );
 
   // Initialize Leaflet map with satellite tiles
   const initializeMap = useCallback(() => {
     if (!mapRef.current || mapInstanceRef.current) return;
 
     const newMap = L.map(mapRef.current, {
-      center: [59.334591, 18.063240], // Stockholm default
+      center: [59.334591, 18.06324], // Stockholm default
       zoom: 13,
       zoomControl: true,
       attributionControl: true,
     });
 
     // Add Esri World Imagery satellite tile layer with caching and progressive loading
-    const tileLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-      attribution: 'Tiles © Esri',
-      maxZoom: 20,
-      maxNativeZoom: 19, // Reduce tile requests at highest zoom
-      crossOrigin: true,
-      // Enable tile caching for faster subsequent loads
-      keepBuffer: 2,
-    });
-    
+    const tileLayer = L.tileLayer(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      {
+        attribution: 'Tiles © Esri',
+        maxZoom: 20,
+        maxNativeZoom: 19, // Reduce tile requests at highest zoom
+        crossOrigin: true,
+        // Enable tile caching for faster subsequent loads
+        keepBuffer: 2,
+      }
+    );
+
     tileLayer.addTo(newMap);
     tileLayerRef.current = tileLayer;
-    
+
     // Monitor tile loading progress
     let tilesLoaded = 0;
-    let tilesRequired = 0;
-    
+    const tilesRequired = 0;
+
     tileLayer.on('loading', () => {
       setTilesLoading(true);
     });
-    
+
     tileLayer.on('load', () => {
       tilesLoaded++;
       if (tilesLoaded >= tilesRequired * 0.8) {
@@ -146,7 +152,13 @@ const AddressWithMapV2: React.FC<AddressWithMapV2Props> = ({
 
   // Trigger image capture when triggerCapture prop changes
   useEffect(() => {
-    if (triggerCapture && addressSelected && mapInstanceRef.current && !capturingImage && onSatelliteImageConfirm) {
+    if (
+      triggerCapture &&
+      addressSelected &&
+      mapInstanceRef.current &&
+      !capturingImage &&
+      onSatelliteImageConfirm
+    ) {
       // Directly invoke capture logic here to avoid circular dependency
       setCapturingImage(true);
       setErrorMessage(null);
@@ -202,119 +214,121 @@ const AddressWithMapV2: React.FC<AddressWithMapV2Props> = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     onChange(query);
-    
+
     // Clear previous debounce
     if (debounceRef.current) {
       clearTimeout(debounceRef.current);
     }
-    
+
     // If query is empty or too short, don't search
     if (!query || query.length < 2) {
       setPredictions([]);
       setIsOpen(false);
       return;
     }
-    
+
     // Set new debounce to fetch predictions after user stops typing
     debounceRef.current = setTimeout(() => {
       searchAddress(query);
     }, 500); // 500ms delay for Nominatim rate limiting
-    
+
     setIsOpen(true);
   };
 
   // Handle place selection or Enter key press
-  const handlePlaceSelect = useCallback(async (prediction?: NominatimResult) => {
-    setIsOpen(false);
-    
-    // If no prediction provided, use the first prediction if available
-    const selectedPrediction = prediction || (predictions.length > 0 ? predictions[0] : null);
-    
-    if (!selectedPrediction) return;
-    
-    const address = selectedPrediction.display_name;
-    onChange(address);
-    setAddressSelected(true);
-    
-    const lat = parseFloat(selectedPrediction.lat);
-    const lon = parseFloat(selectedPrediction.lon);
-    
-    // Initialize map if not already done
-    if (!mapInstanceRef.current && mapRef.current) {
-      try {
-        initializeMap();
-      } catch (err) {
-        setErrorMessage(t('address.errors.mapInit'));
-        return;
-      }
-    }
-    
-    // Wait for map to be ready using ref (immediate access)
-    const setupMap = () => {
-      if (mapInstanceRef.current) {
+  const handlePlaceSelect = useCallback(
+    async (prediction?: NominatimResult) => {
+      setIsOpen(false);
+
+      // If no prediction provided, use the first prediction if available
+      const selectedPrediction = prediction || (predictions.length > 0 ? predictions[0] : null);
+
+      if (!selectedPrediction) return;
+
+      const address = selectedPrediction.display_name;
+      onChange(address);
+      setAddressSelected(true);
+
+      const lat = parseFloat(selectedPrediction.lat);
+      const lon = parseFloat(selectedPrediction.lon);
+
+      // Initialize map if not already done
+      if (!mapInstanceRef.current && mapRef.current) {
         try {
-          // Start at zoom 18 for faster initial load (progressive loading)
-          mapInstanceRef.current.setView([lat, lon], 18);
-          setTilesLoading(true);
-          
-          // Remove existing marker if any
-          if (markerRef.current) {
-            mapInstanceRef.current.removeLayer(markerRef.current);
-          }
-          
-          // Add new marker
-          const newMarker = L.marker([lat, lon]).addTo(mapInstanceRef.current);
-          markerRef.current = newMarker;
-          setMarker(newMarker);
-          
-          // After initial tiles load, smoothly zoom to level 20 for detail
-          setTimeout(() => {
-            if (mapInstanceRef.current) {
-              mapInstanceRef.current.setView([lat, lon], 20, {
-                animate: true,
-                duration: 1.0,
-                easeLinearity: 0.25,
-              });
-              // Give zoom animation time to complete before hiding loader
-              setTimeout(() => {
-                setTilesLoading(false);
-              }, 1500);
-            }
-          }, 800); // Wait 800ms for initial tiles at zoom 18
-          
+          initializeMap();
         } catch (err) {
-          console.error('Error setting up map:', err);
-          setErrorMessage(t('address.errors.geocoding'));
-          setTilesLoading(false);
+          setErrorMessage(t('address.errors.mapInit'));
+          return;
         }
       }
-    };
-    
-    // Try to set up map immediately if it exists
-    if (mapInstanceRef.current) {
-      setupMap();
-    } else {
-      // Otherwise wait for it to be initialized
-      const checkInterval = setInterval(() => {
+
+      // Wait for map to be ready using ref (immediate access)
+      const setupMap = () => {
         if (mapInstanceRef.current) {
+          try {
+            // Start at zoom 18 for faster initial load (progressive loading)
+            mapInstanceRef.current.setView([lat, lon], 18);
+            setTilesLoading(true);
+
+            // Remove existing marker if any
+            if (markerRef.current) {
+              mapInstanceRef.current.removeLayer(markerRef.current);
+            }
+
+            // Add new marker
+            const newMarker = L.marker([lat, lon]).addTo(mapInstanceRef.current);
+            markerRef.current = newMarker;
+            setMarker(newMarker);
+
+            // After initial tiles load, smoothly zoom to level 20 for detail
+            setTimeout(() => {
+              if (mapInstanceRef.current) {
+                mapInstanceRef.current.setView([lat, lon], 20, {
+                  animate: true,
+                  duration: 1.0,
+                  easeLinearity: 0.25,
+                });
+                // Give zoom animation time to complete before hiding loader
+                setTimeout(() => {
+                  setTilesLoading(false);
+                }, 1500);
+              }
+            }, 800); // Wait 800ms for initial tiles at zoom 18
+          } catch (err) {
+            console.error('Error setting up map:', err);
+            setErrorMessage(t('address.errors.geocoding'));
+            setTilesLoading(false);
+          }
+        }
+      };
+
+      // Try to set up map immediately if it exists
+      if (mapInstanceRef.current) {
+        setupMap();
+      } else {
+        // Otherwise wait for it to be initialized
+        const checkInterval = setInterval(() => {
+          if (mapInstanceRef.current) {
+            clearInterval(checkInterval);
+            setupMap();
+          }
+        }, 100);
+
+        // Timeout after 5 seconds
+        setTimeout(() => {
           clearInterval(checkInterval);
-          setupMap();
-        }
-      }, 100);
-      
-      // Timeout after 5 seconds
-      setTimeout(() => {
-        clearInterval(checkInterval);
-        if (!mapInstanceRef.current) {
-          setErrorMessage(t('address.errors.mapInit'));
-        }
-      }, 5000);
-    }
-    
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [predictions, captureMapImage, onChange, initializeMap, t]);
+          if (!mapInstanceRef.current) {
+            setErrorMessage(t('address.errors.mapInit'));
+          }
+        }, 5000);
+      }
+
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    },
+    [predictions, captureMapImage, onChange, initializeMap, t]
+  );
 
   // Handle Enter key
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -374,14 +388,14 @@ const AddressWithMapV2: React.FC<AddressWithMapV2Props> = ({
   return (
     <div className={`relative ${className}`}>
       {/* Input Field */}
-      <div className="relative">
-        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+      <div className='relative'>
+        <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
           <MapPin className={`h-5 w-5 ${hasError ? 'text-red-500' : 'text-gray-400'}`} />
         </div>
-        
+
         <input
           ref={inputRef}
-          type="text"
+          type='text'
           value={value}
           onChange={handleInputChange}
           onKeyPress={handleKeyPress}
@@ -394,9 +408,10 @@ const AddressWithMapV2: React.FC<AddressWithMapV2Props> = ({
             border rounded-lg shadow-sm transition-all duration-200
             focus:outline-none focus:ring-2 focus:ring-offset-0
             sm:text-sm
-            ${hasError
-              ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-              : 'border-gray-300 focus:border-blue-600 focus:ring-blue-600'
+            ${
+              hasError
+                ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                : 'border-gray-300 focus:border-blue-600 focus:ring-blue-600'
             }
             ${disabled ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'}
           `}
@@ -405,18 +420,18 @@ const AddressWithMapV2: React.FC<AddressWithMapV2Props> = ({
         {/* Clear Button */}
         {hasValue && !disabled && (
           <button
-            type="button"
+            type='button'
             onClick={handleClear}
-            className="absolute inset-y-0 right-0 pr-3 flex items-center hover:text-gray-600"
+            className='absolute inset-y-0 right-0 pr-3 flex items-center hover:text-gray-600'
           >
-            <X className="h-5 w-5 text-gray-400" />
+            <X className='h-5 w-5 text-gray-400' />
           </button>
         )}
 
         {/* Loading Indicator */}
         {isLoading && (
-          <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+          <div className='absolute inset-y-0 right-0 pr-3 flex items-center'>
+            <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600'></div>
           </div>
         )}
       </div>
@@ -425,25 +440,25 @@ const AddressWithMapV2: React.FC<AddressWithMapV2Props> = ({
       {isOpen && (predictions.length > 0 || isLoading) && (
         <div
           ref={dropdownRef}
-          className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto"
+          className='absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto'
         >
           {isLoading ? (
-            <div className="px-4 py-3 text-center text-gray-500">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mx-auto"></div>
-              <span className="ml-2">Söker...</span>
+            <div className='px-4 py-3 text-center text-gray-500'>
+              <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mx-auto'></div>
+              <span className='ml-2'>Söker...</span>
             </div>
           ) : (
-            predictions.map((prediction) => (
+            predictions.map(prediction => (
               <button
                 key={prediction.place_id}
-                type="button"
+                type='button'
                 onClick={() => handlePlaceSelect(prediction)}
-                className="w-full px-4 py-3 text-left hover:bg-gray-50 focus:bg-gray-50 focus:outline-none border-b border-gray-100 last:border-b-0"
+                className='w-full px-4 py-3 text-left hover:bg-gray-50 focus:bg-gray-50 focus:outline-none border-b border-gray-100 last:border-b-0'
               >
-                <div className="flex items-start">
-                  <Search className="h-4 w-4 text-gray-400 mt-0.5 mr-3 flex-shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium text-gray-900">
+                <div className='flex items-start'>
+                  <Search className='h-4 w-4 text-gray-400 mt-0.5 mr-3 flex-shrink-0' />
+                  <div className='flex-1 min-w-0'>
+                    <div className='text-sm font-medium text-gray-900'>
                       {prediction.display_name}
                     </div>
                   </div>
@@ -456,25 +471,28 @@ const AddressWithMapV2: React.FC<AddressWithMapV2Props> = ({
 
       {/* Map Preview - Only show after address selection */}
       {addressSelected && (
-        <div className="mt-3 border border-gray-200 rounded-lg overflow-hidden relative" style={{ height: '400px' }}>
+        <div
+          className='mt-3 border border-gray-200 rounded-lg overflow-hidden relative'
+          style={{ height: '400px' }}
+        >
           {(!map || tilesLoading) && (
-            <div className="absolute inset-0 w-full h-full bg-gray-100 flex items-center justify-center z-10">
-              <div className="text-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
-                <p className="text-sm text-gray-600">
+            <div className='absolute inset-0 w-full h-full bg-gray-100 flex items-center justify-center z-10'>
+              <div className='text-center'>
+                <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2'></div>
+                <p className='text-sm text-gray-600'>
                   {tilesLoading ? t('address.map.loading') : 'Initialiserar...'}
                 </p>
               </div>
             </div>
           )}
-          <div ref={mapRef} className="w-full h-full" style={{ display: map ? 'block' : 'none' }} />
+          <div ref={mapRef} className='w-full h-full' style={{ display: map ? 'block' : 'none' }} />
         </div>
       )}
 
       {/* Error Message */}
       {(error || errorMessage) && (
-        <p className="mt-1 text-sm text-red-600 flex items-center">
-          <span className="mr-1">⚠</span>
+        <p className='mt-1 text-sm text-red-600 flex items-center'>
+          <span className='mr-1'>⚠</span>
           {error || errorMessage}
         </p>
       )}

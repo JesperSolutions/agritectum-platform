@@ -42,16 +42,11 @@ const PortalRegister: React.FC = () => {
     setLoading(true);
 
     try {
-      await registerCustomer(
-        formData.email,
-        formData.password,
-        formData.displayName,
-        {
-          phone: formData.phone || undefined,
-          address: formData.address || undefined,
-          companyName: formData.companyName || undefined,
-        }
-      );
+      await registerCustomer(formData.email, formData.password, formData.displayName, {
+        phone: formData.phone || undefined,
+        address: formData.address || undefined,
+        companyName: formData.companyName || undefined,
+      });
       navigate('/portal/dashboard');
     } catch (err: any) {
       setError(err.message || 'Failed to create account');
@@ -164,7 +159,10 @@ const PortalRegister: React.FC = () => {
           </div>
 
           <div>
-            <label htmlFor='confirmPassword' className='block text-sm font-medium text-gray-700 mb-2'>
+            <label
+              htmlFor='confirmPassword'
+              className='block text-sm font-medium text-gray-700 mb-2'
+            >
               Confirm Password *
             </label>
             <input
@@ -202,5 +200,3 @@ const PortalRegister: React.FC = () => {
 };
 
 export default PortalRegister;
-
-

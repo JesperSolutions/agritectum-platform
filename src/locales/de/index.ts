@@ -47,4 +47,3 @@ const deMessages = {
 };
 
 export default deMessages;
-

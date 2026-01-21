@@ -28,7 +28,9 @@ const calculatePolygonArea = (latlngs: L.LatLng[]): number => {
       Math.atan2(
         Math.sin(dLon) * Math.cos(lat2),
         Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon)
-      ) * R * R;
+      ) *
+      R *
+      R;
   }
 
   return Math.abs(area);
@@ -131,7 +133,7 @@ const RoofSizeMeasurer: React.FC<RoofSizeMeasurerProps> = ({
     setIsDrawing(true);
     setPoints([]);
     setArea(null);
-    
+
     // Clear existing polygon and markers
     if (polygonRef.current && mapInstanceRef.current) {
       mapInstanceRef.current.removeLayer(polygonRef.current);
@@ -149,7 +151,7 @@ const RoofSizeMeasurer: React.FC<RoofSizeMeasurerProps> = ({
     setPoints([]);
     setArea(null);
     setIsDrawing(false);
-    
+
     if (polygonRef.current && mapInstanceRef.current) {
       mapInstanceRef.current.removeLayer(polygonRef.current);
       polygonRef.current = null;
@@ -170,41 +172,40 @@ const RoofSizeMeasurer: React.FC<RoofSizeMeasurerProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+    <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50'>
+      <div className='bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col'>
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
-          <div className="flex items-center gap-2">
-            <Ruler className="w-5 h-5 text-blue-600" />
-            <h2 className="text-xl font-bold text-gray-900">Measure Roof Size</h2>
+        <div className='flex items-center justify-between p-4 border-b border-gray-200'>
+          <div className='flex items-center gap-2'>
+            <Ruler className='w-5 h-5 text-blue-600' />
+            <h2 className='text-xl font-bold text-gray-900'>Measure Roof Size</h2>
           </div>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            <X className="w-6 h-6" />
+          <button onClick={onClose} className='text-gray-400 hover:text-gray-600 transition-colors'>
+            <X className='w-6 h-6' />
           </button>
         </div>
 
         {/* Instructions */}
-        <div className="p-4 bg-blue-50 border-b border-gray-200">
-          <p className="text-sm text-gray-700">
+        <div className='p-4 bg-blue-50 border-b border-gray-200'>
+          <p className='text-sm text-gray-700'>
             {isDrawing ? (
               <>
-                <strong>Drawing mode:</strong> Click on the map to add points around the roof perimeter. 
-                You need at least 3 points to form a polygon. The area will be calculated automatically.
+                <strong>Drawing mode:</strong> Click on the map to add points around the roof
+                perimeter. You need at least 3 points to form a polygon. The area will be calculated
+                automatically.
               </>
             ) : (
               <>
-                Click "Start Drawing" to begin measuring. Then click on the map to mark the corners of the roof.
+                Click "Start Drawing" to begin measuring. Then click on the map to mark the corners
+                of the roof.
               </>
             )}
           </p>
         </div>
 
         {/* Map */}
-        <div className="flex-1 relative" style={{ zIndex: 1 }}>
-          <div ref={mapRef} className="w-full h-full min-h-[400px]" style={{ zIndex: 1 }} />
+        <div className='flex-1 relative' style={{ zIndex: 1 }}>
+          <div ref={mapRef} className='w-full h-full min-h-[400px]' style={{ zIndex: 1 }} />
           <style>{`
             .roof-point-marker {
               z-index: 1000 !important;
@@ -216,13 +217,13 @@ const RoofSizeMeasurer: React.FC<RoofSizeMeasurerProps> = ({
         </div>
 
         {/* Controls */}
-        <div className="p-4 border-t border-gray-200 bg-gray-50">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-4">
+        <div className='p-4 border-t border-gray-200 bg-gray-50'>
+          <div className='flex items-center justify-between mb-4'>
+            <div className='flex items-center gap-4'>
               {!isDrawing ? (
                 <button
                   onClick={handleStartDrawing}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                  className='px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium'
                 >
                   Start Drawing
                 </button>
@@ -230,12 +231,12 @@ const RoofSizeMeasurer: React.FC<RoofSizeMeasurerProps> = ({
                 <>
                   <button
                     onClick={handleClear}
-                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium flex items-center gap-2"
+                    className='px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium flex items-center gap-2'
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className='w-4 h-4' />
                     Clear
                   </button>
-                  <span className="text-sm text-gray-600">
+                  <span className='text-sm text-gray-600'>
                     Points: {points.length} {points.length >= 3 && '(Minimum reached)'}
                   </span>
                 </>
@@ -243,30 +244,26 @@ const RoofSizeMeasurer: React.FC<RoofSizeMeasurerProps> = ({
             </div>
 
             {area !== null && (
-              <div className="text-right">
-                <div className="text-sm text-gray-600">Calculated Area</div>
-                <div className="text-2xl font-bold text-blue-600">
-                  {area.toFixed(2)} m²
-                </div>
-                <div className="text-xs text-gray-500">
-                  {(area * 10.764).toFixed(2)} sq ft
-                </div>
+              <div className='text-right'>
+                <div className='text-sm text-gray-600'>Calculated Area</div>
+                <div className='text-2xl font-bold text-blue-600'>{area.toFixed(2)} m²</div>
+                <div className='text-xs text-gray-500'>{(area * 10.764).toFixed(2)} sq ft</div>
               </div>
             )}
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-3">
+          <div className='flex gap-3'>
             <button
               onClick={onClose}
-              className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-semibold"
+              className='flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-semibold'
             >
               Cancel
             </button>
             <button
               onClick={handleConfirm}
               disabled={area === null || area === 0}
-              className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+              className='flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed'
             >
               Use This Area
             </button>
@@ -278,4 +275,3 @@ const RoofSizeMeasurer: React.FC<RoofSizeMeasurerProps> = ({
 };
 
 export default RoofSizeMeasurer;
-

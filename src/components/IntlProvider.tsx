@@ -1,8 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { IntlProvider as ReactIntlProvider } from 'react-intl';
 import { defaultLocale, messages, updateLocale } from '../i18n';
-import { detectUserLocale, getStoredLocale, storeLocale, type SupportedLocale } from '../utils/geolocation';
+import {
+  detectUserLocale,
+  getStoredLocale,
+  storeLocale,
+  type SupportedLocale,
+} from '../utils/geolocation';
 import { logger } from '../utils/logger';
+import { useAuth } from '../contexts/AuthContext';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../config/firebase';
 
 interface IntlProviderProps {
   children: React.ReactNode;
@@ -11,24 +19,42 @@ interface IntlProviderProps {
 const IntlProvider: React.FC<IntlProviderProps> = ({ children }) => {
   const [currentLocale, setCurrentLocale] = useState<SupportedLocale>(defaultLocale);
   const [isInitialized, setIsInitialized] = useState(false);
+  const { currentUser } = useAuth();
 
   useEffect(() => {
     const initializeLocale = async () => {
       try {
-        // Check if user has a stored preference
+        // Priority 1: Check user profile for preferredLanguage
+        if (currentUser?.uid) {
+          try {
+            const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+            const userData = userDoc.data();
+            const userLanguage = userData?.preferredLanguage || userData?.locale;
+
+            if (userLanguage && messages[userLanguage as SupportedLocale]) {
+              setCurrentLocale(userLanguage as SupportedLocale);
+              storeLocale(userLanguage as SupportedLocale, true);
+              setIsInitialized(true);
+              logger.log('[IntlProvider] Using user profile language:', userLanguage);
+              return;
+            }
+          } catch (error) {
+            logger.warn('[IntlProvider] Could not fetch user language preference:', error);
+          }
+        }
+
+        // Priority 2: Check if user has a manually stored preference
         const stored = getStoredLocale();
-        
-        // If locale was manually set, use it and don't re-detect
+
         if (stored && stored.isManual && messages[stored.locale]) {
           setCurrentLocale(stored.locale);
           setIsInitialized(true);
           return;
         }
 
-        // If locale was auto-detected or no stored preference, re-detect
-        // This ensures users get the correct language when they travel
+        // Priority 3: Auto-detect from geolocation
         const detectedLocale = await detectUserLocale();
-        
+
         // Verify the locale has messages available
         if (messages[detectedLocale]) {
           setCurrentLocale(detectedLocale);
@@ -51,7 +77,7 @@ const IntlProvider: React.FC<IntlProviderProps> = ({ children }) => {
     };
 
     initializeLocale();
-  }, []);
+  }, [currentUser?.uid]); // Re-run when user changes
 
   // Use current locale or fallback to default
   const activeLocale = currentLocale || defaultLocale;
@@ -61,10 +87,19 @@ const IntlProvider: React.FC<IntlProviderProps> = ({ children }) => {
   if (import.meta.env.DEV && isInitialized) {
     logger.log('[IntlProvider] Active locale:', activeLocale, 'Type:', typeof activeLocale);
     logger.log('[IntlProvider] Available locales:', Object.keys(messages));
-    logger.log('[IntlProvider] Messages object keys (first 10):', Object.keys(activeMessages || {}).slice(0, 10));
-    logger.log('[IntlProvider] Has navigation.scheduledVisits:', 'navigation.scheduledVisits' in (activeMessages || {}));
+    logger.log(
+      '[IntlProvider] Messages object keys (first 10):',
+      Object.keys(activeMessages || {}).slice(0, 10)
+    );
+    logger.log(
+      '[IntlProvider] Has navigation.scheduledVisits:',
+      'navigation.scheduledVisits' in (activeMessages || {})
+    );
     if (activeMessages && activeMessages['navigation.scheduledVisits']) {
-      logger.log('[IntlProvider] navigation.scheduledVisits value:', activeMessages['navigation.scheduledVisits']);
+      logger.log(
+        '[IntlProvider] navigation.scheduledVisits value:',
+        activeMessages['navigation.scheduledVisits']
+      );
     }
   }
 
@@ -72,9 +107,9 @@ const IntlProvider: React.FC<IntlProviderProps> = ({ children }) => {
   if (!isInitialized) {
     // Return with default locale while detecting
     return (
-      <ReactIntlProvider 
-        locale={defaultLocale} 
-        messages={messages[defaultLocale]} 
+      <ReactIntlProvider
+        locale={defaultLocale}
+        messages={messages[defaultLocale]}
         defaultLocale={defaultLocale}
       >
         {children}
@@ -83,9 +118,9 @@ const IntlProvider: React.FC<IntlProviderProps> = ({ children }) => {
   }
 
   return (
-    <ReactIntlProvider 
-      locale={activeLocale} 
-      messages={activeMessages} 
+    <ReactIntlProvider
+      locale={activeLocale}
+      messages={activeMessages}
       defaultLocale={defaultLocale}
       key={activeLocale} // Force re-render when locale changes
     >

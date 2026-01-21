@@ -13,6 +13,7 @@ BFG is faster and more reliable than filter-branch.
 ### **Option 1: BFG Repo Cleaner (RECOMMENDED)**
 
 #### **Install BFG:**
+
 ```bash
 # Download from: https://rtyley.github.io/bfg-repo-cleaner/
 # Or via chocolatey:
@@ -20,6 +21,7 @@ choco install bfg-repo-cleaner
 ```
 
 #### **Clean History:**
+
 ```bash
 # 1. Clone a fresh copy
 cd ..
@@ -96,16 +98,19 @@ git push -f origin main
 ## 🔒 **Current Security Status**
 
 ### **Good News:**
+
 ✅ Credentials are removed from **future commits** (latest commit forward)  
 ✅ .gitignore now prevents re-adding them  
 ✅ Local files still work (not deleted locally)  
-✅ Production is secure (deployed with security headers)  
+✅ Production is secure (deployed with security headers)
 
 ### **The Problem:**
+
 ⚠️ Credentials still exist in **old commits** in git history  
-⚠️ Anyone who clones repo can access old commits  
+⚠️ Anyone who clones repo can access old commits
 
 ### **Immediate Mitigation:**
+
 Since your repo is likely **private**, the risk is contained to people with repo access. But you should still clean it.
 
 ---
@@ -117,7 +122,7 @@ Since your repo is likely **private**, the risk is contained to people with repo
 Since you mentioned you'll force push, I recommend:
 
 1. **TODAY**: Revoke the exposed service account key in Firebase Console (makes history irrelevant)
-2. **TODAY**: Rotate SMTP password (makes history irrelevant)  
+2. **TODAY**: Rotate SMTP password (makes history irrelevant)
 3. **THIS WEEK**: Use BFG Repo Cleaner to properly clean history
 4. **DONE**: Force push clean history
 
@@ -132,11 +137,10 @@ Since you mentioned you'll force push, I recommend:
 ✅ Security headers deployed  
 ✅ isPublic validation added  
 ✅ Documentation cleaned  
-✅ Material Design implemented  
+✅ Material Design implemented
 
 **Your app is SECURE going forward!** The history cleanup is "nice to have" but not urgent if you revoke the credentials.
 
 ---
 
 **Let me know which approach you prefer, or if you want me to prepare specific commands for BFG!**
-

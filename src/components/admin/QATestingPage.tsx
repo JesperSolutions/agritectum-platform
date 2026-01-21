@@ -266,7 +266,9 @@ const QATestingPage: React.FC = () => {
             addDebugLog(`User branch ID: ${currentUser.branchId}`, 'info');
 
             // Use the report service directly with the test branch
-            const { createReport: createReportService } = await import('../../services/reportService');
+            const { createReport: createReportService } = await import(
+              '../../services/reportService'
+            );
             const reportId = await createReportService(testReport, branchId);
             setTestReportId(reportId);
             addDebugLog(`Test report ID set to: ${reportId}`, 'info');
@@ -314,7 +316,9 @@ const QATestingPage: React.FC = () => {
 
             addDebugLog(`Updating report ${reportId} in branch ${branchId}`, 'info');
 
-            const { updateReport: updateReportService } = await import('../../services/reportService');
+            const { updateReport: updateReportService } = await import(
+              '../../services/reportService'
+            );
             await updateReportService(
               reportId,
               {
@@ -337,7 +341,9 @@ const QATestingPage: React.FC = () => {
 
             addDebugLog(`Deleting report ${reportId} from branch ${branchId}`, 'info');
 
-            const { deleteReport: deleteReportService } = await import('../../services/reportService');
+            const { deleteReport: deleteReportService } = await import(
+              '../../services/reportService'
+            );
             await deleteReportService(reportId, branchId);
             setTestReportId(null);
 

@@ -7,6 +7,7 @@
 ## Executive Summary
 
 This audit aligns the entire codebase with the reference design from the Scheduled Visits page, which demonstrates key design principles:
+
 - Clear, bold section titles and subtitles
 - Tabbed filters with active state styling (`bg-slate-700`)
 - Card-based layouts with consistent padding, shadows, and rounded corners
@@ -21,29 +22,34 @@ This audit aligns the entire codebase with the reference design from the Schedul
 ### 1. Shared Components Created
 
 #### `FilterTabs.tsx`
+
 - Standardized filter button component
 - Active state: `bg-slate-700 text-white`
 - Inactive state: `bg-slate-100 text-slate-700 hover:bg-slate-200`
 - Location: `src/components/shared/filters/FilterTabs.tsx`
 
 #### `StatusBadge.tsx`
+
 - Standardized status badge component
 - Supports multiple status variants (scheduled, completed, cancelled, etc.)
 - Consistent color mapping
 - Location: `src/components/shared/badges/StatusBadge.tsx`
 
 #### `IconLabel.tsx`
+
 - Icon + label pattern for card metadata
 - Consistent spacing and typography
 - Location: `src/components/shared/layouts/IconLabel.tsx`
 
 #### `ListCard.tsx`
+
 - Standardized card component
 - Styling: `bg-white rounded-lg shadow p-6 border border-slate-200`
 - Hover effect: `hover:shadow-lg transition-shadow`
 - Location: `src/components/shared/cards/ListCard.tsx`
 
 #### `PageHeader.tsx`
+
 - Standardized page headers
 - Title: `text-3xl font-bold text-gray-900`
 - Subtitle: `mt-2 text-gray-600`
@@ -52,17 +58,20 @@ This audit aligns the entire codebase with the reference design from the Schedul
 ### 2. Date Formatter Utility
 
 #### `formatDateTime()`
+
 - Format: `MM/DD/YYYY at HH:mm` (e.g., "1/7/2026 at 09:00")
 - Handles Firestore Timestamps, ISO strings, and Date objects
 - Location: `src/utils/dateFormatter.ts`
 
 #### `formatDate()`
+
 - Format: `MM/DD/YYYY` (e.g., "1/7/2026")
 - Location: `src/utils/dateFormatter.ts`
 
 ### 3. Components Aligned
 
 #### ✅ ScheduledVisitsList
+
 - Uses shared components (`FilterTabs`, `StatusBadge`, `IconLabel`, `ListCard`, `PageHeader`)
 - Standardized filter buttons
 - Consistent card layout
@@ -71,6 +80,7 @@ This audit aligns the entire codebase with the reference design from the Schedul
 - Icon + label pattern for metadata
 
 #### ✅ ServiceAgreementsList
+
 - Uses shared components
 - Standardized filter tabs
 - Consistent card layout
@@ -78,12 +88,14 @@ This audit aligns the entire codebase with the reference design from the Schedul
 - Status badges standardized
 
 #### ✅ BuildingsList
+
 - Uses shared components (`ListCard`, `PageHeader`, `IconLabel`)
 - Standardized card styling
 - Consistent button colors (`bg-slate-700`)
 - Icon + label pattern
 
 #### ✅ OffersList
+
 - Uses shared components (`StatusBadge`, `ListCard`)
 - Standardized filter buttons (`bg-slate-700` for active)
 - Consistent card layout
@@ -94,6 +106,7 @@ This audit aligns the entire codebase with the reference design from the Schedul
 ### Components Needing Alignment
 
 #### ⏳ AllReports (`src/components/reports/AllReports.tsx`)
+
 - **Issues:**
   - Filter buttons use custom styling (`bg-slate-200` for active, should be `bg-slate-700`)
   - Status badges use inline styles
@@ -102,6 +115,7 @@ This audit aligns the entire codebase with the reference design from the Schedul
 - **Action:** Replace filter buttons with `FilterTabs`, use `StatusBadge`, standardize cards
 
 #### ⏳ SchedulePage (`src/components/schedule/SchedulePage.tsx`)
+
 - **Issues:**
   - Complex filter system needs standardization
   - Status badges need standardization
@@ -109,12 +123,14 @@ This audit aligns the entire codebase with the reference design from the Schedul
 - **Action:** Standardize filters, use `StatusBadge`, standardize date formatting
 
 #### ⏳ ReportView (`src/components/ReportView.tsx`)
+
 - **Issues:**
   - Status badges use inline `getStatusColor()` function
   - Should use `StatusBadge` component
 - **Action:** Replace inline status badges with `StatusBadge`
 
 #### ⏳ OfferList (`src/components/offers/OfferList.tsx`)
+
 - **Issues:**
   - Filter buttons use `bg-blue-600` (should be `bg-slate-700`)
   - Uses table layout instead of cards
@@ -123,6 +139,7 @@ This audit aligns the entire codebase with the reference design from the Schedul
 ### Standardization Tasks
 
 #### ⏳ Filter Button Standardization
+
 - Replace all instances of:
   - `bg-green-600` → `bg-slate-700`
   - `bg-blue-600` → `bg-slate-700`
@@ -133,6 +150,7 @@ This audit aligns the entire codebase with the reference design from the Schedul
   - `src/components/offers/OfferList.tsx`
 
 #### ⏳ Status Badge Standardization
+
 - Replace all inline status badge implementations with `StatusBadge` component
 - **Files to update:**
   - `src/components/ReportView.tsx`
@@ -142,6 +160,7 @@ This audit aligns the entire codebase with the reference design from the Schedul
   - `src/components/admin/ServiceAgreements.tsx`
 
 #### ⏳ Date Formatting Standardization
+
 - Replace all `toLocaleDateString()` calls with `formatDateTime()` or `formatDate()`
 - **Files to update:**
   - `src/components/reports/AllReports.tsx`
@@ -150,6 +169,7 @@ This audit aligns the entire codebase with the reference design from the Schedul
   - All other components using date formatting
 
 #### ⏳ Card Layout Standardization
+
 - Replace all custom card implementations with `ListCard` component
 - Ensure consistent:
   - Padding: `p-6`
@@ -160,6 +180,7 @@ This audit aligns the entire codebase with the reference design from the Schedul
 ## Inconsistencies Found
 
 ### 1. Filter Button Styling
+
 - **Issue:** Multiple active state colors used
 - **Found in:**
   - `bg-green-600` (ScheduledVisitsList, ServiceAgreementsList) - ✅ Fixed
@@ -168,6 +189,7 @@ This audit aligns the entire codebase with the reference design from the Schedul
 - **Standard:** `bg-slate-700 text-white` for active state
 
 ### 2. Status Badge Styling
+
 - **Issue:** Multiple implementations with different styles
 - **Found in:**
   - Inline styles with varying padding (`px-2 py-1` vs `px-3 py-1`)
@@ -176,6 +198,7 @@ This audit aligns the entire codebase with the reference design from the Schedul
 - **Standard:** Use `StatusBadge` component
 
 ### 3. Card Styling
+
 - **Issue:** Inconsistent card implementations
 - **Found in:**
   - Mixed `rounded-lg` vs `rounded-xl` vs `rounded-2xl`
@@ -185,6 +208,7 @@ This audit aligns the entire codebase with the reference design from the Schedul
 - **Standard:** Use `ListCard` component
 
 ### 4. Date Formatting
+
 - **Issue:** Multiple date formatting approaches
 - **Found in:**
   - `toLocaleDateString()` (locale-dependent)
@@ -193,6 +217,7 @@ This audit aligns the entire codebase with the reference design from the Schedul
 - **Standard:** Use `formatDateTime()` for MM/DD/YYYY at HH:mm
 
 ### 5. Typography Hierarchy
+
 - **Issue:** Inconsistent title/subtitle sizes
 - **Found in:**
   - Mixed `text-2xl` vs `text-3xl` for titles
@@ -202,11 +227,13 @@ This audit aligns the entire codebase with the reference design from the Schedul
 ## Translation Keys Added
 
 ### Common
+
 - `common.filters.all` - "All" / "Alla"
 - `common.filters.upcoming` - "Upcoming" / "Kommande"
 - `common.filters.past` - "Past" / "Tidigare"
 
 ### Schedule
+
 - `schedule.visits.subtitle` - "View scheduled roofer visits for your buildings"
 - `schedule.visits.noVisits` - "No scheduled visits found"
 - `schedule.visits.dateTime` - "Date & Time"

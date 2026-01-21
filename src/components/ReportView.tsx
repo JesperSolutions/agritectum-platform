@@ -24,10 +24,15 @@ import {
   DollarSign,
   Eye,
   Download,
+  Save,
 } from 'lucide-react';
 import LoadingSpinner from './common/LoadingSpinner';
 import CreateOfferModal from './offers/CreateOfferModal';
-import { reportHasOffer, getOfferByReportId, createOffer as createOfferService } from '../services/offerService';
+import {
+  reportHasOffer,
+  getOfferByReportId,
+  createOffer as createOfferService,
+} from '../services/offerService';
 import NotificationToast from './common/NotificationToast';
 import { lazy, Suspense } from 'react';
 import AgritectumLogo from './AgritectumLogo';
@@ -50,7 +55,6 @@ const ReportView: React.FC = () => {
     try {
       return formatCurrency(value);
     } catch (error) {
-      console.error('Error formatting currency:', error);
       return value.toString();
     }
   };
@@ -64,12 +68,11 @@ const ReportView: React.FC = () => {
         margin: 2,
         color: {
           dark: '#000000',
-          light: '#FFFFFF'
-        }
+          light: '#FFFFFF',
+        },
       });
       return qrCodeDataUrl;
     } catch (error) {
-      console.error('Error generating QR code:', error);
       throw new Error('Failed to generate QR code');
     } finally {
       setQrGenerating(false);
@@ -79,17 +82,17 @@ const ReportView: React.FC = () => {
   // Generate external URL and QR code with race condition protection
   const generateExternalResources = async (reportId: string) => {
     if (!reportId) return;
-    
+
     // Prevent multiple simultaneous generation attempts
     if (qrGenerating) {
       return;
     }
-    
+
     try {
       const baseUrl = window.location.origin;
       const url = `${baseUrl}/report/public/${reportId}`;
       setExternalUrl(url);
-      
+
       // Only generate if we don't already have a QR code
       if (!qrCodeUrl) {
         const qrDataUrl = await generateQRCode(url);
@@ -97,7 +100,6 @@ const ReportView: React.FC = () => {
         setQrCodeUrl(prev => prev || qrDataUrl);
       }
     } catch (error) {
-      console.error('Error generating external resources:', error);
       setToast({
         message: 'Failed to generate sharing resources',
         type: 'error',
@@ -110,39 +112,45 @@ const ReportView: React.FC = () => {
   const [report, setReport] = useState<Report | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [editMode, setEditMode] = useState(false);
   const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
   const [externalUrl, setExternalUrl] = useState<string>('');
   const [qrGenerating, setQrGenerating] = useState(false);
   const [branchInfo, setBranchInfo] = useState<{ name: string; logoUrl?: string } | null>(null);
   const [priorReport, setPriorReport] = useState<Report | null>(null);
-  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'warning' } | null>(null);
+  const [toast, setToast] = useState<{
+    message: string;
+    type: 'success' | 'error' | 'warning';
+  } | null>(null);
   const [showCreateOfferModal, setShowCreateOfferModal] = useState(false);
   const [hasOffer, setHasOffer] = useState(false);
   const [existingOffer, setExistingOffer] = useState<Offer | null>(null);
-  const [addressCoordinates, setAddressCoordinates] = useState<{ lat: number; lon: number } | null>(null);
+  const [addressCoordinates, setAddressCoordinates] = useState<{ lat: number; lon: number } | null>(
+    null
+  );
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
 
   // PDF Generation Handler
   const handleExportPDF = async () => {
     if (!report) return;
-    
+
     try {
       setIsGeneratingPDF(true);
       setToast({
         message: t('reportView.generatingPDF') || 'Generating PDF...',
         type: 'success',
       });
-      
+
       // Import the generateReportPDF function
       const { generateReportPDF } = await import('../services/clientPdfService');
-      
+
       // Generate PDF from public view
       const publicUrl = `${window.location.origin}/report/public/${report.id}`;
       const result = await generateReportPDF(report.id, {
         format: 'A4',
-        margin: { top: '20px', bottom: '20px', left: '20px', right: '20px' }
+        margin: { top: '20px', bottom: '20px', left: '20px', right: '20px' },
       });
-      
+
       if (result && result.url) {
         // Download the PDF
         const link = document.createElement('a');
@@ -151,14 +159,13 @@ const ReportView: React.FC = () => {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        
+
         setToast({
           message: t('reportView.pdfDownloaded') || 'PDF downloaded successfully',
           type: 'success',
         });
       }
     } catch (error) {
-      console.error('Error generating PDF:', error);
       setToast({
         message: t('reportView.pdfError') || 'Failed to generate PDF. Please try again.',
         type: 'error',
@@ -176,8 +183,14 @@ const ReportView: React.FC = () => {
         return;
       }
 
+      // Wait for auth to be ready before loading report
+      if (currentUser === undefined) {
+        return;
+      }
+
       try {
         const fetchedReport = await getReport(reportId);
+
         if (fetchedReport) {
           setReport(fetchedReport);
 
@@ -185,7 +198,6 @@ const ReportView: React.FC = () => {
           if (fetchedReport.isShared) {
             await generateExternalResources(reportId);
           }
-
 
           // Load prior report if linked
           if (fetchedReport.priorReportId) {
@@ -251,23 +263,31 @@ const ReportView: React.FC = () => {
         } else {
           setError('Report not found');
         }
-      } catch (error) {
-        console.error('Error loading report:', error);
-        setError('Failed to load report');
+      } catch (error: any) {
+        // Provide user-friendly error messages
+        if (error?.code === 'permission-denied') {
+          setError(
+            'You do not have permission to view this report. Please contact support if you believe this is an error.'
+          );
+        } else if (error?.message?.includes('not found')) {
+          setError('Report not found');
+        } else {
+          setError(`Failed to load report: ${error?.message || 'Unknown error'}`);
+        }
       } finally {
         setLoading(false);
       }
     };
 
     loadReport();
-  }, [reportId, currentUser?.branchId]);
+  }, [reportId, currentUser]);
 
   const handleStatusChange = async (newStatus: string) => {
     if (!report) return;
 
     // Validate status transition
     const { isValidTransition, getValidNextStatuses } = await import('../utils/reportStatusUtils');
-    
+
     if (!isValidTransition(report.status, newStatus as any)) {
       const validNext = getValidNextStatuses(report.status);
       setToast({
@@ -279,30 +299,29 @@ const ReportView: React.FC = () => {
 
     try {
       const updates: any = { status: newStatus as any };
-      
+
       // If setting to shared, also set isShared and isPublic flags
       if (newStatus === 'shared') {
         updates.isShared = true;
         updates.isPublic = true;
       }
-      
+
       await updateReport(report.id, updates);
       setReport(prev => (prev ? { ...prev, ...updates } : null));
-      
+
       // Show success message
       const statusMessages: Record<string, string> = {
-        'completed': t('reportView.reportCompleted'),
-        'sent': t('reportView.reportSent'),
-        'shared': t('reportView.reportShared'),
-        'archived': t('reports.archived'),
+        completed: t('reportView.reportCompleted'),
+        sent: t('reportView.reportSent'),
+        shared: t('reportView.reportShared'),
+        archived: t('reports.archived'),
       };
-      
+
       setToast({
-        message: statusMessages[newStatus] || t('messages.success.saved'),
+        message: statusMessages[newStatus] || t('form.messages.saved'),
         type: 'success',
       });
     } catch (error) {
-      console.error('Error updating status:', error);
       setToast({
         message: t('messages.error.saving'),
         type: 'error',
@@ -331,7 +350,12 @@ const ReportView: React.FC = () => {
             (sum, action) => sum + (action.estimatedCost || 0),
             0
           );
-          const subtotal = offerData.laborCost + offerData.materialCost + offerData.travelCost + offerData.overheadCost + recommendedActionsCost;
+          const subtotal =
+            offerData.laborCost +
+            offerData.materialCost +
+            offerData.travelCost +
+            offerData.overheadCost +
+            recommendedActionsCost;
           const profit = subtotal * (offerData.profitMargin / 100);
           return subtotal + profit;
         })(),
@@ -348,15 +372,12 @@ const ReportView: React.FC = () => {
       // Navigate to the offer
       setTimeout(() => navigate(`/offers`), 1500);
     } catch (error) {
-      console.error('Error creating offer:', error);
       setToast({
         message: 'Failed to create offer',
         type: 'error',
       });
     }
   };
-
-
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -397,11 +418,33 @@ const ReportView: React.FC = () => {
 
   // Determine if user can edit this report
   // Inspectors can edit their own reports, admins can edit reports in their branch
-  const canEdit = report && (
-    currentUser?.uid === report.createdBy ||
-    currentUser?.role === 'branchAdmin' ||
-    currentUser?.role === 'superadmin'
-  ) && report.status !== 'archived'; // Archived reports cannot be edited
+  const canEdit =
+    report &&
+    (currentUser?.uid === report.createdBy ||
+      currentUser?.role === 'branchAdmin' ||
+      currentUser?.role === 'superadmin') &&
+    report.status !== 'archived'; // Archived reports cannot be edited
+
+  // Handle saving issue updates
+  const handleSaveIssue = async (updatedIssue: any) => {
+    if (!report) return;
+    try {
+      const updatedIssues = report.issuesFound.map(issue =>
+        issue.id === updatedIssue.id ? updatedIssue : issue
+      );
+      await updateReport(report.id, { issuesFound: updatedIssues });
+      setReport({ ...report, issuesFound: updatedIssues });
+      setToast({
+        message: 'Issue saved successfully',
+        type: 'success',
+      });
+    } catch (error) {
+      setToast({
+        message: 'Failed to save issue',
+        type: 'error',
+      });
+    }
+  };
 
   if (loading) {
     return (
@@ -477,9 +520,11 @@ const ReportView: React.FC = () => {
                       alt={`${branchInfo.name} logo`}
                       className='h-12 w-auto object-contain'
                       onError={e => {
-                        console.error('Error loading branch logo:', e);
                         e.currentTarget.style.display = 'none';
-                        const fallback = e.currentTarget.parentElement?.parentElement?.querySelector('.fallback-logo');
+                        const fallback =
+                          e.currentTarget.parentElement?.parentElement?.querySelector(
+                            '.fallback-logo'
+                          );
                         if (fallback) (fallback as HTMLElement).style.display = 'flex';
                       }}
                     />
@@ -487,7 +532,7 @@ const ReportView: React.FC = () => {
                 ) : null}
                 {(!branchInfo?.logoUrl || branchInfo.logoUrl === '') && (
                   <div className='fallback-logo flex items-center justify-center bg-white rounded-xl p-2 border border-slate-200 shadow-sm'>
-                    <AgritectumLogo size="sm" showText={false} />
+                    <AgritectumLogo size='sm' showText={false} />
                   </div>
                 )}
               </div>
@@ -506,9 +551,7 @@ const ReportView: React.FC = () => {
                   )}
                 </div>
                 <p className='text-slate-900 font-medium mb-1'>{report.customerName}</p>
-                {branchInfo && (
-                  <p className='text-sm text-slate-600'>{branchInfo.name}</p>
-                )}
+                {branchInfo && <p className='text-sm text-slate-600'>{branchInfo.name}</p>}
                 {report.offerValue && (
                   <p className='text-sm text-slate-600 mt-1'>
                     {t('offer.fields.offerValue')}: {formatCurrencySafe(report.offerValue)}
@@ -547,15 +590,73 @@ const ReportView: React.FC = () => {
               {/* Action Buttons - Horizontal layout */}
               <div className='flex items-center gap-2 flex-wrap'>
                 {canEdit && (
-                  <Link
-                    to={`/report/edit/${report.id}`}
-                    className='inline-flex items-center px-3 py-2 border border-slate-300 text-sm font-medium rounded-lg text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500 transition-colors shadow-sm'
-                  >
-                    <Edit className='w-4 h-4 mr-2' />
-                    {t('actions.edit')}
-                  </Link>
+                  <>
+                    {editMode && (
+                      <button
+                        onClick={async () => {
+                          try {
+                            const { id, ...updates } = report;
+                            // Clean up updates object for Firestore - only include editable fields
+                            const cleanUpdates = {
+                              customerName: report.customerName,
+                              customerAddress: report.customerAddress,
+                              customerPhone: report.customerPhone,
+                              customerEmail: report.customerEmail,
+                              buildingName: report.buildingName,
+                              buildingAddress: report.buildingAddress,
+                              inspectionDate: report.inspectionDate,
+                              roofType: report.roofType,
+                              roofAge: report.roofAge,
+                              conditionNotes: report.conditionNotes,
+                              laborCost: report.laborCost || 0,
+                              materialCost: report.materialCost || 0,
+                              travelCost: report.travelCost || 0,
+                              overheadCost: report.overheadCost || 0,
+                              issuesFound: report.issuesFound || [],
+                              recommendedActions: report.recommendedActions || [],
+                              lastEdited: new Date().toISOString(), // Update last edited timestamp
+                            };
+
+                            await updateReport(report.id, cleanUpdates);
+
+                            // Reload the report to get the updated data from Firestore
+                            const updatedReport = await getReport(report.id);
+                            if (updatedReport) {
+                              setReport(updatedReport);
+                            }
+
+                            setToast({
+                              message: t('report.changesSaved') || 'Changes saved successfully',
+                              type: 'success',
+                            });
+                            setEditMode(false);
+                          } catch (error) {
+                            setToast({
+                              message: t('report.errorSavingChanges') || 'Failed to save changes',
+                              type: 'error',
+                            });
+                          }
+                        }}
+                        className='inline-flex items-center px-3 py-2 border border-green-600 rounded-lg text-sm font-medium transition-colors shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500'
+                      >
+                        <Save className='w-4 h-4 mr-2' />
+                        Save Changes
+                      </button>
+                    )}
+                    <button
+                      onClick={() => setEditMode(!editMode)}
+                      className={`inline-flex items-center px-3 py-2 border rounded-lg text-sm font-medium transition-colors shadow-sm ${
+                        editMode
+                          ? 'border-slate-300 text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500'
+                          : 'border-slate-300 text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500'
+                      }`}
+                    >
+                      <Edit className='w-4 h-4 mr-2' />
+                      {editMode ? 'Exit Edit Mode' : 'Edit Report'}
+                    </button>
+                  </>
                 )}
-                
+
                 <button
                   onClick={async () => {
                     try {
@@ -565,14 +666,14 @@ const ReportView: React.FC = () => {
                       if (!externalUrl || !qrCodeUrl) {
                         await generateExternalResources(report.id);
                       }
-                      const urlToCopy = externalUrl || `${window.location.origin}/report/public/${report.id}`;
+                      const urlToCopy =
+                        externalUrl || `${window.location.origin}/report/public/${report.id}`;
                       await navigator.clipboard.writeText(urlToCopy);
                       setToast({
                         message: t('reportView.linkCopied'),
                         type: 'success',
                       });
                     } catch (error) {
-                      console.error('Error copying link:', error);
                       setToast({
                         message: t('messages.error.sending'),
                         type: 'error',
@@ -596,9 +697,14 @@ const ReportView: React.FC = () => {
                       if (!externalUrl || !qrCodeUrl) {
                         await generateExternalResources(report.id);
                       }
-                      const qrWindow = window.open('', '_blank', 'width=300,height=400,scrollbars=yes,resizable=yes');
+                      const qrWindow = window.open(
+                        '',
+                        '_blank',
+                        'width=300,height=400,scrollbars=yes,resizable=yes'
+                      );
                       if (qrWindow) {
-                        const urlToShow = externalUrl || `${window.location.origin}/report/public/${report.id}`;
+                        const urlToShow =
+                          externalUrl || `${window.location.origin}/report/public/${report.id}`;
                         qrWindow.document.write(`
                           <html>
                             <head>
@@ -633,7 +739,6 @@ const ReportView: React.FC = () => {
                         });
                       }
                     } catch (error) {
-                      console.error('Error showing QR code:', error);
                       setToast({
                         message: 'Failed to generate QR code. Please try again.',
                         type: 'error',
@@ -665,44 +770,57 @@ const ReportView: React.FC = () => {
                   ) : (
                     <Download className='w-4 h-4 mr-2' />
                   )}
-                  {isGeneratingPDF ? (t('reportView.generatingPDF') || 'Generating...') : (t('reportView.exportPDF') || 'Export PDF')}
+                  {isGeneratingPDF
+                    ? t('reportView.generatingPDF') || 'Generating...'
+                    : t('reportView.exportPDF') || 'Export PDF'}
                 </button>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Cost Summary Card */}
-        <CostSummaryCard
-          report={report}
-          isEditable={true}
-          canEdit={!!(canEdit && report.createdBy === currentUser?.uid && currentUser?.role === 'inspector')}
-          onUpdate={async (costs) => {
-            try {
-              await updateReport(report.id, {
-                laborCost: costs.laborCost,
-                materialCost: costs.materialCost,
-                travelCost: costs.travelCost,
-                overheadCost: costs.overheadCost,
-              });
-              setToast({
-                message: 'Kostnader sparade',
-                type: 'success',
-              });
-              // Reload report to get updated values
-              const updatedReport = await getReport(report.id);
-              if (updatedReport) {
-                setReport(updatedReport);
-              }
-            } catch (error) {
-              console.error('Error updating costs:', error);
-              setToast({
-                message: 'Kunde inte spara kostnader',
-                type: 'error',
-              });
+        {/* Cost Summary Card - Hidden from customers */}
+        {currentUser?.role !== 'customer' && (
+          <CostSummaryCard
+            report={report}
+            isEditable={!editMode}
+            canEdit={
+              !!(
+                canEdit &&
+                report.createdBy === currentUser?.uid &&
+                currentUser?.role === 'inspector'
+              )
             }
-          }}
-        />
+            externalEditMode={editMode}
+            onFieldChange={(field, value) =>
+              setReport({ ...report, [field as keyof Report]: value })
+            }
+            onUpdate={async costs => {
+              try {
+                await updateReport(report.id, {
+                  laborCost: costs.laborCost,
+                  materialCost: costs.materialCost,
+                  travelCost: costs.travelCost,
+                  overheadCost: costs.overheadCost,
+                });
+                setToast({
+                  message: 'Kostnader sparade',
+                  type: 'success',
+                });
+                // Reload report to get updated values
+                const updatedReport = await getReport(report.id);
+                if (updatedReport) {
+                  setReport(updatedReport);
+                }
+              } catch (error) {
+                setToast({
+                  message: 'Kunde inte spara kostnader',
+                  type: 'error',
+                });
+              }
+            }}
+          />
+        )}
 
         {/* Report Details */}
         <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
@@ -716,44 +834,99 @@ const ReportView: React.FC = () => {
             <div className='space-y-3'>
               <div className='flex items-center'>
                 <User className='w-4 h-4 text-gray-400 mr-3' />
-                <div className='flex items-center gap-2'>
-                  <span className='text-gray-900'>{report.customerName}</span>
+                <div className='flex items-center gap-2 w-full'>
+                  {editMode ? (
+                    <input
+                      type='text'
+                      value={report.customerName || ''}
+                      onChange={e => setReport({ ...report, customerName: e.target.value })}
+                      className='w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500'
+                    />
+                  ) : (
+                    <span className='text-gray-900'>{report.customerName}</span>
+                  )}
                   {report.customerType === 'company' && (
-                    <span className="px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded-full">
-                      Företag
+                    <span className='px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded-full flex-shrink-0'>
+                      {t('report.company') || 'Company'}
                     </span>
                   )}
                 </div>
               </div>
 
-              <div className='flex items-center'>
-                <MapPin className='w-4 h-4 text-gray-400 mr-3' />
-                <div>
-                  <span className='text-gray-900'>{report.customerAddress}</span>
-                  {report.customerType === 'company' && report.buildingAddress && (
-                    <div className='text-sm text-gray-600 mt-1 ml-7'>
-                      Byggnadsadress: {report.buildingAddress}
+              <div className='flex items-start'>
+                <MapPin className='w-4 h-4 text-gray-400 mr-3 mt-1' />
+                <div className='w-full'>
+                  {editMode ? (
+                    <div className='space-y-2'>
+                      <div>
+                        <label className='text-[10px] uppercase font-bold text-gray-500'>
+                          Kundadress
+                        </label>
+                        <input
+                          type='text'
+                          value={report.customerAddress || ''}
+                          onChange={e => setReport({ ...report, customerAddress: e.target.value })}
+                          className='w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500'
+                        />
+                      </div>
+                      {report.customerType === 'company' && (
+                        <div>
+                          <label className='text-[10px] uppercase font-bold text-gray-500'>
+                            Byggnadsadress
+                          </label>
+                          <input
+                            type='text'
+                            value={report.buildingAddress || ''}
+                            onChange={e =>
+                              setReport({ ...report, buildingAddress: e.target.value })
+                            }
+                            className='w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500'
+                          />
+                        </div>
+                      )}
                     </div>
+                  ) : (
+                    <>
+                      <span className='text-gray-900'>{report.customerAddress}</span>
+                      {report.customerType === 'company' && report.buildingAddress && (
+                        <div className='text-sm text-gray-600 mt-1 ml-0'>
+                          Byggnadsadress: {report.buildingAddress}
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
 
-              {report.customerPhone && (
-                <div className='flex items-center'>
-                  <Phone className='w-4 h-4 text-gray-400 mr-3' />
+              <div className='flex items-center'>
+                <Phone className='w-4 h-4 text-gray-400 mr-3' />
+                {editMode ? (
+                  <input
+                    type='text'
+                    value={report.customerPhone || ''}
+                    onChange={e => setReport({ ...report, customerPhone: e.target.value })}
+                    className='w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500'
+                  />
+                ) : (
                   <span className='text-gray-900'>{report.customerPhone}</span>
-                </div>
-              )}
+                )}
+              </div>
 
-              {report.customerEmail && (
-                <div className='flex items-center'>
-                  <Mail className='w-4 h-4 text-gray-400 mr-3' />
+              <div className='flex items-center'>
+                <Mail className='w-4 h-4 text-gray-400 mr-3' />
+                {editMode ? (
+                  <input
+                    type='email'
+                    value={report.customerEmail || ''}
+                    onChange={e => setReport({ ...report, customerEmail: e.target.value })}
+                    className='w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500'
+                  />
+                ) : (
                   <span className='text-gray-900'>{report.customerEmail}</span>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
-
 
           {/* Prior Report Information */}
           {priorReport && (
@@ -781,9 +954,7 @@ const ReportView: React.FC = () => {
                 {priorReport.offerValue && (
                   <div className='flex items-center'>
                     <DollarSign className='w-4 h-4 text-gray-400 mr-3' />
-                    <span className='text-gray-900'>
-                      {formatCurrency(priorReport.offerValue)}
-                    </span>
+                    <span className='text-gray-900'>{formatCurrency(priorReport.offerValue)}</span>
                   </div>
                 )}
 
@@ -809,23 +980,75 @@ const ReportView: React.FC = () => {
 
             <div className='space-y-3'>
               <div>
+                <span className='text-sm font-medium text-gray-500'>Building Name:</span>
+                {editMode ? (
+                  <input
+                    type='text'
+                    value={report.buildingName || ''}
+                    onChange={e => {
+                      setReport({ ...report, buildingName: e.target.value });
+                    }}
+                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-sans'
+                    placeholder='Enter building name...'
+                  />
+                ) : (
+                  <div className='text-gray-900'>{report.buildingName || 'N/A'}</div>
+                )}
+              </div>
+
+              <div>
                 <span className='text-sm font-medium text-gray-500'>Inspection Date:</span>
-                <div className='text-gray-900'>
-                  {new Date(report.inspectionDate).toLocaleDateString('sv-SE', {
-                    timeZone: 'Europe/Stockholm',
-                  })}
-                </div>
+                {editMode ? (
+                  <input
+                    type='date'
+                    value={
+                      report.inspectionDate
+                        ? new Date(report.inspectionDate).toISOString().split('T')[0]
+                        : ''
+                    }
+                    onChange={e => setReport({ ...report, inspectionDate: e.target.value })}
+                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-sans mt-1'
+                  />
+                ) : (
+                  <div className='text-gray-900'>
+                    {new Date(report.inspectionDate).toLocaleDateString('sv-SE', {
+                      timeZone: 'Europe/Stockholm',
+                    })}
+                  </div>
+                )}
               </div>
 
               <div>
                 <span className='text-sm font-medium text-gray-500'>Roof Type:</span>
-                <div className='text-gray-900 capitalize'>{report.roofType}</div>
+                {editMode ? (
+                  <input
+                    type='text'
+                    value={report.roofType || ''}
+                    onChange={e => setReport({ ...report, roofType: e.target.value as any })}
+                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-sans mt-1'
+                    placeholder='Enter roof type...'
+                  />
+                ) : (
+                  <div className='text-gray-900 capitalize'>{report.roofType}</div>
+                )}
               </div>
 
-              {report.roofAge && (
+              {report.roofAge !== undefined && (
                 <div>
                   <span className='text-sm font-medium text-gray-500'>Roof Age:</span>
-                  <div className='text-gray-900'>{report.roofAge} years</div>
+                  {editMode ? (
+                    <input
+                      type='number'
+                      value={report.roofAge}
+                      onChange={e =>
+                        setReport({ ...report, roofAge: parseInt(e.target.value) || 0 })
+                      }
+                      className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-sans mt-1'
+                      placeholder='0'
+                    />
+                  ) : (
+                    <div className='text-gray-900'>{report.roofAge} years</div>
+                  )}
                 </div>
               )}
 
@@ -833,7 +1056,6 @@ const ReportView: React.FC = () => {
                 <span className='text-sm font-medium text-gray-500'>Inspector:</span>
                 <div className='text-gray-900'>{report.createdByName}</div>
               </div>
-
             </div>
           </div>
         </div>
@@ -842,9 +1064,21 @@ const ReportView: React.FC = () => {
         {report.conditionNotes && (
           <div className='bg-white p-6 rounded-lg shadow-sm border border-gray-200'>
             <h2 className='text-lg font-medium text-gray-900 mb-4'>General Condition Notes</h2>
-            <p className='text-gray-700 whitespace-pre-wrap leading-relaxed'>
-              {report.conditionNotes}
-            </p>
+            {editMode ? (
+              <div className='space-y-3'>
+                <textarea
+                  value={report.conditionNotes}
+                  onChange={e => setReport({ ...report, conditionNotes: e.target.value })}
+                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-sans'
+                  rows={4}
+                  placeholder='Enter condition notes...'
+                />
+              </div>
+            ) : (
+              <p className='text-gray-700 whitespace-pre-wrap leading-relaxed'>
+                {report.conditionNotes}
+              </p>
+            )}
           </div>
         )}
 
@@ -855,79 +1089,87 @@ const ReportView: React.FC = () => {
               <MapPin className='w-5 h-5 mr-2 text-blue-600' />
               {t('reportView.roofOverview') || 'Roof Overview with Issue Locations'}
             </h2>
-            <div className='relative bg-gray-50 rounded-lg overflow-hidden' style={{ position: 'relative', paddingTop: '56.25%' }}>
+            <div
+              className='relative bg-gray-50 rounded-lg overflow-hidden'
+              style={{ position: 'relative', paddingTop: '56.25%' }}
+            >
               <img
                 src={report.roofImageUrl}
-                alt="Roof overview with issue markers"
+                alt='Roof overview with issue markers'
                 className='absolute inset-0 w-full h-full object-contain'
               />
               {/* Render pins */}
-              {report.roofImagePins && report.roofImagePins.map((pin, index) => {
-                const getPinColor = (severity: string) => {
-                  switch (severity) {
-                    case 'critical':
-                      return 'bg-red-600 border-red-700';
-                    case 'high':
-                      return 'bg-orange-500 border-orange-600';
-                    case 'medium':
-                      return 'bg-yellow-500 border-yellow-600';
-                    case 'low':
-                      return 'bg-green-600 border-green-700';
-                    default:
-                      return 'bg-blue-500 border-blue-600';
-                  }
-                };
-                return (
-                  <div
-                    key={pin.id || index}
-                    className={`absolute w-6 h-6 ${getPinColor(pin.severity)} border-2 rounded-full transform -translate-x-1/2 -translate-y-1/2 pointer-events-none z-10`}
-                    style={{
-                      left: `${pin.x}%`,
-                      top: `${pin.y}%`,
-                    }}
-                  >
-                    <span className='absolute inset-0 flex items-center justify-center text-white text-xs font-bold'>
-                      {index + 1}
-                    </span>
-                  </div>
-                );
-              })}
+              {report.roofImagePins &&
+                report.roofImagePins.map((pin, index) => {
+                  const getPinColor = (severity: string) => {
+                    switch (severity) {
+                      case 'critical':
+                        return 'bg-red-600 border-red-700';
+                      case 'high':
+                        return 'bg-orange-500 border-orange-600';
+                      case 'medium':
+                        return 'bg-yellow-500 border-yellow-600';
+                      case 'low':
+                        return 'bg-green-600 border-green-700';
+                      default:
+                        return 'bg-blue-500 border-blue-600';
+                    }
+                  };
+                  return (
+                    <div
+                      key={pin.id || index}
+                      className={`absolute w-6 h-6 ${getPinColor(pin.severity)} border-2 rounded-full transform -translate-x-1/2 -translate-y-1/2 pointer-events-none z-10`}
+                      style={{
+                        left: `${pin.x}%`,
+                        top: `${pin.y}%`,
+                      }}
+                    >
+                      <span className='absolute inset-0 flex items-center justify-center text-white text-xs font-bold'>
+                        {index + 1}
+                      </span>
+                    </div>
+                  );
+                })}
             </div>
             {report.roofImagePins && report.roofImagePins.length > 0 && (
               <div className='mt-4 text-sm text-gray-600'>
-                <p>{t('reportView.pinLegend') || 'Markers indicate issue locations on the roof. Colors represent severity levels.'}</p>
+                <p>
+                  {t('reportView.pinLegend') ||
+                    'Markers indicate issue locations on the roof. Colors represent severity levels.'}
+                </p>
               </div>
             )}
           </div>
         )}
 
         {/* Satellite Map - Only show if we DON'T have a roof image (to avoid redundancy) */}
-        {!report.roofImageUrl && ((report.roofMapMarkers && report.roofMapMarkers.length > 0) || addressCoordinates) && (
-          <div className='bg-white p-6 rounded-lg shadow-sm border border-gray-200'>
-            <h2 className='text-lg font-medium text-gray-900 mb-4 flex items-center'>
-              <MapPin className='w-5 h-5 mr-2' />
-              Property Location Map
-            </h2>
-            {addressCoordinates ? (
-              <div className='relative w-full' style={{ height: '400px', zIndex: 0 }}>
-                <Suspense fallback={<LoadingSpinner size="sm" />}>
-                  <InteractiveRoofMap
-                    lat={addressCoordinates.lat}
-                    lon={addressCoordinates.lon}
-                    availableIssues={(report.issuesFound || []).map(issue => ({
-                      id: issue.id,
-                      title: issue.type + ' - ' + (issue.title || 'Untitled'),
-                    }))}
-                    existingMarkers={report.roofMapMarkers || []}
-                    onImageCapture={() => {}} // Read-only in view mode
-                  />
-                </Suspense>
-              </div>
-            ) : (
-              <p className='text-gray-500 text-center py-4'>Map loading...</p>
-            )}
-          </div>
-        )}
+        {!report.roofImageUrl &&
+          ((report.roofMapMarkers && report.roofMapMarkers.length > 0) || addressCoordinates) && (
+            <div className='bg-white p-6 rounded-lg shadow-sm border border-gray-200'>
+              <h2 className='text-lg font-medium text-gray-900 mb-4 flex items-center'>
+                <MapPin className='w-5 h-5 mr-2' />
+                Property Location Map
+              </h2>
+              {addressCoordinates ? (
+                <div className='relative w-full' style={{ height: '400px', zIndex: 0 }}>
+                  <Suspense fallback={<LoadingSpinner size='sm' />}>
+                    <InteractiveRoofMap
+                      lat={addressCoordinates.lat}
+                      lon={addressCoordinates.lon}
+                      availableIssues={(report.issuesFound || []).map(issue => ({
+                        id: issue.id,
+                        title: issue.type + ' - ' + (issue.title || 'Untitled'),
+                      }))}
+                      existingMarkers={report.roofMapMarkers || []}
+                      onImageCapture={() => {}} // Read-only in view mode
+                    />
+                  </Suspense>
+                </div>
+              ) : (
+                <p className='text-gray-500 text-center py-4'>Map loading...</p>
+              )}
+            </div>
+          )}
 
         {/* Issues Found */}
         <div className='bg-white p-6 rounded-lg shadow-sm border border-gray-200'>
@@ -956,12 +1198,44 @@ const ReportView: React.FC = () => {
                   <div className='space-y-2'>
                     <div>
                       <span className='text-sm font-medium text-gray-500'>Location:</span>
-                      <span className='ml-2 text-gray-900'>{issue.location}</span>
+                      {editMode ? (
+                        <input
+                          type='text'
+                          value={issue.location}
+                          onChange={e => {
+                            const updated = { ...issue, location: e.target.value };
+                            const updatedIssues = report.issuesFound.map(i =>
+                              i.id === issue.id ? updated : i
+                            );
+                            setReport({ ...report, issuesFound: updatedIssues });
+                          }}
+                          className='ml-2 px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 w-full mt-1'
+                          placeholder='Location'
+                        />
+                      ) : (
+                        <span className='ml-2 text-gray-900'>{issue.location}</span>
+                      )}
                     </div>
 
                     <div>
                       <span className='text-sm font-medium text-gray-500'>Description:</span>
-                      <p className='text-gray-700 mt-1 leading-relaxed'>{issue.description}</p>
+                      {editMode ? (
+                        <textarea
+                          value={issue.description}
+                          onChange={e => {
+                            const updated = { ...issue, description: e.target.value };
+                            const updatedIssues = report.issuesFound.map(i =>
+                              i.id === issue.id ? updated : i
+                            );
+                            setReport({ ...report, issuesFound: updatedIssues });
+                          }}
+                          className='w-full mt-1 px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 font-sans'
+                          rows={3}
+                          placeholder='Description'
+                        />
+                      ) : (
+                        <p className='text-gray-700 mt-1 leading-relaxed'>{issue.description}</p>
+                      )}
                     </div>
 
                     {issue.images && issue.images.length > 0 && (
@@ -1050,14 +1324,44 @@ const ReportView: React.FC = () => {
                   </div>
 
                   <div className='space-y-2'>
-                    <p className='text-gray-700 leading-relaxed'>{action.description}</p>
+                    {editMode ? (
+                      <textarea
+                        value={action.description}
+                        onChange={e => {
+                          const updatedActions = report.recommendedActions.map(a =>
+                            a.id === action.id ? { ...a, description: e.target.value } : a
+                          );
+                          setReport({ ...report, recommendedActions: updatedActions });
+                        }}
+                        className='w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 font-sans'
+                        rows={3}
+                      />
+                    ) : (
+                      <p className='text-gray-700 leading-relaxed'>{action.description}</p>
+                    )}
 
-                    {action.estimatedCost && (
+                    {action.estimatedCost !== undefined && (
                       <div>
                         <span className='text-sm font-medium text-gray-500'>Estimated Cost:</span>
-                        <span className='ml-2 text-gray-900 font-medium'>
-                          {formatCurrency(action.estimatedCost)}
-                        </span>
+                        {editMode ? (
+                          <input
+                            type='number'
+                            value={action.estimatedCost}
+                            onChange={e => {
+                              const updatedActions = report.recommendedActions.map(a =>
+                                a.id === action.id
+                                  ? { ...a, estimatedCost: parseFloat(e.target.value) || 0 }
+                                  : a
+                              );
+                              setReport({ ...report, recommendedActions: updatedActions });
+                            }}
+                            className='ml-2 px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500'
+                          />
+                        ) : (
+                          <span className='ml-2 text-gray-900 font-medium'>
+                            {formatCurrency(action.estimatedCost)}
+                          </span>
+                        )}
                       </div>
                     )}
                   </div>
@@ -1070,7 +1374,9 @@ const ReportView: React.FC = () => {
         {/* Status Actions */}
         {canEdit && (
           <div className='bg-white p-6 rounded-lg shadow-sm border border-gray-200'>
-            <h3 className='text-lg font-medium text-gray-900 mb-4'>{t('reportView.reportActions') || 'Report Actions'}</h3>
+            <h3 className='text-lg font-medium text-gray-900 mb-4'>
+              {t('reportView.reportActions') || 'Report Actions'}
+            </h3>
 
             <div className='flex flex-wrap gap-3'>
               {report.status === 'draft' && (
@@ -1113,8 +1419,8 @@ const ReportView: React.FC = () => {
                 </button>
               )}
 
-              {report.status !== 'archived' && (
-                hasOffer ? (
+              {report.status !== 'archived' &&
+                (hasOffer ? (
                   <Link
                     to={existingOffer ? `/offers?selected=${existingOffer.id}` : '/offers'}
                     className='inline-flex items-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-colors'
@@ -1130,12 +1436,10 @@ const ReportView: React.FC = () => {
                     <DollarSign className='w-4 h-4 mr-2' />
                     {t('reportView.createOffer') || 'Create Offer'}
                   </button>
-                )
-              )}
+                ))}
             </div>
           </div>
         )}
-
 
         {/* Create Offer Modal */}
         {report && showCreateOfferModal && (

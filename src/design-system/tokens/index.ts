@@ -1,6 +1,6 @@
 /**
  * Design Tokens Index
- * 
+ *
  * Centralized export for all design system tokens.
  * This is the single source of truth for design values.
  */

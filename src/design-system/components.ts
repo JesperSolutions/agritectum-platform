@@ -1,11 +1,21 @@
 /**
  * Design System Component Patterns
- * 
+ *
  * Standardized component class name patterns for consistent styling.
  * Use these patterns when creating new components or updating existing ones.
  */
 
-import { colors, borderRadius, shadows, spacing, formInput, card, statusBadge, table, typography } from './tokens';
+import {
+  colors,
+  borderRadius,
+  shadows,
+  spacing,
+  formInput,
+  card,
+  statusBadge,
+  table,
+  typography,
+} from './tokens';
 
 /**
  * Button Variants

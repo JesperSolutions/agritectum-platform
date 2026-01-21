@@ -3,17 +3,9 @@ import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useIntl } from '../../hooks/useIntl';
 import Breadcrumb from '../navigation/Breadcrumb';
-import {
-  Home,
-  LogOut,
-  Building,
-  FileCheck,
-  Calendar,
-  User,
-  Menu,
-  X,
-} from 'lucide-react';
+import { Home, LogOut, Building, FileCheck, Calendar, User, Menu, X } from 'lucide-react';
 import AgritectumLogo from '../AgritectumLogo';
+import { NotificationBell } from '../notifications/NotificationBell';
 
 const PortalLayout: React.FC = () => {
   const { currentUser, logout } = useAuth();
@@ -71,28 +63,40 @@ const PortalLayout: React.FC = () => {
       {/* Mobile menu overlay */}
       {isMobileMenuOpen && (
         <div className='fixed inset-0 z-40 lg:hidden'>
-          <div className='fixed inset-0 bg-slate-600 bg-opacity-75' onClick={() => setIsMobileMenuOpen(false)} />
+          <div
+            className='fixed inset-0 bg-slate-600 bg-opacity-75'
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
           <div className='fixed inset-y-0 left-0 flex flex-col w-64 bg-white shadow-xl z-50'>
             <div className='flex flex-col flex-grow pt-5 overflow-y-auto'>
               {/* Logo */}
               <div className='flex items-center flex-shrink-0 px-6 mb-6'>
-                <Link to='/portal/dashboard' className='flex items-center gap-3 w-full' onClick={() => setIsMobileMenuOpen(false)}>
-                  <AgritectumLogo size="sm" />
+                <Link
+                  to='/portal/dashboard'
+                  className='flex items-center gap-3 w-full'
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <AgritectumLogo size='sm' />
                 </Link>
               </div>
 
               {/* User info */}
               <div className='px-6 mb-6'>
                 <div className='text-xs text-slate-500'>{t('common.signedInAs')}</div>
-                <div className='text-xs font-medium text-slate-900 truncate' title={currentUser?.email}>
+                <div
+                  className='text-xs font-medium text-slate-900 truncate'
+                  title={currentUser?.email}
+                >
                   {currentUser?.email}
                 </div>
-                <div className='text-xs text-slate-600 capitalize'>{t('common.roles.customer')}</div>
+                <div className='text-xs text-slate-600 capitalize'>
+                  {t('common.roles.customer')}
+                </div>
               </div>
 
               {/* Navigation */}
               <nav className='flex-1 px-4 space-y-1'>
-                {navigationItems.map((item) => {
+                {navigationItems.map(item => {
                   const Icon = item.icon;
                   const isActive = isActiveRoute(item.path);
                   return (
@@ -106,7 +110,9 @@ const PortalLayout: React.FC = () => {
                           : 'text-slate-700 hover:bg-slate-100 hover:shadow-sm'
                       }`}
                     >
-                      <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-slate-900' : 'text-slate-600'}`} />
+                      <Icon
+                        className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-slate-900' : 'text-slate-600'}`}
+                      />
                       <span className='truncate'>{item.label}</span>
                     </Link>
                   );
@@ -131,22 +137,25 @@ const PortalLayout: React.FC = () => {
             {/* Logo and Brand Info */}
             <div className='flex items-center flex-shrink-0 px-6 mb-6'>
               <Link to='/portal/dashboard' className='flex items-center gap-3 w-full'>
-                <AgritectumLogo size="sm" />
+                <AgritectumLogo size='sm' />
               </Link>
             </div>
 
             {/* User info */}
             <div className='px-6 mb-6'>
-                <div className='text-xs text-slate-500'>{t('common.signedInAs')}</div>
-                <div className='text-xs font-medium text-slate-900 truncate' title={currentUser?.email}>
-                  {currentUser?.email}
-                </div>
-                <div className='text-xs text-slate-600 capitalize'>{t('common.roles.customer')}</div>
+              <div className='text-xs text-slate-500'>{t('common.signedInAs')}</div>
+              <div
+                className='text-xs font-medium text-slate-900 truncate'
+                title={currentUser?.email}
+              >
+                {currentUser?.email}
+              </div>
+              <div className='text-xs text-slate-600 capitalize'>{t('common.roles.customer')}</div>
             </div>
 
             {/* Navigation */}
             <nav className='flex-1 px-4 space-y-1'>
-              {navigationItems.map((item) => {
+              {navigationItems.map(item => {
                 const Icon = item.icon;
                 const isActive = isActiveRoute(item.path);
                 return (
@@ -159,7 +168,9 @@ const PortalLayout: React.FC = () => {
                         : 'text-slate-700 hover:bg-slate-100 hover:shadow-sm'
                     }`}
                   >
-                    <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-slate-900' : 'text-slate-600'}`} />
+                    <Icon
+                      className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-slate-900' : 'text-slate-600'}`}
+                    />
                     <span className='truncate'>{item.label}</span>
                   </Link>
                 );
@@ -191,9 +202,16 @@ const PortalLayout: React.FC = () => {
                 <Menu className='w-6 h-6' />
               </button>
               <Link to='/portal/dashboard' className='flex items-center space-x-2'>
-                <AgritectumLogo size="sm" />
+                <AgritectumLogo size='sm' />
               </Link>
-              <div className='w-10' /> {/* Spacer for centering */}
+              <NotificationBell />
+            </div>
+          </header>
+
+          {/* Desktop header */}
+          <header className='hidden lg:block bg-white shadow-sm border-b border-slate-200'>
+            <div className='flex items-center justify-end px-6 h-16'>
+              <NotificationBell />
             </div>
           </header>
 
@@ -204,7 +222,7 @@ const PortalLayout: React.FC = () => {
                 <div className='mb-6'>
                   <Breadcrumb />
                 </div>
-                
+
                 {/* Page Content */}
                 <Outlet />
               </div>
@@ -217,4 +235,3 @@ const PortalLayout: React.FC = () => {
 };
 
 export default PortalLayout;
-

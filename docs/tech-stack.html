@@ -1,508 +1,651 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tech Stack - Taklaget</title>
-    <meta name="description" content="Complete technology stack overview for Taklaget roof inspection management system. Modern web technologies, Firebase backend, and enterprise features.">
-    <link rel="stylesheet" href="styles.css">
-    <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
-</head>
-<body>
+    <meta
+      name="description"
+      content="Complete technology stack overview for Taklaget roof inspection management system. Modern web technologies, Firebase backend, and enterprise features."
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
+  </head>
+  <body>
     <!-- Navigation -->
     <nav class="navbar">
-        <div class="container">
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0;">
-                <div style="display: flex; align-items: center;">
-                    <img src="assets/logo.svg" alt="Taklaget Logo" style="height: 2rem; margin-right: 0.75rem;">
-                    <span style="font-size: 1.5rem; font-weight: 700; color: var(--primary-color);">Taklaget</span>
-                </div>
-                <div style="display: flex; gap: 2rem;">
-                    <a href="index.html" class="nav-link">Home</a>
-                    <a href="features.html" class="nav-link">Features</a>
-                    <a href="onboarding.html" class="nav-link">Onboarding</a>
-                    <a href="tech-stack.html" class="nav-link" style="color: var(--primary-color);">Tech Stack</a>
-                </div>
-            </div>
+      <div class="container">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+          "
+        >
+          <div style="display: flex; align-items: center">
+            <img
+              src="assets/logo.svg"
+              alt="Taklaget Logo"
+              style="height: 2rem; margin-right: 0.75rem"
+            />
+            <span style="font-size: 1.5rem; font-weight: 700; color: var(--primary-color)"
+              >Taklaget</span
+            >
+          </div>
+          <div style="display: flex; gap: 2rem">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="features.html" class="nav-link">Features</a>
+            <a href="onboarding.html" class="nav-link">Onboarding</a>
+            <a href="tech-stack.html" class="nav-link" style="color: var(--primary-color)"
+              >Tech Stack</a
+            >
+          </div>
         </div>
+      </div>
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero" style="padding: 3rem 0;">
-        <div class="container">
-            <div style="text-align: center;">
-                <h1 class="hero-title" style="font-size: 3rem;">Technology Stack</h1>
-                <p class="hero-subtitle" style="font-size: 1.125rem;">
-                    Built with modern, scalable technologies for enterprise-grade performance
-                </p>
-            </div>
+    <section class="hero" style="padding: 3rem 0">
+      <div class="container">
+        <div style="text-align: center">
+          <h1 class="hero-title" style="font-size: 3rem">Technology Stack</h1>
+          <p class="hero-subtitle" style="font-size: 1.125rem">
+            Built with modern, scalable technologies for enterprise-grade performance
+          </p>
         </div>
+      </div>
     </section>
 
     <!-- Frontend Stack -->
     <section class="section">
-        <div class="container">
-            <h2 class="section-title">Frontend Technologies</h2>
-            <p class="section-subtitle">
-                Modern React-based frontend with TypeScript and responsive design
-            </p>
-            
-            <div class="grid grid-cols-2">
-                <div class="card">
-                    <div style="display: flex; align-items: center; margin-bottom: 1.5rem;">
-                        <div style="width: 3rem; height: 3rem; background: #61dafb; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
-                            <span style="color: white; font-weight: bold; font-size: 1.25rem;">R</span>
-                        </div>
-                        <div>
-                            <h3 class="card-title" style="margin-bottom: 0.25rem;">React 18</h3>
-                            <p style="color: var(--text-secondary); font-size: 0.875rem;">Modern UI library with hooks and concurrent features</p>
-                        </div>
-                    </div>
-                    <ul class="feature-list">
-                        <li>Functional components with hooks</li>
-                        <li>Concurrent rendering</li>
-                        <li>Automatic batching</li>
-                        <li>Server-side rendering ready</li>
-                    </ul>
-                </div>
+      <div class="container">
+        <h2 class="section-title">Frontend Technologies</h2>
+        <p class="section-subtitle">
+          Modern React-based frontend with TypeScript and responsive design
+        </p>
 
-                <div class="card">
-                    <div style="display: flex; align-items: center; margin-bottom: 1.5rem;">
-                        <div style="width: 3rem; height: 3rem; background: #3178c6; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
-                            <span style="color: white; font-weight: bold; font-size: 1.25rem;">TS</span>
-                        </div>
-                        <div>
-                            <h3 class="card-title" style="margin-bottom: 0.25rem;">TypeScript</h3>
-                            <p style="color: var(--text-secondary); font-size: 0.875rem;">Type-safe JavaScript with enhanced developer experience</p>
-                        </div>
-                    </div>
-                    <ul class="feature-list">
-                        <li>Static type checking</li>
-                        <li>Enhanced IDE support</li>
-                        <li>Better refactoring tools</li>
-                        <li>Reduced runtime errors</li>
-                    </ul>
-                </div>
-
-                <div class="card">
-                    <div style="display: flex; align-items: center; margin-bottom: 1.5rem;">
-                        <div style="width: 3rem; height: 3rem; background: #06b6d4; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
-                            <span style="color: white; font-weight: bold; font-size: 1.25rem;">T</span>
-                        </div>
-                        <div>
-                            <h3 class="card-title" style="margin-bottom: 0.25rem;">Tailwind CSS</h3>
-                            <p style="color: var(--text-secondary); font-size: 0.875rem;">Utility-first CSS framework for rapid UI development</p>
-                        </div>
-                    </div>
-                    <ul class="feature-list">
-                        <li>Utility-first approach</li>
-                        <li>Responsive design system</li>
-                        <li>Custom component library</li>
-                        <li>Optimized bundle size</li>
-                    </ul>
-                </div>
-
-                <div class="card">
-                    <div style="display: flex; align-items: center; margin-bottom: 1.5rem;">
-                        <div style="width: 3rem; height: 3rem; background: #646cff; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
-                            <span style="color: white; font-weight: bold; font-size: 1.25rem;">V</span>
-                        </div>
-                        <div>
-                            <h3 class="card-title" style="margin-bottom: 0.25rem;">Vite</h3>
-                            <p style="color: var(--text-secondary); font-size: 0.875rem;">Fast build tool and development server</p>
-                        </div>
-                    </div>
-                    <ul class="feature-list">
-                        <li>Lightning-fast HMR</li>
-                        <li>ES modules support</li>
-                        <li>Optimized production builds</li>
-                        <li>Plugin ecosystem</li>
-                    </ul>
-                </div>
+        <div class="grid grid-cols-2">
+          <div class="card">
+            <div style="display: flex; align-items: center; margin-bottom: 1.5rem">
+              <div
+                style="
+                  width: 3rem;
+                  height: 3rem;
+                  background: #61dafb;
+                  border-radius: 0.5rem;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  margin-right: 1rem;
+                "
+              >
+                <span style="color: white; font-weight: bold; font-size: 1.25rem">R</span>
+              </div>
+              <div>
+                <h3 class="card-title" style="margin-bottom: 0.25rem">React 18</h3>
+                <p style="color: var(--text-secondary); font-size: 0.875rem">
+                  Modern UI library with hooks and concurrent features
+                </p>
+              </div>
             </div>
+            <ul class="feature-list">
+              <li>Functional components with hooks</li>
+              <li>Concurrent rendering</li>
+              <li>Automatic batching</li>
+              <li>Server-side rendering ready</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <div style="display: flex; align-items: center; margin-bottom: 1.5rem">
+              <div
+                style="
+                  width: 3rem;
+                  height: 3rem;
+                  background: #3178c6;
+                  border-radius: 0.5rem;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  margin-right: 1rem;
+                "
+              >
+                <span style="color: white; font-weight: bold; font-size: 1.25rem">TS</span>
+              </div>
+              <div>
+                <h3 class="card-title" style="margin-bottom: 0.25rem">TypeScript</h3>
+                <p style="color: var(--text-secondary); font-size: 0.875rem">
+                  Type-safe JavaScript with enhanced developer experience
+                </p>
+              </div>
+            </div>
+            <ul class="feature-list">
+              <li>Static type checking</li>
+              <li>Enhanced IDE support</li>
+              <li>Better refactoring tools</li>
+              <li>Reduced runtime errors</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <div style="display: flex; align-items: center; margin-bottom: 1.5rem">
+              <div
+                style="
+                  width: 3rem;
+                  height: 3rem;
+                  background: #06b6d4;
+                  border-radius: 0.5rem;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  margin-right: 1rem;
+                "
+              >
+                <span style="color: white; font-weight: bold; font-size: 1.25rem">T</span>
+              </div>
+              <div>
+                <h3 class="card-title" style="margin-bottom: 0.25rem">Tailwind CSS</h3>
+                <p style="color: var(--text-secondary); font-size: 0.875rem">
+                  Utility-first CSS framework for rapid UI development
+                </p>
+              </div>
+            </div>
+            <ul class="feature-list">
+              <li>Utility-first approach</li>
+              <li>Responsive design system</li>
+              <li>Custom component library</li>
+              <li>Optimized bundle size</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <div style="display: flex; align-items: center; margin-bottom: 1.5rem">
+              <div
+                style="
+                  width: 3rem;
+                  height: 3rem;
+                  background: #646cff;
+                  border-radius: 0.5rem;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  margin-right: 1rem;
+                "
+              >
+                <span style="color: white; font-weight: bold; font-size: 1.25rem">V</span>
+              </div>
+              <div>
+                <h3 class="card-title" style="margin-bottom: 0.25rem">Vite</h3>
+                <p style="color: var(--text-secondary); font-size: 0.875rem">
+                  Fast build tool and development server
+                </p>
+              </div>
+            </div>
+            <ul class="feature-list">
+              <li>Lightning-fast HMR</li>
+              <li>ES modules support</li>
+              <li>Optimized production builds</li>
+              <li>Plugin ecosystem</li>
+            </ul>
+          </div>
         </div>
+      </div>
     </section>
 
     <!-- Backend Stack -->
-    <section class="section" style="background: var(--surface);">
-        <div class="container">
-            <h2 class="section-title">Backend & Services</h2>
-            <p class="section-subtitle">
-                Firebase-powered backend with cloud functions and real-time database
-            </p>
-            
-            <div class="grid grid-cols-2">
-                <div class="card">
-                    <div style="display: flex; align-items: center; margin-bottom: 1.5rem;">
-                        <div style="width: 3rem; height: 3rem; background: #ff6b35; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
-                            <span style="color: white; font-weight: bold; font-size: 1.25rem;">F</span>
-                        </div>
-                        <div>
-                            <h3 class="card-title" style="margin-bottom: 0.25rem;">Firebase Auth</h3>
-                            <p style="color: var(--text-secondary); font-size: 0.875rem;">Secure authentication and user management</p>
-                        </div>
-                    </div>
-                    <ul class="feature-list">
-                        <li>Email/password authentication</li>
-                        <li>Custom claims for roles</li>
-                        <li>Security rules enforcement</li>
-                        <li>Multi-factor authentication ready</li>
-                    </ul>
-                </div>
+    <section class="section" style="background: var(--surface)">
+      <div class="container">
+        <h2 class="section-title">Backend & Services</h2>
+        <p class="section-subtitle">
+          Firebase-powered backend with cloud functions and real-time database
+        </p>
 
-                <div class="card">
-                    <div style="display: flex; align-items: center; margin-bottom: 1.5rem;">
-                        <div style="width: 3rem; height: 3rem; background: #ff6b35; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
-                            <span style="color: white; font-weight: bold; font-size: 1.25rem;">F</span>
-                        </div>
-                        <div>
-                            <h3 class="card-title" style="margin-bottom: 0.25rem;">Firestore</h3>
-                            <p style="color: var(--text-secondary); font-size: 0.875rem;">NoSQL document database with real-time sync</p>
-                        </div>
-                    </div>
-                    <ul class="feature-list">
-                        <li>Real-time data synchronization</li>
-                        <li>Offline-first architecture</li>
-                        <li>Security rules</li>
-                        <li>Automatic scaling</li>
-                    </ul>
-                </div>
-
-                <div class="card">
-                    <div style="display: flex; align-items: center; margin-bottom: 1.5rem;">
-                        <div style="width: 3rem; height: 3rem; background: #ff6b35; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
-                            <span style="color: white; font-weight: bold; font-size: 1.25rem;">F</span>
-                        </div>
-                        <div>
-                            <h3 class="card-title" style="margin-bottom: 0.25rem;">Cloud Functions</h3>
-                            <p style="color: var(--text-secondary); font-size: 0.875rem;">Serverless backend functions for automation</p>
-                        </div>
-                    </div>
-                    <ul class="feature-list">
-                        <li>PDF generation with Puppeteer</li>
-                        <li>Email automation</li>
-                        <li>User management</li>
-                        <li>Data processing</li>
-                    </ul>
-                </div>
-
-                <div class="card">
-                    <div style="display: flex; align-items: center; margin-bottom: 1.5rem;">
-                        <div style="width: 3rem; height: 3rem; background: #ff6b35; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
-                            <span style="color: white; font-weight: bold; font-size: 1.25rem;">F</span>
-                        </div>
-                        <div>
-                            <h3 class="card-title" style="margin-bottom: 0.25rem;">Firebase Hosting</h3>
-                            <p style="color: var(--text-secondary); font-size: 0.875rem;">Global CDN hosting with SSL</p>
-                        </div>
-                    </div>
-                    <ul class="feature-list">
-                        <li>Global CDN distribution</li>
-                        <li>Automatic SSL certificates</li>
-                        <li>Custom domain support</li>
-                        <li>Instant rollbacks</li>
-                    </ul>
-                </div>
+        <div class="grid grid-cols-2">
+          <div class="card">
+            <div style="display: flex; align-items: center; margin-bottom: 1.5rem">
+              <div
+                style="
+                  width: 3rem;
+                  height: 3rem;
+                  background: #ff6b35;
+                  border-radius: 0.5rem;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  margin-right: 1rem;
+                "
+              >
+                <span style="color: white; font-weight: bold; font-size: 1.25rem">F</span>
+              </div>
+              <div>
+                <h3 class="card-title" style="margin-bottom: 0.25rem">Firebase Auth</h3>
+                <p style="color: var(--text-secondary); font-size: 0.875rem">
+                  Secure authentication and user management
+                </p>
+              </div>
             </div>
+            <ul class="feature-list">
+              <li>Email/password authentication</li>
+              <li>Custom claims for roles</li>
+              <li>Security rules enforcement</li>
+              <li>Multi-factor authentication ready</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <div style="display: flex; align-items: center; margin-bottom: 1.5rem">
+              <div
+                style="
+                  width: 3rem;
+                  height: 3rem;
+                  background: #ff6b35;
+                  border-radius: 0.5rem;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  margin-right: 1rem;
+                "
+              >
+                <span style="color: white; font-weight: bold; font-size: 1.25rem">F</span>
+              </div>
+              <div>
+                <h3 class="card-title" style="margin-bottom: 0.25rem">Firestore</h3>
+                <p style="color: var(--text-secondary); font-size: 0.875rem">
+                  NoSQL document database with real-time sync
+                </p>
+              </div>
+            </div>
+            <ul class="feature-list">
+              <li>Real-time data synchronization</li>
+              <li>Offline-first architecture</li>
+              <li>Security rules</li>
+              <li>Automatic scaling</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <div style="display: flex; align-items: center; margin-bottom: 1.5rem">
+              <div
+                style="
+                  width: 3rem;
+                  height: 3rem;
+                  background: #ff6b35;
+                  border-radius: 0.5rem;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  margin-right: 1rem;
+                "
+              >
+                <span style="color: white; font-weight: bold; font-size: 1.25rem">F</span>
+              </div>
+              <div>
+                <h3 class="card-title" style="margin-bottom: 0.25rem">Cloud Functions</h3>
+                <p style="color: var(--text-secondary); font-size: 0.875rem">
+                  Serverless backend functions for automation
+                </p>
+              </div>
+            </div>
+            <ul class="feature-list">
+              <li>PDF generation with Puppeteer</li>
+              <li>Email automation</li>
+              <li>User management</li>
+              <li>Data processing</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <div style="display: flex; align-items: center; margin-bottom: 1.5rem">
+              <div
+                style="
+                  width: 3rem;
+                  height: 3rem;
+                  background: #ff6b35;
+                  border-radius: 0.5rem;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  margin-right: 1rem;
+                "
+              >
+                <span style="color: white; font-weight: bold; font-size: 1.25rem">F</span>
+              </div>
+              <div>
+                <h3 class="card-title" style="margin-bottom: 0.25rem">Firebase Hosting</h3>
+                <p style="color: var(--text-secondary); font-size: 0.875rem">
+                  Global CDN hosting with SSL
+                </p>
+              </div>
+            </div>
+            <ul class="feature-list">
+              <li>Global CDN distribution</li>
+              <li>Automatic SSL certificates</li>
+              <li>Custom domain support</li>
+              <li>Instant rollbacks</li>
+            </ul>
+          </div>
         </div>
+      </div>
     </section>
 
     <!-- Additional Technologies -->
     <section class="section">
-        <div class="container">
-            <h2 class="section-title">Additional Technologies</h2>
-            <p class="section-subtitle">
-                Supporting libraries and services for enhanced functionality
-            </p>
-            
-            <div class="grid grid-cols-3">
-                <div class="card">
-                    <h3 class="card-title">PDF Generation</h3>
-                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;">
-                        <span class="badge badge-blue">Puppeteer</span>
-                        <span class="badge badge-blue">jsPDF</span>
-                    </div>
-                    <p class="card-description">
-                        Professional PDF generation with Puppeteer for HTML-to-PDF conversion 
-                        and jsPDF for programmatic PDF creation.
-                    </p>
-                </div>
+      <div class="container">
+        <h2 class="section-title">Additional Technologies</h2>
+        <p class="section-subtitle">Supporting libraries and services for enhanced functionality</p>
 
-                <div class="card">
-                    <h3 class="card-title">Maps Integration</h3>
-                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;">
-                        <span class="badge badge-green">Google Maps API</span>
-                        <span class="badge badge-green">Places API</span>
-                    </div>
-                    <p class="card-description">
-                        Google Maps integration for location services, address autocomplete, 
-                        and static map generation for reports.
-                    </p>
-                </div>
-
-                <div class="card">
-                    <h3 class="card-title">PWA Features</h3>
-                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;">
-                        <span class="badge badge-red">Service Worker</span>
-                        <span class="badge badge-red">IndexedDB</span>
-                    </div>
-                    <p class="card-description">
-                        Progressive Web App capabilities with offline storage, 
-                        background sync, and native app-like experience.
-                    </p>
-                </div>
-
-                <div class="card">
-                    <h3 class="card-title">State Management</h3>
-                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;">
-                        <span class="badge badge-blue">Zustand</span>
-                        <span class="badge badge-blue">React Context</span>
-                    </div>
-                    <p class="card-description">
-                        Lightweight state management with Zustand for global state 
-                        and React Context for component-level state.
-                    </p>
-                </div>
-
-                <div class="card">
-                    <h3 class="card-title">Form Handling</h3>
-                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;">
-                        <span class="badge badge-green">React Hook Form</span>
-                        <span class="badge badge-green">Zod</span>
-                    </div>
-                    <p class="card-description">
-                        Efficient form handling with React Hook Form and Zod for 
-                        runtime type validation and schema definition.
-                    </p>
-                </div>
-
-                <div class="card">
-                    <h3 class="card-title">UI Components</h3>
-                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;">
-                        <span class="badge badge-red">Radix UI</span>
-                        <span class="badge badge-red">Lucide React</span>
-                    </div>
-                    <p class="card-description">
-                        Accessible UI components with Radix UI primitives and 
-                        Lucide React for consistent iconography.
-                    </p>
-                </div>
+        <div class="grid grid-cols-3">
+          <div class="card">
+            <h3 class="card-title">PDF Generation</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem">
+              <span class="badge badge-blue">Puppeteer</span>
+              <span class="badge badge-blue">jsPDF</span>
             </div>
+            <p class="card-description">
+              Professional PDF generation with Puppeteer for HTML-to-PDF conversion and jsPDF for
+              programmatic PDF creation.
+            </p>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">Maps Integration</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem">
+              <span class="badge badge-green">Google Maps API</span>
+              <span class="badge badge-green">Places API</span>
+            </div>
+            <p class="card-description">
+              Google Maps integration for location services, address autocomplete, and static map
+              generation for reports.
+            </p>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">PWA Features</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem">
+              <span class="badge badge-red">Service Worker</span>
+              <span class="badge badge-red">IndexedDB</span>
+            </div>
+            <p class="card-description">
+              Progressive Web App capabilities with offline storage, background sync, and native
+              app-like experience.
+            </p>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">State Management</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem">
+              <span class="badge badge-blue">Zustand</span>
+              <span class="badge badge-blue">React Context</span>
+            </div>
+            <p class="card-description">
+              Lightweight state management with Zustand for global state and React Context for
+              component-level state.
+            </p>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">Form Handling</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem">
+              <span class="badge badge-green">React Hook Form</span>
+              <span class="badge badge-green">Zod</span>
+            </div>
+            <p class="card-description">
+              Efficient form handling with React Hook Form and Zod for runtime type validation and
+              schema definition.
+            </p>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">UI Components</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem">
+              <span class="badge badge-red">Radix UI</span>
+              <span class="badge badge-red">Lucide React</span>
+            </div>
+            <p class="card-description">
+              Accessible UI components with Radix UI primitives and Lucide React for consistent
+              iconography.
+            </p>
+          </div>
         </div>
+      </div>
     </section>
 
     <!-- Architecture Overview -->
-    <section class="section" style="background: var(--surface);">
-        <div class="container">
-            <h2 class="section-title">System Architecture</h2>
-            <p class="section-subtitle">
-                Scalable architecture designed for enterprise use
-            </p>
-            
-            <div class="card" style="margin-bottom: 2rem;">
-                <h3 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 1.5rem;">Frontend Architecture</h3>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
-                    <div>
-                        <h4 style="font-weight: 600; margin-bottom: 1rem;">Component Structure</h4>
-                        <ul class="feature-list">
-                            <li>Atomic design principles</li>
-                            <li>Reusable component library</li>
-                            <li>Type-safe props and interfaces</li>
-                            <li>Consistent styling system</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 style="font-weight: 600; margin-bottom: 1rem;">State Management</h4>
-                        <ul class="feature-list">
-                            <li>Global state with Zustand</li>
-                            <li>Local state with React hooks</li>
-                            <li>Context for shared data</li>
-                            <li>Optimistic updates</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+    <section class="section" style="background: var(--surface)">
+      <div class="container">
+        <h2 class="section-title">System Architecture</h2>
+        <p class="section-subtitle">Scalable architecture designed for enterprise use</p>
 
-            <div class="card" style="margin-bottom: 2rem;">
-                <h3 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 1.5rem;">Backend Architecture</h3>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
-                    <div>
-                        <h4 style="font-weight: 600; margin-bottom: 1rem;">Data Layer</h4>
-                        <ul class="feature-list">
-                            <li>Firestore for primary data</li>
-                            <li>Firebase Storage for files</li>
-                            <li>Security rules enforcement</li>
-                            <li>Real-time synchronization</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 style="font-weight: 600; margin-bottom: 1rem;">Business Logic</h4>
-                        <ul class="feature-list">
-                            <li>Cloud Functions for automation</li>
-                            <li>Serverless architecture</li>
-                            <li>Event-driven processing</li>
-                            <li>Scalable compute resources</li>
-                        </ul>
-                    </div>
-                </div>
+        <div class="card" style="margin-bottom: 2rem">
+          <h3 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 1.5rem">
+            Frontend Architecture
+          </h3>
+          <div
+            style="
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+              gap: 2rem;
+            "
+          >
+            <div>
+              <h4 style="font-weight: 600; margin-bottom: 1rem">Component Structure</h4>
+              <ul class="feature-list">
+                <li>Atomic design principles</li>
+                <li>Reusable component library</li>
+                <li>Type-safe props and interfaces</li>
+                <li>Consistent styling system</li>
+              </ul>
             </div>
-
-            <div class="card">
-                <h3 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 1.5rem;">Security & Compliance</h3>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
-                    <div>
-                        <h4 style="font-weight: 600; margin-bottom: 1rem;">Authentication</h4>
-                        <ul class="feature-list">
-                            <li>Firebase Authentication</li>
-                            <li>Role-based access control</li>
-                            <li>Custom claims system</li>
-                            <li>Secure token management</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 style="font-weight: 600; margin-bottom: 1rem;">Data Protection</h4>
-                        <ul class="feature-list">
-                            <li>GDPR compliance</li>
-                            <li>Data encryption at rest</li>
-                            <li>Secure data transmission</li>
-                            <li>Audit logging</li>
-                        </ul>
-                    </div>
-                </div>
+            <div>
+              <h4 style="font-weight: 600; margin-bottom: 1rem">State Management</h4>
+              <ul class="feature-list">
+                <li>Global state with Zustand</li>
+                <li>Local state with React hooks</li>
+                <li>Context for shared data</li>
+                <li>Optimistic updates</li>
+              </ul>
             </div>
+          </div>
         </div>
+
+        <div class="card" style="margin-bottom: 2rem">
+          <h3 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 1.5rem">
+            Backend Architecture
+          </h3>
+          <div
+            style="
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+              gap: 2rem;
+            "
+          >
+            <div>
+              <h4 style="font-weight: 600; margin-bottom: 1rem">Data Layer</h4>
+              <ul class="feature-list">
+                <li>Firestore for primary data</li>
+                <li>Firebase Storage for files</li>
+                <li>Security rules enforcement</li>
+                <li>Real-time synchronization</li>
+              </ul>
+            </div>
+            <div>
+              <h4 style="font-weight: 600; margin-bottom: 1rem">Business Logic</h4>
+              <ul class="feature-list">
+                <li>Cloud Functions for automation</li>
+                <li>Serverless architecture</li>
+                <li>Event-driven processing</li>
+                <li>Scalable compute resources</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 1.5rem">
+            Security & Compliance
+          </h3>
+          <div
+            style="
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+              gap: 2rem;
+            "
+          >
+            <div>
+              <h4 style="font-weight: 600; margin-bottom: 1rem">Authentication</h4>
+              <ul class="feature-list">
+                <li>Firebase Authentication</li>
+                <li>Role-based access control</li>
+                <li>Custom claims system</li>
+                <li>Secure token management</li>
+              </ul>
+            </div>
+            <div>
+              <h4 style="font-weight: 600; margin-bottom: 1rem">Data Protection</h4>
+              <ul class="feature-list">
+                <li>GDPR compliance</li>
+                <li>Data encryption at rest</li>
+                <li>Secure data transmission</li>
+                <li>Audit logging</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Performance & Scalability -->
     <section class="section">
-        <div class="container">
-            <h2 class="section-title">Performance & Scalability</h2>
-            <p class="section-subtitle">
-                Optimized for performance and built to scale
-            </p>
-            
-            <div class="grid grid-cols-2">
-                <div class="card">
-                    <h3 class="card-title">Performance Optimizations</h3>
-                    <ul class="feature-list">
-                        <li>Code splitting and lazy loading</li>
-                        <li>Image optimization and compression</li>
-                        <li>Bundle size optimization</li>
-                        <li>Caching strategies</li>
-                        <li>Service worker for offline caching</li>
-                        <li>Database query optimization</li>
-                    </ul>
-                </div>
+      <div class="container">
+        <h2 class="section-title">Performance & Scalability</h2>
+        <p class="section-subtitle">Optimized for performance and built to scale</p>
 
-                <div class="card">
-                    <h3 class="card-title">Scalability Features</h3>
-                    <ul class="feature-list">
-                        <li>Serverless backend architecture</li>
-                        <li>Auto-scaling cloud functions</li>
-                        <li>Global CDN distribution</li>
-                        <li>Database sharding support</li>
-                        <li>Microservices-ready design</li>
-                        <li>Horizontal scaling capabilities</li>
-                    </ul>
-                </div>
-            </div>
+        <div class="grid grid-cols-2">
+          <div class="card">
+            <h3 class="card-title">Performance Optimizations</h3>
+            <ul class="feature-list">
+              <li>Code splitting and lazy loading</li>
+              <li>Image optimization and compression</li>
+              <li>Bundle size optimization</li>
+              <li>Caching strategies</li>
+              <li>Service worker for offline caching</li>
+              <li>Database query optimization</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">Scalability Features</h3>
+            <ul class="feature-list">
+              <li>Serverless backend architecture</li>
+              <li>Auto-scaling cloud functions</li>
+              <li>Global CDN distribution</li>
+              <li>Database sharding support</li>
+              <li>Microservices-ready design</li>
+              <li>Horizontal scaling capabilities</li>
+            </ul>
+          </div>
         </div>
+      </div>
     </section>
 
     <!-- Development Tools -->
-    <section class="section" style="background: var(--surface);">
-        <div class="container">
-            <h2 class="section-title">Development & Deployment</h2>
-            <p class="section-subtitle">
-                Modern development workflow and deployment pipeline
-            </p>
-            
-            <div class="grid grid-cols-3">
-                <div class="card">
-                    <h3 class="card-title">Development Tools</h3>
-                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;">
-                        <span class="badge badge-blue">ESLint</span>
-                        <span class="badge badge-blue">Prettier</span>
-                        <span class="badge badge-blue">TypeScript</span>
-                    </div>
-                    <p class="card-description">
-                        Code quality tools for consistent formatting, linting, and type checking.
-                    </p>
-                </div>
+    <section class="section" style="background: var(--surface)">
+      <div class="container">
+        <h2 class="section-title">Development & Deployment</h2>
+        <p class="section-subtitle">Modern development workflow and deployment pipeline</p>
 
-                <div class="card">
-                    <h3 class="card-title">Build & Deploy</h3>
-                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;">
-                        <span class="badge badge-green">Vite</span>
-                        <span class="badge badge-green">Firebase CLI</span>
-                        <span class="badge badge-green">GitHub Actions</span>
-                    </div>
-                    <p class="card-description">
-                        Automated build and deployment pipeline with GitHub Actions and Firebase CLI.
-                    </p>
-                </div>
-
-                <div class="card">
-                    <h3 class="card-title">Monitoring</h3>
-                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;">
-                        <span class="badge badge-red">Firebase Analytics</span>
-                        <span class="badge badge-red">Error Tracking</span>
-                        <span class="badge badge-red">Performance</span>
-                    </div>
-                    <p class="card-description">
-                        Comprehensive monitoring with Firebase Analytics, error tracking, and performance metrics.
-                    </p>
-                </div>
+        <div class="grid grid-cols-3">
+          <div class="card">
+            <h3 class="card-title">Development Tools</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem">
+              <span class="badge badge-blue">ESLint</span>
+              <span class="badge badge-blue">Prettier</span>
+              <span class="badge badge-blue">TypeScript</span>
             </div>
+            <p class="card-description">
+              Code quality tools for consistent formatting, linting, and type checking.
+            </p>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">Build & Deploy</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem">
+              <span class="badge badge-green">Vite</span>
+              <span class="badge badge-green">Firebase CLI</span>
+              <span class="badge badge-green">GitHub Actions</span>
+            </div>
+            <p class="card-description">
+              Automated build and deployment pipeline with GitHub Actions and Firebase CLI.
+            </p>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">Monitoring</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem">
+              <span class="badge badge-red">Firebase Analytics</span>
+              <span class="badge badge-red">Error Tracking</span>
+              <span class="badge badge-red">Performance</span>
+            </div>
+            <p class="card-description">
+              Comprehensive monitoring with Firebase Analytics, error tracking, and performance
+              metrics.
+            </p>
+          </div>
         </div>
+      </div>
     </section>
 
     <!-- Call to Action -->
-    <section class="section" style="background: var(--primary-color); color: white;">
-        <div class="container">
-            <div style="text-align: center;">
-                <h2 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 1rem;">
-                    Built for the Future
-                </h2>
-                <p style="font-size: 1.125rem; margin-bottom: 2rem; opacity: 0.9;">
-                    Experience the power of modern web technologies in your roofing business.
-                </p>
-                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-                    <a href="onboarding.html" class="btn btn-white">Get Started</a>
-                    <a href="features.html" class="btn btn-secondary">Explore Features</a>
-                </div>
-            </div>
+    <section class="section" style="background: var(--primary-color); color: white">
+      <div class="container">
+        <div style="text-align: center">
+          <h2 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 1rem">
+            Built for the Future
+          </h2>
+          <p style="font-size: 1.125rem; margin-bottom: 2rem; opacity: 0.9">
+            Experience the power of modern web technologies in your roofing business.
+          </p>
+          <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap">
+            <a href="onboarding.html" class="btn btn-white">Get Started</a>
+            <a href="features.html" class="btn btn-secondary">Explore Features</a>
+          </div>
         </div>
+      </div>
     </section>
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="container">
-            <div class="grid grid-cols-3">
-                <div>
-                    <h3 class="footer-title">Taklaget</h3>
-                    <p style="color: #9ca3af; margin-bottom: 1rem;">
-                        Professional roof inspection management system for Nordic companies.
-                    </p>
-                </div>
-                <div>
-                    <h4 style="font-weight: 600; margin-bottom: 1rem;">Documentation</h4>
-                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                        <a href="features.html" class="footer-link">Features</a>
-                        <a href="onboarding.html" class="footer-link">Onboarding</a>
-                        <a href="tech-stack.html" class="footer-link">Tech Stack</a>
-                    </div>
-                </div>
-                <div>
-                    <h4 style="font-weight: 600; margin-bottom: 1rem;">Support</h4>
-                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                        <a href="https://github.com/your-username/taklaget-service-app" class="footer-link">GitHub Repository</a>
-                        <a href="https://taklaget-service-app.web.app" class="footer-link">Live Application</a>
-                        <span style="color: #9ca3af;">© 2025 Taklaget AB</span>
-                    </div>
-                </div>
+      <div class="container">
+        <div class="grid grid-cols-3">
+          <div>
+            <h3 class="footer-title">Taklaget</h3>
+            <p style="color: #9ca3af; margin-bottom: 1rem">
+              Professional roof inspection management system for Nordic companies.
+            </p>
+          </div>
+          <div>
+            <h4 style="font-weight: 600; margin-bottom: 1rem">Documentation</h4>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem">
+              <a href="features.html" class="footer-link">Features</a>
+              <a href="onboarding.html" class="footer-link">Onboarding</a>
+              <a href="tech-stack.html" class="footer-link">Tech Stack</a>
             </div>
+          </div>
+          <div>
+            <h4 style="font-weight: 600; margin-bottom: 1rem">Support</h4>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem">
+              <a href="https://github.com/your-username/taklaget-service-app" class="footer-link"
+                >GitHub Repository</a
+              >
+              <a href="https://taklaget-service-app.web.app" class="footer-link"
+                >Live Application</a
+              >
+              <span style="color: #9ca3af">© 2025 Taklaget AB</span>
+            </div>
+          </div>
         </div>
+      </div>
     </footer>
-</body>
+  </body>
 </html>

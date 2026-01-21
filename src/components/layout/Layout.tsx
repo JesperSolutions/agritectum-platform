@@ -6,13 +6,7 @@ import { useIntl } from '../../hooks/useIntl';
 import { usePageState, useBranchContext } from '../../hooks/usePageState';
 import Breadcrumb from '../navigation/Breadcrumb';
 import NavigationMenu, { NavigationItem } from './NavigationMenu';
-import {
-  LogOut,
-  WifiOff,
-  FolderSync as Sync,
-  Menu,
-  X,
-} from 'lucide-react';
+import { LogOut, WifiOff, FolderSync as Sync, Menu, X } from 'lucide-react';
 import OfflineIndicator from '../OfflineIndicator';
 import NotificationCenter from '../NotificationCenter';
 import AgritectumLogo from '../AgritectumLogo';
@@ -105,9 +99,7 @@ const Layout: React.FC = () => {
     if (reportsChildren.length > 0) {
       items.push({
         label: t('navigation.reports'),
-        children: reportsChildren.filter(child => 
-          !child.roles || child.roles.includes(role)
-        ),
+        children: reportsChildren.filter(child => !child.roles || child.roles.includes(role)),
       });
     }
 
@@ -139,9 +131,7 @@ const Layout: React.FC = () => {
 
     items.push({
       label: t('navigation.operations'),
-      children: operationsChildren.filter(child => 
-        !child.roles || child.roles.includes(role)
-      ),
+      children: operationsChildren.filter(child => !child.roles || child.roles.includes(role)),
     });
 
     // Administration section (for branchAdmin and superadmin)
@@ -238,7 +228,7 @@ const Layout: React.FC = () => {
       {/* Material Design Mobile Header */}
       <div className='lg:hidden bg-white shadow-sm border-b border-slate-200 px-4 py-3 flex items-center justify-between'>
         <Link to='/dashboard'>
-          <AgritectumLogo size="sm" />
+          <AgritectumLogo size='sm' />
         </Link>
 
         <div className='flex items-center space-x-2'>
@@ -281,10 +271,12 @@ const Layout: React.FC = () => {
             {/* Logo and Branch Info */}
             <div className='flex items-center flex-shrink-0 px-6 mb-6'>
               <Link to='/dashboard' className='flex items-center gap-3 w-full'>
-                <AgritectumLogo size="sm" />
+                <AgritectumLogo size='sm' />
                 {branchInfo?.name && (
                   <div className='flex-1 min-w-0'>
-                    <div className='text-xs text-slate-500 truncate leading-tight'>{branchInfo.name}</div>
+                    <div className='text-xs text-slate-500 truncate leading-tight'>
+                      {branchInfo.name}
+                    </div>
                   </div>
                 )}
               </Link>
@@ -293,7 +285,10 @@ const Layout: React.FC = () => {
             {/* User info */}
             <div className='px-6 mb-6'>
               <div className='text-xs text-slate-500'>{t('common.signedInAs')}</div>
-              <div className='text-xs font-medium text-slate-900 truncate' title={currentUser?.email}>
+              <div
+                className='text-xs font-medium text-slate-900 truncate'
+                title={currentUser?.email}
+              >
                 {currentUser?.email}
               </div>
               <div className='text-xs text-slate-600 capitalize'>
@@ -345,7 +340,7 @@ const Layout: React.FC = () => {
                 <div className='mb-6'>
                   <Breadcrumb />
                 </div>
-                
+
                 {/* Page Content */}
                 <Outlet />
               </div>

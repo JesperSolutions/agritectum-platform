@@ -31,7 +31,10 @@ export const storeCurrency = (currency: string): void => {
 /**
  * Get currency code based on user preference, then locale/branch country
  */
-export const getCurrencyCode = (locale?: SupportedLocale, overrideStoredCurrency?: string): string => {
+export const getCurrencyCode = (
+  locale?: SupportedLocale,
+  overrideStoredCurrency?: string
+): string => {
   // First, check if there's a stored currency preference (manually set by user)
   const storedCurrency = overrideStoredCurrency || getStoredCurrency();
   if (storedCurrency) {
@@ -167,5 +170,3 @@ export const storePhoneCountryCode = (countryCode: string): void => {
     // Ignore localStorage errors
   }
 };
-
-

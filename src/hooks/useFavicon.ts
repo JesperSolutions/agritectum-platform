@@ -21,5 +21,3 @@ export function useFavicon(customUrl?: string) {
     };
   }, [customUrl]);
 }
-
-

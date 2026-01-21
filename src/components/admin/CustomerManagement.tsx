@@ -29,10 +29,20 @@ import Tooltip from '../Tooltip';
 import ConfirmationDialog from '../common/ConfirmationDialog';
 import EmptyState from '../common/EmptyState';
 import { logger } from '../../utils/logger';
-import { getCustomers, createCustomer, updateCustomer, deleteCustomer } from '../../services/customerService';
+import {
+  getCustomers,
+  createCustomer,
+  updateCustomer,
+  deleteCustomer,
+} from '../../services/customerService';
 import { formatCurrencyAmount } from '../../utils/currency';
 import type { SupportedLocale } from '../../utils/geolocation';
-import { createCustomerInvitation, getSignupUrl, getInvitationsForCustomer, CustomerInvitation } from '../../services/customerInvitationService';
+import {
+  createCustomerInvitation,
+  getSignupUrl,
+  getInvitationsForCustomer,
+  CustomerInvitation,
+} from '../../services/customerInvitationService';
 
 interface CustomerManagementProps {}
 
@@ -42,7 +52,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
   const { t, locale } = useIntl();
   const { showSuccess, showError } = useToast();
   const currentLocale = locale as SupportedLocale;
-  
+
   // Determine if user is in read-only mode (inspectors)
   const isReadOnly = currentUser?.role === 'inspector';
   const [customers, setCustomers] = useState<Customer[]>([]);
@@ -52,7 +62,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState<string>('name');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-  
+
   // Filter state
   const [filterStatus, setFilterStatus] = useState<'all' | 'hasReports' | 'noReports'>('all');
   const [filterMinRevenue, setFilterMinRevenue] = useState<number | undefined>(undefined);
@@ -86,7 +96,6 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
     parentCompanyId: '' as string | undefined,
     notes: '',
   });
-
 
   // Form validation state
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
@@ -169,26 +178,31 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
         debouncedSearchTerm === '' ||
         customer.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
         customer.email?.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-        customer.phone?.replace(/\s|-|\(|\)/g, '').toLowerCase().includes(debouncedSearchTerm.replace(/\s|-|\(|\)/g, '').toLowerCase()) ||
+        customer.phone
+          ?.replace(/\s|-|\(|\)/g, '')
+          .toLowerCase()
+          .includes(debouncedSearchTerm.replace(/\s|-|\(|\)/g, '').toLowerCase()) ||
         customer.address?.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
         customer.company?.toLowerCase().includes(debouncedSearchTerm.toLowerCase());
-      
+
       // Parent company filter
-      const matchesParentCompany = 
-        filterParentCompany === null || 
+      const matchesParentCompany =
+        filterParentCompany === null ||
         customer.parentCompanyId === filterParentCompany ||
-        (filterParentCompany === 'none' && !customer.parentCompanyId && customer.customerType === 'company');
-      
+        (filterParentCompany === 'none' &&
+          !customer.parentCompanyId &&
+          customer.customerType === 'company');
+
       // Status filter
       const matchesStatus =
         filterStatus === 'all' ||
         (filterStatus === 'hasReports' && (customer.totalReports || 0) > 0) ||
         (filterStatus === 'noReports' && (customer.totalReports || 0) === 0);
-      
+
       // Revenue filter
       const matchesRevenue =
         filterMinRevenue === undefined || (customer.totalRevenue || 0) >= filterMinRevenue;
-      
+
       return matchesSearch && matchesStatus && matchesRevenue && matchesParentCompany;
     });
 
@@ -225,7 +239,15 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
     });
 
     return sorted;
-  }, [customers, debouncedSearchTerm, sortBy, sortOrder, filterStatus, filterMinRevenue, filterParentCompany]);
+  }, [
+    customers,
+    debouncedSearchTerm,
+    sortBy,
+    sortOrder,
+    filterStatus,
+    filterMinRevenue,
+    filterParentCompany,
+  ]);
 
   // Count active filters
   const activeFilterCount = useMemo(() => {
@@ -243,7 +265,9 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
   };
 
   const applyQuickFilter = (preset: 'hasReports' | 'noReports' | 'highValue') => {
-    setFilterStatus(preset === 'hasReports' ? 'hasReports' : preset === 'noReports' ? 'noReports' : 'all');
+    setFilterStatus(
+      preset === 'hasReports' ? 'hasReports' : preset === 'noReports' ? 'noReports' : 'all'
+    );
     if (preset === 'highValue') {
       setFilterMinRevenue(50000); // 50k threshold (currency varies by locale)
     } else {
@@ -307,7 +331,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
         if (currentUser && refreshToken) {
           await refreshToken();
         }
-        
+
         // Log current user info for debugging - EXPANDED (only in development)
         logger.debug('Pre-delete User Info - FULL DETAILS:');
         logger.debug('   User ID:', currentUser?.uid);
@@ -316,11 +340,14 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
         logger.debug('   User Permission Level:', currentUser?.permissionLevel);
         logger.debug('   User BranchId:', currentUser?.branchId);
         logger.debug('   User BranchId Type:', typeof currentUser?.branchId);
-        logger.debug('   User BranchId === "jYPEEhrb7iNGqumvV80L":', currentUser?.branchId === 'jYPEEhrb7iNGqumvV80L');
+        logger.debug(
+          '   User BranchId === "jYPEEhrb7iNGqumvV80L":',
+          currentUser?.branchId === 'jYPEEhrb7iNGqumvV80L'
+        );
         logger.debug('   Customer ID:', customerToDelete.id);
         logger.debug('   Customer Name:', customerToDelete.name);
         logger.debug('   Customer BranchId:', customerToDelete.branchId);
-        
+
         // Try to get the actual token claims
         if (firebaseUser) {
           try {
@@ -334,16 +361,20 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
             logger.error('Error getting token:', tokenError);
           }
         }
-        
+
         await deleteCustomer(customerToDelete.id, currentUser || undefined);
         setShowDeleteModal(false);
         setCustomerToDelete(null);
         await fetchCustomers();
-        showSuccess(t('admin.customerManagement.customerDeletedSuccessfully') || 'Customer deleted successfully');
+        showSuccess(
+          t('admin.customerManagement.customerDeletedSuccessfully') ||
+            'Customer deleted successfully'
+        );
       } catch (error: any) {
         console.error('Error deleting customer:', error);
         // Use the error message from service if available, otherwise use generic message
-        const errorMsg = error.message || t('admin.errors.failedToDeleteCustomer') || 'Failed to delete customer';
+        const errorMsg =
+          error.message || t('admin.errors.failedToDeleteCustomer') || 'Failed to delete customer';
         setError(errorMsg);
         showError(errorMsg);
       } finally {
@@ -370,7 +401,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
         if (!currentUser?.branchId && currentUser?.role !== 'superadmin') {
           throw new Error('Branch ID is required to create a customer');
         }
-        
+
         await createCustomer({
           ...formData,
           parentCompanyId: formData.parentCompanyId || undefined,
@@ -381,12 +412,18 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
       }
       await fetchCustomers();
       clearFormErrors();
-      
+
       // Show success toast
       if (editingCustomer) {
-        showSuccess(t('admin.customerManagement.customerUpdatedSuccessfully') || 'Customer updated successfully');
+        showSuccess(
+          t('admin.customerManagement.customerUpdatedSuccessfully') ||
+            'Customer updated successfully'
+        );
       } else {
-        showSuccess(t('admin.customerManagement.customerCreatedSuccessfully') || 'Customer created successfully');
+        showSuccess(
+          t('admin.customerManagement.customerCreatedSuccessfully') ||
+            'Customer created successfully'
+        );
       }
     } catch (error) {
       console.error('Error saving customer:', error);
@@ -429,7 +466,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
     setGeneratedLink(null);
     setLinkCopied(false);
     setShowInvitationModal(true);
-    
+
     // Load existing invitations for this customer
     try {
       const invitations = await getInvitationsForCustomer(customer.id);
@@ -443,7 +480,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
   // Generate new invitation link
   const handleCreateInvitation = async () => {
     if (!invitationCustomer || !currentUser) return;
-    
+
     setGeneratingLink(true);
     try {
       const invitation = await createCustomerInvitation(
@@ -453,7 +490,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
         currentUser.uid,
         invitationCustomer.email
       );
-      
+
       const signupUrl = getSignupUrl(invitation.token);
       setGeneratedLink(signupUrl);
       setCustomerInvitations(prev => [invitation, ...prev]);
@@ -482,14 +519,15 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
   // Format date (robust against invalid/Firestore Timestamp) using locale-specific format
   const formatDate = (value: any) => {
     try {
-      const d = (value && typeof value.toDate === 'function') ? value.toDate() : new Date(value);
+      const d = value && typeof value.toDate === 'function' ? value.toDate() : new Date(value);
       if (!value || isNaN(d.getTime())) return '-';
       // Use locale-specific date format (dd/mm/yyyy for Danish, yyyy-mm-dd for Swedish)
-      const localeCode = currentLocale === 'da-DK' ? 'da-DK' : currentLocale === 'sv-SE' ? 'sv-SE' : 'en-US';
-      return d.toLocaleDateString(localeCode, { 
-        year: 'numeric', 
-        month: '2-digit', 
-        day: '2-digit' 
+      const localeCode =
+        currentLocale === 'da-DK' ? 'da-DK' : currentLocale === 'sv-SE' ? 'sv-SE' : 'en-US';
+      return d.toLocaleDateString(localeCode, {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
       });
     } catch {
       return '-';
@@ -501,7 +539,12 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
     return formatCurrencyAmount(amount, currentLocale);
   };
 
-  if (!currentUser || (currentUser.role !== 'superadmin' && currentUser.role !== 'branchAdmin')) {
+  if (
+    !currentUser ||
+    (currentUser.role !== 'superadmin' &&
+      currentUser.role !== 'branchAdmin' &&
+      currentUser.role !== 'inspector')
+  ) {
     return (
       <div className='min-h-screen bg-slate-50 flex items-center justify-center'>
         <div className='text-center'>
@@ -524,7 +567,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                 {isReadOnly ? t('customer.title.directory') : t('customer.title')}
               </h1>
               <p className='mt-2 text-slate-600'>
-                {isReadOnly 
+                {isReadOnly
                   ? t('customer.subtitle.directory', { count: filteredAndSortedCustomers.length })
                   : t('customer.subtitle.management', { count: filteredAndSortedCustomers.length })}
               </p>
@@ -543,7 +586,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                 onClick={() => fetchCustomers()}
                 className='inline-flex items-center px-4 py-2 border border-slate-200 rounded-lg shadow-sm text-sm font-medium text-slate-700 bg-white hover:bg-slate-50'
               >
-{t('customer.refresh')}
+                {t('customer.refresh')}
               </button>
             </div>
           </div>
@@ -577,9 +620,11 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                 )}
               </div>
               <p className='mt-1 text-sm text-slate-500'>
-                {filteredAndSortedCustomers.length === 1 
+                {filteredAndSortedCustomers.length === 1
                   ? t('customer.searchResults.singular', { count: 1 })
-                  : t('customer.searchResults.plural', { count: filteredAndSortedCustomers.length })}
+                  : t('customer.searchResults.plural', {
+                      count: filteredAndSortedCustomers.length,
+                    })}
                 {searchTerm && ` ${t('customer.searchMatching', { term: searchTerm })}`}
               </p>
             </div>
@@ -651,7 +696,9 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                   </label>
                   <select
                     value={filterStatus}
-                    onChange={e => setFilterStatus(e.target.value as 'all' | 'hasReports' | 'noReports')}
+                    onChange={e =>
+                      setFilterStatus(e.target.value as 'all' | 'hasReports' | 'noReports')
+                    }
                     className='w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm'
                   >
                     <option value='all'>{t('customer.filters.allCustomers')}</option>
@@ -668,7 +715,9 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                   <input
                     type='number'
                     value={filterMinRevenue || ''}
-                    onChange={e => setFilterMinRevenue(e.target.value ? Number(e.target.value) : undefined)}
+                    onChange={e =>
+                      setFilterMinRevenue(e.target.value ? Number(e.target.value) : undefined)
+                    }
                     placeholder={t('customer.filters.enterAmount')}
                     min='0'
                     className='w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm'
@@ -728,7 +777,9 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
 
               {/* Sort Order */}
               <div>
-                <label className='block text-sm font-medium text-slate-700 mb-2'>{t('customer.sortOrder')}</label>
+                <label className='block text-sm font-medium text-slate-700 mb-2'>
+                  {t('customer.sortOrder')}
+                </label>
                 <select
                   value={sortOrder}
                   onChange={e => setSortOrder(e.target.value as 'asc' | 'desc')}
@@ -758,7 +809,9 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                 <XCircle className='h-5 w-5' />
               </div>
               <div className='ml-3 flex-1'>
-                <h3 className='text-sm font-medium text-red-800'>{t('customer.errorState.title')}</h3>
+                <h3 className='text-sm font-medium text-red-800'>
+                  {t('customer.errorState.title')}
+                </h3>
                 <p className='mt-1 text-sm text-red-700'>{error}</p>
                 <div className='mt-3'>
                   <button
@@ -788,13 +841,20 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                   {customers
                     .filter(c => c.customerType === 'company' && !c.parentCompanyId)
                     .map(parentCompany => {
-                      const subCompanies = customers.filter(c => c.parentCompanyId === parentCompany.id);
+                      const subCompanies = customers.filter(
+                        c => c.parentCompanyId === parentCompany.id
+                      );
                       return (
-                        <div key={parentCompany.id} className='border border-slate-200 rounded-lg p-4'>
+                        <div
+                          key={parentCompany.id}
+                          className='border border-slate-200 rounded-lg p-4'
+                        >
                           <div className='flex items-center justify-between mb-3'>
                             <div className='flex items-center gap-2'>
                               <Building className='h-5 w-5 text-green-600' />
-                              <h3 className='text-base font-semibold text-slate-900'>{parentCompany.name}</h3>
+                              <h3 className='text-base font-semibold text-slate-900'>
+                                {parentCompany.name}
+                              </h3>
                               <span className='px-2 py-0.5 text-xs bg-green-100 text-green-800 rounded-full'>
                                 Huvudföretag
                               </span>
@@ -820,10 +880,15 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                           {subCompanies.length > 0 && (
                             <div className='ml-8 mt-3 space-y-2 border-l-2 border-purple-200 pl-4'>
                               {subCompanies.map(subCompany => (
-                                <div key={subCompany.id} className='flex items-center justify-between py-2'>
+                                <div
+                                  key={subCompany.id}
+                                  className='flex items-center justify-between py-2'
+                                >
                                   <div className='flex items-center gap-2'>
                                     <Building className='h-4 w-4 text-purple-600' />
-                                    <span className='text-sm font-medium text-slate-900'>{subCompany.name}</span>
+                                    <span className='text-sm font-medium text-slate-900'>
+                                      {subCompany.name}
+                                    </span>
                                     <span className='px-2 py-0.5 text-xs bg-purple-100 text-purple-800 rounded-full'>
                                       Dotterbolag
                                     </span>
@@ -841,7 +906,8 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                         </div>
                       );
                     })}
-                  {customers.filter(c => c.customerType === 'company' && !c.parentCompanyId).length === 0 && (
+                  {customers.filter(c => c.customerType === 'company' && !c.parentCompanyId)
+                    .length === 0 && (
                     <p className='text-sm text-slate-500 text-center py-4'>
                       Inga huvudföretag hittades. Skapa ett företag för att börja bygga hierarkin.
                     </p>
@@ -851,18 +917,22 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
             ) : filteredAndSortedCustomers.length === 0 ? (
               <EmptyState
                 icon={Building}
-                title={searchTerm ? t('customer.emptyState.noCustomersFound') : t('customer.emptyState.noCustomersYet')}
-                description={searchTerm
-                  ? t('customer.emptyState.tryAdjustingSearch')
-                  : isReadOnly
-                  ? t('customer.emptyState.noCustomersCreatedYet')
-                  : t('customer.emptyState.createFirstCustomer')}
-                actionLabel={searchTerm || isReadOnly
-                  ? undefined
-                  : t('customer.emptyState.createNewCustomer')}
-                onAction={searchTerm || isReadOnly
-                  ? undefined
-                  : handleCreateCustomer}
+                title={
+                  searchTerm
+                    ? t('customer.emptyState.noCustomersFound')
+                    : t('customer.emptyState.noCustomersYet')
+                }
+                description={
+                  searchTerm
+                    ? t('customer.emptyState.tryAdjustingSearch')
+                    : isReadOnly
+                      ? t('customer.emptyState.noCustomersCreatedYet')
+                      : t('customer.emptyState.createFirstCustomer')
+                }
+                actionLabel={
+                  searchTerm || isReadOnly ? undefined : t('customer.emptyState.createNewCustomer')
+                }
+                onAction={searchTerm || isReadOnly ? undefined : handleCreateCustomer}
               />
             ) : (
               <div className='overflow-x-auto -mx-4 sm:mx-0'>
@@ -900,8 +970,8 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                                   {customer.name}
                                 </button>
                                 {customer.customerType === 'company' && (
-                                  <span className="px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded-full">
-                                    Företag
+                                  <span className='px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded-full'>
+                                    {t('customer.type.company') || 'Company'}
                                   </span>
                                 )}
                               </div>
@@ -926,7 +996,8 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                                       }}
                                       className='underline hover:text-purple-800 font-medium'
                                     >
-                                      {customers.find(c => c.id === customer.parentCompanyId)?.name || 'Okänt företag'}
+                                      {customers.find(c => c.id === customer.parentCompanyId)
+                                        ?.name || 'Okänt företag'}
                                     </button>
                                   </span>
                                 </div>
@@ -935,9 +1006,15 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                                 <div className='text-xs text-green-600 mt-1 flex items-center gap-1'>
                                   <Building className='h-3 w-3' />
                                   <span>Huvudföretag</span>
-                                  {customers.filter(c => c.parentCompanyId === customer.id).length > 0 && (
+                                  {customers.filter(c => c.parentCompanyId === customer.id).length >
+                                    0 && (
                                     <span className='ml-1'>
-                                      ({customers.filter(c => c.parentCompanyId === customer.id).length} dotterbolag)
+                                      (
+                                      {
+                                        customers.filter(c => c.parentCompanyId === customer.id)
+                                          .length
+                                      }{' '}
+                                      dotterbolag)
                                     </span>
                                   )}
                                 </div>
@@ -983,60 +1060,64 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                           </td>
                           <td className='px-6 py-4 whitespace-nowrap text-sm font-medium sticky right-0 bg-white z-10'>
                             <div className='flex space-x-2'>
-                            <Tooltip content='View Customer Details'>
-                              <button
-                                onClick={() => handleViewCustomer(customer)}
-                                className='text-blue-600 hover:text-blue-900 p-1 rounded hover:bg-blue-50'
-                              >
-                                <Eye className='h-4 w-4' />
-                              </button>
-                            </Tooltip>
-                            {!isReadOnly && (
-                              <>
-                                <Tooltip content='Edit Customer'>
-                                  <button
-                                    onClick={() => handleEditCustomer(customer)}
-                                    className='text-indigo-600 hover:text-indigo-900 p-1 rounded hover:bg-indigo-50'
-                                  >
-                                    <Edit className='h-4 w-4' />
-                                  </button>
-                                </Tooltip>
-                                <Tooltip content='Delete Customer'>
-                                  <button
-                                    onClick={() => handleDeleteCustomer(customer)}
-                                    className='text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50'
-                                  >
-                                    <Trash2 className='h-4 w-4' />
-                                  </button>
-                                </Tooltip>
-                              </>
-                            )}
-                            {!isReadOnly && (
-                              <Tooltip content='Export Data (GDPR)'>
+                              <Tooltip content='View Customer Details'>
                                 <button
-                                  onClick={() => exportCustomerData(customer)}
-                                  className='text-green-600 hover:text-green-900 p-1 rounded hover:bg-green-50'
-                                >
-                                  <Download className='h-4 w-4' />
-                                </button>
-                              </Tooltip>
-                            )}
-                            {!isReadOnly && (
-                              <Tooltip content={t('customer.invitation.generate') || 'Generate Signup Link'}>
-                                <button
-                                  onClick={() => handleGenerateSignupLink(customer)}
+                                  onClick={() => handleViewCustomer(customer)}
                                   className='text-blue-600 hover:text-blue-900 p-1 rounded hover:bg-blue-50'
                                 >
-                                  <Link2 className='h-4 w-4' />
+                                  <Eye className='h-4 w-4' />
                                 </button>
                               </Tooltip>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                              {!isReadOnly && (
+                                <>
+                                  <Tooltip content='Edit Customer'>
+                                    <button
+                                      onClick={() => handleEditCustomer(customer)}
+                                      className='text-indigo-600 hover:text-indigo-900 p-1 rounded hover:bg-indigo-50'
+                                    >
+                                      <Edit className='h-4 w-4' />
+                                    </button>
+                                  </Tooltip>
+                                  <Tooltip content='Delete Customer'>
+                                    <button
+                                      onClick={() => handleDeleteCustomer(customer)}
+                                      className='text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50'
+                                    >
+                                      <Trash2 className='h-4 w-4' />
+                                    </button>
+                                  </Tooltip>
+                                </>
+                              )}
+                              {!isReadOnly && (
+                                <Tooltip content='Export Data (GDPR)'>
+                                  <button
+                                    onClick={() => exportCustomerData(customer)}
+                                    className='text-green-600 hover:text-green-900 p-1 rounded hover:bg-green-50'
+                                  >
+                                    <Download className='h-4 w-4' />
+                                  </button>
+                                </Tooltip>
+                              )}
+                              {!isReadOnly && (
+                                <Tooltip
+                                  content={
+                                    t('customer.invitation.generate') || 'Generate Signup Link'
+                                  }
+                                >
+                                  <button
+                                    onClick={() => handleGenerateSignupLink(customer)}
+                                    className='text-blue-600 hover:text-blue-900 p-1 rounded hover:bg-blue-50'
+                                  >
+                                    <Link2 className='h-4 w-4' />
+                                  </button>
+                                </Tooltip>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             )}
@@ -1084,14 +1165,20 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                 </div>
 
                 <div>
-                  <h4 className='font-medium text-slate-900 mb-2'>{t('customer.businessInfo.title')}</h4>
+                  <h4 className='font-medium text-slate-900 mb-2'>
+                    {t('customer.businessInfo.title')}
+                  </h4>
                   <div className='space-y-2 text-sm'>
                     <p>
-                      <span className='font-medium'>{t('customer.businessInfo.totalReports')}:</span>{' '}
+                      <span className='font-medium'>
+                        {t('customer.businessInfo.totalReports')}:
+                      </span>{' '}
                       {selectedCustomer.totalReports || 0}
                     </p>
                     <p>
-                      <span className='font-medium'>{t('customer.businessInfo.totalRevenue')}:</span>{' '}
+                      <span className='font-medium'>
+                        {t('customer.businessInfo.totalRevenue')}:
+                      </span>{' '}
                       {formatCurrency(selectedCustomer.totalRevenue || 0)}
                     </p>
                     <p>
@@ -1121,7 +1208,9 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                 {isReadOnly && (
                   <button
                     onClick={() => {
-                      navigate(`/report/new?customerId=${selectedCustomer.id}&customerName=${encodeURIComponent(selectedCustomer.name)}&customerAddress=${encodeURIComponent(selectedCustomer.address || '')}`);
+                      navigate(
+                        `/report/new?customerId=${selectedCustomer.id}&customerName=${encodeURIComponent(selectedCustomer.name)}&customerAddress=${encodeURIComponent(selectedCustomer.address || '')}`
+                      );
                       setSelectedCustomer(null);
                     }}
                     className='px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium shadow-sm flex items-center'
@@ -1180,7 +1269,9 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
 
               <div className='space-y-4'>
                 <div>
-                  <label className='block text-sm font-medium text-gray-700 mb-1'>{t('customer.form.name')} *</label>
+                  <label className='block text-sm font-medium text-gray-700 mb-1'>
+                    {t('customer.form.name')} *
+                  </label>
                   <input
                     type='text'
                     value={formData.name}
@@ -1204,7 +1295,9 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                 </div>
 
                 <div>
-                  <label className='block text-sm font-medium text-gray-700 mb-1'>{t('customer.form.email')}</label>
+                  <label className='block text-sm font-medium text-gray-700 mb-1'>
+                    {t('customer.form.email')}
+                  </label>
                   <input
                     type='email'
                     value={formData.email}
@@ -1227,7 +1320,9 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                 </div>
 
                 <div>
-                  <label className='block text-sm font-medium text-gray-700 mb-1'>{t('customer.form.phone')}</label>
+                  <label className='block text-sm font-medium text-gray-700 mb-1'>
+                    {t('customer.form.phone')}
+                  </label>
                   <input
                     type='tel'
                     value={formData.phone}
@@ -1250,7 +1345,9 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                 </div>
 
                 <div>
-                  <label className='block text-sm font-medium text-gray-700 mb-1'>{t('customer.form.address')}</label>
+                  <label className='block text-sm font-medium text-gray-700 mb-1'>
+                    {t('customer.form.address')}
+                  </label>
                   <input
                     type='text'
                     value={formData.address}
@@ -1261,17 +1358,24 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                 </div>
 
                 <div>
-                  <label className='block text-sm font-medium text-gray-700 mb-1'>{t('customer.form.customerType') || 'Kundtyp'}</label>
+                  <label className='block text-sm font-medium text-gray-700 mb-1'>
+                    {t('customer.form.customerType') || 'Kundtyp'}
+                  </label>
                   <select
                     value={formData.customerType}
-                    onChange={e => setFormData(prev => ({ 
-                      ...prev, 
-                      customerType: e.target.value as 'individual' | 'company',
-                      parentCompanyId: e.target.value === 'individual' ? undefined : prev.parentCompanyId
-                    }))}
+                    onChange={e =>
+                      setFormData(prev => ({
+                        ...prev,
+                        customerType: e.target.value as 'individual' | 'company',
+                        parentCompanyId:
+                          e.target.value === 'individual' ? undefined : prev.parentCompanyId,
+                      }))
+                    }
                     className='w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm'
                   >
-                    <option value='individual'>{t('customer.form.individual') || 'Privatperson'}</option>
+                    <option value='individual'>
+                      {t('customer.form.individual') || 'Privatperson'}
+                    </option>
                     <option value='company'>{t('customer.form.company') || 'Företag'}</option>
                   </select>
                 </div>
@@ -1283,15 +1387,24 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                     </label>
                     <select
                       value={formData.parentCompanyId || ''}
-                      onChange={e => setFormData(prev => ({ 
-                        ...prev, 
-                        parentCompanyId: e.target.value || undefined 
-                      }))}
+                      onChange={e =>
+                        setFormData(prev => ({
+                          ...prev,
+                          parentCompanyId: e.target.value || undefined,
+                        }))
+                      }
                       className='w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm'
                     >
-                      <option value=''>{t('customer.form.noParent') || 'Ingen (huvudföretag)'}</option>
+                      <option value=''>
+                        {t('customer.form.noParent') || 'Ingen (huvudföretag)'}
+                      </option>
                       {customers
-                        .filter(c => c.customerType === 'company' && c.id !== editingCustomer?.id && !c.parentCompanyId)
+                        .filter(
+                          c =>
+                            c.customerType === 'company' &&
+                            c.id !== editingCustomer?.id &&
+                            !c.parentCompanyId
+                        )
                         .map(c => (
                           <option key={c.id} value={c.id}>
                             {c.name}
@@ -1299,26 +1412,36 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                         ))}
                     </select>
                     <p className='mt-1 text-xs text-slate-500'>
-                      {t('customer.form.parentCompanyHelp') || 'Välj ett huvudföretag om detta är en dotterbolag'}
+                      {t('customer.form.parentCompanyHelp') ||
+                        'Välj ett huvudföretag om detta är en dotterbolag'}
                     </p>
                   </div>
                 )}
 
                 {formData.customerType === 'company' && (
                   <div>
-                    <label className='block text-sm font-medium text-gray-700 mb-1'>{t('customer.form.buildingAddress') || 'Byggnadsadress'}</label>
+                    <label className='block text-sm font-medium text-gray-700 mb-1'>
+                      {t('customer.form.buildingAddress') || 'Byggnadsadress'}
+                    </label>
                     <input
                       type='text'
                       value={formData.buildingAddress}
-                      onChange={e => setFormData(prev => ({ ...prev, buildingAddress: e.target.value }))}
+                      onChange={e =>
+                        setFormData(prev => ({ ...prev, buildingAddress: e.target.value }))
+                      }
                       className='w-full border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm'
-                      placeholder={t('customer.form.buildingAddressPlaceholder') || 'Om den skiljer sig från huvudadressen'}
+                      placeholder={
+                        t('customer.form.buildingAddressPlaceholder') ||
+                        'Om den skiljer sig från huvudadressen'
+                      }
                     />
                   </div>
                 )}
 
                 <div>
-                  <label className='block text-sm font-medium text-gray-700 mb-1'>{t('customer.form.companyName') || 'Company'}</label>
+                  <label className='block text-sm font-medium text-gray-700 mb-1'>
+                    {t('customer.form.companyName') || 'Company'}
+                  </label>
                   <input
                     type='text'
                     value={formData.company}
@@ -1328,7 +1451,9 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                 </div>
 
                 <div>
-                  <label className='block text-sm font-medium text-gray-700 mb-1'>{t('customer.form.notes')}</label>
+                  <label className='block text-sm font-medium text-gray-700 mb-1'>
+                    {t('customer.form.notes')}
+                  </label>
                   <textarea
                     value={formData.notes}
                     onChange={e => setFormData(prev => ({ ...prev, notes: e.target.value }))}
@@ -1358,7 +1483,9 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                   {isSubmitting ? (
                     <>
                       <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2'></div>
-                      {showCreateModal ? t('customer.form.creating') || 'Creating...' : t('customer.form.updating') || 'Updating...'}
+                      {showCreateModal
+                        ? t('customer.form.creating') || 'Creating...'
+                        : t('customer.form.updating') || 'Updating...'}
                     </>
                   ) : showCreateModal ? (
                     t('customer.form.create') || 'Create'
@@ -1378,7 +1505,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
           onConfirm={confirmDeleteCustomer}
           title={t('customer.actions.delete') || t('common.delete')}
           message={
-            customerToDelete 
+            customerToDelete
               ? customerToDelete.totalReports && customerToDelete.totalReports > 0
                 ? `${t('common.deleteCustomerConfirmation', { name: customerToDelete.name })} ${t('customer.confirmDeleteWithReports', { count: customerToDelete.totalReports })}`
                 : t('common.deleteCustomerConfirmation', { name: customerToDelete.name })
@@ -1425,7 +1552,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                       {t('customer.invitation.existingLinks') || 'Existing active links:'}
                     </p>
                     <div className='space-y-2'>
-                      {customerInvitations.map((inv) => (
+                      {customerInvitations.map(inv => (
                         <div key={inv.id} className='flex items-center justify-between text-xs'>
                           <span className='text-slate-500'>
                             {t('customer.invitation.expires') || 'Expires'}:{' '}

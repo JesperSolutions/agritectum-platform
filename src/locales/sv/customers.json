@@ -163,5 +163,21 @@
   "customer.invitation.created": "Registreringslänk skapad!",
   "customer.invitation.error": "Kunde inte skapa registreringslänk",
   "customer.invitation.copied": "Länk kopierad till urklipp!",
-  "customer.invitation.copyError": "Kunde inte kopiera länk"
+  "customer.invitation.copyError": "Kunde inte kopiera länk",
+
+  "customer.type.company": "Företag",
+  "customer.type.individual": "Privatperson",
+  "customer.type.parentCompany": "Huvudföretag",
+  "customer.type.subsidiary": "Dotterbolag",
+  "customer.type.subsidiaryOf": "Dotterbolag av",
+  "customer.type.subsidiaries": "dotterbolag",
+
+  "customer.filter.parentCompany": "Huvudföretag",
+  "customer.filter.allCompanies": "Alla företag",
+  "customer.filter.parentCompaniesOnly": "Endast huvudföretag",
+
+  "customer.hierarchy.title": "Företagshierarki",
+  "customer.hierarchy.empty": "Inga huvudföretag hittades. Skapa ett företag för att börja bygga hierarkin.",
+
+  "customer.error.unknownCompany": "Okänt företag"
 }

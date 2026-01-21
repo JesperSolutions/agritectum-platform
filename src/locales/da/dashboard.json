@@ -63,13 +63,13 @@
   "dashboard.charts.customerGrowth": "Kundevækst",
   "dashboard.charts.issueTypes": "Type af mangler",
   "dashboard.charts.roofTypes": "Tagtyper",
-  
+
   "DASHBOARD.TOTALREPORTS": "Samlet antal rapporter",
   "DASHBOARD.COMPLETIONRATE": "Færdiggørelsesrate",
   "DASHBOARD.PENDINGREPORTS": "Afventende rapporter",
   "DASHBOARD.TEAMPRODUCTIVITY": "Teamproduktivitet",
   "DASHBOARD.LASTUPDATED": "Sidst opdateret",
-  
+
   "dashboard.teamActivity": "Teamaktivitet",
   "dashboard.vsLastWeek": "sammenlignet med sidste uge",
   "dashboard.aboveTarget": "Over målet",
@@ -81,12 +81,12 @@
   "dashboard.completionRate": "Færdiggørelsesrate",
   "dashboard.pendingReports": "Afventende rapporter",
   "dashboard.teamProductivity": "Teamproduktivitet",
-  
+
   "dashboard.roles.inspector": "Inspektør",
   "dashboard.roles.branchAdmin": "Filialadministrator",
   "dashboard.roles.admin": "Administrator",
   "dashboard.inspector": "Inspektør",
-  
+
   "dashboard.active": "Aktive",
   "dashboard.completed": "Færdige",
   "dashboard.status": "Status",
@@ -115,7 +115,7 @@
   "quickActions.backToTop": "Til toppen",
   "quickActions.hide": "Skjul hurtigmenu",
   "quickActions.restore": "Vis hurtigmenu igen",
-  
+
   "dashboard.superadmin": "Superadministrator",
   "dashboard.comprehensiveOverview": "Omfattende oversigt",
   "dashboard.branches": "filialer",
@@ -127,30 +127,30 @@
   "dashboard.totalRevenue": "Samlet omsætning",
   "dashboard.reports": "rapporter",
   "dashboard.pending": "Afventende",
-  
+
   "dashboard.serviceAgreements.activeAgreements": "Aktive aftaler",
   "dashboard.serviceAgreements.ofTotal": "af {total} totalt",
   "dashboard.serviceAgreements.monthlyRevenue": "Månedsomsætning",
   "dashboard.serviceAgreements.expiringSoon": "Udløber snart",
   "dashboard.serviceAgreements.next30Days": "Næste 30 dage",
-  
+
   "dashboard.scheduledVisits.title": "Planlagte besøg",
   "dashboard.scheduledVisits.viewCalendar": "Vis kalender",
   "dashboard.scheduledVisits.upcoming7Days": "Kommende (7 dage)",
   "dashboard.scheduledVisits.scheduledVisits": "Planlagte besøg",
   "dashboard.scheduledVisits.overdue": "Forfaldne",
-  
+
   "dashboard.financialOverview.title": "Økonomisk oversigt",
   "dashboard.financialOverview.viewAnalytics": "Vis analyser",
   "dashboard.financialOverview.oneTimeRevenue": "Engangsindtægter",
   "dashboard.financialOverview.recurringRevenue": "Tilbagevendende indtægter",
   "dashboard.financialOverview.recurringPercent": "Tilbagevendende %",
   "dashboard.financialOverview.ofTotalRevenue": "af samlet omsætning",
-  
+
   "dashboard.todayTasks": "Dagens opgaver",
   "dashboard.noTasksToday": "Ingen opgaver i dag",
   "dashboard.personalWorkspace": "Personligt arbejdsområde",
-  
+
   "dashboard.pendingCustomerResponses.title": "Afventende kundesvar",
   "dashboard.rejectedOrders.title": "Afviste ordrer",
   "dashboard.rejectedOrders.rejectedOn": "Afvist den",
@@ -158,7 +158,7 @@
   "dashboard.viewAll": "Vis alle",
   "dashboard.viewCalendar": "Vis kalender",
   "dashboard.andMore": "+{count} flere",
-  
+
   "dashboard.quickActions.title": "Hurtige handlinger",
   "dashboard.quickActions.createAppointment": "Opret aftale",
   "dashboard.quickActions.scheduleInspection": "Planlæg inspektion",
@@ -168,13 +168,19 @@
   "dashboard.quickActions.createReport": "Opret rapport",
   "dashboard.quickActions.serviceAgreement": "Serviceaftale",
   "dashboard.quickActions.createAgreement": "Opret aftale",
-  
+
   "dashboard.completedThisWeek": "Afsluttet denne uge",
   "dashboard.scheduledThisWeek": "Planlagt denne uge",
   "dashboard.averageTime": "Gennemsnitlig tid",
   "dashboard.hours": "timer",
   "dashboard.allTime": "i alt",
   "dashboard.upcoming": "kommende",
-  "dashboard.activeUsers": "Aktive brugere"
-}
+  "dashboard.activeUsers": "Aktive brugere",
 
+  "dashboard.map.title": "Ejendomskort",
+  "dashboard.map.subtitle": "Geografisk oversigt over alle ejendomme",
+  "dashboard.map.noLocations": "Ingen ejendomsplaceringer tilgængelige",
+  "dashboard.map.addLocations": "Tilføj koordinater til dine bygninger for at se dem på kortet.",
+  "dashboard.map.buildingsShown": "bygninger vist",
+  "dashboard.viewDetails": "Vis detaljer"
+}

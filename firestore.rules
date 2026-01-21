@@ -34,20 +34,31 @@ service cloud.firestore {
       return userBranchId == branchId || userBranchId == "main" || isSuperadmin();
     }
     
+    function getUserRole() {
+      // Try to get role from custom claims first
+      // Fallback: check user document in Firestore
+      return request.auth.token.role != null
+        ? request.auth.token.role
+        : (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+           get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role != null
+          ? get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role
+          : "");
+    }
+    
     function isSuperadmin() {
-      return isAuthenticated() && getPermissionLevel() >= 2;
+      return isAuthenticated() && (getUserRole() == 'superadmin' || getPermissionLevel() >= 2);
     }
     
     function isBranchAdmin() {
-      return isAuthenticated() && getPermissionLevel() >= 1;
+      return isAuthenticated() && (getUserRole() == 'branchAdmin' || getPermissionLevel() >= 1);
     }
     
     function isInspector() {
-      return isAuthenticated() && getPermissionLevel() >= 0;
+      return isAuthenticated() && (getUserRole() == 'inspector' || getPermissionLevel() == 0);
     }
     
     function isCustomer() {
-      return isAuthenticated() && getPermissionLevel() == -1;
+      return isAuthenticated() && (getUserRole() == 'customer' || getPermissionLevel() == -1);
     }
     
     function getUserType() {
@@ -139,13 +150,23 @@ service cloud.firestore {
       // Allow public read access for customer reports (when isPublic is true)
       allow read: if resource.data.isPublic == true;
       
-      // Allow customer read access for shared reports linked to their company
+      // Allow customer read access for their own reports (by customerId or companyId)
       allow read: if isAuthenticated() && isCustomer() && (
-        resource.data.isShared == true || resource.data.isPublic == true
-      ) && (
         resource.data.customerId == request.auth.uid ||
-        resource.data.customerId == getUserCompanyId()
+        resource.data.customerId == getUserCompanyId() ||
+        resource.data.companyId == getUserCompanyId()
       );
+      
+      // CRITICAL FIX: Allow customers to read reports for buildings they own
+      allow read: if isAuthenticated() && isCustomer() && 
+        resource.data.buildingId != null &&
+        exists(/databases/$(database)/documents/buildings/$(resource.data.buildingId)) &&
+        (
+          get(/databases/$(database)/documents/buildings/$(resource.data.buildingId)).data.customerId == request.auth.uid ||
+          get(/databases/$(database)/documents/buildings/$(resource.data.buildingId)).data.customerId == getUserCompanyId() ||
+          (get(/databases/$(database)/documents/buildings/$(resource.data.buildingId)).data.companyId != null && 
+           get(/databases/$(database)/documents/buildings/$(resource.data.buildingId)).data.companyId == getUserCompanyId())
+        );
       
       // Allow authenticated read access for internal users
       allow read: if isAuthenticated() && (
@@ -189,14 +210,18 @@ service cloud.firestore {
           getUserBranchId() == "main"
         ) &&
         // Basic required fields - using actual field names from Customer interface (name, address)
-        request.resource.data.keys().hasAll(["name", "branchId", "createdBy"]);
+        request.resource.data.keys().hasAll(["name", "branchId", "createdBy"]) &&
+        (isSuperadmin() || isBranchAdmin());
+      // Only admins can update customers
       allow update: if isAuthenticated() && (
         isSuperadmin() ||
-        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
-        (isInspector() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
       );
-      // Allow authenticated users to delete customers
-      allow delete: if isAuthenticated();
+      // Only admins can delete customers
+      allow delete: if isAuthenticated() && (
+        isSuperadmin() ||
+        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+      );
     }
     
     // Customer invitations collection - for customer signup links
@@ -390,6 +415,26 @@ service cloud.firestore {
       // Public read access for customer acceptance (when offer is pending/awaiting_response)
       allow read: if resource.data.status in ['pending', 'awaiting_response'] && 
         resource.data.publicLink != null;
+      
+      // Allow customer read access for their own offers (by customerId or companyId)
+      allow read: if isAuthenticated() && isCustomer() && (
+        resource.data.customerId == request.auth.uid ||
+        resource.data.customerId == getUserCompanyId() ||
+        resource.data.companyId == getUserCompanyId()
+      );
+      
+      // CRITICAL FIX: Allow customers to read offers for reports linked to buildings they own
+      allow read: if isAuthenticated() && isCustomer() && 
+        resource.data.reportId != null &&
+        exists(/databases/$(database)/documents/reports/$(resource.data.reportId)) &&
+        get(/databases/$(database)/documents/reports/$(resource.data.reportId)).data.buildingId != null &&
+        exists(/databases/$(database)/documents/buildings/$(get(/databases/$(database)/documents/reports/$(resource.data.reportId)).data.buildingId)) &&
+        (
+          get(/databases/$(database)/documents/buildings/$(get(/databases/$(database)/documents/reports/$(resource.data.reportId)).data.buildingId)).data.customerId == request.auth.uid ||
+          get(/databases/$(database)/documents/buildings/$(get(/databases/$(database)/documents/reports/$(resource.data.reportId)).data.buildingId)).data.customerId == getUserCompanyId() ||
+          (get(/databases/$(database)/documents/buildings/$(get(/databases/$(database)/documents/reports/$(resource.data.reportId)).data.buildingId)).data.companyId != null && 
+           get(/databases/$(database)/documents/buildings/$(get(/databases/$(database)/documents/reports/$(resource.data.reportId)).data.buildingId)).data.companyId == getUserCompanyId())
+        );
       
       // Authenticated read access for internal users
       allow read: if isAuthenticated() && (
@@ -636,14 +681,16 @@ service cloud.firestore {
       // For single document reads, check branchId match
       allow get: if isAuthenticated() && (
         isSuperadmin() ||
-        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
+        (isInspector() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
       );
       
-      // Allow list queries for branch admins and superadmins
+      // Allow list queries for branch admins, inspectors, and superadmins
       // Customers can list their own agreements
       allow list: if isAuthenticated() && (
         isSuperadmin() ||
         isBranchAdmin() ||
+        isInspector() ||
         isCustomer()
       );
       

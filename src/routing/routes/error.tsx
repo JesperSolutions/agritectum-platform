@@ -31,7 +31,9 @@ export const UnauthorizedPage = () => {
   return (
     <div className='min-h-screen bg-slate-50 flex items-center justify-center'>
       <div className='bg-white p-8 rounded-lg shadow-md text-center'>
-        <h1 className='text-2xl font-bold text-slate-900 mb-4'>{t('errors.routing.accessDenied')}</h1>
+        <h1 className='text-2xl font-bold text-slate-900 mb-4'>
+          {t('errors.routing.accessDenied')}
+        </h1>
         <p className='text-slate-600 mb-6'>{t('errors.routing.accessDeniedMessage')}</p>
         <button
           onClick={() => (window.location.href = '/dashboard')}
@@ -52,10 +54,10 @@ export const NoBranchPage = () => {
   return (
     <div className='min-h-screen bg-slate-50 flex items-center justify-center'>
       <div className='bg-white p-8 rounded-lg shadow-md text-center'>
-        <h1 className='text-2xl font-bold text-slate-900 mb-4'>{t('errors.routing.noBranchAssigned')}</h1>
-        <p className='text-slate-600 mb-6'>
-          {t('errors.routing.noBranchMessage')}
-        </p>
+        <h1 className='text-2xl font-bold text-slate-900 mb-4'>
+          {t('errors.routing.noBranchAssigned')}
+        </h1>
+        <p className='text-slate-600 mb-6'>{t('errors.routing.noBranchMessage')}</p>
         <button
           onClick={() => (window.location.href = '/login')}
           className='px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium shadow-sm'

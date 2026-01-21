@@ -6,7 +6,7 @@ let testEnv: RulesTestEnvironment;
 beforeAll(async () => {
   testEnv = await initializeTestEnvironment({
     projectId: 'test-taklaget',
-    firestore: { rules: '../firestore.rules' }
+    firestore: { rules: '../firestore.rules' },
   });
 });
 afterAll(async () => {
@@ -14,22 +14,37 @@ afterAll(async () => {
 });
 
 test('superadmin can read any user', async () => {
-  const ctx = testEnv.authenticatedContext('u1', { permissionLevel: 2, branchId: 'main', role: 'superadmin' });
+  const ctx = testEnv.authenticatedContext('u1', {
+    permissionLevel: 2,
+    branchId: 'main',
+    role: 'superadmin',
+  });
   await setDoc(doc(ctx.firestore(), 'users/u2'), { branchId: 'branchX' });
   await expect(getDoc(doc(ctx.firestore(), 'users/u2'))).resolves.toHaveProperty('exists', true);
 });
 
 test('branch admin can read only their branch user', async () => {
-  const branchAdmin = testEnv.authenticatedContext('ba1', { permissionLevel: 1, branchId: 'branch42', role: 'branchAdmin' });
+  const branchAdmin = testEnv.authenticatedContext('ba1', {
+    permissionLevel: 1,
+    branchId: 'branch42',
+    role: 'branchAdmin',
+  });
   await setDoc(doc(branchAdmin.firestore(), 'users/u5'), { branchId: 'branch42' });
-  await expect(getDoc(doc(branchAdmin.firestore(), 'users/u5'))).resolves.toHaveProperty('exists', true);
+  await expect(getDoc(doc(branchAdmin.firestore(), 'users/u5'))).resolves.toHaveProperty(
+    'exists',
+    true
+  );
   // Other branch should fail
   await setDoc(doc(branchAdmin.firestore(), 'users/u6'), { branchId: 'otherBranch' });
   await expect(getDoc(doc(branchAdmin.firestore(), 'users/u6'))).rejects.toThrow();
 });
 
 test('inspector can only read own branch reports', async () => {
-  const insp = testEnv.authenticatedContext('ins1', { permissionLevel: 0, branchId: 'zzz', role: 'inspector' });
+  const insp = testEnv.authenticatedContext('ins1', {
+    permissionLevel: 0,
+    branchId: 'zzz',
+    role: 'inspector',
+  });
   await setDoc(doc(insp.firestore(), 'reports/r1'), { branchId: 'zzz', isPublic: false });
   await expect(getDoc(doc(insp.firestore(), 'reports/r1'))).resolves.toHaveProperty('exists', true);
   await setDoc(doc(insp.firestore(), 'reports/r2'), { branchId: 'xx', isPublic: false });

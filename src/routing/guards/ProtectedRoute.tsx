@@ -37,7 +37,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     }
   }
 
-  // Check branch requirement
+  // Check branch requirement - but only for routes that explicitly require it
+  // Branch admins and inspectors need a branch, but don't block dashboard access
   if (requiredBranch && !currentUser.branchId && currentUser.role !== 'superadmin') {
     return <Navigate to='/no-branch' replace />;
   }
