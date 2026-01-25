@@ -64,11 +64,6 @@
   "dashboard.charts.issueTypes": "Art der Mängel",
   "dashboard.charts.roofTypes": "Dachtypen",
 
-  "DASHBOARD.TOTALREPORTS": "Gesamtanzahl Berichte",
-  "DASHBOARD.COMPLETIONRATE": "Abschlussrate",
-  "DASHBOARD.PENDINGREPORTS": "Ausstehende Berichte",
-  "DASHBOARD.TEAMPRODUCTIVITY": "Teamproduktivität",
-  "DASHBOARD.LASTUPDATED": "Zuletzt aktualisiert",
 
   "dashboard.teamActivity": "Teamaktivität",
   "dashboard.vsLastWeek": "im Vergleich zur letzten Woche",
@@ -162,5 +157,21 @@
   "dashboard.map.noLocations": "Keine Gebäudestandorte verfügbar",
   "dashboard.map.addLocations": "Fügen Sie Ihren Gebäuden Koordinaten hinzu, um sie auf der Karte zu sehen.",
   "dashboard.map.buildingsShown": "Gebäude angezeigt",
-  "dashboard.viewDetails": "Details anzeigen"
+  "dashboard.viewDetails": "Details anzeigen",
+
+  "portal.healthScores.title": "Ihre Gebäudezustandswerte verstehen",
+  "portal.healthScores.explanation": "Jedes Gebäude erhält eine Zustandsnote von A (Ausgezeichnet) bis F (Kritisch) auf einer 100-Punkte-Skala. Gebäude mit 90+ Punkten erhalten ein A, 80-89 erhalten ein B, 70-79 erhalten ein C, 60-69 erhalten ein D und alles unter 60 erhält ein F.",
+  "portal.healthScores.howCalculated": "Wie die Werte berechnet werden",
+  "portal.healthScores.howCalculatedDesc": "Wir bewerten drei Schlüsselfaktoren – wann das Gebäude zuletzt inspiziert wurde (40% des Wertes), die Anzahl der gefundenen kritischen Probleme (30% des Wertes) und wie regelmäßig Wartungen durchgeführt werden (30% des Wertes).",
+  
+  "portal.stats.buildings": "Gebäude",
+  "portal.stats.buildingsDesc": "Gesamtzahl der Immobilien in Ihrem Portfolio",
+  "portal.stats.portfolioHealth": "Portfolio-Zustand",
+  "portal.stats.portfolioHealthDesc": "Durchschnittlicher Zustandswert für alle Gebäude. Höher ist besser (0-100-Skala)",
+  "portal.stats.averageScore": "Durchschnittswert",
+  "portal.stats.totalCosts": "Gesamtkosten",
+  "portal.stats.totalCostsDesc": "Gesamtwartungs- und Inspektionskosten für alle Gebäude (Arbeitskräfte + Materialien + Transport)",
+  "portal.stats.avgPerBuilding": "Durchschn./Gebäude",
+  "portal.stats.upcomingInspections": "Bevorstehende Inspektionen",
+  "portal.stats.upcomingInspectionsDesc": "Anzahl der geplanten Dachprüfungen"
 }

@@ -23,6 +23,7 @@ import {
   updateBuilding,
   getBuildingActivity,
   BuildingActivity,
+  deleteBuilding,
 } from '../../services/buildingService';
 import { getReportsByBuildingId } from '../../services/reportService';
 import { getServiceAgreementsByBuilding } from '../../services/serviceAgreementService';
@@ -46,6 +47,7 @@ import {
   ExternalLink,
   AlertCircle,
   Leaf,
+  Trash2,
 } from 'lucide-react';
 import LoadingSpinner from '../common/LoadingSpinner';
 import BuildingMap from './BuildingMap';
@@ -68,6 +70,8 @@ const BuildingDetail: React.FC = () => {
   const [loadingRelated, setLoadingRelated] = useState(true);
   const [editing, setEditing] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [formData, setFormData] = useState({
     address: '',
     buildingType: 'residential' as Building['buildingType'],
@@ -85,6 +89,33 @@ const BuildingDetail: React.FC = () => {
       ]);
     }
   }, [buildingId, currentUser]);
+
+  const handleDeleteBuilding = async () => {
+    if (!buildingId || !building) return;
+
+    // Check for non-in-progress reports
+    const completedReports = reports.filter(r => r.status !== 'in-progress');
+    if (completedReports.length > 0) {
+      setErrors([
+        `Cannot delete building with ${completedReports.length} completed/archived report(s). Please remove these reports first.`,
+      ]);
+      setShowDeleteDialog(false);
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      await deleteBuilding(buildingId);
+      // Redirect to buildings list
+      window.location.href = '/portal/buildings';
+    } catch (error: any) {
+      logger.error('[BuildingDetail] Delete failed:', error);
+      setErrors(prev => [...prev, `Delete failed: ${error?.message || 'Unknown error'}`]);
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteDialog(false);
+    }
+  };
 
   const loadBuilding = async () => {
     if (!buildingId) {
@@ -251,6 +282,14 @@ const BuildingDetail: React.FC = () => {
           <ArrowLeft className='w-4 h-4 mr-2' />
           {t('buildings.backToBuildings') || t('dashboard.viewAll') || 'Back to Buildings'}
         </Link>
+        <button
+          onClick={() => setShowDeleteDialog(true)}
+          className='inline-flex items-center px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg border border-red-200 transition-colors'
+          title='Delete building'
+        >
+          <Trash2 className='w-4 h-4 mr-2' />
+          Delete
+        </button>
       </div>
 
       {/* Page Header with Stats */}
@@ -809,6 +848,46 @@ const BuildingDetail: React.FC = () => {
               )}
             </div>
           )}
+        </div>
+      )}
+
+      {/* Delete Confirmation Dialog */}
+      {showDeleteDialog && (
+        <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4'>
+          <div className='bg-white rounded-lg shadow-xl max-w-md w-full'>
+            <div className='p-6'>
+              <div className='flex items-center justify-center w-12 h-12 bg-red-100 rounded-full mx-auto mb-4'>
+                <AlertCircle className='w-6 h-6 text-red-600' />
+              </div>
+              <h3 className='text-lg font-medium text-gray-900 text-center mb-2'>
+                Delete Building?
+              </h3>
+              <p className='text-sm text-gray-600 text-center mb-6'>
+                {building?.address || 'This building'} will be permanently deleted. This action cannot be undone.
+                {reports.length > 0 && (
+                  <span className='block mt-4 text-red-600 font-medium'>
+                    Note: Only in-progress reports can be kept. {reports.filter(r => r.status !== 'in-progress').length} completed/archived report(s) must be removed first.
+                  </span>
+                )}
+              </p>
+              <div className='flex gap-3 justify-center'>
+                <button
+                  onClick={() => setShowDeleteDialog(false)}
+                  disabled={isDeleting}
+                  className='px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50'
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDeleteBuilding}
+                  disabled={isDeleting}
+                  className='px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed'
+                >
+                  {isDeleting ? 'Deleting...' : 'Delete'}
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -150,6 +150,7 @@
   "customerProfile.loadError": "Kundendaten konnten nicht geladen werden",
   "customerProfile.buildingType": "Typ",
   "customerProfile.roofSize": "Dachgröße",
+  "customerProfile.createEsgReport": "ESG-Bericht erstellen",
 
   "customer.invitation.title": "Anmeldelink generieren",
   "customer.invitation.description": "Anmeldelink generieren für",

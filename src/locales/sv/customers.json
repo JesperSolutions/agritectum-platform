@@ -150,6 +150,7 @@
   "customerProfile.loadError": "Kunde inte ladda kunddata",
   "customerProfile.buildingType": "Typ",
   "customerProfile.roofSize": "Tagstorlek",
+  "customerProfile.createEsgReport": "Skapa ESG-rapport",
 
   "customer.invitation.title": "Generera registreringslänk",
   "customer.invitation.description": "Generera en registreringslänk för",

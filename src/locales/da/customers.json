@@ -150,6 +150,7 @@
   "customerProfile.loadError": "Kunne ikke indlæse kundedata",
   "customerProfile.buildingType": "Type",
   "customerProfile.roofSize": "Tagstørrelse",
+  "customerProfile.createEsgReport": "Opret ESG-rapport",
 
   "customer.invitation.title": "Generer tilmeldingslink",
   "customer.invitation.description": "Generer et tilmeldingslink til",

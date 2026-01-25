@@ -64,12 +64,6 @@
   "dashboard.charts.issueTypes": "Issue Types",
   "dashboard.charts.roofTypes": "Roof Types",
 
-  "DASHBOARD.TOTALREPORTS": "Total Reports",
-  "DASHBOARD.COMPLETIONRATE": "Completion Rate",
-  "DASHBOARD.PENDINGREPORTS": "Pending Reports",
-  "DASHBOARD.TEAMPRODUCTIVITY": "Team Productivity",
-  "DASHBOARD.LASTUPDATED": "Last Updated",
-
   "dashboard.teamActivity": "Team Activity",
   "dashboard.vsLastWeek": "compared to last week",
   "dashboard.aboveTarget": "Above target",
@@ -182,5 +176,21 @@
   "dashboard.map.noLocations": "No building locations available",
   "dashboard.map.addLocations": "Add coordinates to your buildings to see them on the map.",
   "dashboard.map.buildingsShown": "buildings shown",
-  "dashboard.viewDetails": "View Details"
+  "dashboard.viewDetails": "View Details",
+
+  "portal.healthScores.title": "Understanding Your Building Health Scores",
+  "portal.healthScores.explanation": "Each building receives a health grade from A (Excellent) to F (Critical) based on a 100-point scale. Buildings scoring 90+ earn an A, 80-89 get a B, 70-79 receive a C, 60-69 get a D, and anything below 60 is rated F.",
+  "portal.healthScores.howCalculated": "How scores are calculated",
+  "portal.healthScores.howCalculatedDesc": "We evaluate three key factors—when the building was last inspected (40% of score), the number of critical issues found (30% of score), and how regularly maintenance is performed (30% of score).",
+  
+  "portal.stats.buildings": "Buildings",
+  "portal.stats.buildingsDesc": "Total number of properties in your portfolio",
+  "portal.stats.portfolioHealth": "Portfolio Health",
+  "portal.stats.portfolioHealthDesc": "Average health score across all buildings. Higher is better (0-100 scale)",
+  "portal.stats.averageScore": "Average Score",
+  "portal.stats.totalCosts": "Total Costs",
+  "portal.stats.totalCostsDesc": "Total maintenance and inspection costs across all buildings (labor + materials + travel)",
+  "portal.stats.avgPerBuilding": "avg/building",
+  "portal.stats.upcomingInspections": "Upcoming Inspections",
+  "portal.stats.upcomingInspectionsDesc": "Number of scheduled roof inspections"
 }

@@ -16,6 +16,7 @@ interface RoofSizeMeasurerProps {
   initialArea?: number; // Optional initial area value
   initialSnapshot?: string; // Optional initial snapshot data URL
   initialPolygonPoints?: L.LatLng[]; // Optional initial polygon points for redrawing
+  address?: string; // Optional address to display in header
 }
 
 // Helper function to calculate area of a polygon in square meters
@@ -61,6 +62,7 @@ const RoofSizeMeasurer: React.FC<RoofSizeMeasurerProps> = ({
   initialArea,
   initialSnapshot,
   initialPolygonPoints,
+  address,
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
@@ -344,9 +346,12 @@ const RoofSizeMeasurer: React.FC<RoofSizeMeasurerProps> = ({
         <div className='flex items-center justify-between p-4 border-b border-gray-200'>
           <div className='flex items-center gap-2'>
             <Ruler className='w-5 h-5 text-blue-600' />
-            <h2 className='text-xl font-bold text-gray-900'>
-              {t('reportForm.roofMeasurer.title') || 'Measure Roof Size'}
-            </h2>
+            <div>
+              <h2 className='text-xl font-bold text-gray-900'>
+                {t('reportForm.roofMeasurer.title') || 'Measure Roof Size'}
+              </h2>
+              {address && <p className='text-sm text-gray-600 mt-1'>{address}</p>}
+            </div>
           </div>
           <button onClick={onClose} className='text-gray-400 hover:text-gray-600 transition-colors'>
             <X className='w-6 h-6' />

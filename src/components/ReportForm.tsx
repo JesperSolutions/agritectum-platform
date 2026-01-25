@@ -587,7 +587,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
 
   // Handle building selection - use building data as source of truth
   const handleBuildingSelect = useCallback(
-    (buildingId: string) => {
+    async (buildingId: string) => {
       const building = customerBuildings.find(b => b.id === buildingId);
       if (building) {
         setSelectedBuildingId(buildingId);
@@ -598,6 +598,26 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
           roofType: building.roofType || prev.roofType,
           roofSize: building.roofSize || prev.roofSize,
         }));
+
+        // Geocode building address to get coordinates for map measurer
+        if (building.address) {
+          try {
+            const response = await fetch(
+              `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(building.address)}&addressdetails=1&limit=1`
+            );
+            if (response.ok) {
+              const data = await response.json();
+              if (data && data.length > 0) {
+                setAddressCoordinates({
+                  lat: parseFloat(data[0].lat),
+                  lon: parseFloat(data[0].lon),
+                });
+              }
+            }
+          } catch (error) {
+            console.warn('Could not geocode building address:', error);
+          }
+        }
       }
     },
     [customerBuildings]
@@ -2394,7 +2414,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                           id='roofSize'
                           value={formData.roofSize || ''}
                           onChange={e => {
-                            const value = e.target.value ? parseFloat(e.target.value) : undefined;
+                            const value = e.target.value ? Math.round(parseFloat(e.target.value) * 100) / 100 : undefined;
                             setFormData(prev => ({ ...prev, roofSize: value }));
                             clearFieldError('roofSize');
                           }}
@@ -3735,6 +3755,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
           <RoofSizeMeasurer
             lat={addressCoordinates.lat}
             lon={addressCoordinates.lon}
+            address={formData.buildingAddress || formData.customerAddress}
             onAreaCalculated={(area, snapshotDataUrl, polygonPoints) => {
               setFormData(prev => ({ ...prev, roofSize: area }));
               setRoofSnapshot(snapshotDataUrl);

@@ -64,11 +64,6 @@
   "dashboard.charts.issueTypes": "Typ av brister",
   "dashboard.charts.roofTypes": "Taktyper",
 
-  "DASHBOARD.TOTALREPORTS": "Totalt antal rapporter",
-  "DASHBOARD.COMPLETIONRATE": "Slutförandegrad",
-  "DASHBOARD.PENDINGREPORTS": "Väntande rapporter",
-  "DASHBOARD.TEAMPRODUCTIVITY": "Teamproduktivitet",
-  "DASHBOARD.LASTUPDATED": "Senast uppdaterad",
 
   "dashboard.teamActivity": "Teamaktivitet",
   "dashboard.vsLastWeek": "jämfört med förra veckan",
@@ -182,5 +177,21 @@
   "dashboard.map.noLocations": "Inga fastighetsplatser tillgängliga",
   "dashboard.map.addLocations": "Lägg till koordinater till dina fastigheter för att se dem på kartan.",
   "dashboard.map.buildingsShown": "fastigheter visas",
-  "dashboard.viewDetails": "Visa detaljer"
+  "dashboard.viewDetails": "Visa detaljer",
+
+  "portal.healthScores.title": "Förstå dina byggnaders hälsoscorer",
+  "portal.healthScores.explanation": "Varje byggnad får ett hälsovärde från A (Utmärkt) till F (Kritisk) baserat på en 100-poängsskala. Byggnader med 90+ poäng får A, 80-89 får B, 70-79 får C, 60-69 får D, och allt under 60 får F.",
+  "portal.healthScores.howCalculated": "Hur poängen beräknas",
+  "portal.healthScores.howCalculatedDesc": "Vi utvärderar tre nyckelfaktorer – när byggnaden senast inspekterades (40% av poängen), antalet kritiska problem som upptäcktes (30% av poängen) och hur regelbundet underhållet utförs (30% av poängen).",
+  
+  "portal.stats.buildings": "Byggnader",
+  "portal.stats.buildingsDesc": "Totalt antal fastigheter i din portfölj",
+  "portal.stats.portfolioHealth": "Portföljhälsa",
+  "portal.stats.portfolioHealthDesc": "Genomsnittligt hälsovärde för alla byggnader. Högre är bättre (0-100 skala)",
+  "portal.stats.averageScore": "Genomsnittligt värde",
+  "portal.stats.totalCosts": "Totala kostnader",
+  "portal.stats.totalCostsDesc": "Totala underhålls- och inspektionskostnader för alla byggnader (arbetskraft + material + transport)",
+  "portal.stats.avgPerBuilding": "genomsnitt/byggnad",
+  "portal.stats.upcomingInspections": "Kommande inspektioner",
+  "portal.stats.upcomingInspectionsDesc": "Antal planerade takbesiktningar"
 }

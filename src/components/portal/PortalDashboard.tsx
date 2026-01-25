@@ -290,18 +290,13 @@ const PortalDashboard: React.FC = () => {
           </div>
           <div className='flex-1'>
             <h3 className='text-sm font-semibold text-slate-900 mb-3'>
-              Understanding Your Building Health Scores
+              {t('portal.healthScores.title')}
             </h3>
             <p className='text-sm text-slate-700 leading-relaxed mb-3'>
-              Each building receives a health grade from <strong>A (Excellent)</strong> to{' '}
-              <strong>F (Critical)</strong> based on a 100-point scale. Buildings scoring 90+ earn
-              an A, 80-89 get a B, 70-79 receive a C, 60-69 get a D, and anything below 60 is rated
-              F.
+              {t('portal.healthScores.explanation')}
             </p>
             <p className='text-xs text-slate-600 leading-relaxed'>
-              <strong>How scores are calculated:</strong> We evaluate three key factors—when the
-              building was last inspected (40% of score), the number of critical issues found (30%
-              of score), and how regularly maintenance is performed (30% of score).
+              <strong>{t('portal.healthScores.howCalculated')}:</strong> {t('portal.healthScores.howCalculatedDesc')}
             </p>
           </div>
         </div>
@@ -312,11 +307,11 @@ const PortalDashboard: React.FC = () => {
         <div className='bg-white rounded-lg shadow p-6'>
           <div className='flex items-center justify-between mb-2'>
             <div className='flex items-center gap-2'>
-              <p className='text-sm font-medium text-gray-600'>{t('navigation.buildings')}</p>
+              <p className='text-sm font-medium text-gray-600'>{t('portal.stats.buildings')}</p>
               <div className='group relative'>
                 <HelpCircle className='w-4 h-4 text-gray-400 cursor-help' />
                 <div className='absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity w-48 z-10'>
-                  Total number of properties in your portfolio
+                  {t('portal.stats.buildingsDesc')}
                 </div>
               </div>
             </div>
@@ -351,11 +346,11 @@ const PortalDashboard: React.FC = () => {
         <div className='bg-white rounded-lg shadow p-6'>
           <div className='flex items-center justify-between mb-2'>
             <div className='flex items-center gap-2'>
-              <p className='text-sm font-medium text-gray-600'>Portfolio Health</p>
+              <p className='text-sm font-medium text-gray-600'>{t('portal.stats.portfolioHealth')}</p>
               <div className='group relative'>
                 <HelpCircle className='w-4 h-4 text-gray-400 cursor-help' />
                 <div className='absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity w-56 z-10'>
-                  Average health score across all buildings. Higher is better (0-100 scale)
+                  {t('portal.stats.portfolioHealthDesc')}
                 </div>
               </div>
             </div>
@@ -374,18 +369,17 @@ const PortalDashboard: React.FC = () => {
             </div>
           </div>
           <p className='text-3xl font-bold text-gray-900'>{avgHealthScore}</p>
-          <p className='text-xs text-gray-500 mt-1'>Average Score</p>
+          <p className='text-xs text-gray-500 mt-1'>{t('portal.stats.averageScore')}</p>
         </div>
 
         <div className='bg-white rounded-lg shadow p-6'>
           <div className='flex items-center justify-between mb-2'>
             <div className='flex items-center gap-2'>
-              <p className='text-sm font-medium text-gray-600'>Total Costs</p>
+              <p className='text-sm font-medium text-gray-600'>{t('portal.stats.totalCosts')}</p>
               <div className='group relative'>
                 <HelpCircle className='w-4 h-4 text-gray-400 cursor-help' />
                 <div className='absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity w-56 z-10'>
-                  Total maintenance and inspection costs across all buildings (labor + materials +
-                  travel)
+                  {t('portal.stats.totalCostsDesc')}
                 </div>
               </div>
             </div>
@@ -396,7 +390,7 @@ const PortalDashboard: React.FC = () => {
           </p>
           <p className='text-xs text-gray-500 mt-1'>
             {avgCostPerBuilding > 0
-              ? `${Math.round(avgCostPerBuilding / 1000)}k avg/building`
+              ? `${Math.round(avgCostPerBuilding / 1000)}k ${t('portal.stats.avgPerBuilding')}`
               : 'SEK'}
           </p>
         </div>
@@ -404,11 +398,11 @@ const PortalDashboard: React.FC = () => {
         <div className='bg-white rounded-lg shadow p-6'>
           <div className='flex items-center justify-between mb-2'>
             <div className='flex items-center gap-2'>
-              <p className='text-sm font-medium text-gray-600'>Upcoming Inspections</p>
+              <p className='text-sm font-medium text-gray-600'>{t('portal.stats.upcomingInspections')}</p>
               <div className='group relative'>
                 <HelpCircle className='w-4 h-4 text-gray-400 cursor-help' />
                 <div className='absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity w-48 z-10'>
-                  Number of scheduled roof inspections
+                  {t('portal.stats.upcomingInspectionsDesc')}
                 </div>
               </div>
             </div>

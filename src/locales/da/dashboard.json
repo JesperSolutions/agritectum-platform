@@ -64,12 +64,6 @@
   "dashboard.charts.issueTypes": "Type af mangler",
   "dashboard.charts.roofTypes": "Tagtyper",
 
-  "DASHBOARD.TOTALREPORTS": "Samlet antal rapporter",
-  "DASHBOARD.COMPLETIONRATE": "Færdiggørelsesrate",
-  "DASHBOARD.PENDINGREPORTS": "Afventende rapporter",
-  "DASHBOARD.TEAMPRODUCTIVITY": "Teamproduktivitet",
-  "DASHBOARD.LASTUPDATED": "Sidst opdateret",
-
   "dashboard.teamActivity": "Teamaktivitet",
   "dashboard.vsLastWeek": "sammenlignet med sidste uge",
   "dashboard.aboveTarget": "Over målet",
@@ -182,5 +176,21 @@
   "dashboard.map.noLocations": "Ingen ejendomsplaceringer tilgængelige",
   "dashboard.map.addLocations": "Tilføj koordinater til dine bygninger for at se dem på kortet.",
   "dashboard.map.buildingsShown": "bygninger vist",
-  "dashboard.viewDetails": "Vis detaljer"
+  "dashboard.viewDetails": "Vis detaljer",
+
+  "portal.healthScores.title": "Forståelse af dine bygningshelbredsscore",
+  "portal.healthScores.explanation": "Hver bygning modtager en helbredskarakter fra A (Udmærket) til F (Kritisk) baseret på en 100-point skala. Bygninger der scorer 90+ får A, 80-89 får B, 70-79 får C, 60-69 får D, og alt under 60 får F.",
+  "portal.healthScores.howCalculated": "Sådan beregnes scorene",
+  "portal.healthScores.howCalculatedDesc": "Vi vurderer tre vigtige faktorer—hvornår bygningen sidst blev inspiceret (40% af score), antallet af kritiske problemer fundet (30% af score), og hvor regelmæssigt vedligehold udføres (30% af score).",
+  
+  "portal.stats.buildings": "Bygninger",
+  "portal.stats.buildingsDesc": "Samlet antal ejendomme i din portefølje",
+  "portal.stats.portfolioHealth": "Porteføljehelbredsstatus",
+  "portal.stats.portfolioHealthDesc": "Gennemsnitlig helbredsscore på tværs af alle bygninger. Højere er bedre (0-100 skala)",
+  "portal.stats.averageScore": "Gennemsnitlig score",
+  "portal.stats.totalCosts": "Samlede udgifter",
+  "portal.stats.totalCostsDesc": "Samlede vedligeholdelses- og inspektionsomkostninger på tværs af alle bygninger (arbejdsløn + materialer + transport)",
+  "portal.stats.avgPerBuilding": "gennemsnit pr. bygning",
+  "portal.stats.upcomingInspections": "Kommende inspektioner",
+  "portal.stats.upcomingInspectionsDesc": "Antal planlagte taginspektioner"
 }

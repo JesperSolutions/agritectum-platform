@@ -150,6 +150,7 @@
   "customerProfile.loadError": "Failed to load customer data",
   "customerProfile.buildingType": "Type",
   "customerProfile.roofSize": "Roof Size",
+  "customerProfile.createEsgReport": "Create ESG Report",
 
   "customer.invitation.title": "Generate Sign-up Link",
   "customer.invitation.description": "Generate a sign-up link for",

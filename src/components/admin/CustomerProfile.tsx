@@ -20,6 +20,9 @@ import {
   AlertCircle,
   Leaf,
   ExternalLink,
+  Edit,
+  Trash2,
+  Plus,
 } from 'lucide-react';
 import LoadingSpinner from '../common/LoadingSpinner';
 import EmptyState from '../common/EmptyState';
@@ -85,6 +88,8 @@ const CustomerProfile: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'overview' | 'buildings' | 'reports' | 'agreements'>(
     'overview'
   );
+  const [deletingBuildingId, setDeletingBuildingId] = useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
     if (customerId && currentUser) {
@@ -194,6 +199,19 @@ const CustomerProfile: React.FC = () => {
       </div>
     );
   }
+
+  const handleDeleteBuilding = async (buildingId: string) => {
+    try {
+      const { deleteBuilding } = await import('../../services/buildingService');
+      await deleteBuilding(buildingId);
+      setBuildings(prev => prev.filter(b => b.id !== buildingId));
+      setDeletingBuildingId(null);
+      setShowDeleteConfirm(false);
+    } catch (err) {
+      console.error('Failed to delete building:', err);
+      setError('Failed to delete building');
+    }
+  };
 
   return (
     <div className='min-h-screen bg-slate-50 font-material'>
@@ -498,6 +516,34 @@ const CustomerProfile: React.FC = () => {
                                 ) : null}
                               </div>
 
+                              {/* Building Actions */}
+                              <div className='mt-4 flex flex-wrap gap-2'>
+                                {/* Edit Building Button */}
+                                <button
+                                  onClick={e => {
+                                    e.stopPropagation();
+                                    navigate(`/portal/buildings/${building.id}`);
+                                  }}
+                                  className='flex items-center gap-1 px-3 py-2 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors'
+                                >
+                                  <Edit className='w-3 h-3' />
+                                  Edit
+                                </button>
+
+                                {/* Delete Building Button */}
+                                <button
+                                  onClick={e => {
+                                    e.stopPropagation();
+                                    setDeletingBuildingId(building.id);
+                                    setShowDeleteConfirm(true);
+                                  }}
+                                  className='flex items-center gap-1 px-3 py-2 text-xs bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors'
+                                >
+                                  <Trash2 className='w-3 h-3' />
+                                  Delete
+                                </button>
+                              </div>
+
                               {/* ESG Report Actions */}
                               <div className='mt-3 flex flex-wrap gap-2'>
                                 {esgReports[building.id]?.length > 0 ? (
@@ -726,6 +772,42 @@ const CustomerProfile: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Delete Building Confirmation Dialog */}
+      {showDeleteConfirm && deletingBuildingId && (
+        <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4'>
+          <div className='bg-white rounded-lg shadow-xl max-w-md w-full'>
+            <div className='p-6'>
+              <div className='flex items-center justify-center w-12 h-12 bg-red-100 rounded-full mx-auto mb-4'>
+                <AlertCircle className='w-6 h-6 text-red-600' />
+              </div>
+              <h3 className='text-lg font-medium text-gray-900 text-center mb-2'>
+                Delete Building?
+              </h3>
+              <p className='text-sm text-gray-600 text-center mb-6'>
+                This building will be permanently deleted. This action cannot be undone.
+              </p>
+              <div className='flex gap-3 justify-center'>
+                <button
+                  onClick={() => {
+                    setShowDeleteConfirm(false);
+                    setDeletingBuildingId(null);
+                  }}
+                  className='px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors'
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => handleDeleteBuilding(deletingBuildingId)}
+                  className='px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors'
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

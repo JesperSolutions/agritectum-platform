@@ -111,133 +111,165 @@ const BuildingsMapOverview: React.FC<BuildingsMapOverviewProps> = ({
       return;
     }
 
-    try {
-      // Calculate center point
-      const avgLat =
-        buildingsWithCoords.reduce((sum, b) => sum + (b.latitude || 0), 0) /
-        buildingsWithCoords.length;
-      const avgLon =
-        buildingsWithCoords.reduce((sum, b) => sum + (b.longitude || 0), 0) /
-        buildingsWithCoords.length;
-
-      console.log('[BuildingsMapOverview] Initializing map at center:', { avgLat, avgLon });
-
-      // Initialize map
-      const map = L.map(mapRef.current, {
-        center: [avgLat, avgLon],
-        zoom: 12,
-        minZoom: 8,
-        maxZoom: 18,
-        zoomControl: true,
-        scrollWheelZoom: true,
-      });
-
-      // Add tile layer (OpenStreetMap)
-      console.log('[BuildingsMapOverview] Adding tile layer');
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        maxZoom: 19,
-      }).addTo(map);
-
-      // Add markers for each building
-      console.log(
-        '[BuildingsMapOverview] Adding markers for',
-        buildingsWithCoords.length,
-        'buildings'
-      );
-      const markers: L.Marker[] = [];
-      buildingsWithCoords.forEach(building => {
-        if (!building.latitude || !building.longitude) return;
-
-        const icon = createMarkerIcon(building);
-        const marker = L.marker([building.latitude, building.longitude], { icon }).addTo(map);
-
-        // Create popup content
-        const popupContent = `
-          <div style="padding: 8px; min-width: 200px; cursor: pointer;" class="building-popup" data-building-id="${building.id}">
-            <div style="margin-bottom: 8px;">
-              <span style="
-                display: inline-block;
-                background-color: ${getGradeColor(building.healthGrade)};
-                color: white;
-                font-weight: bold;
-                padding: 4px 8px;
-                border-radius: 4px;
-                font-size: 12px;
-                margin-right: 8px;
-              ">${building.healthGrade || '?'}</span>
-              <span style="font-size: 12px; color: #666;">Score: ${building.healthScore || 0}</span>
-            </div>
-            <strong style="display: block; margin-bottom: 4px; font-size: 14px;">${building.address}</strong>
-            <div style="margin-top: 8px; text-align: center;">
-              <span style="
-                display: inline-block;
-                padding: 4px 12px;
-                background-color: #475569;
-                color: white;
-                border-radius: 4px;
-                font-size: 12px;
-                cursor: pointer;
-              ">${t('dashboard.viewDetails') || 'View Details'} →</span>
-            </div>
-          </div>
-        `;
-
-        marker.bindPopup(popupContent);
-
-        // Handle popup click to navigate
-        marker.on('popupopen', () => {
-          setTimeout(() => {
-            const popup = document.querySelector(`[data-building-id="${building.id}"]`);
-            if (popup) {
-              popup.addEventListener('click', () => {
-                navigate(`/portal/buildings/${building.id}`);
-              });
-            }
-          }, 100);
-        });
-
-        markers.push(marker);
-      });
-
-      markersRef.current = markers;
-
-      // Fit bounds to show all markers
-      if (buildingsWithCoords.length > 1) {
-        const bounds = L.latLngBounds(buildingsWithCoords.map(b => [b.latitude!, b.longitude!]));
-        map.fitBounds(bounds, { padding: [50, 50] });
+    // Delay initialization to ensure DOM and Leaflet CSS are fully loaded
+    const initTimer = setTimeout(() => {
+      if (!mapRef.current) {
+        console.log('[BuildingsMapOverview] mapRef disappeared');
+        setIsLoading(false);
+        return;
       }
 
-      mapInstanceRef.current = map;
-      console.log(
-        '[BuildingsMapOverview] Map initialization complete, added',
-        markers.length,
-        'markers'
-      );
-      setIsLoading(false);
+      const width = mapRef.current.offsetWidth;
+      const height = mapRef.current.offsetHeight;
+      console.log('[BuildingsMapOverview] Container dimensions:', { width, height });
 
-      // Invalidate size after a short delay
-      setTimeout(() => {
-        console.log('[BuildingsMapOverview] Invalidating map size');
-        map.invalidateSize();
-      }, 200);
+      if (width === 0 || height === 0) {
+        console.log('[BuildingsMapOverview] Container has zero dimensions, retrying...');
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 500);
+        return;
+      }
 
-      // Cleanup
-      return () => {
-        markersRef.current.forEach(marker => marker.remove());
-        if (map) {
-          try {
-            map.remove();
-          } catch (e) {
-            console.error('Error removing map:', e);
-          }
+      try {
+        // Calculate center point
+        const avgLat =
+          buildingsWithCoords.reduce((sum, b) => sum + (b.latitude || 0), 0) /
+          buildingsWithCoords.length;
+        const avgLon =
+          buildingsWithCoords.reduce((sum, b) => sum + (b.longitude || 0), 0) /
+          buildingsWithCoords.length;
+
+        console.log('[BuildingsMapOverview] Initializing map at center:', { avgLat, avgLon });
+
+        // Initialize map with explicit container element
+        const map = L.map(mapRef.current, {
+          center: [avgLat, avgLon],
+          zoom: 12,
+          minZoom: 8,
+          maxZoom: 18,
+          zoomControl: true,
+          scrollWheelZoom: true,
+        });
+
+        // Add tile layer (OpenStreetMap)
+        console.log('[BuildingsMapOverview] Adding tile layer');
+        const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          maxZoom: 19,
+        });
+        tileLayer.addTo(map);
+
+        // Wait for tile layer to load
+        tileLayer.on('load', () => {
+          console.log('[BuildingsMapOverview] Tile layer loaded');
+        });
+
+        // Add markers for each building
+        console.log(
+          '[BuildingsMapOverview] Adding markers for',
+          buildingsWithCoords.length,
+          'buildings'
+        );
+        const markers: L.Marker[] = [];
+        buildingsWithCoords.forEach(building => {
+          if (!building.latitude || !building.longitude) return;
+
+          const icon = createMarkerIcon(building);
+          const marker = L.marker([building.latitude, building.longitude], { icon }).addTo(map);
+
+          // Create popup content
+          const popupContent = `
+            <div style="padding: 8px; min-width: 200px; cursor: pointer;" class="building-popup" data-building-id="${building.id}">
+              <div style="margin-bottom: 8px;">
+                <span style="
+                  display: inline-block;
+                  background-color: ${getGradeColor(building.healthGrade)};
+                  color: white;
+                  font-weight: bold;
+                  padding: 4px 8px;
+                  border-radius: 4px;
+                  font-size: 12px;
+                  margin-right: 8px;
+                ">${building.healthGrade || '?'}</span>
+                <span style="font-size: 12px; color: #666;">Score: ${building.healthScore || 0}</span>
+              </div>
+              <strong style="display: block; margin-bottom: 4px; font-size: 14px;">${building.address}</strong>
+              <div style="margin-top: 8px; text-align: center;">
+                <span style="
+                  display: inline-block;
+                  padding: 4px 12px;
+                  background-color: #475569;
+                  color: white;
+                  border-radius: 4px;
+                  font-size: 12px;
+                  cursor: pointer;
+                ">${t('dashboard.viewDetails') || 'View Details'} →</span>
+              </div>
+            </div>
+          `;
+
+          marker.bindPopup(popupContent);
+
+          // Handle popup click to navigate
+          marker.on('popupopen', () => {
+            setTimeout(() => {
+              const popup = document.querySelector(`[data-building-id="${building.id}"]`);
+              if (popup) {
+                popup.addEventListener('click', () => {
+                  navigate(`/portal/buildings/${building.id}`);
+                });
+              }
+            }, 100);
+          });
+
+          markers.push(marker);
+        });
+
+        markersRef.current = markers;
+
+        // Fit bounds to show all markers
+        if (buildingsWithCoords.length > 1) {
+          const bounds = L.latLngBounds(buildingsWithCoords.map(b => [b.latitude!, b.longitude!]));
+          map.fitBounds(bounds, { padding: [50, 50] });
+        } else {
+          // Single marker - just show it
+          map.setView([buildingsWithCoords[0].latitude!, buildingsWithCoords[0].longitude!], 12);
         }
-      };
-    } catch (err) {
-      console.error('Error initializing buildings map:', err);
-      setIsLoading(false);
-    }
+
+        mapInstanceRef.current = map;
+        console.log(
+          '[BuildingsMapOverview] Map initialization complete, added',
+          markers.length,
+          'markers'
+        );
+        setIsLoading(false);
+
+        // Invalidate size to ensure proper rendering
+        setTimeout(() => {
+          console.log('[BuildingsMapOverview] Invalidating map size');
+          map.invalidateSize();
+        }, 100);
+      } catch (err) {
+        console.error('Error initializing buildings map:', err);
+        setIsLoading(false);
+      }
+    }, 250);
+
+    // Cleanup
+    return () => {
+      clearTimeout(initTimer);
+      markersRef.current.forEach(marker => marker.remove());
+      if (mapInstanceRef.current) {
+        try {
+          mapInstanceRef.current.remove();
+          mapInstanceRef.current = null;
+        } catch (e) {
+          console.error('Error removing map:', e);
+        }
+      }
+    };
   }, [buildings, navigate, t]);
 
   // Filter buildings with valid coordinates for display
@@ -264,7 +296,7 @@ const BuildingsMapOverview: React.FC<BuildingsMapOverviewProps> = ({
   }
 
   return (
-    <div className={`relative ${className}`}>
+    <div className={`relative w-full ${className}`} style={{ overflow: 'visible' }}>
       {isLoading && (
         <div className='absolute inset-0 bg-white/50 flex items-center justify-center z-10 rounded-lg'>
           <Loader2 className='w-8 h-8 text-slate-400 animate-spin' />
@@ -273,7 +305,13 @@ const BuildingsMapOverview: React.FC<BuildingsMapOverviewProps> = ({
       <div
         ref={mapRef}
         className='w-full rounded-lg border border-slate-200 overflow-hidden'
-        style={{ minHeight: '300px', height: '300px' }}
+        style={{ 
+          minHeight: '400px', 
+          height: '400px',
+          width: '100%',
+          display: 'block',
+          position: 'relative'
+        }}
       />
       <div className='mt-2 flex items-center text-sm text-slate-600'>
         <MapPin className='w-4 h-4' />
