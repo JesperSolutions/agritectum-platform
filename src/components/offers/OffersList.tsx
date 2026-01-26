@@ -167,14 +167,6 @@ const OffersList: React.FC<OffersListProps> = ({
                 {pill.label}
               </button>
             ))}
-            <div className='ml-auto'>
-              <button
-                onClick={() => navigate('/reports')}
-                className='px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors'
-              >
-                + {t('offers.createOffer')}
-              </button>
-            </div>
           </div>
 
           {/* Select (accessible alternative) */}
@@ -199,8 +191,8 @@ const OffersList: React.FC<OffersListProps> = ({
       {filteredAndSortedOffers.length === 0 ? (
         <EmptyState
           icon={DollarSign}
-          title='Inga offerter än'
-          description='Skapa din första offert från en slutförd rapport.'
+          title={t('offers.noOffers')}
+          description={t('offers.noOffersMessage')}
           actionLabel='Gå till Rapporter'
           onAction={() => navigate('/reports')}
         />
@@ -219,7 +211,7 @@ const OffersList: React.FC<OffersListProps> = ({
                         {offer.customerName || 'Unknown'}
                       </div>
                       <div className='text-sm text-gray-500'>
-                        {offer.customerEmail || 'No email'}
+                        {offer.customerEmail || t('offers.noEmail')}
                       </div>
                     </div>
                     <StatusBadge status={offer.status || 'pending'} />
@@ -282,7 +274,7 @@ const OffersList: React.FC<OffersListProps> = ({
                             setTimeout(() => setCopying(null), 1200);
                           }}
                         >
-                          {copying === offer.id ? '✔ Copied' : 'Copy Link'}
+                          {copying === offer.id ? t('offers.linkCopied') : t('offers.copyLink')}
                         </DropdownMenuItem>
                         {onDelete && (
                           <DropdownMenuItem
@@ -319,7 +311,7 @@ const OffersList: React.FC<OffersListProps> = ({
                         className='px-3 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white hover:bg-blue-700'
                         title='Copy public link to clipboard'
                       >
-                        {copying === offer.id ? '✔ Copied!' : 'Copy Link'}
+                        {copying === offer.id ? t('offers.linkCopied') : t('offers.copyLink')}
                       </button>
                     )}
                   </div>

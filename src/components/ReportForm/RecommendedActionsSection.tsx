@@ -2,6 +2,7 @@ import React from 'react';
 import { CheckCircle, Plus, Trash2 } from 'lucide-react';
 import { RecommendedAction, ActionPriority, ActionUrgency } from '../types';
 import AccessibleButton from '../AccessibleButton';
+import { useIntl } from '../../hooks/useIntl';
 
 interface RecommendedActionsSectionProps {
   actions: RecommendedAction[];
@@ -32,6 +33,7 @@ const RecommendedActionsSection: React.FC<RecommendedActionsSectionProps> = ({
   errors,
   touched,
 }) => {
+  const { t } = useIntl();
   return (
     <div className='bg-white p-6 rounded-lg shadow-sm border border-gray-200'>
       <div className='flex items-center justify-between mb-4'>
@@ -143,7 +145,7 @@ const RecommendedActionsSection: React.FC<RecommendedActionsSectionProps> = ({
                     }
                     className='block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
                   >
-                    <option value=''>Välj intervall</option>
+                    <option value=''>{t('form.placeholders.selectCostRange')}</option>
                     <option value='250'>0-500 SEK</option>
                     <option value='750'>500-1000 SEK</option>
                     <option value='1250'>1000-1500 SEK</option>

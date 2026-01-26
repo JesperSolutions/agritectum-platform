@@ -179,5 +179,6 @@
   "costEstimate.subtotal": "Zwischensumme",
   "costEstimate.edit": "Kosten bearbeiten",
   "costEstimate.save": "Kosten speichern",
-  "costEstimate.cancel": "Abbrechen"
+  "costEstimate.cancel": "Abbrechen",
+  "form.placeholders.selectCostRange": "Intervall auswählen"
 }

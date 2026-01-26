@@ -353,13 +353,13 @@ export const createReport = async (
             address: building.address,
             buildingType: building.buildingType,
             roofType: building.roofType,
-            roofSize: building.roofSize,
-            latitude: building.latitude,
-            longitude: building.longitude,
+            roofSize: building.roofSize || null, // Convert undefined to null for Firestore
+            latitude: building.latitude || null, // Convert undefined to null for Firestore
+            longitude: building.longitude || null, // Convert undefined to null for Firestore
             changedBy: reportData.createdBy,
             changedAt: new Date().toISOString(),
           }
-        : undefined,
+        : null, // Use null instead of undefined
     };
 
     // Filter out undefined values to prevent Firestore errors

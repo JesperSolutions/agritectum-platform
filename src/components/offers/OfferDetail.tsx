@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useIntl } from '../../hooks/useIntl';
 import { Offer, OfferStatusHistory } from '../../types';
 import {
   ArrowLeft,
@@ -31,23 +32,24 @@ const OfferDetail: React.FC<OfferDetailProps> = ({
   onExportOffer,
 }) => {
   const navigate = useNavigate();
+  const { t } = useIntl();
   const [showExtendDialog, setShowExtendDialog] = useState(false);
   const [newValidUntil, setNewValidUntil] = useState('');
 
   const getStatusBadge = (status: Offer['status']) => {
     const badges: Record<string, { color: string; icon: React.ComponentType<any>; label: string }> =
       {
-        pending: { color: 'bg-yellow-100 text-yellow-800', icon: Clock, label: 'Pending' },
-        accepted: { color: 'bg-green-100 text-green-800', icon: CheckCircle, label: 'Accepted' },
-        rejected: { color: 'bg-red-100 text-red-800', icon: XCircle, label: 'Rejected' },
+        pending: { color: 'bg-amber-100 text-amber-900', icon: Clock, label: 'Pending' },
+        accepted: { color: 'bg-emerald-100 text-emerald-900', icon: CheckCircle, label: 'Accepted' },
+        rejected: { color: 'bg-red-100 text-red-900', icon: XCircle, label: 'Rejected' },
         awaiting_response: {
-          color: 'bg-orange-100 text-orange-800',
+          color: 'bg-slate-200 text-slate-900',
           icon: AlertCircle,
-          label: 'Awaiting Response',
+          label: t('offers.detail.awaitingResponse'),
         },
-        expired: { color: 'bg-gray-100 text-gray-800', icon: XCircle, label: 'Expired' },
+        expired: { color: 'bg-slate-100 text-slate-900', icon: XCircle, label: t('offers.status.expired') },
       };
-    const fallback = { color: 'bg-gray-100 text-gray-800', icon: Clock, label: 'Unknown' };
+    const fallback = { color: 'bg-gray-100 text-gray-800', icon: Clock, label: t('offers.status.pending') };
     const badge = badges[status as string] || fallback;
     const Icon = badge.icon;
     return (
@@ -96,7 +98,7 @@ const OfferDetail: React.FC<OfferDetailProps> = ({
             <div className='flex items-center gap-2'>
               <button
                 onClick={() => window.open(`/offer/public/${offer.id}`, '_blank')}
-                className='px-3 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white hover:bg-blue-700'
+                className='px-3 py-2 rounded-lg text-sm font-medium bg-slate-600 text-white hover:bg-slate-700'
                 title='Open public page'
               >
                 Public Link
@@ -104,7 +106,7 @@ const OfferDetail: React.FC<OfferDetailProps> = ({
               {offer.status === 'pending' && onSendOffer && (
                 <button
                   onClick={onSendOffer}
-                  className='px-3 py-2 rounded-lg text-sm font-medium bg-green-600 text-white hover:bg-green-700'
+                  className='px-3 py-2 rounded-lg text-sm font-medium bg-slate-600 text-white hover:bg-slate-700'
                 >
                   Send Email
                 </button>
@@ -112,7 +114,7 @@ const OfferDetail: React.FC<OfferDetailProps> = ({
               {onExportOffer && (
                 <button
                   onClick={onExportOffer}
-                  className='px-3 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-800 hover:bg-gray-200'
+                  className='px-3 py-2 rounded-lg text-sm font-medium bg-slate-200 text-slate-900 hover:bg-slate-300'
                 >
                   Export
                 </button>
@@ -120,7 +122,7 @@ const OfferDetail: React.FC<OfferDetailProps> = ({
               {offer.status === 'pending' && onSendReminder && (
                 <button
                   onClick={onSendReminder}
-                  className='px-3 py-2 rounded-lg text-sm font-medium bg-orange-600 text-white hover:bg-orange-700'
+                  className='px-3 py-2 rounded-lg text-sm font-medium bg-slate-600 text-white hover:bg-slate-700'
                 >
                   Reminder
                 </button>
@@ -128,7 +130,7 @@ const OfferDetail: React.FC<OfferDetailProps> = ({
               {offer.status === 'pending' && onExtendValidity && (
                 <button
                   onClick={() => setShowExtendDialog(true)}
-                  className='px-3 py-2 rounded-lg text-sm font-medium bg-purple-600 text-white hover:bg-purple-700'
+                  className='px-3 py-2 rounded-lg text-sm font-medium bg-slate-600 text-white hover:bg-slate-700'
                 >
                   Extend
                 </button>
@@ -139,7 +141,7 @@ const OfferDetail: React.FC<OfferDetailProps> = ({
                     `${window.location.origin}/offer/public/${offer.id}`
                   );
                 }}
-                className='px-3 py-2 rounded-lg text-sm font-medium border border-gray-200 hover:bg-blue-50 text-blue-700'
+                className='px-3 py-2 rounded-lg text-sm font-medium border border-slate-200 hover:bg-slate-50 text-slate-700'
               >
                 Copy Link
               </button>
@@ -233,7 +235,7 @@ const OfferDetail: React.FC<OfferDetailProps> = ({
           {/* Status History */}
           <div className='bg-white rounded-lg shadow-lg p-6'>
             <h3 className='text-lg font-bold text-gray-900 mb-4'>
-              {t('offers.detail.statusHistory') || 'Status History'}
+              {t('offers.detail.statusHistory')}
             </h3>
             <div className='space-y-4'>
               {offer.statusHistory.map((history: OfferStatusHistory, index: number) => (
@@ -262,12 +264,12 @@ const OfferDetail: React.FC<OfferDetailProps> = ({
           {/* Quick Actions */}
           <div className='bg-white rounded-lg shadow-lg p-6'>
             <h3 className='text-lg font-bold text-gray-900 mb-4'>
-              {t('offers.detail.quickActions') || 'Quick Actions'}
+              {t('offers.detail.quickActions')}
             </h3>
             <div className='space-y-2'>
               <button
                 onClick={() => window.open(`/offer/public/${offer.id}`, '_blank')}
-                className='w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
+                className='w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-600 text-white rounded-lg hover:bg-slate-700 transition-colors'
               >
                 <ExternalLink className='w-4 h-4' />
                 {t('offers.actions.viewPublicLink') || 'View Public Link'}
@@ -275,16 +277,16 @@ const OfferDetail: React.FC<OfferDetailProps> = ({
               {offer.status === 'pending' && onSendReminder && (
                 <button
                   onClick={onSendReminder}
-                  className='w-full flex items-center justify-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors'
+                  className='w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-600 text-white rounded-lg hover:bg-slate-700 transition-colors'
                 >
                   <Send className='w-4 h-4' />
-                  {t('offers.actions.sendReminder') || 'Send Reminder'}
+                  {t('offers.actions.sendReminder')}
                 </button>
               )}
               {offer.status === 'pending' && onExtendValidity && (
                 <button
                   onClick={() => setShowExtendDialog(true)}
-                  className='w-full flex items-center justify-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors'
+                  className='w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-600 text-white rounded-lg hover:bg-slate-700 transition-colors'
                 >
                   <Calendar className='w-4 h-4' />
                   Extend Validity

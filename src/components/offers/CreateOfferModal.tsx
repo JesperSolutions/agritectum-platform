@@ -28,7 +28,7 @@ const CreateOfferModal: React.FC<CreateOfferModalProps> = ({ report, onClose, on
     laborCost: 0,
     materialCost: 0,
     travelCost: 0,
-    overheadCost: 0,
+    overheadCost: '',
     profitMargin: 15, // Default 15%
     validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 30 days from now
   });
@@ -67,7 +67,7 @@ const CreateOfferModal: React.FC<CreateOfferModalProps> = ({ report, onClose, on
       newErrors.travelCost = 'Travel cost cannot be negative';
     }
 
-    if (formData.overheadCost < 0) {
+    if (formData.overheadCost !== '' && typeof formData.overheadCost === 'number' && formData.overheadCost < 0) {
       newErrors.overheadCost = 'Overhead cost cannot be negative';
     }
 
@@ -101,7 +101,7 @@ const CreateOfferModal: React.FC<CreateOfferModalProps> = ({ report, onClose, on
       formData.laborCost +
       formData.materialCost +
       formData.travelCost +
-      formData.overheadCost +
+      (typeof formData.overheadCost === 'string' ? 0 : formData.overheadCost) +
       recommendedActionsCost;
     const profit = subtotal * (formData.profitMargin / 100);
     return subtotal + profit;
@@ -267,12 +267,13 @@ const CreateOfferModal: React.FC<CreateOfferModalProps> = ({ report, onClose, on
                 <input
                   type='number'
                   value={formData.overheadCost}
-                  onChange={e => handleChange('overheadCost', parseFloat(e.target.value) || 0)}
+                  onChange={e => handleChange('overheadCost', e.target.value ? parseFloat(e.target.value) : '')}
                   className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                     errors.overheadCost ? 'border-red-500' : 'border-gray-300'
                   }`}
                   min='0'
                   step='0.01'
+                  placeholder='0'
                 />
                 {errors.overheadCost && (
                   <p className='mt-1 text-sm text-red-600'>{errors.overheadCost}</p>

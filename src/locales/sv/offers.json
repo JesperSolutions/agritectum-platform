@@ -43,7 +43,12 @@
   "offers.status.accepted": "Accepterad",
   "offers.status.rejected": "Avvisad",
   "offers.status.awaiting_response": "Väntar på svar",
+  "offers.status.awaitingResponse": "Väntar på svar",
   "offers.status.expired": "Utgången",
+  "offers.stats.awaiting": "Väntar",
+  "offers.stats.customerResponse": "Kundsvar",
+  "offers.stats.timeExpired": "Utgången",
+  "offers.stats.needsAttention": "Behöver uppmärksamhet",
 
   "offers.table.customer": "Kund",
   "offers.table.date": "Datum",
@@ -83,6 +88,7 @@
   "offers.detail.viewInspectionReport": "Visa inspektionsrapport",
   "offers.detail.statusHistory": "Statushistorik",
   "offers.detail.changedBy": "Ändrad av",
+  "offers.detail.awaitingResponse": "Väntar på svar",
 
   "offers.create.title": "Skapa offert",
   "offers.create.customerInformation": "Kundinformation",
@@ -156,5 +162,19 @@
   "offers.rejectionReasonRequired": "Vänligen ange en anledning för att avvisa offerten.",
 
   "offer.fields.isOffer": "Offert",
-  "offer.fields.offerValue": "Offertvärde"
+  "offer.fields.offerValue": "Offertvärde",
+
+  "offers.preview.title": "Förhandsgranska offert",
+  "offers.preview.close": "Stäng",
+  "offers.preview.checkBeforeSending": "Kontrollera offerten nedan innan du skickar. Denna vy visar exakt hur kunden kommer att se offerten.",
+  "offers.preview.cancel": "Avbryt",
+  "offers.preview.send": "Skicka offert",
+  "offers.preview.sending": "Skickar...",
+  "offers.sentSuccess": "Offert skickad",
+  "offers.sendError": "Kunde inte skicka offert",
+  "offers.noEmail": "Ingen e-post",
+  "offers.copyLink": "Kopiera länk",
+  "offers.linkCopied": "✔ Kopierad",
+  "offers.selectReport": "Välj en rapport",
+  "offers.noReportsAvailable": "Inga rapporter tillgängliga"
 }

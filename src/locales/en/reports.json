@@ -196,6 +196,7 @@
   "costEstimate.edit": "Edit Costs",
   "costEstimate.save": "Save Costs",
   "costEstimate.cancel": "Cancel",
+  "form.placeholders.selectCostRange": "Select interval",
 
   "report.changesSaved": "Changes saved successfully",
   "report.errorSavingChanges": "Failed to save changes"

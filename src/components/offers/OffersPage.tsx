@@ -161,12 +161,12 @@ const OffersPage: React.FC = () => {
     setIsSendingOffer(true);
     try {
       await sendOfferToCustomer(previewOffer.id);
-      setNotification({ message: 'Offert skickad', type: 'success' });
+      setNotification({ message: t('offers.sentSuccess'), type: 'success' });
       setPreviewOffer(null);
       await loadOffers();
     } catch (error) {
       console.error('Error sending offer:', error);
-      setNotification({ message: 'Kunde inte skicka offert', type: 'error' });
+      setNotification({ message: t('offers.sendError'), type: 'error' });
     } finally {
       setIsSendingOffer(false);
     }
@@ -317,35 +317,20 @@ const OffersPage: React.FC = () => {
   }
 
   return (
-    <div className='min-h-screen bg-gray-50 font-material'>
-      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
-        {/* EMAIL WARNING (if email system is down) */}
-        {!emailEnabled && (
-          <div className='mb-6 bg-red-50 border-l-4 border-red-600 p-4 rounded-lg flex items-center gap-4'>
-            <AlertCircle className='w-6 h-6 text-red-500' />
-            <div>
-              <strong className='text-red-700 font-semibold'>
-                Email sending is currently unavailable.
-              </strong>
-              <div className='text-red-700 text-sm font-normal'>
-                You can still copy the public link for manual delivery below. Please alert an admin
-                if this persists.
-              </div>
-            </div>
-          </div>
-        )}
-        {/* Material Design Header */}
-        <div className='mb-8'>
+    <div className='min-h-screen bg-white font-material'>
+      <div className='max-w-7xl mx-auto'>
+        {/* Dark Gradient Header - Matches Dashboard */}
+        <div className='bg-gradient-to-r from-slate-900 to-slate-700 rounded-b-2xl shadow-lg p-8 text-white'>
           <div className='flex items-center justify-between'>
             <div>
-              <h1 className='text-3xl font-light tracking-tight text-gray-900'>
-                {t('offers.title')}
-              </h1>
-              <p className='text-gray-600 mt-2 text-base font-light'>{t('offers.subtitle')}</p>
+              <h1 className='text-3xl font-medium tracking-tight'>{t('offers.title')}</h1>
+              <p className='text-white text-opacity-90 mt-2 text-base font-light'>
+                {t('offers.subtitle')}
+              </p>
             </div>
             <button
               onClick={() => setShowReportSelector(true)}
-              className='flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-material shadow-material-2 hover:shadow-material-3 transition-all duration-material font-medium uppercase tracking-wide'
+              className='flex items-center gap-2 px-6 py-3 bg-white text-slate-900 rounded-xl hover:bg-slate-50 transition-all duration-300 font-medium shadow-lg hover:shadow-xl'
             >
               <Plus className='w-5 h-5' />
               {t('offers.createFromReport')}
@@ -353,113 +338,66 @@ const OffersPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Material Design Statistics Cards */}
-        <div className='grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-6 mb-8'>
-          <div className='bg-white rounded-material shadow-material-2 p-6 transition-all duration-material hover:shadow-material-3'>
-            <div className='flex items-start justify-between gap-3'>
-              <DollarSign className='w-10 h-10 text-blue-600 flex-shrink-0 mt-1' />
-              <div className='flex-1 text-right'>
-                <p className='text-xs font-medium text-gray-600 uppercase tracking-wide mb-2'>
-                  {t('offers.total')}
-                </p>
-                <p className='text-4xl font-light text-gray-900 mb-1'>{stats.total}</p>
-                <p className='text-xs text-gray-500 font-light'>{t('offers.total')}</p>
+        <div className='px-4 sm:px-6 lg:px-8 py-8'>
+          {/* EMAIL WARNING (if email system is down) */}
+          {!emailEnabled && (
+            <div className='mb-6 bg-red-50 border-l-4 border-red-600 p-4 rounded-lg flex items-center gap-4'>
+              <AlertCircle className='w-6 h-6 text-red-500' />
+              <div>
+                <strong className='text-red-700 font-semibold'>
+                  Email sending is currently unavailable.
+                </strong>
+                <div className='text-red-700 text-sm font-normal'>
+                  You can still copy the public link for manual delivery below. Please alert an admin
+                  if this persists.
+                </div>
               </div>
             </div>
+          )}
+
+          {/* KPI Cards - Matches Dashboard Design */}
+          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8'>
+            {[
+              { label: t('offers.total'), value: stats.total, icon: DollarSign, color: 'text-blue-600' },
+              { label: t('offers.pending'), value: stats.pending, icon: Clock, color: 'text-yellow-600' },
+              { label: t('offers.stats.awaiting'), value: stats.awaiting_response, icon: AlertCircle, color: 'text-orange-600' },
+              { label: t('offers.status.accepted'), value: stats.accepted, icon: CheckCircle, color: 'text-green-600' },
+              { label: t('offers.status.rejected'), value: stats.rejected, icon: XCircle, color: 'text-red-600' },
+              { label: t('offers.status.expired'), value: stats.expired, icon: XCircle, color: 'text-slate-600' },
+            ].map((stat, index) => (
+              <div
+                key={index}
+                className='bg-white rounded-xl shadow-sm border border-slate-200 p-4 md:p-6 transition-all hover:shadow-md'
+              >
+                <div className='flex flex-col gap-3'>
+                  <div className='w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0'>
+                    <stat.icon className={`w-5 h-5 ${stat.color}`} />
+                  </div>
+                  <div>
+                    <p className='text-xs font-medium text-slate-500 uppercase tracking-wide mb-2'>
+                      {stat.label}
+                    </p>
+                    <p className='text-2xl md:text-3xl font-bold text-slate-900 mb-1'>
+                      {stat.value}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
 
-          <div className='bg-white rounded-material shadow-material-2 p-6 transition-all duration-material hover:shadow-material-3'>
-            <div className='flex items-start justify-between gap-3'>
-              <Clock className='w-10 h-10 text-yellow-600 flex-shrink-0 mt-1' />
-              <div className='flex-1 text-right'>
-                <p className='text-xs font-medium text-gray-600 uppercase tracking-wide mb-2'>
-                  {t('offers.pending')}
-                </p>
-                <p className='text-4xl font-light text-yellow-600 mb-1'>{stats.pending}</p>
-                <p className='text-xs text-gray-500 font-light'>{t('offers.pending')}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className='bg-white rounded-material shadow-material-2 p-6 transition-all duration-material hover:shadow-material-3'>
-            <div className='flex items-start justify-between gap-3'>
-              <AlertCircle className='w-10 h-10 text-orange-600 flex-shrink-0 mt-1' />
-              <div className='flex-1 text-right'>
-                <p className='text-xs font-medium text-gray-600 uppercase tracking-wide mb-2'>
-                  Awaiting
-                </p>
-                <p className='text-4xl font-light text-orange-600 mb-1'>
-                  {stats.awaiting_response}
-                </p>
-                <p className='text-xs text-gray-500 font-light'>Customer response</p>
-              </div>
-            </div>
-          </div>
-
-          <div className='bg-white rounded-material shadow-material-2 p-6 transition-all duration-material hover:shadow-material-3'>
-            <div className='flex items-start justify-between gap-3'>
-              <CheckCircle className='w-10 h-10 text-green-600 flex-shrink-0 mt-1' />
-              <div className='flex-1 text-right'>
-                <p className='text-xs font-medium text-gray-600 uppercase tracking-wide mb-2'>
-                  {t('offers.status.accepted')}
-                </p>
-                <p className='text-4xl font-light text-green-600 mb-1'>{stats.accepted}</p>
-                <p className='text-xs text-gray-500 font-light'>{t('offers.stats.approved')}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className='bg-white rounded-material shadow-material-2 p-6 transition-all duration-material hover:shadow-material-3'>
-            <div className='flex items-start justify-between gap-3'>
-              <XCircle className='w-10 h-10 text-red-600 flex-shrink-0 mt-1' />
-              <div className='flex-1 text-right'>
-                <p className='text-xs font-medium text-gray-600 uppercase tracking-wide mb-2'>
-                  {t('offers.status.rejected')}
-                </p>
-                <p className='text-4xl font-light text-red-600 mb-1'>{stats.rejected}</p>
-                <p className='text-xs text-gray-500 font-light'>{t('offers.stats.declined')}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className='bg-white rounded-material shadow-material-2 p-6 transition-all duration-material hover:shadow-material-3'>
-            <div className='flex items-start justify-between gap-3'>
-              <XCircle className='w-10 h-10 text-gray-600 flex-shrink-0 mt-1' />
-              <div className='flex-1 text-right'>
-                <p className='text-xs font-medium text-gray-600 uppercase tracking-wide mb-2'>
-                  Expired
-                </p>
-                <p className='text-4xl font-light text-gray-600 mb-1'>{stats.expired}</p>
-                <p className='text-xs text-gray-500 font-light'>Time expired</p>
-              </div>
-            </div>
-          </div>
-
-          <div className='bg-white rounded-material shadow-material-2 p-6 transition-all duration-material hover:shadow-material-3 border-l-4 border-red-500'>
-            <div className='flex items-start justify-between gap-3'>
-              <AlertCircle className='w-10 h-10 text-red-600 flex-shrink-0 mt-1' />
-              <div className='flex-1 text-right'>
-                <p className='text-xs font-medium text-gray-600 uppercase tracking-wide mb-2'>
-                  Overdue
-                </p>
-                <p className='text-4xl font-light text-red-600 mb-1'>{stats.overdue}</p>
-                <p className='text-xs text-gray-500 font-light'>Needs attention</p>
-              </div>
-            </div>
-          </div>
+          {/* Offers List */}
+          <OffersList
+            offers={offers}
+            onView={handleViewOffer}
+            onSendReminder={handleSendReminder}
+            onExtendValidity={handleExtendValidity}
+            emailEnabled={emailEnabled}
+            onSendOffer={handleSendOffer}
+            onExportOffer={handleExportOffer}
+            onDelete={handleDeleteOffer}
+          />
         </div>
-
-        {/* Offers List */}
-        <OffersList
-          offers={offers}
-          onView={handleViewOffer}
-          onSendReminder={handleSendReminder}
-          onExtendValidity={handleExtendValidity}
-          emailEnabled={emailEnabled}
-          onSendOffer={handleSendOffer}
-          onExportOffer={handleExportOffer}
-          onDelete={handleDeleteOffer}
-        />
       </div>
 
       {/* Report Selector Modal */}

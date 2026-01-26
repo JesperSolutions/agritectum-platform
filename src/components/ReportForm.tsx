@@ -419,6 +419,11 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
     }
   }, [mode, currentUser?.uid, totalSteps]);
 
+  // Log addressCoordinates changes for debugging
+  useEffect(() => {
+    console.log('[ReportForm] addressCoordinates updated:', addressCoordinates);
+  }, [addressCoordinates]);
+
   // Consolidated Auto-save functionality
   useEffect(() => {
     // Don't auto-save if loading or if form is completely empty
@@ -565,6 +570,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
           // If there's only one building and no building is selected, auto-select it
           if (buildings.length === 1 && !selectedBuildingId) {
             const building = buildings[0];
+            console.log('[ReportForm] Auto-selecting single building:', building.id);
             setSelectedBuildingId(building.id);
             setFormData(prev => ({
               ...prev,
@@ -573,6 +579,54 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
               roofType: building.roofType || prev.roofType,
               roofSize: building.roofSize || prev.roofSize,
             }));
+
+            // Geocode building address for map measurer with fallback logic
+            if (building.address) {
+              console.log('[ReportForm] Auto-geocoding building address:', building.address);
+              try {
+                // Try multiple versions of the address for better geocoding success
+                const addressVariants = [
+                  building.address, // Full address
+                  building.address.split(',').slice(0, 2).join(',').trim(), // Just street and first location
+                  building.address.split(',')[0].trim(), // Just the street
+                ];
+
+                let geocoded = false;
+                for (const variant of addressVariants) {
+                  if (geocoded) break;
+                  
+                  console.log('[ReportForm] Trying geocoding with variant:', variant);
+                  const query = encodeURIComponent(variant);
+                  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${query}&addressdetails=1&limit=1`;
+                  
+                  try {
+                    const response = await fetch(url);
+                    if (response.ok) {
+                      const data = await response.json();
+                      if (data && data.length > 0) {
+                        const coords = {
+                          lat: parseFloat(data[0].lat),
+                          lon: parseFloat(data[0].lon),
+                        };
+                        console.log('[ReportForm] Auto-geocoding successful with variant:', variant);
+                        console.log('[ReportForm] Setting coordinates:', coords);
+                        setAddressCoordinates(coords);
+                        geocoded = true;
+                        break;
+                      }
+                    }
+                  } catch (variantError) {
+                    console.warn('[ReportForm] Variant geocoding failed:', variantError);
+                  }
+                }
+
+                if (!geocoded) {
+                  console.warn('[ReportForm] Auto-geocoding failed for all address variants');
+                }
+              } catch (error) {
+                console.error('[ReportForm] Auto-geocoding error:', error);
+              }
+            }
           }
         } catch (error) {
           console.error('Error loading buildings:', error);
@@ -588,7 +642,10 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
   // Handle building selection - use building data as source of truth
   const handleBuildingSelect = useCallback(
     async (buildingId: string) => {
+      console.log('[ReportForm] Building selected:', buildingId);
       const building = customerBuildings.find(b => b.id === buildingId);
+      console.log('[ReportForm] Building found:', building);
+      
       if (building) {
         setSelectedBuildingId(buildingId);
         setFormData(prev => ({
@@ -598,26 +655,62 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
           roofType: building.roofType || prev.roofType,
           roofSize: building.roofSize || prev.roofSize,
         }));
+        console.log('[ReportForm] Form data updated with building address:', building.address);
 
         // Geocode building address to get coordinates for map measurer
         if (building.address) {
+          console.log('[ReportForm] Starting geocoding for address:', building.address);
           try {
-            const response = await fetch(
-              `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(building.address)}&addressdetails=1&limit=1`
-            );
-            if (response.ok) {
-              const data = await response.json();
-              if (data && data.length > 0) {
-                setAddressCoordinates({
-                  lat: parseFloat(data[0].lat),
-                  lon: parseFloat(data[0].lon),
-                });
+            // Try multiple versions of the address for better geocoding success
+            const addressVariants = [
+              building.address, // Full address
+              building.address.split(',').slice(0, 2).join(',').trim(), // Just street and first location
+              building.address.split(',')[0].trim(), // Just the street
+            ];
+
+            let geocoded = false;
+            for (const variant of addressVariants) {
+              if (geocoded) break;
+              
+              console.log('[ReportForm] Trying geocoding with variant:', variant);
+              const query = encodeURIComponent(variant);
+              const url = `https://nominatim.openstreetmap.org/search?format=json&q=${query}&addressdetails=1&limit=1`;
+              
+              try {
+                const response = await fetch(url);
+                console.log('[ReportForm] Geocoding response status:', response.status);
+                
+                if (response.ok) {
+                  const data = await response.json();
+                  console.log('[ReportForm] Geocoding response data:', data);
+                  
+                  if (data && data.length > 0) {
+                    const coords = {
+                      lat: parseFloat(data[0].lat),
+                      lon: parseFloat(data[0].lon),
+                    };
+                    console.log('[ReportForm] Setting address coordinates:', coords);
+                    setAddressCoordinates(coords);
+                    geocoded = true;
+                    break;
+                  }
+                }
+              } catch (variantError) {
+                console.warn('[ReportForm] Variant geocoding failed:', variantError);
               }
             }
+
+            if (!geocoded) {
+              console.warn('[ReportForm] Geocoding failed for all address variants');
+            }
           } catch (error) {
-            console.warn('Could not geocode building address:', error);
+            console.error('[ReportForm] Geocoding error:', error);
           }
+        } else {
+          console.warn('[ReportForm] Building address is empty');
         }
+      } else {
+        console.warn('[ReportForm] Building not found in customerBuildings:', buildingId);
       }
     },
     [customerBuildings]
@@ -2150,14 +2243,20 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                       ref={addressInputRef}
                       value={formData.customerAddress || ''}
                       onChange={(address, coordinates) => {
+                        console.log('[ReportForm] AddressInput onChange triggered');
+                        console.log('[ReportForm] Address:', address);
+                        console.log('[ReportForm] Coordinates from AddressInput:', coordinates);
                         setFormData(prev => ({ ...prev, customerAddress: address }));
                         if (coordinates) {
+                          console.log('[ReportForm] Setting addressCoordinates:', coordinates);
                           setAddressCoordinates(coordinates);
                           // If user was waiting to measure, open measurer now
                           if (pendingRoofSizeMeasure) {
                             setPendingRoofSizeMeasure(false);
                             setTimeout(() => setShowRoofSizeMeasurer(true), 100);
                           }
+                        } else {
+                          console.warn('[ReportForm] No coordinates received from AddressInput');
                         }
                         clearFieldError('customerAddress');
                       }}
@@ -2427,7 +2526,13 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                     <button
                       type='button'
                       onClick={() => {
+                        console.log('[ReportForm] Measure button clicked');
+                        console.log('[ReportForm] addressCoordinates current state:', addressCoordinates);
+                        console.log('[ReportForm] formData.buildingAddress:', formData.buildingAddress);
+                        console.log('[ReportForm] formData.customerAddress:', formData.customerAddress);
+                        
                         if (!addressCoordinates) {
+                          console.warn('[ReportForm] No addressCoordinates available');
                           // Focus address input and wait for coordinates
                           setPendingRoofSizeMeasure(true);
                           if (addressInputRef.current) {
@@ -2444,6 +2549,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                           });
                           return;
                         }
+                        console.log('[ReportForm] Opening roof size measurer with coords:', addressCoordinates);
                         setShowRoofSizeMeasurer(true);
                       }}
                       className='px-3 py-2 h-10 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2 text-sm text-slate-700 whitespace-nowrap shadow-sm'
@@ -3327,7 +3433,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                           }
                           className='block w-full text-sm border-slate-300 rounded-lg shadow-sm focus:ring-slate-500 focus:border-slate-500'
                         >
-                          <option value=''>Välj intervall</option>
+                          <option value=''>{t('form.placeholders.selectCostRange')}</option>
                           <option value='250'>0-500 {getCurrencyCode(locale)}</option>
                           <option value='750'>500-1000 {getCurrencyCode(locale)}</option>
                           <option value='1250'>1000-1500 {getCurrencyCode(locale)}</option>

@@ -196,6 +196,7 @@
   "costEstimate.edit": "Redigera kostnader",
   "costEstimate.save": "Spara kostnader",
   "costEstimate.cancel": "Avbryt",
+  "form.placeholders.selectCostRange": "Välj intervall",
 
   "report.changesSaved": "Ändringar sparade",
   "report.errorSavingChanges": "Kunde inte spara ändringar"

@@ -6,10 +6,12 @@ import { CheckCircle, XCircle, Clock, AlertCircle } from 'lucide-react';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import { logOfferEvent } from '../../utils/logger';
+import { useIntl } from '../../hooks/useIntl';
 
 const PublicOfferView: React.FC = () => {
   const { offerId } = useParams<{ offerId: string }>();
   const navigate = useNavigate();
+  const { t } = useIntl();
   const [offer, setOffer] = useState<Offer | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -256,10 +258,10 @@ const PublicOfferView: React.FC = () => {
                 <Clock className='w-5 h-5 text-blue-500 mr-3 mt-0.5' />
                 <div>
                   <p className='text-blue-800 font-semibold'>
-                    {daysRemaining > 0 ? `${daysRemaining} days remaining` : 'Expiring soon'}
+                    {daysRemaining > 0 ? `${daysRemaining} ${t('offers.public.daysRemaining')}` : t('offers.public.expiringSoon')}
                   </p>
                   <p className='text-blue-600 text-sm'>
-                    Valid until{' '}
+                    {t('offers.public.validUntil')}{' '}
                     {((offer as any).validUntil &&
                     typeof (offer as any).validUntil?.toDate === 'function'
                       ? (offer as any).validUntil.toDate()
@@ -349,7 +351,7 @@ const PublicOfferView: React.FC = () => {
         {!isExpiredOrResponded && (
           <div className='bg-white rounded-lg shadow-lg p-8'>
             <h3 className='text-xl font-bold text-gray-900 mb-4 text-center'>
-              What would you like to do?
+              {t('offers.public.whatWouldYouLikeToDo')}
             </h3>
             <div className='flex flex-col sm:flex-row gap-4'>
               <button
@@ -358,7 +360,7 @@ const PublicOfferView: React.FC = () => {
                 className='flex-1 bg-green-600 text-white px-8 py-4 rounded-lg hover:bg-green-700 transition-colors font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center'
               >
                 <CheckCircle className='w-6 h-6 mr-2' />
-                {processing ? 'Processing...' : 'Accept Offer'}
+                {processing ? t('offers.public.processing') : t('offers.public.acceptOffer')}
               </button>
               <button
                 onClick={() => setShowRejectDialog(true)}
@@ -366,7 +368,7 @@ const PublicOfferView: React.FC = () => {
                 className='flex-1 bg-red-600 text-white px-8 py-4 rounded-lg hover:bg-red-700 transition-colors font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center'
               >
                 <XCircle className='w-6 h-6 mr-2' />
-                Decline Offer
+                {t('offers.public.declineOffer')}
               </button>
             </div>
           </div>
@@ -374,24 +376,23 @@ const PublicOfferView: React.FC = () => {
 
         {/* Contact Information */}
         <div className='mt-6 text-center text-gray-600 text-sm'>
-          <p>Questions? Contact us at support@agritectum.com</p>
+          <p>{t('offers.public.questions')}</p>
         </div>
       </div>
 
       {/* Rejection Dialog */}
       {showRejectDialog && (
         <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50'>
-          <div className='bg-white rounded-lg shadow-xl max-w-md w-full p-6'>
-            <h3 className='text-xl font-bold text-gray-900 mb-4'>Decline Offer</h3>
+          <div className='bg-white rounded-material shadow-material-4 max-w-md w-full p-6'>
+            <h3 className='text-xl font-bold text-gray-900 mb-4'>{t('offers.public.declineDialogTitle')}</h3>
             <p className='text-gray-600 mb-4'>
-              We'd appreciate if you could tell us why you're declining this offer. This helps us
-              improve our service.
+              {t('offers.public.declineDialogMessage')}
             </p>
             <textarea
               value={rejectionReason}
               onChange={e => setRejectionReason(e.target.value)}
-              placeholder='Please provide a reason (optional)...'
-              className='w-full border border-gray-300 rounded-lg p-3 mb-4 focus:ring-2 focus:ring-red-500 focus:border-transparent'
+              placeholder={t('offers.public.reasonPlaceholder')}
+              className='w-full border border-gray-300 rounded-material p-3 mb-4 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-material'
               rows={4}
             />
             <div className='flex gap-3'>
@@ -407,9 +408,9 @@ const PublicOfferView: React.FC = () => {
               <button
                 onClick={handleReject}
                 disabled={processing || !rejectionReason.trim()}
-                className='flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+                className='flex-1 px-4 py-2 bg-red-600 text-white rounded-material hover:bg-red-700 transition-all duration-material disabled:opacity-50 disabled:cursor-not-allowed'
               >
-                {processing ? 'Submitting...' : 'Submit'}
+                {processing ? t('offers.public.submitting') : t('offers.public.submit')}
               </button>
             </div>
           </div>

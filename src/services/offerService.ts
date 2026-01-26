@@ -67,7 +67,7 @@ export const createOffer = async (
     const offer: Omit<Offer, 'id'> = {
       ...offerData,
       customerId: report.customerId, // Ensure customerId is set from report
-      companyId: report.companyId, // Ensure companyId is set from report
+      ...(report.companyId && { companyId: report.companyId }), // Only include if defined
       status: 'pending',
       statusHistory: [
         {

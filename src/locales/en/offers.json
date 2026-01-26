@@ -43,7 +43,12 @@
   "offers.status.accepted": "Accepted",
   "offers.status.rejected": "Rejected",
   "offers.status.awaiting_response": "Awaiting Response",
+  "offers.status.awaitingResponse": "Awaiting Response",
   "offers.status.expired": "Expired",
+  "offers.stats.awaiting": "Awaiting",
+  "offers.stats.customerResponse": "Customer response",
+  "offers.stats.timeExpired": "Time expired",
+  "offers.stats.needsAttention": "Needs attention",
 
   "offers.table.customer": "Customer",
   "offers.table.date": "Date",
@@ -83,6 +88,7 @@
   "offers.detail.viewInspectionReport": "View Inspection Report",
   "offers.detail.statusHistory": "Status History",
   "offers.detail.changedBy": "Changed By",
+  "offers.detail.awaitingResponse": "Awaiting Response",
 
   "offers.create.title": "Create Offer",
   "offers.create.customerInformation": "Customer Information",
@@ -156,5 +162,19 @@
   "offers.rejectionReasonRequired": "Please provide a reason for declining the offer.",
 
   "offer.fields.isOffer": "Offer",
-  "offer.fields.offerValue": "Offer Value"
+  "offer.fields.offerValue": "Offer Value",
+
+  "offers.preview.title": "Preview Offer",
+  "offers.preview.close": "Close",
+  "offers.preview.checkBeforeSending": "Check the offer below before sending. This view shows exactly how the customer will see the offer.",
+  "offers.preview.cancel": "Cancel",
+  "offers.preview.send": "Send Offer",
+  "offers.preview.sending": "Sending...",
+  "offers.sentSuccess": "Offer sent",
+  "offers.sendError": "Could not send offer",
+  "offers.noEmail": "No email",
+  "offers.copyLink": "Copy Link",
+  "offers.linkCopied": "✔ Copied",
+  "offers.selectReport": "Select a Report",
+  "offers.noReportsAvailable": "No reports available"
 }

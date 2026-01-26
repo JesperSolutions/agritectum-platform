@@ -176,5 +176,6 @@
   "costEstimate.subtotal": "Delsum",
   "costEstimate.edit": "Rediger omkostninger",
   "costEstimate.save": "Gem omkostninger",
-  "costEstimate.cancel": "Annuller"
+  "costEstimate.cancel": "Annuller",
+  "form.placeholders.selectCostRange": "Vælg interval"
 }
