@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useIntl } from '../../hooks/useIntl';
+import { getCurrencyCode } from '../../utils/currency';
 import {
   getOffers,
   sendReminderToCustomer,
@@ -25,7 +26,7 @@ import { openOfferPrintWindow } from '../../services/offerExport';
 const OffersPage: React.FC = () => {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
-  const { t } = useIntl();
+  const { t, locale } = useIntl();
   const { reports: availableReports, fetchReports } = useReports();
   const [offers, setOffers] = useState<Offer[]>([]);
   const [loading, setLoading] = useState(true);
@@ -227,7 +228,7 @@ const OffersPage: React.FC = () => {
         customerEmail: selectedReport.customerEmail || '',
         customerPhone: selectedReport.customerPhone,
         customerAddress: selectedReport.customerAddress,
-        currency: 'SEK',
+        currency: getCurrencyCode(locale),
         totalAmount: (() => {
           // Calculate sum of estimated costs from recommended actions (solutions)
           const recommendedActionsCost = (selectedReport.recommendedActions || []).reduce(

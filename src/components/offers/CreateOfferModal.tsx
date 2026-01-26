@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Report } from '../../types';
 import { X, DollarSign, Calendar } from 'lucide-react';
 import { useIntl } from 'react-intl';
+import { getCurrencyCode } from '../../utils/currency';
 import AddressWithMapV2 from '../AddressWithMapV2';
 
 interface CreateOfferModalProps {
@@ -22,12 +23,13 @@ interface CreateOfferModalProps {
 const CreateOfferModal: React.FC<CreateOfferModalProps> = ({ report, onClose, onCreate }) => {
   const intl = useIntl();
   const t = (key: string, values?: any) => intl.formatMessage({ id: key }, values);
+  const currency = getCurrencyCode(intl.locale as any);
   const [formData, setFormData] = useState({
     title: `Repair Offer - ${report.customerName}`,
     description: `Based on the inspection conducted on ${new Date(report.inspectionDate).toLocaleDateString('sv-SE')}, we propose the following repairs to address the issues found.`,
-    laborCost: 0,
-    materialCost: 0,
-    travelCost: 0,
+    laborCost: '',
+    materialCost: '',
+    travelCost: '',
     overheadCost: '',
     profitMargin: 15, // Default 15%
     validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 30 days from now
@@ -55,19 +57,24 @@ const CreateOfferModal: React.FC<CreateOfferModalProps> = ({ report, onClose, on
       newErrors.description = 'Description is required';
     }
 
-    if (formData.laborCost < 0) {
+    const laborCost = typeof formData.laborCost === 'string' ? 0 : formData.laborCost;
+    const materialCost = typeof formData.materialCost === 'string' ? 0 : formData.materialCost;
+    const travelCost = typeof formData.travelCost === 'string' ? 0 : formData.travelCost;
+    const overheadCost = typeof formData.overheadCost === 'string' ? 0 : formData.overheadCost;
+
+    if (laborCost < 0) {
       newErrors.laborCost = 'Labor cost cannot be negative';
     }
 
-    if (formData.materialCost < 0) {
+    if (materialCost < 0) {
       newErrors.materialCost = 'Material cost cannot be negative';
     }
 
-    if (formData.travelCost < 0) {
+    if (travelCost < 0) {
       newErrors.travelCost = 'Travel cost cannot be negative';
     }
 
-    if (formData.overheadCost !== '' && typeof formData.overheadCost === 'number' && formData.overheadCost < 0) {
+    if (overheadCost < 0) {
       newErrors.overheadCost = 'Overhead cost cannot be negative';
     }
 
@@ -90,23 +97,6 @@ const CreateOfferModal: React.FC<CreateOfferModalProps> = ({ report, onClose, on
     return Object.keys(newErrors).length === 0;
   };
 
-  const calculateTotal = (): number => {
-    // Calculate sum of estimated costs from recommended actions (solutions)
-    const recommendedActionsCost = (report.recommendedActions || []).reduce(
-      (sum, action) => sum + (action.estimatedCost || 0),
-      0
-    );
-
-    const subtotal =
-      formData.laborCost +
-      formData.materialCost +
-      formData.travelCost +
-      (typeof formData.overheadCost === 'string' ? 0 : formData.overheadCost) +
-      recommendedActionsCost;
-    const profit = subtotal * (formData.profitMargin / 100);
-    return subtotal + profit;
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -116,7 +106,15 @@ const CreateOfferModal: React.FC<CreateOfferModalProps> = ({ report, onClose, on
 
     setLoading(true);
     try {
-      await onCreate(formData);
+      // Convert empty string values to numbers for the API
+      const offerData = {
+        ...formData,
+        laborCost: typeof formData.laborCost === 'string' ? 0 : formData.laborCost,
+        materialCost: typeof formData.materialCost === 'string' ? 0 : formData.materialCost,
+        travelCost: typeof formData.travelCost === 'string' ? 0 : formData.travelCost,
+        overheadCost: typeof formData.overheadCost === 'string' ? 0 : formData.overheadCost,
+      };
+      await onCreate(offerData);
       onClose();
     } catch (error) {
       console.error('Error creating offer:', error);
@@ -210,12 +208,13 @@ const CreateOfferModal: React.FC<CreateOfferModalProps> = ({ report, onClose, on
                 <input
                   type='number'
                   value={formData.laborCost}
-                  onChange={e => handleChange('laborCost', parseFloat(e.target.value) || 0)}
+                  onChange={e => handleChange('laborCost', e.target.value ? parseFloat(e.target.value) : '')}
                   className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                     errors.laborCost ? 'border-red-500' : 'border-gray-300'
                   }`}
                   min='0'
                   step='0.01'
+                  placeholder='0'
                 />
                 {errors.laborCost && (
                   <p className='mt-1 text-sm text-red-600'>{errors.laborCost}</p>
@@ -229,12 +228,13 @@ const CreateOfferModal: React.FC<CreateOfferModalProps> = ({ report, onClose, on
                 <input
                   type='number'
                   value={formData.materialCost}
-                  onChange={e => handleChange('materialCost', parseFloat(e.target.value) || 0)}
+                  onChange={e => handleChange('materialCost', e.target.value ? parseFloat(e.target.value) : '')}
                   className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                     errors.materialCost ? 'border-red-500' : 'border-gray-300'
                   }`}
                   min='0'
                   step='0.01'
+                  placeholder='0'
                 />
                 {errors.materialCost && (
                   <p className='mt-1 text-sm text-red-600'>{errors.materialCost}</p>
@@ -248,12 +248,13 @@ const CreateOfferModal: React.FC<CreateOfferModalProps> = ({ report, onClose, on
                 <input
                   type='number'
                   value={formData.travelCost}
-                  onChange={e => handleChange('travelCost', parseFloat(e.target.value) || 0)}
+                  onChange={e => handleChange('travelCost', e.target.value ? parseFloat(e.target.value) : '')}
                   className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                     errors.travelCost ? 'border-red-500' : 'border-gray-300'
                   }`}
                   min='0'
                   step='0.01'
+                  placeholder='0'
                 />
                 {errors.travelCost && (
                   <p className='mt-1 text-sm text-red-600'>{errors.travelCost}</p>
@@ -308,11 +309,11 @@ const CreateOfferModal: React.FC<CreateOfferModalProps> = ({ report, onClose, on
                   (sum, action) => sum + (action.estimatedCost || 0),
                   0
                 );
-                const baseSubtotal =
-                  formData.laborCost +
-                  formData.materialCost +
-                  formData.travelCost +
-                  formData.overheadCost;
+                const laborCost = typeof formData.laborCost === 'string' ? 0 : formData.laborCost;
+                const materialCost = typeof formData.materialCost === 'string' ? 0 : formData.materialCost;
+                const travelCost = typeof formData.travelCost === 'string' ? 0 : formData.travelCost;
+                const overheadCost = typeof formData.overheadCost === 'string' ? 0 : formData.overheadCost;
+                const baseSubtotal = laborCost + materialCost + travelCost + overheadCost;
                 const subtotal = baseSubtotal + recommendedActionsCost;
                 const profit = subtotal * (formData.profitMargin / 100);
 
@@ -325,7 +326,7 @@ const CreateOfferModal: React.FC<CreateOfferModalProps> = ({ report, onClose, on
                           Recommended Actions Cost:
                         </span>
                         <span className='text-sm font-semibold text-gray-900'>
-                          {recommendedActionsCost.toLocaleString()} SEK
+                          {recommendedActionsCost.toLocaleString()} {currency}
                         </span>
                       </div>
                     )}
@@ -334,7 +335,7 @@ const CreateOfferModal: React.FC<CreateOfferModalProps> = ({ report, onClose, on
                         {t('offers.create.subtotal')}:
                       </span>
                       <span className='text-sm font-semibold text-gray-900'>
-                        {subtotal.toLocaleString()} SEK
+                        {subtotal.toLocaleString()} {currency}
                       </span>
                     </div>
                     <div className='flex justify-between items-center mt-2'>
@@ -342,7 +343,7 @@ const CreateOfferModal: React.FC<CreateOfferModalProps> = ({ report, onClose, on
                         {t('offers.create.profit')} ({formData.profitMargin}%):
                       </span>
                       <span className='text-sm font-semibold text-gray-900'>
-                        {profit.toLocaleString()} SEK
+                        {profit.toLocaleString()} {currency}
                       </span>
                     </div>
                     <div className='flex justify-between items-center mt-2 pt-2 border-t border-blue-200'>
@@ -350,7 +351,7 @@ const CreateOfferModal: React.FC<CreateOfferModalProps> = ({ report, onClose, on
                         {t('offers.detail.totalAmount')}:
                       </span>
                       <span className='text-2xl font-bold text-blue-600'>
-                        {(subtotal + profit).toLocaleString()} SEK
+                        {(subtotal + profit).toLocaleString()} {currency}
                       </span>
                     </div>
                   </>

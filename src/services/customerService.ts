@@ -154,8 +154,17 @@ export const updateCustomer = async (
     }
 
     const customerRef = doc(db, 'customers', customerId);
+    
+    // Filter out undefined and empty string values to prevent Firestore errors
+    const cleanedUpdates = Object.entries(updates).reduce((acc, [key, value]) => {
+      if (value !== undefined && value !== '') {
+        acc[key] = value;
+      }
+      return acc;
+    }, {} as Record<string, any>);
+    
     await updateDoc(customerRef, {
-      ...updates,
+      ...cleanedUpdates,
       lastEdited: new Date().toISOString(),
     });
   } catch (error: any) {

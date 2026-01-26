@@ -71,11 +71,11 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({
       icon: <Leaf className='w-4 h-4' />,
     },
     '/admin/esg-service': {
-      label: t('navigation.esgService') || 'ESG Service',
+      label: t('navigation.newESGReport') || 'New ESG Report',
       icon: <Leaf className='w-4 h-4' />,
     },
     '/admin/esg-reports': {
-      label: t('navigation.esgReports') || 'ESG Reports',
+      label: t('navigation.allESGReports') || 'All ESG Reports',
       icon: <Leaf className='w-4 h-4' />,
     },
     '/admin/email-templates': {
@@ -83,7 +83,7 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({
       icon: <Mail className='w-4 h-4' />,
     },
     '/settings': { label: t('navigation.settings'), icon: <Settings className='w-4 h-4' /> },
-    '/report/new': { label: t('navigation.newReport'), icon: <FileText className='w-4 h-4' /> },
+    '/report/new': { label: t('navigation.newTagReport'), icon: <FileText className='w-4 h-4' /> },
     '/report/edit': { label: t('navigation.editReport'), icon: <FileText className='w-4 h-4' /> },
     '/report/view': { label: t('navigation.viewReport'), icon: <FileText className='w-4 h-4' /> },
   };

@@ -78,7 +78,7 @@ const Layout: React.FC = () => {
     // Reports section - Data Entry & Reports
     const reportsChildren: NavigationItem[] = [
       {
-        label: t('navigation.newReport'),
+        label: t('navigation.newTagReport'),
         path: '/report/new',
         roles: ['inspector', 'branchAdmin', 'superadmin'],
       },
@@ -86,14 +86,27 @@ const Layout: React.FC = () => {
 
     if (role === 'inspector') {
       reportsChildren.push({
-        label: t('navigation.myReports'),
+        label: t('navigation.myTagReports'),
         path: '/reports',
       });
     } else if (role === 'branchAdmin' || role === 'superadmin') {
       reportsChildren.push({
-        label: t('navigation.allReports'),
+        label: t('navigation.allTagReports'),
         path: '/admin/reports',
       });
+    }
+
+    if (role === 'branchAdmin' || role === 'superadmin') {
+      reportsChildren.push(
+        {
+          label: t('navigation.newESGReport'),
+          path: '/admin/esg-service',
+        },
+        {
+          label: t('navigation.allESGReports'),
+          path: '/admin/esg-reports',
+        }
+      );
     }
 
     if (reportsChildren.length > 0) {
@@ -144,14 +157,6 @@ const Layout: React.FC = () => {
         {
           label: t('navigation.analytics'),
           path: '/admin/analytics',
-        },
-        {
-          label: t('navigation.esgService'),
-          path: '/admin/esg-service',
-        },
-        {
-          label: t('navigation.esgReports'),
-          path: '/admin/esg-reports',
         },
       ];
 

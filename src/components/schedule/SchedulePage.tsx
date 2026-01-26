@@ -324,40 +324,49 @@ const SchedulePage: React.FC = () => {
   return (
     <div className='space-y-6 font-material max-w-7xl mx-auto'>
       {/* Header */}
-      <div className='bg-white rounded-material shadow-material-2 p-6'>
-        <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
-          <div>
-            <h1 className='text-3xl sm:text-4xl font-light text-slate-900 tracking-tight mb-2'>
-              {t('schedule.title')}
-            </h1>
-            <p className='text-base sm:text-lg text-slate-600 font-light'>
-              {t('schedule.subtitle')}
-            </p>
-          </div>
-          <div className='flex items-center gap-2'>
-            <Button variant='outline' onClick={loadAppointments} disabled={loading}>
-              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-              <span className='hidden sm:inline'>{t('schedule.refresh')}</span>
-            </Button>
-            {userCanManage && (
-              <Button onClick={handleCreateAppointment}>
-                <Plus className='w-4 h-4' />
-                {t('schedule.addAppointment')}
-              </Button>
-            )}
+      <div className='bg-white rounded-xl shadow-lg overflow-hidden'>
+        <div className='bg-gradient-to-r from-slate-900 to-slate-700 px-6 py-8'>
+          <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
+            <div>
+              <h1 className='text-3xl sm:text-4xl font-bold text-white tracking-tight mb-2'>
+                {t('schedule.title')}
+              </h1>
+              <p className='text-base sm:text-lg text-slate-200 font-light'>
+                {t('schedule.subtitle')}
+              </p>
+            </div>
+            <div className='flex items-center gap-2'>
+              <button
+                onClick={loadAppointments}
+                disabled={loading}
+                className='px-4 py-2 bg-white text-slate-900 rounded-lg hover:bg-slate-100 transition-colors flex items-center gap-2 font-medium'
+              >
+                <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+                <span className='hidden sm:inline'>{t('schedule.refresh')}</span>
+              </button>
+              {userCanManage && (
+                <button
+                  onClick={handleCreateAppointment}
+                  className='px-4 py-2 bg-white text-slate-900 rounded-lg hover:bg-slate-100 transition-colors flex items-center gap-2 font-medium'
+                >
+                  <Plus className='w-4 h-4' />
+                  {t('schedule.addAppointment')}
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
       {/* Enhanced Filter Panel */}
-      <div className='bg-white rounded-material shadow-material-2 p-4 border border-slate-200'>
+      <div className='bg-white rounded-xl shadow-lg p-6 border border-slate-200'>
         <div className='flex items-center justify-between mb-4'>
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className='flex items-center gap-2 text-slate-700 hover:text-slate-900'
+            className='flex items-center gap-2 text-slate-700 hover:text-slate-900 font-medium'
           >
-            <Filter className='w-4 h-4' />
-            <span className='text-sm font-medium'>{t('schedule.filters') || 'Filters'}</span>
+            <Filter className='w-5 h-5' />
+            <span className='text-sm font-medium'>{t('schedule.filters') || 'Filter'}</span>
             {showFilters ? <ChevronUp className='w-4 h-4' /> : <ChevronDown className='w-4 h-4' />}
           </button>
           {(filterStatus !== 'all' ||
@@ -484,7 +493,7 @@ const SchedulePage: React.FC = () => {
 
       {/* Error Message */}
       {error && (
-        <div className='bg-red-50 border border-red-200 rounded-material p-4 flex items-start gap-3'>
+        <div className='bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3 shadow-lg'>
           <AlertTriangle className='w-5 h-5 text-red-600 flex-shrink-0 mt-0.5' />
           <div>
             <h3 className='font-medium text-red-900 mb-1'>{t('schedule.errorLoading')}</h3>
@@ -495,7 +504,7 @@ const SchedulePage: React.FC = () => {
 
       {/* Today's Appointments for Inspectors */}
       {isInspector && todaysAppointments.length > 0 && (
-        <div className='bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-material p-4'>
+        <div className='bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6 shadow-lg'>
           <div className='flex items-center gap-2 mb-3'>
             <Calendar className='w-5 h-5 text-blue-600' />
             <h3 className='font-semibold text-blue-900'>{t('schedule.todaysAppointments')}</h3>
@@ -564,25 +573,25 @@ const SchedulePage: React.FC = () => {
         </div>
       )}
 
-      {/* Filters */}
-      <div className='bg-white rounded-material shadow-material-2 p-4'>
-        <div className='flex items-center gap-2 overflow-x-auto'>
+      {/* Status Tabs */}
+      <div className='bg-white rounded-xl shadow-lg overflow-hidden'>
+        <div className='flex items-center gap-0 overflow-x-auto border-b border-slate-200'>
           <button
             onClick={() => setFilterStatus('all')}
-            className={`px-4 py-2 rounded-material text-sm font-medium transition-all duration-material whitespace-nowrap ${
+            className={`px-6 py-4 text-sm font-medium transition-all whitespace-nowrap border-b-2 ${
               filterStatus === 'all'
-                ? 'bg-blue-600 text-white shadow-material-2'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                ? 'border-blue-600 text-blue-600 bg-blue-50'
+                : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50'
             }`}
           >
             {t('schedule.filters.allAppointments')} ({appointments.length})
           </button>
           <button
             onClick={() => setFilterStatus('scheduled')}
-            className={`px-4 py-2 rounded-material text-sm font-medium transition-all duration-material whitespace-nowrap ${
+            className={`px-6 py-4 text-sm font-medium transition-all whitespace-nowrap border-b-2 ${
               filterStatus === 'scheduled'
-                ? 'bg-blue-600 text-white shadow-material-2'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                ? 'border-blue-600 text-blue-600 bg-blue-50'
+                : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50'
             }`}
           >
             {t('schedule.filters.scheduled')} (
@@ -590,10 +599,10 @@ const SchedulePage: React.FC = () => {
           </button>
           <button
             onClick={() => setFilterStatus('in_progress')}
-            className={`px-4 py-2 rounded-material text-sm font-medium transition-all duration-material whitespace-nowrap ${
+            className={`px-6 py-4 text-sm font-medium transition-all whitespace-nowrap border-b-2 ${
               filterStatus === 'in_progress'
-                ? 'bg-yellow-600 text-white shadow-material-2'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                ? 'border-amber-600 text-amber-600 bg-amber-50'
+                : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50'
             }`}
           >
             {t('schedule.filters.inProgress')} (
@@ -601,10 +610,10 @@ const SchedulePage: React.FC = () => {
           </button>
           <button
             onClick={() => setFilterStatus('completed')}
-            className={`px-4 py-2 rounded-material text-sm font-medium transition-all duration-material whitespace-nowrap ${
+            className={`px-6 py-4 text-sm font-medium transition-all whitespace-nowrap border-b-2 ${
               filterStatus === 'completed'
-                ? 'bg-green-600 text-white shadow-material-2'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                ? 'border-emerald-600 text-emerald-600 bg-emerald-50'
+                : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50'
             }`}
           >
             {t('schedule.filters.completed')} (
@@ -612,10 +621,10 @@ const SchedulePage: React.FC = () => {
           </button>
           <button
             onClick={() => setFilterStatus('cancelled')}
-            className={`px-4 py-2 rounded-material text-sm font-medium transition-all duration-material whitespace-nowrap ${
+            className={`px-6 py-4 text-sm font-medium transition-all whitespace-nowrap border-b-2 ${
               filterStatus === 'cancelled'
-                ? 'bg-slate-600 text-white shadow-material-2'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                ? 'border-slate-600 text-slate-600 bg-slate-50'
+                : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50'
             }`}
           >
             {t('schedule.filters.cancelled')} (
@@ -625,7 +634,7 @@ const SchedulePage: React.FC = () => {
       </div>
 
       {/* Appointments List */}
-      <div className='bg-white rounded-material shadow-material-2 p-6'>
+      <div className='bg-white rounded-xl shadow-lg p-6'>
         <AppointmentList
           appointments={filteredAppointments}
           onEdit={handleEditAppointment}

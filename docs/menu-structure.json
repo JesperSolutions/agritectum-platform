@@ -13,11 +13,11 @@
         "icon": "FileText",
         "children": [
           {
-            "label": "New Report",
+            "label": "New Roof Report",
             "path": "/report/new"
           },
           {
-            "label": "My Reports",
+            "label": "My Roof Reports",
             "path": "/reports"
           }
         ]
@@ -62,12 +62,20 @@
         "icon": "FileText",
         "children": [
           {
-            "label": "New Report",
+            "label": "New Roof Report",
             "path": "/report/new"
           },
           {
-            "label": "All Reports",
+            "label": "All Roof Reports",
             "path": "/admin/reports"
+          },
+          {
+            "label": "New ESG Report",
+            "path": "/admin/esg-service"
+          },
+          {
+            "label": "All ESG Reports",
+            "path": "/admin/esg-reports"
           }
         ]
       },
@@ -104,10 +112,6 @@
           {
             "label": "Analytics",
             "path": "/admin/analytics"
-          },
-          {
-            "label": "ESG Improvements",
-            "path": "/admin/building-esg-improvements"
           }
         ]
       },
@@ -133,12 +137,20 @@
         "icon": "FileText",
         "children": [
           {
-            "label": "New Report",
+            "label": "New Roof Report",
             "path": "/report/new"
           },
           {
-            "label": "All Reports",
+            "label": "All Roof Reports",
             "path": "/admin/reports"
+          },
+          {
+            "label": "New ESG Report",
+            "path": "/admin/esg-service"
+          },
+          {
+            "label": "All ESG Reports",
+            "path": "/admin/esg-reports"
           }
         ]
       },
@@ -179,10 +191,6 @@
           {
             "label": "Analytics",
             "path": "/admin/analytics"
-          },
-          {
-            "label": "ESG Improvements",
-            "path": "/admin/building-esg-improvements"
           },
           {
             "label": "Email Templates",
