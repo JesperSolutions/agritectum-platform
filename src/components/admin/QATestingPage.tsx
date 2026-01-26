@@ -85,7 +85,7 @@ const QATestingPage: React.FC = () => {
           </p>
           <button
             onClick={() => (window.location.href = '/dashboard')}
-            className='px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors'
+            className='px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium shadow-sm'
           >
             Go to Dashboard
           </button>
@@ -753,7 +753,7 @@ const QATestingPage: React.FC = () => {
               <button
                 onClick={runAllTests}
                 disabled={isRunning}
-                className='px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2'
+                className='px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium shadow-sm disabled:opacity-50 flex items-center gap-2'
               >
                 <RefreshCw className={`w-4 h-4 ${isRunning ? 'animate-spin' : ''}`} />
                 Run All Tests
@@ -761,7 +761,7 @@ const QATestingPage: React.FC = () => {
               <button
                 onClick={clearResults}
                 disabled={isRunning}
-                className='px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 disabled:opacity-50'
+                className='px-4 py-2 bg-slate-600 text-white rounded-lg hover:bg-slate-700 transition-colors text-sm font-medium shadow-sm disabled:opacity-50'
               >
                 Clear Results
               </button>
@@ -801,7 +801,7 @@ const QATestingPage: React.FC = () => {
               <button
                 onClick={() => runTestSuite(suite.name)}
                 disabled={isRunning}
-                className='w-full mt-4 px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 disabled:opacity-50'
+                className='w-full mt-4 px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors text-sm font-medium shadow-sm disabled:opacity-50'
               >
                 Run Suite
               </button>

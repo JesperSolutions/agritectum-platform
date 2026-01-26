@@ -97,11 +97,12 @@ service cloud.firestore {
       );
       
       // Allow branch admins and superadmins to create users in their branch
-      // Allow customers to create their own account
+      // Allow authenticated users to create their own account (for signup flow)
       allow create: if isAuthenticated() && (
         isSuperadmin() ||
         (isBranchAdmin() && (request.resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
-        (isCustomer() && request.auth.uid == userId && request.resource.data.userType == "customer")
+        // Allow any authenticated user to create their own user document (claims may not be set yet during signup)
+        (request.auth.uid == userId && request.resource.data.userType == "customer")
       );
       
       // Allow branch admins and superadmins to update users in their branch

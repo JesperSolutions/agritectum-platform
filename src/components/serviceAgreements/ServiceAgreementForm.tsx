@@ -59,7 +59,7 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
     endDate: '',
     nextServiceDate: '',
     serviceFrequency: 'annual' as 'quarterly' | 'biannual' | 'annual',
-    status: 'active' as 'active' | 'expired' | 'cancelled' | 'pending',
+    status: 'pending' as 'active' | 'expired' | 'cancelled' | 'pending',
     notes: '',
     // Paper version fields
     purpose: '',
@@ -279,7 +279,8 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
       const { storage } = await import('../../config/firebase');
       const timestamp = Date.now();
       const fileName = `signature_${type}_${timestamp}_${compressedFile.name}`;
-      const storagePath = `service-agreements/${formData.customerId}/signatures/${fileName}`;
+      // Use a dedicated uploads bucket path that is allowed by Storage rules
+      const storagePath = `serviceAgreementUploads/${formData.customerId}/signatures/${fileName}`;
       const fileRef = ref(storage, storagePath);
 
       // Upload to Firebase Storage
@@ -407,10 +408,10 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
           formData.signatures.supplierImageUrl ||
           formData.signatures.customerImageUrl
             ? {
-                supplier: formData.signatures.supplier || undefined,
-                customer: formData.signatures.customer || undefined,
-                supplierImageUrl: formData.signatures.supplierImageUrl || undefined,
-                customerImageUrl: formData.signatures.customerImageUrl || undefined,
+                ...(formData.signatures.supplier && { supplier: formData.signatures.supplier }),
+                ...(formData.signatures.customer && { customer: formData.signatures.customer }),
+                ...(formData.signatures.supplierImageUrl && { supplierImageUrl: formData.signatures.supplierImageUrl }),
+                ...(formData.signatures.customerImageUrl && { customerImageUrl: formData.signatures.customerImageUrl }),
               }
             : undefined,
       };
@@ -1171,7 +1172,7 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
             <h3 className='text-lg font-semibold text-slate-900 mb-4'>
               {t('serviceAgreement.form.signatures.title') || '7. UNDERSKRIFTER'}
             </h3>
-            <div className='grid grid-cols-2 gap-4'>
+            <div className='grid grid-cols-1 gap-4'>
               <div>
                 <label className='block text-sm font-medium text-slate-700 mb-2'>
                   {t('serviceAgreement.form.signatures.supplier') || 'Leverandør:'}
@@ -1241,76 +1242,9 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
                     </div>
                   )}
                 </div>
-              </div>
-              <div>
-                <label className='block text-sm font-medium text-slate-700 mb-2'>
-                  {t('serviceAgreement.form.signatures.customer') || 'Kunde:'}
-                </label>
-                <input
-                  type='text'
-                  value={formData.signatures.customer}
-                  onChange={e =>
-                    setFormData({
-                      ...formData,
-                      signatures: { ...formData.signatures, customer: e.target.value },
-                    })
-                  }
-                  placeholder={t('serviceAgreement.form.signatures.customerPlaceholder') || 'Navn'}
-                  className='w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-700 focus:border-transparent mb-2'
-                />
-                <input
-                  ref={customerImageInputRef}
-                  type='file'
-                  accept='image/*'
-                  onChange={e => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      handleSignatureImageUpload('customer', file);
-                    }
-                  }}
-                  className='hidden'
-                />
-                <div className='flex items-center gap-2'>
-                  <button
-                    type='button'
-                    onClick={() => customerImageInputRef.current?.click()}
-                    disabled={uploadingSignature.customer}
-                    className='px-3 py-2 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed'
-                  >
-                    {uploadingSignature.customer ? (
-                      <>
-                        <RefreshCw className='w-4 h-4 animate-spin' />
-                        {t('common.uploading') || 'Uploading...'}
-                      </>
-                    ) : (
-                      <>
-                        <Upload className='w-4 h-4' />
-                        {t('serviceAgreement.form.signatures.uploadImage') || 'Upload billede'}
-                      </>
-                    )}
-                  </button>
-                  {formData.signatures.customerImageUrl && (
-                    <div className='relative inline-block'>
-                      <img
-                        src={formData.signatures.customerImageUrl}
-                        alt='Customer signature'
-                        className='h-12 w-auto border border-slate-300 rounded'
-                      />
-                      <button
-                        type='button'
-                        onClick={() =>
-                          setFormData({
-                            ...formData,
-                            signatures: { ...formData.signatures, customerImageUrl: '' },
-                          })
-                        }
-                        className='absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600'
-                      >
-                        <XIcon className='w-3 h-3' />
-                      </button>
-                    </div>
-                  )}
-                </div>
+                <p className='text-xs text-slate-500 mt-2'>
+                  {t('serviceAgreement.form.signatures.customerNote') || 'Kundens underskrift bliver tilføjet når de accepterer aftalen via linket.'}
+                </p>
               </div>
             </div>
           </div>

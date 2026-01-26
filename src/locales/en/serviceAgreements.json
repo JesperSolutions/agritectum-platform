@@ -247,6 +247,7 @@
   "serviceAgreement.form.signatures.supplierPlaceholder": "Name",
   "serviceAgreement.form.signatures.customer": "Customer:",
   "serviceAgreement.form.signatures.customerPlaceholder": "Name",
+  "serviceAgreement.form.signatures.customerNote": "Customer signature will be added when they accept the agreement via the link.",
   "serviceAgreement.form.signatures.uploadImage": "Upload Image",
   "serviceAgreement.detail.send": "Send",
   "serviceAgreement.detail.sending": "Sending...",

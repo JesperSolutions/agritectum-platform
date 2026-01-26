@@ -1,15 +1,13 @@
-import * as functions from 'firebase-functions';
+import { onSchedule } from 'firebase-functions/v2/scheduler';
 import * as admin from 'firebase-admin';
 
 /**
  * Scheduled Cloud Function that runs daily at 6 AM to send appointment reminders
  * Finds appointments scheduled for tomorrow and sends reminders to customers and roofers
  */
-export const sendAppointmentReminders = functions
-  .region('europe-west1')
-  .pubsub.schedule('0 6 * * *') // Every day at 6 AM UTC
-  .timeZone('Europe/Copenhagen')
-  .onRun(async _context => {
+export const sendAppointmentReminders = onSchedule(
+  '0 6 * * *', // Every day at 6 AM UTC
+  async () => {
     console.log('🔄 Starting appointment reminder job...');
 
     try {

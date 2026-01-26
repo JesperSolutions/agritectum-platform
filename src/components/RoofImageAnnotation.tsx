@@ -199,7 +199,7 @@ const RoofImageAnnotation: React.FC<RoofImageAnnotationProps> = ({
               type='button'
               onClick={handleGalleryClick}
               disabled={disabled || uploading}
-              className='flex items-center gap-2 px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors'
+              className='flex items-center gap-2 px-4 py-2 text-sm bg-slate-700 text-white rounded-lg hover:bg-slate-800 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-medium shadow-sm'
             >
               <FileImage className='w-4 h-4' />
               {t('form.buttons.selectFromGallery')}

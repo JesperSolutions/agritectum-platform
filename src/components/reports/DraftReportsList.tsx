@@ -138,7 +138,7 @@ const DraftReportsList: React.FC = () => {
           </p>
           <button
             onClick={() => navigate('/report/new')}
-            className='px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors'
+            className='px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium shadow-sm'
           >
             {t('reports.createNewReport') || 'Create New Report'}
           </button>
@@ -203,14 +203,14 @@ const DraftReportsList: React.FC = () => {
                     <div className='flex items-center gap-2 ml-6'>
                       <button
                         onClick={() => handleResumeDraft(report)}
-                        className='px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center gap-2'
+                        className='px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium shadow-sm flex items-center gap-2'
                       >
                         <Edit className='w-4 h-4' />
                         {t('reports.resume') || 'Resume'}
                       </button>
                       <button
                         onClick={() => handleDeleteDraft(report)}
-                        className='px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors flex items-center gap-2'
+                        className='px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium shadow-sm flex items-center gap-2'
                       >
                         <Trash2 className='w-4 h-4' />
                         {t('common.delete') || 'Delete'}

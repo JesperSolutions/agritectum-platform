@@ -100,7 +100,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
             <button
               onClick={onClose}
               disabled={isLoading}
-              className='px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 disabled:opacity-50'
+              className='px-4 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition-colors text-sm font-medium shadow-sm disabled:opacity-50'
             >
               {cancelText}
             </button>

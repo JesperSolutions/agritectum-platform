@@ -269,7 +269,7 @@ const OfferDetail: React.FC<OfferDetailProps> = ({
             <div className='space-y-2'>
               <button
                 onClick={() => window.open(`/offer/public/${offer.id}`, '_blank')}
-                className='w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-600 text-white rounded-lg hover:bg-slate-700 transition-colors'
+                className='w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium shadow-sm'
               >
                 <ExternalLink className='w-4 h-4' />
                 {t('offers.actions.viewPublicLink') || 'View Public Link'}
@@ -277,7 +277,7 @@ const OfferDetail: React.FC<OfferDetailProps> = ({
               {offer.status === 'pending' && onSendReminder && (
                 <button
                   onClick={onSendReminder}
-                  className='w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-600 text-white rounded-lg hover:bg-slate-700 transition-colors'
+                  className='w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium shadow-sm'
                 >
                   <Send className='w-4 h-4' />
                   {t('offers.actions.sendReminder')}
@@ -286,7 +286,7 @@ const OfferDetail: React.FC<OfferDetailProps> = ({
               {offer.status === 'pending' && onExtendValidity && (
                 <button
                   onClick={() => setShowExtendDialog(true)}
-                  className='w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-600 text-white rounded-lg hover:bg-slate-700 transition-colors'
+                  className='w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium shadow-sm'
                 >
                   <Calendar className='w-4 h-4' />
                   Extend Validity
@@ -370,7 +370,7 @@ const OfferDetail: React.FC<OfferDetailProps> = ({
             <h3 className='text-lg font-bold text-gray-900 mb-4'>Related Report</h3>
             <button
               onClick={() => navigate(`/report/view/${offer.reportId}`)}
-              className='w-full flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors'
+              className='w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition-colors text-sm font-medium shadow-sm'
             >
               <ExternalLink className='w-4 h-4' />
               View Inspection Report
@@ -405,7 +405,7 @@ const OfferDetail: React.FC<OfferDetailProps> = ({
               <button
                 onClick={handleExtendValidity}
                 disabled={!newValidUntil}
-                className='flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+                className='flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed'
               >
                 Extend
               </button>

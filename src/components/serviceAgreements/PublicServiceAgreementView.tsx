@@ -36,6 +36,8 @@ const PublicServiceAgreementView: React.FC = () => {
   // Form state
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
+  const [signatureFile, setSignatureFile] = useState<File | null>(null);
+  const [signaturePreview, setSignaturePreview] = useState('');
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [acceptAgreement, setAcceptAgreement] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
@@ -103,6 +105,11 @@ const PublicServiceAgreementView: React.FC = () => {
         t('serviceAgreement.public.validation.emailInvalid') || 'Invalid email address';
     }
 
+    if (!signatureFile) {
+      errors.signatureFile =
+        t('serviceAgreement.public.validation.signatureRequired') || 'Signature file is required';
+    }
+
     if (!agreeToTerms) {
       errors.agreeToTerms =
         t('serviceAgreement.public.validation.termsRequired') ||
@@ -117,6 +124,47 @@ const PublicServiceAgreementView: React.FC = () => {
 
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
+  };
+
+  const handleSignatureUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'application/pdf'];
+    if (!allowedTypes.includes(file.type)) {
+      setFormErrors(prev => ({
+        ...prev,
+        signatureFile: 'Only PNG, JPG, or PDF files are allowed',
+      }));
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setFormErrors(prev => ({
+        ...prev,
+        signatureFile: 'File size must be less than 5MB',
+      }));
+      return;
+    }
+
+    setSignatureFile(file);
+    
+    // Show preview for images
+    if (allowedTypes.slice(0, 2).includes(file.type)) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setSignaturePreview(event.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Clear error
+    setFormErrors(prev => {
+      const { signatureFile: _, ...rest } = prev;
+      return rest;
+    });
   };
 
   const handleAccept = async () => {
@@ -142,6 +190,7 @@ const PublicServiceAgreementView: React.FC = () => {
           name: customerName.trim(),
           email: customerEmail.trim(),
         },
+        signatureFile,
         ipAddress
       );
 
@@ -870,6 +919,58 @@ const PublicServiceAgreementView: React.FC = () => {
                 />
                 {formErrors.customerEmail && (
                   <p className='mt-1 text-sm text-red-600'>{formErrors.customerEmail}</p>
+                )}
+              </div>
+
+              {/* Signature Upload */}
+              <div>
+                <label className='block text-sm font-medium text-gray-700 mb-2'>
+                  {t('serviceAgreement.public.form.signature') || 'Upload Signature'} *
+                </label>
+                <div className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+                  formErrors.signatureFile ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-slate-400'
+                }`}>
+                  <input
+                    type='file'
+                    accept='image/png,image/jpeg,image/jpg,application/pdf'
+                    onChange={handleSignatureUpload}
+                    className='hidden'
+                    id='signature-upload'
+                  />
+                  <label htmlFor='signature-upload' className='cursor-pointer'>
+                    {signatureFile ? (
+                      <div className='space-y-2'>
+                        {signaturePreview && (
+                          <div className='mb-4'>
+                            <img
+                              src={signaturePreview}
+                              alt='Signature preview'
+                              className='max-h-32 mx-auto'
+                            />
+                          </div>
+                        )}
+                        <p className='font-medium text-gray-900'>{signatureFile.name}</p>
+                        <p className='text-xs text-gray-500'>
+                          {(signatureFile.size / 1024 / 1024).toFixed(2)} MB
+                        </p>
+                        <p className='text-sm text-slate-600 mt-2'>
+                          {t('serviceAgreement.public.form.clickToChange') || 'Click to change file'}
+                        </p>
+                      </div>
+                    ) : (
+                      <div className='space-y-2'>
+                        <p className='text-sm font-medium text-gray-700'>
+                          {t('serviceAgreement.public.form.uploadSignature') || 'Click to upload signature'}
+                        </p>
+                        <p className='text-xs text-gray-500'>
+                          {t('serviceAgreement.public.form.signatureFormats') || 'PNG, JPG, or PDF (max 5MB)'}
+                        </p>
+                      </div>
+                    )}
+                  </label>
+                </div>
+                {formErrors.signatureFile && (
+                  <p className='mt-1 text-sm text-red-600'>{formErrors.signatureFile}</p>
                 )}
               </div>
 

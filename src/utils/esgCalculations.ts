@@ -313,38 +313,35 @@ export function getClimateZone(latitude?: number): ClimateZone {
 }
 
 /**
- * Roof type specifications based on environmental research and credible sources
+ * Roof type specifications - SYNCHRONIZED with ESGService.tsx UI calculations
  * These match the 4 division areas used in ESG service reports
- *
- * Sources:
- * - Green Roof CO2: EPA Green Infrastructure studies (2-3 kg CO₂/m²/year)
- * - Photocatalytic NOx: Multiple studies show 0.08-0.12 kg NOx/m²/year reduction
- * - Cool Roof Energy: LBNL studies show 5-15 kWh/m²/year cooling energy reduction
- * - Water Management: Green infrastructure studies show 10-25 L/m²/year retention
+ * 
+ * Note: Values are per 1000 m² to match the UI formula: (area / 1000) × factor
+ * Converted from UI hardcoded values to maintain calculation consistency
  */
 const ROOF_TYPE_SPECS = {
   'Green Roof System': {
-    co2: 2.8, // kg CO₂ per m² per year (carbon sequestration + reduced cooling)
+    co2: 525, // kg CO₂ per 1000 m² per year (UI: 525)
     nox: 0.08, // kg NOₓ per m² per year (air purification through vegetation)
-    energy: 3.2, // kWh per m² per year (reduced building energy through insulation)
+    energy: 375, // kWh per 1000 m² per year (UI: 375)
     water: 18.5, // L per m² per year (stormwater retention and management)
   },
   'Photocatalytic Coating': {
-    co2: 1.6, // kg CO₂ per m² per year (reduced air treatment needs)
+    co2: 485, // kg CO₂ per 1000 m² per year (UI: 485)
     nox: 0.12, // kg NOₓ per m² per year (direct photocatalytic reduction)
-    energy: 0.8, // kWh per m² per year (small energy benefit from cleaner air systems)
+    energy: 0, // kWh per 1000 m² per year (UI: 0 - no energy benefit shown)
     water: 2.1, // L per m² per year (reduced water treatment from cleaner air)
   },
   'White - Cool Roof Coating': {
-    co2: 4.2, // kg CO₂ per m² per year (significant cooling energy reduction)
+    co2: 1663, // kg CO₂ per 1000 m² per year (UI: 1663)
     nox: 0.03, // kg NOₓ per m² per year (indirect from reduced energy use)
-    energy: 12.8, // kWh per m² per year (major cooling energy savings)
+    energy: 2125, // kWh per 1000 m² per year (UI: 2125)
     water: 4.5, // L per m² per year (reduced HVAC water usage)
   },
   'Social Activities Area': {
-    co2: 1.2, // kg CO₂ per m² per year (community gardens, reduced transport)
+    co2: 125, // kg CO₂ per 1000 m² per year (UI: 125)
     nox: 0.04, // kg NOₓ per m² per year (local food production, reduced transport)
-    energy: 0.5, // kWh per m² per year (small energy benefits from local activities)
+    energy: 0, // kWh per 1000 m² per year (UI: 0 - no energy benefit shown)
     water: 8.3, // L per m² per year (rainwater collection, community gardens)
   },
 } as const;
@@ -388,36 +385,38 @@ export function calculateESGFromDivisions(
   let totalWaterPerYear = 0;
 
   // Calculate metrics for each division area
+  // Note: CO2 and Energy use per-1000m² factors, matching UI calculations
+  
   // Green Roof Area
   const greenRoofSize = (divisions.greenRoof / 100) * roofSize;
   const greenRoofData = ROOF_TYPE_SPECS['Green Roof System'];
-  totalCo2PerYear += greenRoofData.co2 * greenRoofSize;
+  totalCo2PerYear += (greenRoofData.co2 / 1000) * greenRoofSize;
   totalNoxPerYear += greenRoofData.nox * greenRoofSize;
-  totalEnergyPerYear += greenRoofData.energy * greenRoofSize;
+  totalEnergyPerYear += (greenRoofData.energy / 1000) * greenRoofSize;
   totalWaterPerYear += greenRoofData.water * greenRoofSize;
 
   // NOx Reduction Area
   const noxReductionSize = (divisions.noxReduction / 100) * roofSize;
   const noxReductionData = ROOF_TYPE_SPECS['Photocatalytic Coating'];
-  totalCo2PerYear += noxReductionData.co2 * noxReductionSize;
+  totalCo2PerYear += (noxReductionData.co2 / 1000) * noxReductionSize;
   totalNoxPerYear += noxReductionData.nox * noxReductionSize;
-  totalEnergyPerYear += noxReductionData.energy * noxReductionSize;
+  totalEnergyPerYear += (noxReductionData.energy / 1000) * noxReductionSize;
   totalWaterPerYear += noxReductionData.water * noxReductionSize;
 
   // Cool Roof Area
   const coolRoofSize = (divisions.coolRoof / 100) * roofSize;
   const coolRoofData = ROOF_TYPE_SPECS['White - Cool Roof Coating'];
-  totalCo2PerYear += coolRoofData.co2 * coolRoofSize;
+  totalCo2PerYear += (coolRoofData.co2 / 1000) * coolRoofSize;
   totalNoxPerYear += coolRoofData.nox * coolRoofSize;
-  totalEnergyPerYear += coolRoofData.energy * coolRoofSize;
+  totalEnergyPerYear += (coolRoofData.energy / 1000) * coolRoofSize;
   totalWaterPerYear += coolRoofData.water * coolRoofSize;
 
   // Social Activities Area
   const socialSize = (divisions.socialActivities / 100) * roofSize;
   const socialData = ROOF_TYPE_SPECS['Social Activities Area'];
-  totalCo2PerYear += socialData.co2 * socialSize;
+  totalCo2PerYear += (socialData.co2 / 1000) * socialSize;
   totalNoxPerYear += socialData.nox * socialSize;
-  totalEnergyPerYear += socialData.energy * socialSize;
+  totalEnergyPerYear += (socialData.energy / 1000) * socialSize;
   totalWaterPerYear += socialData.water * socialSize;
 
   // Calculate initial carbon footprint (manufacturing footprint)

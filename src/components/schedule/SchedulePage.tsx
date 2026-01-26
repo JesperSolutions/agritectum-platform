@@ -339,7 +339,7 @@ const SchedulePage: React.FC = () => {
               <button
                 onClick={loadAppointments}
                 disabled={loading}
-                className='px-4 py-2 bg-white text-slate-900 rounded-lg hover:bg-slate-100 transition-colors flex items-center gap-2 font-medium'
+                className='px-4 py-2 bg-white text-slate-900 rounded-lg hover:bg-slate-100 transition-colors flex items-center gap-2 text-sm font-medium shadow-sm'
               >
                 <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
                 <span className='hidden sm:inline'>{t('schedule.refresh')}</span>
@@ -347,7 +347,7 @@ const SchedulePage: React.FC = () => {
               {userCanManage && (
                 <button
                   onClick={handleCreateAppointment}
-                  className='px-4 py-2 bg-white text-slate-900 rounded-lg hover:bg-slate-100 transition-colors flex items-center gap-2 font-medium'
+                  className='px-4 py-2 bg-white text-slate-900 rounded-lg hover:bg-slate-100 transition-colors flex items-center gap-2 text-sm font-medium shadow-sm'
                 >
                   <Plus className='w-4 h-4' />
                   {t('schedule.addAppointment')}

@@ -191,9 +191,9 @@ export const getScheduledVisits = async (user: User): Promise<ScheduledVisit[]> 
 
     // Only throw permission error if it's actually a permission issue
     if (error.code === 'permission-denied') {
-      throw new Error(
-        'Missing or insufficient permissions to access scheduled visits. Please ensure your account has the correct custom claims set (branchId and permissionLevel).'
-      );
+      // Be graceful in UI: return empty list for branch admins/inspectors instead of crashing
+      logger.warn('⚠️ Permission denied when querying scheduled visits. Returning empty list.');
+      return [] as ScheduledVisit[];
     }
 
     throw new Error(error.message || 'Failed to fetch scheduled visits');

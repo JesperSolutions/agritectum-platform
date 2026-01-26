@@ -2,6 +2,17 @@
   "schedule.title": "Schedule",
   "schedule.subtitle": "Manage inspection schedules and appointments",
   "schedule.newAppointment": "New Inspection",
+  
+  "schedule.status": "Status",
+  "schedule.dateRange": "Date Range",
+  "schedule.inspector": "Inspector",
+  "schedule.options": "Options",
+  "schedule.all": "All",
+  "schedule.allDates": "All Dates",
+  "schedule.allInspectors": "All Inspectors",
+  "schedule.hideCancelled": "Hide Cancelled",
+  "schedule.hideCompleted": "Hide Completed",
+  "schedule.hideOld": "Hide Old (>30 days)",
   "schedule.editAppointment": "Edit Inspection",
   "schedule.viewAppointment": "View Inspection",
 

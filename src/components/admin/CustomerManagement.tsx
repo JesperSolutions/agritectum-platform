@@ -1229,7 +1229,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                     </button>
                     <button
                       onClick={() => handleDeleteCustomer(selectedCustomer)}
-                      className='px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 flex items-center'
+                      className='px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium shadow-sm flex items-center gap-2'
                     >
                       <Trash2 className='h-4 w-4 mr-2' />
                       {t('common.delete')}
@@ -1606,14 +1606,14 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                       setInvitationCustomer(null);
                       setGeneratedLink(null);
                     }}
-                    className='px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50'
+                    className='px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 shadow-sm'
                   >
                     {t('common.close') || 'Close'}
                   </button>
                   <button
                     onClick={handleCreateInvitation}
                     disabled={generatingLink}
-                    className='px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2'
+                    className='px-4 py-2 text-sm font-medium text-white bg-slate-700 rounded-lg hover:bg-slate-800 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2'
                   >
                     {generatingLink ? (
                       <>

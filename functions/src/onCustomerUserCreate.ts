@@ -27,7 +27,9 @@ export const onCustomerUserCreate = onDocumentCreated('users/{userId}', async ev
       role: 'customer',
       permissionLevel: -1,
       userType: 'customer',
+      email: userData.email || null,
       companyId: userData.companyId || null,
+      branchId: userData.branchId || null,
     };
 
     await admin.auth().setCustomUserClaims(userId, customClaims);

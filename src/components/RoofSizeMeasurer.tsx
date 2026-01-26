@@ -419,7 +419,7 @@ const RoofSizeMeasurer: React.FC<RoofSizeMeasurerProps> = ({
               {!isDrawing ? (
                 <button
                   onClick={handleStartDrawing}
-                  className='px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800 transition-colors font-medium text-sm sm:text-base touch-manipulation'
+                  className='px-4 py-2.5 bg-slate-700 text-white rounded-lg hover:bg-slate-800 active:bg-slate-900 transition-colors font-medium text-sm sm:text-base touch-manipulation shadow-sm'
                   style={{ minHeight: '44px' }} // iOS touch target minimum
                 >
                   {t('reportForm.roofMeasurer.startDrawing') || 'Start Drawing'}

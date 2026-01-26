@@ -3660,7 +3660,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                 <button
                   type='button'
                   onClick={handleDeleteDraft}
-                  className='px-4 py-2 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500'
+                  className='px-4 py-2 border border-red-300 rounded-lg shadow-sm text-sm font-medium text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500'
                 >
                   {t('form.buttons.deleteDraft')}
                 </button>
@@ -3708,7 +3708,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                     <button
                       type='button'
                       onClick={() => setCurrentStep(prev => Math.max(1, prev - 1))}
-                      className='w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+                      className='w-full sm:w-auto px-4 py-2 border border-slate-300 rounded-lg shadow-sm text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500'
                     >
                       {t('form.buttons.previous')}
                     </button>
@@ -3716,7 +3716,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                     <button
                       type='submit'
                       disabled={loading}
-                      className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50'
+                      className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-slate-600 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 disabled:opacity-50 shadow-sm'
                     >
                       {loading ? <LoadingSpinner size='sm' /> : <Save className='w-4 h-4 mr-2' />}
                       {t('form.buttons.saveAsDraft')}
@@ -3755,13 +3755,13 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                 <div className='flex justify-center gap-3 mt-4'>
                   <button
                     onClick={() => setShowCancelDialog(false)}
-                    className='px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500'
+                    className='px-4 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition-colors text-sm font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-500'
                   >
                     {t('form.buttons.continueEditing')}
                   </button>
                   <button
                     onClick={confirmCancel}
-                    className='px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500'
+                    className='px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500'
                   >
                     {t('form.buttons.discardChanges')}
                   </button>
@@ -3788,13 +3788,13 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                 <div className='flex justify-center gap-3 mt-4'>
                   <button
                     onClick={() => setShowDeleteDraftDialog(false)}
-                    className='px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500'
+                    className='px-4 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition-colors text-sm font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-500'
                   >
                     {t('form.buttons.cancel')}
                   </button>
                   <button
                     onClick={confirmDeleteDraft}
-                    className='px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500'
+                    className='px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500'
                   >
                     {t('form.buttons.deleteDraft')}
                   </button>

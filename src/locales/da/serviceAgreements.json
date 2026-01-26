@@ -247,6 +247,7 @@
   "serviceAgreement.form.signatures.supplierPlaceholder": "Navn",
   "serviceAgreement.form.signatures.customer": "Kunde:",
   "serviceAgreement.form.signatures.customerPlaceholder": "Navn",
+  "serviceAgreement.form.signatures.customerNote": "Kundens underskrift bliver tilføjet når de accepterer aftalen via linket.",
   "serviceAgreement.form.signatures.uploadImage": "Upload billede",
   "serviceAgreement.detail.send": "Send",
   "serviceAgreement.detail.sending": "Sender...",

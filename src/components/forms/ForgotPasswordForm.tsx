@@ -130,14 +130,14 @@ const ForgotPasswordForm: React.FC = () => {
                 <button
                   type='submit'
                   disabled={loading}
-                  className='group relative w-full flex justify-center py-3 px-6 text-base font-medium rounded-material text-white bg-blue-600 hover:bg-blue-700 shadow-material-2 hover:shadow-material-4 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-material uppercase tracking-wide'
+                  className='group relative w-full flex justify-center py-3 px-6 text-base font-medium rounded-lg text-white bg-slate-700 hover:bg-slate-800 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200'
                 >
                   {loading ? <LoadingSpinner size='sm' /> : t('forgotPassword.sendResetLink')}
                 </button>
 
                 <Link
                   to='/login'
-                  className='flex items-center justify-center w-full py-3 px-6 text-base font-medium rounded-material text-gray-700 bg-gray-100 hover:bg-gray-200 transition-all duration-material'
+                  className='flex items-center justify-center w-full py-3 px-6 text-base font-medium rounded-lg text-slate-700 bg-slate-100 hover:bg-slate-200 transition-all duration-200'
                 >
                   <ArrowLeft className='w-4 h-4 mr-2' />
                   {t('forgotPassword.backToLogin')}
@@ -150,7 +150,7 @@ const ForgotPasswordForm: React.FC = () => {
             <div className='pt-4'>
               <Link
                 to='/login'
-                className='flex items-center justify-center w-full py-3 px-6 text-base font-medium rounded-material text-white bg-blue-600 hover:bg-blue-700 shadow-material-2 hover:shadow-material-4 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-material uppercase tracking-wide'
+                className='flex items-center justify-center w-full py-3 px-6 text-base font-medium rounded-lg text-white bg-slate-700 hover:bg-slate-800 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-all duration-200'
               >
                 <ArrowLeft className='w-4 h-4 mr-2' />
                 {t('forgotPassword.backToLogin')}

@@ -17,6 +17,15 @@ import { getAuth } from 'firebase/auth';
 import { ServiceAgreement } from '../types';
 import { logger } from '../utils/logger';
 
+/**
+ * Calculate expiration date (7 days from now)
+ */
+const getExpirationDate = (): Date => {
+  const expiration = new Date();
+  expiration.setDate(expiration.getDate() + 7);
+  return expiration;
+};
+
 const removeUndefinedFields = <T extends Record<string, unknown>>(data: T): T => {
   const cleanedEntries = Object.entries(data).reduce<Record<string, unknown>>(
     (acc, [key, value]) => {
@@ -95,11 +104,16 @@ export const createServiceAgreement = async (
       }
     }
 
+    // Generate unique public token for customer acceptance
+    const publicToken = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+
     const agreementsRef = collection(db, 'serviceAgreements');
     const agreementWithDefaults = {
       ...agreementData,
       latitude,
       longitude,
+      isPublic: true,
+      publicToken,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -206,6 +220,16 @@ export const updateServiceAgreement = async (
       if (coords) {
         updates.latitude = coords.lat;
         updates.longitude = coords.lon;
+      }
+    }
+
+    // Ensure publicToken exists (for old agreements)
+    const agreementSnap = await getDoc(agreementRef);
+    if (agreementSnap.exists()) {
+      const agreement = agreementSnap.data();
+      if (!agreement.publicToken) {
+        updates.publicToken = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+        updates.isPublic = true;
       }
     }
 
@@ -319,63 +343,6 @@ export const generatePublicToken = (): string => {
 };
 
 // Send service agreement to customer via email
-export const sendServiceAgreementToCustomer = async (
-  agreementId: string,
-  customerEmail: string
-): Promise<void> => {
-  try {
-    const agreementRef = doc(db, 'serviceAgreements', agreementId);
-    const agreementSnap = await getDoc(agreementRef);
-
-    if (!agreementSnap.exists()) {
-      throw new Error('Service agreement not found');
-    }
-
-    const agreement = { id: agreementSnap.id, ...agreementSnap.data() } as ServiceAgreement;
-
-    // Ensure agreement is public and has a token
-    if (!agreement.isPublic || !agreement.publicToken) {
-      const token = generatePublicToken();
-      await updateDoc(agreementRef, {
-        isPublic: true,
-        publicToken: token,
-        updatedAt: serverTimestamp(),
-      });
-      agreement.isPublic = true;
-      agreement.publicToken = token;
-    }
-
-    const publicLink = `${window.location.origin}/service-agreement/public/${agreement.publicToken}`;
-
-    // Add to mail collection for Trigger Email extension
-    const mailRef = collection(db, 'mail');
-    await addDoc(mailRef, {
-      to: customerEmail,
-      template: {
-        name: 'service-agreement-sent',
-        data: {
-          customerName: agreement.customerName,
-          agreementType: agreement.agreementType,
-          startDate: agreement.startDate,
-          endDate: agreement.endDate,
-          nextServiceDate: agreement.nextServiceDate,
-          publicLink: publicLink,
-        },
-      },
-    });
-
-    // Update agreement with sent timestamp
-    await updateDoc(agreementRef, {
-      emailSent: true,
-      sentAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-    });
-  } catch (error) {
-    console.error('Error sending service agreement to customer:', error);
-    throw new Error('Failed to send service agreement to customer');
-  }
-};
-
 // Get service agreement by public token
 export const getServiceAgreementByPublicToken = async (
   token: string
@@ -405,6 +372,7 @@ export const getServiceAgreementByPublicToken = async (
 export const acceptServiceAgreementPublic = async (
   agreementId: string,
   customerData: { name: string; email: string },
+  signatureFile?: File | null,
   ipAddress?: string
 ): Promise<void> => {
   try {
@@ -425,13 +393,37 @@ export const acceptServiceAgreementPublic = async (
       throw new Error('This service agreement has already been accepted');
     }
 
+    if (!signatureFile) {
+      throw new Error('Signature file is required');
+    }
+
+    // Upload signature to storage
+    let signatureUrl: string | null = null;
+    try {
+      const { storage } = await import('../config/firebase');
+      const { ref, uploadBytes, getDownloadURL } = await import('firebase/storage');
+      
+      const timestamp = new Date().getTime();
+      const storageRef = ref(
+        storage,
+        `serviceAgreementUploads/${agreement.customerId || agreement.companyId}/signatures/${timestamp}-${signatureFile.name}`
+      );
+      
+      await uploadBytes(storageRef, signatureFile);
+      signatureUrl = await getDownloadURL(storageRef);
+    } catch (uploadError) {
+      console.error('Error uploading signature:', uploadError);
+      throw new Error('Failed to upload signature file');
+    }
+
     await updateDoc(agreementRef, {
       acceptedAt: new Date().toISOString(),
       acceptedBy: customerData.name,
       acceptedByEmail: customerData.email,
       acceptedIpAddress: ipAddress || null,
-      acceptanceSignature: `${customerData.name} - ${new Date().toISOString()}`,
-      status: 'active', // Change status to active upon acceptance
+      signatureUrl: signatureUrl,
+      signatureFileName: signatureFile.name,
+      status: 'active',
       updatedAt: new Date().toISOString(),
     });
   } catch (error) {
@@ -549,5 +541,59 @@ export const getServiceAgreementsByCompany = async (
     }
 
     throw new Error('Failed to fetch service agreements by company');
+  }
+};
+
+/**
+ * Send service agreement to customer via portal notification (not email)
+ * Creates an in-app notification that appears in the customer's portal
+ * Agreement will be available for 7 days
+ */
+export const sendServiceAgreementToCustomerPortal = async (
+  agreementId: string,
+  customerId: string
+): Promise<void> => {
+  try {
+    const agreement = await getServiceAgreement(agreementId);
+
+    if (!agreement) {
+      throw new Error('Service agreement not found');
+    }
+
+    // Create in-app notification for customer
+    const notificationsRef = collection(db, 'notifications');
+    const expirationDate = getExpirationDate();
+    const publicLink = `/portal/service-agreement/${agreementId}`;
+
+    await addDoc(notificationsRef, {
+      userId: customerId,
+      type: 'service_agreement_sent',
+      title: 'Service Agreement Ready for Review',
+      message: `A new service agreement from ${agreement.createdByName || 'Your Service Provider'} is ready for review and signing.`,
+      data: {
+        agreementId: agreementId,
+        customerName: agreement.customerName,
+        buildingAddress: agreement.customerAddress,
+      },
+      link: publicLink,
+      expiresAt: expirationDate,
+      createdAt: serverTimestamp(),
+      read: false,
+      actionRequired: true,
+    });
+
+    // Update agreement status to sent
+    const agreementRef = doc(db, 'serviceAgreements', agreementId);
+    await updateDoc(agreementRef, {
+      sentToPortal: true,
+      sentAt: serverTimestamp(),
+      portalExpiresAt: expirationDate,
+      updatedAt: serverTimestamp(),
+    });
+
+    logger.log(`✅ Service agreement ${agreementId} sent to customer portal`);
+  } catch (error) {
+    console.error('Error sending service agreement to portal:', error);
+    throw new Error('Failed to send service agreement');
   }
 };

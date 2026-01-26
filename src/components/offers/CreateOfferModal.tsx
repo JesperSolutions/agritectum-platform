@@ -384,14 +384,14 @@ const CreateOfferModal: React.FC<CreateOfferModalProps> = ({ report, onClose, on
             <button
               type='button'
               onClick={onClose}
-              className='flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-semibold'
+              className='flex-1 px-4 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition-colors text-sm font-medium shadow-sm'
             >
               {t('offers.create.cancel')}
             </button>
             <button
               type='submit'
               disabled={loading}
-              className='flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed'
+              className='flex-1 px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed'
             >
               {loading ? t('offers.create.creating') : t('offers.create.createOffer')}
             </button>

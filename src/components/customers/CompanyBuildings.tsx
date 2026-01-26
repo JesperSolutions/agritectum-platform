@@ -144,7 +144,7 @@ const CompanyBuildings: React.FC<CompanyBuildingsProps> = ({ customer, onBuildin
             <div className='flex gap-2'>
               <button
                 onClick={editingBuilding ? handleUpdateBuilding : handleAddBuilding}
-                className='px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700'
+                className='px-4 py-2 text-sm font-medium text-white bg-slate-700 rounded-lg hover:bg-slate-800 transition-colors shadow-sm'
               >
                 {editingBuilding ? 'Uppdatera' : 'Lägg till'}
               </button>
@@ -155,7 +155,7 @@ const CompanyBuildings: React.FC<CompanyBuildingsProps> = ({ customer, onBuildin
                   setNewBuildingAddress('');
                   setNewBuildingDescription('');
                 }}
-                className='px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50'
+                className='px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 shadow-sm'
               >
                 Avbryt
               </button>

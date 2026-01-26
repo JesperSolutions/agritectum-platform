@@ -78,14 +78,14 @@ const ImprovementResults: React.FC<ImprovementResultsProps> = ({ metrics, onExpo
             <div className='flex space-x-2'>
               <button
                 onClick={() => onExport('PDF')}
-                className='flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors'
+                className='flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium shadow-sm'
               >
                 <FileText className='w-4 h-4 mr-2' />
                 PDF
               </button>
               <button
                 onClick={() => onExport('Excel')}
-                className='flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors'
+                className='flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium shadow-sm'
               >
                 <Download className='w-4 h-4 mr-2' />
                 Excel

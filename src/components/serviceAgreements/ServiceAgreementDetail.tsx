@@ -20,7 +20,7 @@ import {
   CheckCircle,
 } from 'lucide-react';
 import { useToast } from '../../contexts/ToastContext';
-import { sendServiceAgreementToCustomer } from '../../services/serviceAgreementService';
+import { sendServiceAgreementToCustomerPortal } from '../../services/serviceAgreementService';
 import { useAuth } from '../../contexts/AuthContext';
 
 interface ServiceAgreementDetailProps {
@@ -97,18 +97,18 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
   };
 
   const handleSend = async () => {
-    if (!agreement.customerEmail) {
+    if (!agreement.customerId) {
       showError(
-        t('serviceAgreement.detail.noEmail') || 'Customer email is required to send the agreement'
+        t('serviceAgreement.detail.noCustomer') || 'Customer ID is required to send the agreement'
       );
       return;
     }
 
     setSending(true);
     try {
-      await sendServiceAgreementToCustomer(agreement.id, agreement.customerEmail);
+      await sendServiceAgreementToCustomerPortal(agreement.id, agreement.customerId);
       showSuccess(
-        t('serviceAgreement.detail.sent') || 'Service agreement sent to customer successfully'
+        t('serviceAgreement.detail.sentPortal') || 'Service agreement sent to customer portal successfully'
       );
     } catch (error) {
       console.error('Error sending service agreement:', error);
@@ -121,37 +121,85 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
   return (
     <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4'>
       <div className='bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-slate-200'>
-        {/* Header */}
-        <div className='sticky top-0 bg-white border-b border-slate-200 px-8 py-6 flex items-center justify-between z-10'>
-          <div>
-            <h2 className='text-2xl font-bold text-slate-900 tracking-tight'>
-              {t('serviceAgreement.detail.title')}
-            </h2>
-            <p className='text-sm text-slate-600 mt-1'>{agreement.customerName}</p>
+        {/* Header with Status and Actions */}
+        <div className='sticky top-0 bg-white border-b border-slate-200 px-8 py-6 z-10'>
+          <div className='flex items-center justify-between mb-4'>
+            <div>
+              <h2 className='text-2xl font-bold text-slate-900 tracking-tight'>
+                {t('serviceAgreement.detail.title')}
+              </h2>
+              <p className='text-sm text-slate-600 mt-1'>{agreement.customerName}</p>
+            </div>
+            <button
+              onClick={onClose}
+              className='text-slate-400 hover:text-slate-600 transition-colors p-2 hover:bg-slate-100 rounded-lg'
+              aria-label={t('common.buttons.close')}
+            >
+              <X className='h-6 w-6' />
+            </button>
           </div>
-          <button
-            onClick={onClose}
-            className='text-slate-400 hover:text-slate-600 transition-colors p-2 hover:bg-slate-100 rounded-lg'
-            aria-label={t('common.buttons.close')}
-          >
-            <X className='h-6 w-6' />
-          </button>
+
+          {/* Status Badge and Action Buttons */}
+          <div className='flex items-center justify-between flex-wrap gap-3'>
+            <div className='flex items-center gap-3'>
+              <span
+                className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(agreement.status)}`}
+              >
+                {t(`serviceAgreement.status.${agreement.status}`)}
+              </span>
+              <span className='inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-slate-100 text-slate-800'>
+                <FileCheck className='w-4 h-4 mr-1' />
+                {t(`serviceAgreement.type.${agreement.agreementType}`)}
+              </span>
+            </div>
+
+            {/* Action Buttons */}
+            <div className='flex items-center gap-2'>
+              {agreement.publicToken && (
+                <>
+                  <button
+                    onClick={() => {
+                      const url = `${window.location.origin}/service-agreement/public/${agreement.publicToken}`;
+                      window.open(url, '_blank');
+                    }}
+                    className='px-3 py-2 rounded-lg text-sm font-medium bg-slate-600 text-white hover:bg-slate-700 flex items-center gap-2'
+                    title={t('serviceAgreement.detail.viewPublic') || 'View public page'}
+                  >
+                    <ExternalLink className='w-4 h-4' />
+                    {t('serviceAgreement.detail.publicLink') || 'Public Link'}
+                  </button>
+                  <button
+                    onClick={async () => {
+                      const url = `${window.location.origin}/service-agreement/public/${agreement.publicToken}`;
+                      await navigator.clipboard.writeText(url);
+                      setCopied(true);
+                      showSuccess(
+                        t('serviceAgreement.detail.linkCopied') || 'Link copied to clipboard'
+                      );
+                      setTimeout(() => setCopied(false), 2000);
+                    }}
+                    className='px-3 py-2 rounded-lg text-sm font-medium border border-slate-200 hover:bg-slate-50 text-slate-700 flex items-center gap-2'
+                    title={t('serviceAgreement.detail.copyLink') || 'Copy link'}
+                  >
+                    {copied ? (
+                      <>
+                        <Check className='w-4 h-4' />
+                        {t('serviceAgreement.detail.copied') || 'Copied!'}
+                      </>
+                    ) : (
+                      <>
+                        <Copy className='w-4 h-4' />
+                        {t('serviceAgreement.detail.copy') || 'Copy'}
+                      </>
+                    )}
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
         </div>
 
         <div className='p-8 space-y-6'>
-          {/* Status and Type Badges */}
-          <div className='flex items-center gap-3'>
-            <span
-              className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(agreement.status)}`}
-            >
-              {t(`serviceAgreement.status.${agreement.status}`)}
-            </span>
-            <span className='inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-slate-100 text-slate-800'>
-              <FileCheck className='w-4 h-4 mr-1' />
-              {t(`serviceAgreement.type.${agreement.agreementType}`)}
-            </span>
-          </div>
-
           {/* Customer Info */}
           <div className='bg-slate-50 rounded-xl p-6 border border-slate-200'>
             <h4 className='text-sm font-semibold text-slate-500 uppercase tracking-wide mb-4 flex items-center gap-2'>
@@ -526,66 +574,21 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
             </div>
           )}
 
-          {/* Public Link Section */}
-          {agreement.isPublic && agreement.publicToken && (
-            <div className='bg-blue-50 rounded-xl p-6 border border-blue-200'>
-              <h4 className='text-sm font-semibold text-blue-900 uppercase tracking-wide mb-3 flex items-center gap-2'>
-                <ExternalLink className='w-4 h-4' />
-                {t('serviceAgreement.detail.publicLink') || 'Public Link'}
-              </h4>
-              <div className='flex items-center gap-2'>
-                <input
-                  type='text'
-                  readOnly
-                  value={`${window.location.origin}/service-agreement/public/${agreement.publicToken}`}
-                  className='flex-1 px-4 py-2 bg-white border border-blue-300 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500'
-                  onClick={e => (e.target as HTMLInputElement).select()}
-                />
-                <button
-                  onClick={async () => {
-                    const url = `${window.location.origin}/service-agreement/public/${agreement.publicToken}`;
-                    await navigator.clipboard.writeText(url);
-                    setCopied(true);
-                    showSuccess(
-                      t('serviceAgreement.detail.linkCopied') || 'Link copied to clipboard'
-                    );
-                    setTimeout(() => setCopied(false), 2000);
-                  }}
-                  className='px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2'
-                  title={t('serviceAgreement.detail.copyLink') || 'Copy link'}
-                >
-                  {copied ? (
-                    <>
-                      <Check className='w-4 h-4' />
-                      {t('serviceAgreement.detail.copied') || 'Copied!'}
-                    </>
-                  ) : (
-                    <>
-                      <Copy className='w-4 h-4' />
-                      {t('serviceAgreement.detail.copy') || 'Copy'}
-                    </>
-                  )}
-                </button>
-                <button
-                  onClick={() => {
-                    const url = `${window.location.origin}/service-agreement/public/${agreement.publicToken}`;
-                    window.open(url, '_blank');
-                  }}
-                  className='px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors flex items-center gap-2'
-                  title={t('serviceAgreement.detail.viewPublic') || 'View public page'}
-                >
-                  <ExternalLink className='w-4 h-4' />
-                  {t('serviceAgreement.detail.view') || 'View'}
-                </button>
-              </div>
-              {agreement.acceptedAt && (
-                <p className='mt-3 text-sm text-green-700'>
-                  ✓ {t('serviceAgreement.detail.acceptedOn') || 'Accepted on'}{' '}
-                  {formatDate(agreement.acceptedAt)}
-                  {agreement.acceptedBy &&
-                    ` ${t('serviceAgreement.detail.by') || 'by'} ${agreement.acceptedBy}`}
+          {/* Acceptance Status */}
+          {agreement.acceptedAt && (
+            <div className='bg-green-50 rounded-xl p-6 border border-green-200'>
+              <div className='flex items-center gap-2 text-green-800'>
+                <CheckCircle className='w-5 h-5' />
+                <p className='font-semibold'>
+                  {t('serviceAgreement.detail.accepted') || 'Agreement Accepted'}
                 </p>
-              )}
+              </div>
+              <p className='mt-2 text-sm text-green-700'>
+                {t('serviceAgreement.detail.acceptedOn') || 'Accepted on'}{' '}
+                {formatDate(agreement.acceptedAt)}
+                {agreement.acceptedBy &&
+                  ` ${t('serviceAgreement.detail.by') || 'by'} ${agreement.acceptedBy}`}
+              </p>
             </div>
           )}
 
@@ -609,46 +612,29 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
         </div>
 
         {/* Actions */}
-        <div className='sticky bottom-0 bg-white border-t border-slate-200 px-8 py-6 flex justify-end gap-3'>
+        <div className='sticky bottom-0 bg-white border-t border-slate-200 px-8 py-6 flex justify-between gap-3'>
           <button
             onClick={onClose}
             className='px-6 py-3 border border-slate-200 rounded-lg text-slate-700 hover:bg-slate-50 transition-colors font-medium'
           >
             {t('common.buttons.close')}
           </button>
-          {agreement.customerEmail && (
+          <div className='flex gap-3'>
             <button
-              onClick={handleSend}
-              disabled={sending}
-              className='px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium uppercase tracking-wide flex items-center gap-2 shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed'
+              onClick={onEdit}
+              className='px-6 py-3 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors font-medium uppercase tracking-wide flex items-center gap-2 shadow-sm hover:shadow-md'
             >
-              {sending ? (
-                <>
-                  <Clock className='h-5 w-5 animate-spin' />
-                  {t('serviceAgreement.detail.sending') || 'Sending...'}
-                </>
-              ) : (
-                <>
-                  <Send className='h-5 w-5' />
-                  {t('serviceAgreement.detail.send') || 'Send'}
-                </>
-              )}
+              <Edit className='h-5 w-5' />
+              {t('serviceAgreement.editAgreement')}
             </button>
-          )}
-          <button
-            onClick={onEdit}
-            className='px-6 py-3 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors font-medium uppercase tracking-wide flex items-center gap-2 shadow-sm hover:shadow-md'
-          >
-            <Edit className='h-5 w-5' />
-            {t('serviceAgreement.editAgreement')}
-          </button>
-          <button
-            onClick={onDelete}
-            className='px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium uppercase tracking-wide flex items-center gap-2 shadow-sm hover:shadow-md'
-          >
-            <Trash2 className='h-5 w-5' />
-            {t('serviceAgreement.deleteAgreement')}
-          </button>
+            <button
+              onClick={onDelete}
+              className='px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium uppercase tracking-wide flex items-center gap-2 shadow-sm hover:shadow-md'
+            >
+              <Trash2 className='h-5 w-5' />
+              {t('serviceAgreement.deleteAgreement')}
+            </button>
+          </div>
         </div>
       </div>
     </div>

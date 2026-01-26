@@ -359,7 +359,7 @@ const RoofForGoodCalculator: React.FC<{ building?: Building }> = ({ building }) 
               placeholder={t('esg.calculator.step2.addressPlaceholder') || 'Enter full address'}
               className='flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none'
             />
-            <button className='px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium'>
+            <button className='px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium shadow-sm'>
               {t('esg.calculator.step2.useLocation') || 'Use Current'}
             </button>
           </div>

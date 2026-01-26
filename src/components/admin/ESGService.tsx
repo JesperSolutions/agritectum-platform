@@ -1411,7 +1411,7 @@ const ESGService: React.FC = () => {
                     </button>
                     <button
                       onClick={() => setShowPublicLinkModal(false)}
-                      className='px-6 py-3 bg-slate-200 text-slate-800 rounded-xl hover:bg-slate-300 transition-all font-semibold'
+                      className='px-4 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition-colors text-sm font-medium shadow-sm'
                     >
                       {t('common.buttons.close') || 'Close'}
                     </button>

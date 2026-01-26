@@ -2,6 +2,17 @@
   "schedule.title": "Tidsplan",
   "schedule.subtitle": "Administrer inspektionsplaner og aftalte tider",
   "schedule.newAppointment": "Ny inspektion",
+  
+  "schedule.status": "Status",
+  "schedule.dateRange": "Datointerval",
+  "schedule.inspector": "Inspektør",
+  "schedule.options": "Indstillinger",
+  "schedule.all": "Alle",
+  "schedule.allDates": "Alle datoer",
+  "schedule.allInspectors": "Alle inspektører",
+  "schedule.hideCancelled": "Skjul annullerede",
+  "schedule.hideCompleted": "Skjul færdige",
+  "schedule.hideOld": "Skjul gamle (>30 dage)",
   "schedule.editAppointment": "Rediger inspektion",
   "schedule.viewAppointment": "Vis inspektion",
 

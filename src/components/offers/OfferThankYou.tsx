@@ -10,7 +10,7 @@ const OfferThankYou: React.FC = () => (
       </p>
       <a
         href='https://agritectum.com'
-        className='mt-4 inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
+        className='mt-4 inline-block px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium shadow-sm'
       >
         Go to Homepage
       </a>

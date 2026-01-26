@@ -223,7 +223,7 @@ const RoofSizeMeasurer: React.FC<RoofSizeMeasurerProps> = ({
               {!isDrawing ? (
                 <button
                   onClick={handleStartDrawing}
-                  className='px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium'
+                  className='px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium shadow-sm'
                 >
                   Start Drawing
                 </button>
@@ -231,7 +231,7 @@ const RoofSizeMeasurer: React.FC<RoofSizeMeasurerProps> = ({
                 <>
                   <button
                     onClick={handleClear}
-                    className='px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium flex items-center gap-2'
+                    className='px-4 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition-colors text-sm font-medium shadow-sm flex items-center gap-2'
                   >
                     <Trash2 className='w-4 h-4' />
                     Clear

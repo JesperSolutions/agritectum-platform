@@ -147,7 +147,7 @@ const LoginForm: React.FC = () => {
             <button
               type='submit'
               disabled={loading}
-              className='group relative w-full flex justify-center py-3 px-6 text-base font-medium rounded-material text-white bg-blue-600 hover:bg-blue-700 shadow-material-2 hover:shadow-material-4 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-material uppercase tracking-wide'
+              className='group relative w-full flex justify-center py-3 px-6 text-base font-medium rounded-lg text-white bg-slate-700 hover:bg-slate-800 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200'
             >
               {loading ? <LoadingSpinner size='sm' /> : t('login.signin')}
             </button>

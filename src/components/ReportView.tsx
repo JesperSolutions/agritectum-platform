@@ -1382,7 +1382,7 @@ const ReportView: React.FC = () => {
               {report.status === 'draft' && (
                 <button
                   onClick={() => handleStatusChange('completed')}
-                  className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500'
+                  className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 shadow-sm'
                 >
                   <CheckCircle className='w-4 h-4 mr-2' />
                   {t('reportView.markAsCompleted')}
@@ -1392,7 +1392,7 @@ const ReportView: React.FC = () => {
               {report.status === 'completed' && (
                 <button
                   onClick={() => handleStatusChange('sent')}
-                  className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+                  className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-slate-700 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 shadow-sm'
                 >
                   <Send className='w-4 h-4 mr-2' />
                   {t('reportView.markAsSent')}
@@ -1412,7 +1412,7 @@ const ReportView: React.FC = () => {
               {(report.status === 'sent' || report.status === 'completed') && (
                 <button
                   onClick={() => handleStatusChange('archived')}
-                  className='inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+                  className='inline-flex items-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-lg text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-colors shadow-sm'
                 >
                   <Archive className='w-4 h-4 mr-2' />
                   {t('reports.actions.archive')}
@@ -1423,7 +1423,7 @@ const ReportView: React.FC = () => {
                 (hasOffer ? (
                   <Link
                     to={existingOffer ? `/offers?selected=${existingOffer.id}` : '/offers'}
-                    className='inline-flex items-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-colors'
+                    className='inline-flex items-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-lg text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-colors shadow-sm'
                   >
                     <Eye className='w-4 h-4 mr-2' />
                     {t('reportView.viewOffer') || 'View Offer'}

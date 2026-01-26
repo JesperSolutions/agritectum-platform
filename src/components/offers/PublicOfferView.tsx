@@ -193,7 +193,7 @@ const PublicOfferView: React.FC = () => {
           </p>
           <button
             onClick={() => (window.location.href = 'https://agritectum.com')}
-            className='px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
+            className='px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium shadow-sm'
           >
             Go to Homepage
           </button>
@@ -408,7 +408,7 @@ const PublicOfferView: React.FC = () => {
               <button
                 onClick={handleReject}
                 disabled={processing || !rejectionReason.trim()}
-                className='flex-1 px-4 py-2 bg-red-600 text-white rounded-material hover:bg-red-700 transition-all duration-material disabled:opacity-50 disabled:cursor-not-allowed'
+                className='flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed'
               >
                 {processing ? t('offers.public.submitting') : t('offers.public.submit')}
               </button>
@@ -456,7 +456,7 @@ const PublicOfferView: React.FC = () => {
                   doAccept();
                 }}
                 disabled={processing}
-                className='flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+                className='flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed'
               >
                 {processing ? 'Confirming...' : 'Confirm'}
               </button>
