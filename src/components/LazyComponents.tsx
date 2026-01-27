@@ -47,6 +47,9 @@ export const LazyBuildingDetail = lazyWithRetry(() => import('./portal/BuildingD
 export const LazyServiceAgreementsList = lazyWithRetry(
   () => import('./portal/ServiceAgreementsList')
 );
+export const LazyPortalServiceAgreementDetail = lazyWithRetry(
+  () => import('./portal/PortalServiceAgreementDetail')
+);
 export const LazyScheduledVisitsList = lazyWithRetry(() => import('./portal/ScheduledVisitsList'));
 export const LazyAcceptAppointmentView = lazyWithRetry(
   () => import('./portal/AcceptAppointmentView')

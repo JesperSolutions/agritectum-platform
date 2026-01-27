@@ -8,6 +8,7 @@ import {
   LazyBuildingsList,
   LazyBuildingDetail,
   LazyServiceAgreementsList,
+  LazyPortalServiceAgreementDetail,
   LazyScheduledVisitsList,
   LazyAcceptAppointmentView,
   LazyPortalCustomerProfile,
@@ -74,6 +75,15 @@ export const portalRoutes: RouteObject[] = [
         element: (
           <Suspense fallback={<LoadingFallback />}>
             <LazyServiceAgreementsList />
+          </Suspense>
+        ),
+        errorElement: <RouteErrorBoundary />,
+      },
+      {
+        path: 'service-agreements/:agreementId',
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <LazyPortalServiceAgreementDetail />
           </Suspense>
         ),
         errorElement: <RouteErrorBoundary />,

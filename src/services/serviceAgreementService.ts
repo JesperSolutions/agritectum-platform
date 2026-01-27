@@ -233,6 +233,11 @@ export const updateServiceAgreement = async (
       }
     }
 
+    // If acceptance timestamp is provided without explicit status, mark as active
+    if (updates.acceptedAt && !updates.status) {
+      updates.status = 'active';
+    }
+
     const sanitizedUpdates = removeUndefinedFields({
       ...updates,
       updatedAt: new Date().toISOString(),

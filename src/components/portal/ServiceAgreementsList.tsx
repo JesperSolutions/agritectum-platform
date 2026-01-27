@@ -17,7 +17,7 @@ const ServiceAgreementsList: React.FC = () => {
   const { t } = useIntl();
   const [agreements, setAgreements] = useState<ServiceAgreement[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<'all' | 'active' | 'expired' | 'cancelled'>('all');
+  const [filter, setFilter] = useState<'all' | 'active' | 'expired' | 'cancelled' | 'pending'>('all');
 
   useEffect(() => {
     if (currentUser) {
@@ -29,7 +29,8 @@ const ServiceAgreementsList: React.FC = () => {
     if (!currentUser) return;
     setLoading(true);
     try {
-      const data = await getServiceAgreementsByCustomer(currentUser.uid);
+      const customerId = currentUser.companyId || currentUser.uid;
+      const data = await getServiceAgreementsByCustomer(customerId);
       setAgreements(data);
     } catch (error) {
       console.error('Error loading service agreements:', error);
@@ -53,6 +54,7 @@ const ServiceAgreementsList: React.FC = () => {
 
   const filterTabs = [
     { value: 'all', label: t('common.filters.all') || 'All' },
+    { value: 'pending', label: t('serviceAgreement.status.pending') || 'Pending' },
     { value: 'active', label: t('serviceAgreement.status.active') || 'Active' },
     { value: 'expired', label: t('serviceAgreement.status.expired') || 'Expired' },
     { value: 'cancelled', label: t('serviceAgreement.status.cancelled') || 'Cancelled' },
@@ -68,7 +70,7 @@ const ServiceAgreementsList: React.FC = () => {
       <FilterTabs
         tabs={filterTabs}
         activeTab={filter}
-        onTabChange={value => setFilter(value as 'all' | 'active' | 'expired' | 'cancelled')}
+        onTabChange={value => setFilter(value as 'all' | 'active' | 'expired' | 'cancelled' | 'pending')}
       />
 
       {filteredAgreements.length === 0 ? (
@@ -93,17 +95,17 @@ const ServiceAgreementsList: React.FC = () => {
               <div className='grid grid-cols-1 md:grid-cols-4 gap-4 mt-4'>
                 <IconLabel
                   icon={Calendar}
-                  label={t('serviceAgreement.startDate') || 'Start Date'}
+                  label={t('serviceAgreement.detail.startDate') || 'Start Date'}
                   value={formatDate(agreement.startDate)}
                 />
                 <IconLabel
                   icon={Calendar}
-                  label={t('serviceAgreement.endDate') || 'End Date'}
+                  label={t('serviceAgreement.detail.endDate') || 'End Date'}
                   value={formatDate(agreement.endDate)}
                 />
                 <IconLabel
                   icon={Calendar}
-                  label={t('serviceAgreement.nextService') || 'Next Service'}
+                  label={t('serviceAgreement.detail.nextService') || 'Next Service'}
                   value={formatDate(agreement.nextServiceDate)}
                 />
                 {agreement.price && (

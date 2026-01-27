@@ -620,18 +620,18 @@ const BuildingDetail: React.FC = () => {
                           <div className='grid grid-cols-1 md:grid-cols-3 gap-4 mt-4'>
                             <IconLabel
                               icon={Calendar}
-                              label={t('serviceAgreement.startDate') || 'Start Date'}
+                              label={t('serviceAgreement.detail.startDate') || 'Start Date'}
                               value={formatDate(agreement.startDate)}
                             />
                             <IconLabel
                               icon={Calendar}
-                              label={t('serviceAgreement.endDate') || 'End Date'}
+                              label={t('serviceAgreement.detail.endDate') || 'End Date'}
                               value={formatDate(agreement.endDate)}
                             />
                             {agreement.nextServiceDate && (
                               <IconLabel
                                 icon={Calendar}
-                                label={t('serviceAgreement.nextService') || 'Next Service'}
+                                label={t('serviceAgreement.detail.nextService') || 'Next Service'}
                                 value={formatDate(agreement.nextServiceDate)}
                               />
                             )}
@@ -664,12 +664,12 @@ const BuildingDetail: React.FC = () => {
                           <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mt-4'>
                             <IconLabel
                               icon={Calendar}
-                              label={t('serviceAgreement.startDate') || 'Start Date'}
+                              label={t('serviceAgreement.detail.startDate') || 'Start Date'}
                               value={formatDate(agreement.startDate)}
                             />
                             <IconLabel
                               icon={Calendar}
-                              label={t('serviceAgreement.endDate') || 'End Date'}
+                              label={t('serviceAgreement.detail.endDate') || 'End Date'}
                               value={formatDate(agreement.endDate)}
                             />
                           </div>
