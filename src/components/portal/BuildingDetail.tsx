@@ -2,22 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useIntl } from '../../hooks/useIntl';
-
-// Dynamic logger import
-let logger: any = {
-  log: console.log,
-  warn: console.warn,
-  error: console.error,
-};
-
-(async () => {
-  try {
-    const loggerModule = await import('../../utils/logger');
-    logger = loggerModule.logger;
-  } catch (error) {
-    console.warn('Failed to load logger module');
-  }
-})();
+import { logger } from '../../utils/logger';
 import {
   getBuildingById,
   updateBuilding,
@@ -237,7 +222,6 @@ const BuildingDetail: React.FC = () => {
   const pastAgreements = serviceAgreements.filter(a => a.status !== 'active');
 
   if (loading) {
-    logger.log('⏳ [BuildingDetail] Rendering loading state');
     return (
       <div className='flex items-center justify-center h-64'>
         <LoadingSpinner size='lg' />
@@ -246,7 +230,6 @@ const BuildingDetail: React.FC = () => {
   }
 
   if (!building) {
-    logger.warn('⚠️ [BuildingDetail] Building is null, rendering not found');
     return (
       <div className='text-center py-12'>
         <p className='text-gray-600'>
@@ -262,17 +245,33 @@ const BuildingDetail: React.FC = () => {
     );
   }
 
-  logger.log('✅ [BuildingDetail] Rendering page:', {
-    buildingId: building.id,
-    address: building.address,
-    reportsCount: reports.length,
-    agreementsCount: serviceAgreements.length,
-    activitiesCount: activities.length,
-    loadingRelated,
-  });
-
   return (
     <div className='space-y-6'>
+      {/* Error Messages */}
+      {errors.length > 0 && (
+        <div className='bg-red-50 border border-red-200 rounded-lg p-4'>
+          <div className='flex items-start gap-3'>
+            <AlertCircle className='w-5 h-5 text-red-600 flex-shrink-0 mt-0.5' />
+            <div className='flex-1'>
+              <h3 className='font-semibold text-red-900 mb-2'>Issues encountered</h3>
+              <ul className='space-y-1'>
+                {errors.map((error, idx) => (
+                  <li key={idx} className='text-sm text-red-700'>
+                    • {error}
+                  </li>
+                ))}
+              </ul>
+              <button
+                onClick={() => setErrors([])}
+                className='mt-3 text-sm text-red-600 hover:text-red-700 font-medium'
+              >
+                Dismiss
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className='flex items-center justify-between'>
         <Link

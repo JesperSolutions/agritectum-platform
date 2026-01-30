@@ -1,14 +1,25 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Helper functions
+    //
+    // ============================================================================
+    // HELPER FUNCTIONS
+    // ============================================================================
+    //
+    // Standard Patterns:
+    // 1. Branch Access: (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")
+    // 2. Superadmins get branchId == "main" in custom claims for universal access
+    // 3. All internal users (inspector/branchAdmin) are scoped to their branch
+    // 4. Customers use isCustomer() check and link via customerId or companyId
+    //
+    
+    // Authentication check
     function isAuthenticated() {
       return request.auth != null;
     }
     
+    // Get permission level from custom claims (with Firestore fallback)
     function getPermissionLevel() {
-      // Try to get permission level from custom claims first
-      // Fallback: check user document in Firestore
       return request.auth.token.permissionLevel != null 
         ? request.auth.token.permissionLevel
         : (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
@@ -17,9 +28,8 @@ service cloud.firestore {
           : 0);
     }
     
+    // Get branch ID from custom claims (with Firestore fallback)
     function getUserBranchId() {
-      // Try to get branchId from custom claims first
-      // Fallback: check user document in Firestore
       return request.auth.token.branchId != null 
         ? request.auth.token.branchId
         : (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
@@ -28,15 +38,8 @@ service cloud.firestore {
           : "");
     }
     
-    function hasBranchAccess(branchId) {
-      // Helper to check if user has access to a branch (handles null/empty branchId)
-      let userBranchId = getUserBranchId();
-      return userBranchId == branchId || userBranchId == "main" || isSuperadmin();
-    }
-    
+    // Get user role from custom claims (with Firestore fallback)
     function getUserRole() {
-      // Try to get role from custom claims first
-      // Fallback: check user document in Firestore
       return request.auth.token.role != null
         ? request.auth.token.role
         : (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
@@ -45,6 +48,17 @@ service cloud.firestore {
           : "");
     }
     
+    // Get company ID for customer users (with Firestore fallback)
+    function getUserCompanyId() {
+      return request.auth.token.companyId != null
+        ? request.auth.token.companyId
+        : (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+           get(/databases/$(database)/documents/users/$(request.auth.uid)).data.companyId != null
+          ? get(/databases/$(database)/documents/users/$(request.auth.uid)).data.companyId
+          : "");
+    }
+    
+    // Permission level checks
     function isSuperadmin() {
       return isAuthenticated() && (getUserRole() == 'superadmin' || getPermissionLevel() >= 2);
     }
@@ -61,32 +75,11 @@ service cloud.firestore {
       return isAuthenticated() && (getUserRole() == 'customer' || getPermissionLevel() == -1);
     }
     
-    function getUserType() {
-      // Try to get userType from custom claims first
-      // Fallback: check user document in Firestore
-      return request.auth.token.userType != null
-        ? request.auth.token.userType
-        : (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
-           get(/databases/$(database)/documents/users/$(request.auth.uid)).data.userType != null
-          ? get(/databases/$(database)/documents/users/$(request.auth.uid)).data.userType
-          : "internal");
-    }
-    
-    function getUserCompanyId() {
-      // Try to get companyId from custom claims first
-      // Fallback: check user document in Firestore
-      return request.auth.token.companyId != null
-        ? request.auth.token.companyId
-        : (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
-           get(/databases/$(database)/documents/users/$(request.auth.uid)).data.companyId != null
-          ? get(/databases/$(database)/documents/users/$(request.auth.uid)).data.companyId
-          : "");
-    }
-    
-    // Helper function to check if user is authenticated (fallback for users without custom claims)
-    function isAuthenticatedUser() {
-      return isAuthenticated();
-    }
+    //
+    // ============================================================================
+    // COLLECTION RULES
+    // ============================================================================
+    //
     
     // Users collection
     match /users/{userId} {
@@ -111,7 +104,7 @@ service cloud.firestore {
         isSuperadmin() ||
         (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
         // Allow authenticated users to update their own document
-        (isAuthenticatedUser() && request.auth.uid == userId)
+        (request.auth.uid == userId)
       );
       
       // Allow authenticated users to delete users
@@ -127,23 +120,7 @@ service cloud.firestore {
       );
       allow write: if isSuperadmin();
       
-      // Employees subcollection
-      match /employees/{employeeId} {
-        allow read: if isAuthenticated() && (
-          isSuperadmin() ||
-          (isBranchAdmin() && (getUserBranchId() == branchId || getUserBranchId() == "main")) ||
-          (isInspector() && (getUserBranchId() == branchId || getUserBranchId() == "main"))
-        );
-        allow create: if isAuthenticated() && (
-          isSuperadmin() ||
-          (isBranchAdmin() && (getUserBranchId() == branchId || getUserBranchId() == "main"))
-        );
-        allow update: if isAuthenticated() && (
-          isSuperadmin() ||
-          (isBranchAdmin() && (getUserBranchId() == branchId || getUserBranchId() == "main"))
-        );
-        allow delete: if isAuthenticated();
-      }
+      // Note: employees subcollection deprecated - all user data in /users collection
     }
     
     // Reports collection
@@ -265,7 +242,10 @@ service cloud.firestore {
       allow create: if isAuthenticated() && (
         isSuperadmin() ||
         (isBranchAdmin() && (request.resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
-      ) && request.resource.data.createdBy == request.auth.uid;
+      ) && 
+        request.resource.data.createdBy == request.auth.uid &&
+        // Required fields validation
+        request.resource.data.keys().hasAll(["branchId", "scheduledDate", "assignedInspectorId", "customerName", "createdBy"]);
       
       // Superadmin and branch admins can update appointments in their branch
       // Inspectors can update their own appointment status and notes
@@ -399,23 +379,7 @@ service cloud.firestore {
       allow read, write: if isAuthenticated() && request.auth.token.email == email;
     }
 
-    // Employees collection
-    match /employees/{employeeId} {
-      allow read: if isAuthenticated() && (
-        isSuperadmin() ||
-        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
-        (isInspector() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
-      );
-      allow create: if isAuthenticated() && (
-        isSuperadmin() ||
-        (isBranchAdmin() && (request.resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
-      );
-      allow update: if isAuthenticated() && (
-        isSuperadmin() ||
-        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
-      );
-      allow delete: if isAuthenticated();
-    }
+    // Note: employees collection deprecated - all user data in /users collection
     
     // Offers collection
     match /offers/{offerId} {
@@ -443,20 +407,27 @@ service cloud.firestore {
            get(/databases/$(database)/documents/buildings/$(get(/databases/$(database)/documents/reports/$(resource.data.reportId)).data.buildingId)).data.companyId == getUserCompanyId())
         );
       
-      // Authenticated read access for internal users
-      allow read: if isAuthenticated() && (
-        isSuperadmin() ||
-        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
-        (isInspector() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
-        (isInspector() && resource.data.createdBy == request.auth.uid)
-      );
+      // Superadmin read access
+      allow read: if isAuthenticated() && isSuperadmin();
+      
+      // Branch admin read access - can query by their branchId
+      allow read: if isAuthenticated() && isBranchAdmin() && 
+        (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main");
+      
+      // Inspector read access - can query by createdBy or their branchId
+      allow read: if isAuthenticated() && isInspector() && 
+        (resource.data.createdBy == request.auth.uid || 
+         (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"));
       
       // Create offers - authenticated users in their branch
       allow create: if isAuthenticated() && (
         isSuperadmin() ||
         (isBranchAdmin() && (request.resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
         (isInspector() && (request.resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
-      ) && request.resource.data.createdBy == request.auth.uid;
+      ) && 
+        request.resource.data.createdBy == request.auth.uid &&
+        // Required fields validation
+        request.resource.data.keys().hasAll(["reportId", "branchId", "customerEmail", "totalAmount", "createdBy"]);
       
       // Update offers - branch admins and superadmins
       allow update: if isAuthenticated() && (
@@ -535,7 +506,12 @@ service cloud.firestore {
         (isBranchAdmin() && (request.resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
         (isInspector() && (request.resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")))
       ) &&
-        request.resource.data.createdBy == request.auth.uid;
+        request.resource.data.createdBy == request.auth.uid &&
+        // Required fields validation
+        request.resource.data.keys().hasAll(["address", "createdBy", "createdAt"]) &&
+        // Must have EITHER customerId OR companyId (not both, not neither)
+        ((request.resource.data.keys().hasAny(["customerId"]) && !request.resource.data.keys().hasAny(["companyId"])) ||
+         (!request.resource.data.keys().hasAny(["customerId"]) && request.resource.data.keys().hasAny(["companyId"])));
       
       // Customers can update their own buildings
       // Internal users can update buildings in their branch
@@ -577,8 +553,8 @@ service cloud.firestore {
           (resource.data.companyId != null && resource.data.companyId == getUserCompanyId())
         )) ||
         isSuperadmin() ||
-        (isBranchAdmin() && (getUserBranchId() != "" && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))) ||
-        (isInspector() && (getUserBranchId() != "" && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")))
+        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
+        (isInspector() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
       );
       
       // Only internal users can create scheduled visits

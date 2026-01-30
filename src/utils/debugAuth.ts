@@ -39,5 +39,6 @@ export const debugUserAuth = async () => {
 
 // Add to window for easy debugging
 if (typeof window !== 'undefined') {
-  (window as any).debugAuth = debugUserAuth;
+  const windowWithDebug = window as unknown as { debugAuth?: typeof debugUserAuth };
+  windowWithDebug.debugAuth = debugUserAuth;
 }

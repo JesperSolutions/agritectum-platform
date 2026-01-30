@@ -87,8 +87,10 @@ export const createOffer = async (
     };
 
     // Normalize validUntil to Firestore Timestamp if provided as string/date
-    if ((offer as any).validUntil && typeof (offer as any).validUntil === 'string') {
-      (offer as any).validUntil = Timestamp.fromDate(new Date((offer as any).validUntil));
+    if (offer.validUntil && typeof offer.validUntil === 'string') {
+      // Type guard: ensure it's treated as string before conversion
+      const dateString = offer.validUntil as string;
+      offer.validUntil = Timestamp.fromDate(new Date(dateString)) as unknown as string;
     }
 
     const offersRef = collection(db, 'offers');
@@ -368,7 +370,7 @@ const getUserEmailByUid = async (uid: string): Promise<string | null> => {
     const userRef = doc(db, 'users', uid);
     const snap = await getDoc(userRef);
     if (!snap.exists()) return null;
-    const data = snap.data() as any;
+    const data = snap.data() as User;
     return data?.email ?? null;
   } catch (err) {
     console.error('Failed to resolve user email by UID:', err);
@@ -426,10 +428,10 @@ export const sendReminderToCustomer = async (offerId: string): Promise<void> => 
 
     // Calculate days since sent
     // Support both Firestore Timestamp and legacy string date
-    const sentDate =
-      (offer as any).sentAt && typeof (offer as any).sentAt?.toDate === 'function'
-        ? (offer as any).sentAt.toDate()
-        : new Date((offer as any).sentAt);
+    const sentAtValue = offer.sentAt;
+    const sentDate = sentAtValue && typeof sentAtValue === 'object' && 'toDate' in sentAtValue
+        ? (sentAtValue as Timestamp).toDate()
+        : new Date(sentAtValue);
     const now = new Date();
     const daysSinceSent = Math.floor((now.getTime() - sentDate.getTime()) / (1000 * 60 * 60 * 24));
 

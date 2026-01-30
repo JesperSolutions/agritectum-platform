@@ -128,5 +128,6 @@ export const cleanupTempReports = async () => {
 
 // Add to window for easy access
 if (typeof window !== 'undefined') {
-  (window as any).cleanupTempReports = cleanupTempReports;
+  const windowWithCleanup = window as unknown as { cleanupTempReports?: typeof cleanupTempReports };
+  windowWithCleanup.cleanupTempReports = cleanupTempReports;
 }

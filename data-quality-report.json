@@ -1,0 +1,32 @@
+{
+  "critical": [
+    {
+      "collection": "buildings",
+      "docId": "JErC3hixRZCMtnV97SmJ",
+      "description": "References non-existent customer: Zwv6wPlzWeQAmhGZNbCf"
+    },
+    {
+      "collection": "buildings",
+      "docId": "iIki2AFBQskCtEgYOGWL",
+      "description": "References non-existent customer: Kpr9cRggCr3UVpLsBjWi"
+    }
+  ],
+  "warning": [],
+  "info": [
+    {
+      "collection": "scheduledVisits",
+      "docId": "Oj7QvPPzz4tOSXzigSMC",
+      "description": "No buildingId (may be pre-building visit)"
+    },
+    {
+      "collection": "scheduledVisits",
+      "docId": "i8jAN4jCFCWHZ5yYZo4Y",
+      "description": "No buildingId (may be pre-building visit)"
+    },
+    {
+      "collection": "scheduledVisits",
+      "docId": "ogT18YWzXGQneHCP9ZWS",
+      "description": "No buildingId (may be pre-building visit)"
+    }
+  ]
+}

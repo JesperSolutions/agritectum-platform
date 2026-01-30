@@ -80,7 +80,8 @@ class SearchService {
     const indexedFields: string[] = [];
 
     // Index all string fields
-    Object.entries(document as any).forEach(([key, value]) => {
+    const entries = Object.entries(document as Record<string, unknown>);
+    entries.forEach(([key, value]) => {
       if (typeof value === 'string' && value.trim()) {
         const words = this.tokenize(value);
         this.searchIndex[type][`${id}_${key}`] = words;
@@ -228,7 +229,7 @@ class SearchService {
 
       if (score > 0) {
         // Find existing result or create new one
-        let existingResult = results.find(r => (r.item as any).id === id);
+        let existingResult = results.find(r => (r.item as Record<string, unknown>).id === id);
 
         if (!existingResult) {
           existingResult = {

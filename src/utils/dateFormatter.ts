@@ -5,6 +5,8 @@
  * Reference format: MM/DD/YYYY at HH:mm (e.g., "1/7/2026 at 09:00")
  */
 
+import { Timestamp } from 'firebase/firestore';
+
 /**
  * Format date to MM/DD/YYYY at HH:mm
  * Example: "1/7/2026 at 09:00"
@@ -23,9 +25,9 @@ export const formatDateTime = (
       date &&
       typeof date === 'object' &&
       'toDate' in date &&
-      typeof (date as any).toDate === 'function'
+      typeof (date as { toDate(): Date }).toDate === 'function'
     ) {
-      dateObj = (date as any).toDate();
+      dateObj = (date as Timestamp).toDate();
     } else if (typeof date === 'string') {
       // Handle ISO string or YYYY-MM-DD format
       if (date.includes('T')) {
@@ -80,9 +82,9 @@ export const formatDate = (date: Date | string | number | null | undefined): str
       date &&
       typeof date === 'object' &&
       'toDate' in date &&
-      typeof (date as any).toDate === 'function'
+      typeof (date as { toDate(): Date }).toDate === 'function'
     ) {
-      dateObj = (date as any).toDate();
+      dateObj = (date as Timestamp).toDate();
     } else if (typeof date === 'string') {
       if (date.includes('T')) {
         dateObj = new Date(date);
@@ -126,9 +128,9 @@ export const formatSwedishDate = (date: Date | string | number | null | undefine
       date &&
       typeof date === 'object' &&
       'toDate' in date &&
-      typeof (date as any).toDate === 'function'
+      typeof (date as { toDate(): Date }).toDate === 'function'
     ) {
-      dateObj = (date as any).toDate();
+      dateObj = (date as Timestamp).toDate();
     } else if (typeof date === 'string') {
       if (date.includes('T')) {
         dateObj = new Date(date);
@@ -172,9 +174,9 @@ export const formatSwedishDateTime = (date: Date | string | number | null | unde
       date &&
       typeof date === 'object' &&
       'toDate' in date &&
-      typeof (date as any).toDate === 'function'
+      typeof (date as { toDate(): Date }).toDate === 'function'
     ) {
-      dateObj = (date as any).toDate();
+      dateObj = (date as Timestamp).toDate();
     } else if (typeof date === 'string') {
       if (date.includes('T')) {
         dateObj = new Date(date);

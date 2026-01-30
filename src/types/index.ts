@@ -135,18 +135,8 @@ export interface Customer {
   };
 }
 
-export interface Employee {
-  id: string;
-  uid: string;
-  email: string;
-  displayName: string;
-  role: UserRole;
-  permissionLevel: PermissionLevel;
-  branchId: string;
-  isActive: boolean;
-  createdAt: string;
-  lastLogin?: string;
-}
+// Note: Employee interface removed - use User interface instead
+// All employee data is stored in /users collection
 
 export type AppointmentStatus = 'scheduled' | 'in_progress' | 'completed' | 'cancelled' | 'no_show';
 

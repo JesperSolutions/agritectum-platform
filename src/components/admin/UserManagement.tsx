@@ -21,7 +21,7 @@ import * as userService from '../../services/userService';
 import * as branchService from '../../services/branchService';
 import { createUserWithAuth } from '../../services/userAuthService';
 import { generateTemporaryPassword } from '../../services/userInvitationService';
-import { Employee, UserRole, Branch } from '../../types';
+import { User, UserRole, Branch } from '../../types';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { logger } from '../../utils/logger';
 import Tooltip from '../Tooltip';
@@ -31,14 +31,14 @@ const UserManagement: React.FC = () => {
   const { currentUser } = useAuth();
   const { t } = useIntl();
   const { showSuccess, showError } = useToast();
-  const [users, setUsers] = useState<Employee[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [branches, setBranches] = useState<Branch[]>([]);
   const [selectedBranch, setSelectedBranch] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
-  const [editingUser, setEditingUser] = useState<Employee | null>(null);
-  const [formData, setFormData] = useState<Partial<Employee>>({
+  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [formData, setFormData] = useState<Partial<User>>({
     email: '',
     displayName: '',
     role: 'inspector' as UserRole,
@@ -48,11 +48,11 @@ const UserManagement: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isGeneratingPassword, setIsGeneratingPassword] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [userToDelete, setUserToDelete] = useState<Employee | null>(null);
+  const [userToDelete, setUserToDelete] = useState<User | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [passwordToShow, setPasswordToShow] = useState<string | null>(null);
-  const [userForPassword, setUserForPassword] = useState<Employee | null>(null);
+  const [userForPassword, setUserForPassword] = useState<User | null>(null);
   const [isResettingPassword, setIsResettingPassword] = useState(false);
   const [isViewingPassword, setIsViewingPassword] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<{
@@ -360,13 +360,13 @@ const UserManagement: React.FC = () => {
 
         logger.log('✅ User created with Firebase Auth:', authResult.userId);
 
-        const employee = {
+        const user = {
           id: authResult.userId!,
           uid: authResult.firebaseUid!,
           ...formData,
           permissionLevel,
           branchId: targetBranchId,
-        } as Employee;
+        } as User;
 
         // Refresh the users list
         if (currentUser?.role === 'superadmin') {
@@ -404,7 +404,7 @@ const UserManagement: React.FC = () => {
     }
   };
 
-  const handleEdit = (user: Employee) => {
+  const handleEdit = (user: User) => {
     setEditingUser(user);
     setFormData({
       email: user.email,
@@ -419,7 +419,7 @@ const UserManagement: React.FC = () => {
     setShowForm(true);
   };
 
-  const handleDelete = (user: Employee) => {
+  const handleDelete = (user: User) => {
     setUserToDelete(user);
     setShowDeleteDialog(true);
   };
@@ -451,7 +451,7 @@ const UserManagement: React.FC = () => {
     }
   };
 
-  const handleToggleStatus = async (user: Employee) => {
+  const handleToggleStatus = async (user: User) => {
     const targetBranchId = user.branchId || selectedBranch || currentUser?.branchId;
     if (!targetBranchId) {
       setError('No branch selected');
@@ -472,7 +472,7 @@ const UserManagement: React.FC = () => {
     }
   };
 
-  const handleResetPassword = async (user: Employee) => {
+  const handleResetPassword = async (user: User) => {
     if (
       !window.confirm(t('admin.userManagement.confirmResetPassword', { name: user.displayName }))
     ) {
@@ -498,7 +498,7 @@ const UserManagement: React.FC = () => {
     }
   };
 
-  const handleViewPassword = async (user: Employee) => {
+  const handleViewPassword = async (user: User) => {
     setIsViewingPassword(true);
     try {
       const result = await userService.viewUserPassword(user.id);

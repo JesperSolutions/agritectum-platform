@@ -16,7 +16,7 @@ import { useToast } from '../../contexts/ToastContext';
 import {
   Appointment,
   AppointmentStatus,
-  Employee,
+  User,
   Customer,
   canAccessAllBranches,
 } from '../../types';
@@ -64,7 +64,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
   // UI state
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [inspectors, setInspectors] = useState<Employee[]>([]);
+  const [inspectors, setInspectors] = useState<User[]>([]);
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [customerSearchTerm, setCustomerSearchTerm] = useState('');
   const [showCustomerSearch, setShowCustomerSearch] = useState(false);

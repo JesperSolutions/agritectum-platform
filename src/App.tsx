@@ -22,7 +22,8 @@ function App() {
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
       // Store the event for later use
-      (window as any).deferredPrompt = e;
+      const windowWithPrompt = window as unknown as { deferredPrompt?: Event };
+      windowWithPrompt.deferredPrompt = e;
     };
 
     // PWA Update available

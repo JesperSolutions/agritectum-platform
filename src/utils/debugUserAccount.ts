@@ -155,6 +155,10 @@ export const findLinusHollberg = async () => {
 
 // Add to window for easy access
 if (typeof window !== 'undefined') {
-  (window as any).debugUserAccount = debugUserAccount;
-  (window as any).findLinusHollberg = findLinusHollberg;
+  const windowWithDebug = window as unknown as { 
+    debugUserAccount?: typeof debugUserAccount;
+    findLinusHollberg?: typeof findLinusHollberg;
+  };
+  windowWithDebug.debugUserAccount = debugUserAccount;
+  windowWithDebug.findLinusHollberg = findLinusHollberg;
 }

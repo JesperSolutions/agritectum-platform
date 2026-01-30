@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agritectum Platform - Database Health Report</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 1200px; margin: 20px auto; padding: 20px; }
+    h1 { color: #333; border-bottom: 3px solid #4CAF50; padding-bottom: 10px; }
+    h2 { color: #555; margin-top: 30px; }
+    .metric-card { background: #f5f5f5; padding: 15px; margin: 10px 0; border-radius: 5px; }
+    .health-score { font-size: 48px; font-weight: bold; text-align: center; margin: 20px 0; }
+    .score-excellent { color: #4CAF50; }
+    .score-good { color: #FF9800; }
+    .score-poor { color: #f44336; }
+    .issue-list { background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px; margin: 10px 0; }
+    table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+    th, td { text-align: left; padding: 8px; border-bottom: 1px solid #ddd; }
+    th { background-color: #4CAF50; color: white; }
+    .timestamp { color: #888; font-size: 0.9em; }
+  </style>
+</head>
+<body>
+  <h1>🏢 Agritectum Platform - Database Health Report</h1>
+  <p class="timestamp">Generated: 2026-01-30T09:08:28.294Z</p>
+  
+  <div class="health-score score-excellent">
+    96/100
+  </div>
+  
+  
+  <div class="issue-list">
+    <h3>⚠️ Issues Affecting Score</h3>
+    <ul>
+      <li>2 buildings with invalid customer references (-4 points)</li>
+    </ul>
+  </div>
+  
+  
+  <h2>📊 Collection Sizes</h2>
+  <table>
+    <tr><th>Collection</th><th>Documents</th></tr>
+    <tr><td>users</td><td>28</td></tr><tr><td>branches</td><td>5</td></tr><tr><td>customers</td><td>17</td></tr><tr><td>companies</td><td>1</td></tr><tr><td>buildings</td><td>31</td></tr><tr><td>reports</td><td>32</td></tr><tr><td>offers</td><td>1</td></tr><tr><td>appointments</td><td>3</td></tr><tr><td>scheduledVisits</td><td>11</td></tr><tr><td>serviceAgreements</td><td>6</td></tr><tr><td>esgServiceReports</td><td>4</td></tr><tr><td>notifications</td><td>8</td></tr><tr><td>mail</td><td>61</td></tr><tr><td>emailLogs</td><td>0</td></tr><tr><td>validation_errors</td><td>0</td></tr>
+  </table>
+  
+  <h2>🔗 Relationship Health</h2>
+  
+    <div class="metric-card">
+      <strong>reportsToBuildings</strong><br>
+      Valid: 32/32 (100.0%)<br>
+      
+    </div>
+  
+    <div class="metric-card">
+      <strong>offersToReports</strong><br>
+      Valid: 1/1 (100.0%)<br>
+      
+    </div>
+  
+    <div class="metric-card">
+      <strong>buildingsToCustomers</strong><br>
+      Valid: 29/31 (93.5%)<br>
+      <span style="color: #f44336;">Invalid: 2</span>
+    </div>
+  
+  
+  <h2>🏢 Branch Distribution</h2>
+  
+    <div class="metric-card">
+      <strong>users</strong><br>
+      agritectum-sverige: 7<br>stockholm: 4<br>agritectum-danmark: 6<br>agritectum-deutschland: 5<br>qa-test-branch: 2
+      
+    </div>
+  
+    <div class="metric-card">
+      <strong>customers</strong><br>
+      agritectum-danmark: 4<br>stockholm: 6<br>agritectum-sverige: 3<br>agritectum-deutschland: 2<br>qa-test-branch: 2
+      
+    </div>
+  
+    <div class="metric-card">
+      <strong>buildings</strong><br>
+      agritectum-deutschland: 2<br>stockholm: 11<br>agritectum-sverige: 3<br>agritectum-danmark: 13<br>qa-test-branch: 2
+      
+    </div>
+  
+    <div class="metric-card">
+      <strong>reports</strong><br>
+      stockholm: 23<br>agritectum-deutschland: 2<br>agritectum-sverige: 2<br>agritectum-danmark: 4<br>qa-test-branch: 1
+      
+    </div>
+  
+    <div class="metric-card">
+      <strong>offers</strong><br>
+      agritectum-danmark: 1
+      
+    </div>
+  
+    <div class="metric-card">
+      <strong>appointments</strong><br>
+      agritectum-sverige: 1<br>agritectum-danmark: 2
+      
+    </div>
+  
+  
+  <h2>📈 Recent Activity (Last 7 Days)</h2>
+  <table>
+    <tr><th>Collection</th><th>Created</th></tr>
+    <tr><td>reports</td><td>2</td></tr><tr><td>offers</td><td>1</td></tr><tr><td>appointments</td><td>0</td></tr><tr><td>scheduledVisits</td><td>0</td></tr>
+  </table>
+  
+  
+</body>
+</html>

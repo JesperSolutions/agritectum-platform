@@ -47,6 +47,15 @@ import { generateReportPDF } from './simplePdfService';
 import { onCustomerUserCreate } from './onCustomerUserCreate';
 import { onBuildingCreate } from './onBuildingCreate';
 
+// Relationship validation functions - Phase 3
+import {
+  validateReportBuilding,
+  validateOfferReport,
+  validateBuildingReferences,
+  validateAppointmentReferences,
+  validateDocumentRelationships,
+} from './relationshipValidation';
+
 // Start writing functions
 // https://firebase.google.com/docs/functions/typescript
 
@@ -85,6 +94,13 @@ export { generateReportPDF };
 // Export customer and building functions
 export { onCustomerUserCreate };
 export { onBuildingCreate };
+
+// Export relationship validation functions - Phase 3
+export { validateReportBuilding };
+export { validateOfferReport };
+export { validateBuildingReferences };
+export { validateAppointmentReferences };
+export { validateDocumentRelationships };
 
 // export const helloWorld = onRequest((request, response) => {
 //   logger.info("Hello logs!", {structuredData: true});

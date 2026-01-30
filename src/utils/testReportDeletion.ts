@@ -133,10 +133,11 @@ export const testReportDeletion = async () => {
 
         // Analyze the error
         if (deleteError instanceof Error) {
+          const firestoreError = deleteError as Error & { code?: string; details?: unknown };
           console.log('🔍 Error details:');
           console.log('  - Message:', deleteError.message);
-          console.log('  - Code:', (deleteError as any).code);
-          console.log('  - Details:', (deleteError as any).details);
+          console.log('  - Code:', firestoreError.code);
+          console.log('  - Details:', firestoreError.details);
         }
       }
 
@@ -187,10 +188,11 @@ export const testReportDeletion = async () => {
 
       // Analyze the error
       if (deleteError instanceof Error) {
+        const firestoreError = deleteError as Error & { code?: string; details?: unknown };
         console.log('🔍 Error details:');
         console.log('  - Message:', deleteError.message);
-        console.log('  - Code:', (deleteError as any).code);
-        console.log('  - Details:', (deleteError as any).details);
+        console.log('  - Code:', firestoreError.code);
+        console.log('  - Details:', firestoreError.details);
       }
     }
   } catch (error) {
@@ -260,16 +262,21 @@ export const testSpecificReportDeletion = async (reportId: string) => {
     console.log('✅ Report deleted successfully!');
   } catch (error) {
     console.error('❌ Deletion failed:', error);
+    const firestoreError = error as Error & { code?: string; details?: unknown };
     console.log('🔍 Error details:', {
       message: error instanceof Error ? error.message : 'Unknown error',
-      code: (error as any).code,
-      details: (error as any).details,
+      code: firestoreError.code,
+      details: firestoreError.details,
     });
   }
 };
 
 // Add to window for easy testing
 if (typeof window !== 'undefined') {
-  (window as any).testReportDeletion = testReportDeletion;
-  (window as any).testSpecificReportDeletion = testSpecificReportDeletion;
+  const windowWithTest = window as unknown as { 
+    testReportDeletion?: typeof testReportDeletion;
+    testSpecificReportDeletion?: typeof testSpecificReportDeletion;
+  };
+  windowWithTest.testReportDeletion = testReportDeletion;
+  windowWithTest.testSpecificReportDeletion = testSpecificReportDeletion;
 }

@@ -327,7 +327,25 @@ Firestore Database
 
 ## <a name="security-rules"></a>Security Rules by Collection
 
-### Helper Functions
+### Standard Patterns & Architecture
+
+**Updated:** January 30, 2026 - Phase 2 Cleanup
+
+#### Branch Access Pattern (Standard)
+
+All internal user access follows this pattern:
+
+```javascript
+// Pattern: Branch match OR "main" bypass
+(resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")
+```
+
+**How it works:**
+- Superadmins get `branchId == "main"` in custom claims → bypass branch restrictions
+- Branch admins get `branchId == "their-branch"` → access their branch only
+- Inspectors get `branchId == "their-branch"` → access their branch only
+
+#### Helper Functions (Active)
 
 ```javascript
 // Authentication check
@@ -335,29 +353,56 @@ function isAuthenticated() {
   return request.auth != null;
 }
 
-// Permission level from custom claims
+// Get permission level from custom claims (with Firestore fallback)
 function getPermissionLevel() {
-  return request.auth.token.permissionLevel != null ? request.auth.token.permissionLevel : 0;
+  return request.auth.token.permissionLevel != null 
+    ? request.auth.token.permissionLevel
+    : 0; // Fallback checks Firestore user doc
 }
 
-// Branch ID from custom claims
+// Get branch ID from custom claims (with Firestore fallback)
 function getUserBranchId() {
-  return request.auth.token.branchId != null ? request.auth.token.branchId : '';
+  return request.auth.token.branchId != null 
+    ? request.auth.token.branchId
+    : ""; // Fallback checks Firestore user doc
 }
 
-// Permission checks
+// Get user role from custom claims (with Firestore fallback)
+function getUserRole() {
+  return request.auth.token.role != null
+    ? request.auth.token.role
+    : ""; // Fallback checks Firestore user doc
+}
+
+// Get company ID for customer users
+function getUserCompanyId() {
+  return request.auth.token.companyId != null
+    ? request.auth.token.companyId
+    : "";
+}
+
+// Permission level checks
 function isSuperadmin() {
-  return isAuthenticated() && getPermissionLevel() >= 2;
+  return isAuthenticated() && (getUserRole() == 'superadmin' || getPermissionLevel() >= 2);
 }
 
 function isBranchAdmin() {
-  return isAuthenticated() && getPermissionLevel() >= 1;
+  return isAuthenticated() && (getUserRole() == 'branchAdmin' || getPermissionLevel() >= 1);
 }
 
 function isInspector() {
-  return isAuthenticated() && getPermissionLevel() >= 0;
+  return isAuthenticated() && (getUserRole() == 'inspector' || getPermissionLevel() == 0);
+}
+
+function isCustomer() {
+  return isAuthenticated() && (getUserRole() == 'customer' || getPermissionLevel() == -1);
 }
 ```
+
+**Removed Functions (Phase 2):**
+- `hasBranchAccess()` - Replaced with inline pattern
+- `getUserType()` - Use `isCustomer()` check instead
+- `isAuthenticatedUser()` - Use `isAuthenticated()` directly
 
 ---
 

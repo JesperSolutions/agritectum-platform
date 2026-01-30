@@ -512,9 +512,9 @@ export const findOrCreateBuilding = async (
       customerId: customerId,
       address: address.trim(),
       branchId: branchId,
-      roofType: roofType as any,
+      roofType: roofType as RoofType | undefined,
       roofSize: roofSize,
-      buildingType: buildingType as any,
+      buildingType: buildingType as 'residential' | 'commercial' | 'industrial' | undefined,
       createdBy: createdBy,
     };
 

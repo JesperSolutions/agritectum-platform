@@ -4,7 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useIntl } from '../../hooks/useIntl';
 import { getBuildingsByCustomer, createBuilding } from '../../services/buildingService';
 import { Building } from '../../types';
-import { Building as BuildingIcon, Plus, MapPin } from 'lucide-react';
+import { Building as BuildingIcon, Plus, MapPin, AlertCircle } from 'lucide-react';
 import LoadingSpinner from '../common/LoadingSpinner';
 import ListCard from '../shared/cards/ListCard';
 import PageHeader from '../shared/layouts/PageHeader';
@@ -16,6 +16,9 @@ const BuildingsList: React.FC = () => {
   const [buildings, setBuildings] = useState<Building[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     address: '',
@@ -31,15 +34,23 @@ const BuildingsList: React.FC = () => {
   }, [currentUser]);
 
   const loadBuildings = async () => {
-    if (!currentUser) return;
+    if (!currentUser) {
+      setError('User not authenticated');
+      setLoading(false);
+      return;
+    }
+    
     setLoading(true);
+    setError(null);
     try {
       // Use companyId (linked customer/company document) not user uid
       const customerId = currentUser.companyId || currentUser.uid;
       const data = await getBuildingsByCustomer(customerId);
-      setBuildings(data);
-    } catch (error) {
+      setBuildings(data || []);
+    } catch (error: any) {
       console.error('Error loading buildings:', error);
+      setError(error?.message || 'Failed to load buildings. Please try again.');
+      setBuildings([]);
     } finally {
       setLoading(false);
     }
@@ -47,23 +58,52 @@ const BuildingsList: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!currentUser) return;
+    
+    // Validation
+    const errors: Record<string, string> = {};
+    
+    if (!formData.name.trim()) {
+      errors.name = 'Building name is required';
+    } else if (formData.name.length < 2) {
+      errors.name = 'Building name must be at least 2 characters';
+    }
+    
+    if (!formData.address.trim()) {
+      errors.address = 'Address is required';
+    } else if (formData.address.length < 5) {
+      errors.address = 'Address must be at least 5 characters';
+    }
+    
+    if (formData.roofSize && (isNaN(parseFloat(formData.roofSize)) || parseFloat(formData.roofSize) <= 0)) {
+      errors.roofSize = 'Roof size must be a positive number';
+    }
+    
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      setError('Please correct the errors below');
+      return;
+    }
+    
+    if (!currentUser) {
+      setError('User not authenticated');
+      return;
+    }
+
+    setValidationErrors({});
+    setError(null);
+    setIsSubmitting(true);
 
     try {
-      if (!formData.address || !formData.name) {
-        alert('Please fill in all required fields (Name and Address)');
-        return;
-      }
-      // Use companyId (linked customer/company document) not user uid
       const customerId = currentUser.companyId || currentUser.uid;
       await createBuilding({
-        name: formData.name,
+        name: formData.name.trim(),
         customerId: customerId,
-        address: formData.address,
+        address: formData.address.trim(),
         buildingType: formData.buildingType,
         roofType: formData.roofType,
         roofSize: formData.roofSize ? parseFloat(formData.roofSize) : undefined,
       });
+      
       setShowForm(false);
       setFormData({
         name: '',
@@ -72,9 +112,13 @@ const BuildingsList: React.FC = () => {
         roofType: 'tile',
         roofSize: '',
       });
-      loadBuildings();
-    } catch (error) {
+      setError(null);
+      await loadBuildings();
+    } catch (error: any) {
       console.error('Error creating building:', error);
+      setError(error?.message || 'Failed to create building. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -88,6 +132,23 @@ const BuildingsList: React.FC = () => {
 
   return (
     <div className='space-y-6'>
+      {error && (
+        <div className='bg-red-50 border border-red-200 rounded-lg p-4'>
+          <div className='flex items-start gap-3'>
+            <AlertCircle className='w-5 h-5 text-red-600 flex-shrink-0 mt-0.5' />
+            <div className='flex-1'>
+              <p className='text-sm text-red-700 font-medium'>{error}</p>
+              <button
+                onClick={() => setError(null)}
+                className='mt-2 text-sm text-red-600 hover:text-red-700 font-medium'
+              >
+                Dismiss
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className='flex justify-between items-center'>
         <PageHeader
           title={t('buildings.title') || 'Buildings'}
@@ -95,7 +156,8 @@ const BuildingsList: React.FC = () => {
         />
         <button
           onClick={() => setShowForm(!showForm)}
-          className='flex items-center gap-2 px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium shadow-sm'
+          disabled={isSubmitting}
+          className='flex items-center gap-2 px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed'
         >
           <Plus className='w-5 h-5' />
           <span>{t('buildings.addBuilding') || 'Add Building'}</span>
@@ -105,6 +167,13 @@ const BuildingsList: React.FC = () => {
       {showForm && (
         <div className='bg-white rounded-lg shadow p-6'>
           <h2 className='text-xl font-semibold mb-4'>{t('buildings.addBuilding')}</h2>
+          
+          {error && (
+            <div className='mb-4 p-4 bg-red-50 border border-red-200 rounded-lg'>
+              <p className='text-sm text-red-700 font-medium'>{error}</p>
+            </div>
+          )}
+          
           <form onSubmit={handleSubmit} className='space-y-4'>
             <div>
               <label className='block text-sm font-medium text-gray-700 mb-2'>
@@ -115,9 +184,15 @@ const BuildingsList: React.FC = () => {
                 placeholder='e.g., Main Office, Warehouse A'
                 value={formData.name}
                 onChange={e => setFormData({ ...formData, name: e.target.value })}
+                disabled={isSubmitting}
                 required
-                className='w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500'
+                className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-green-500 ${
+                  validationErrors.name ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                } disabled:opacity-50 disabled:cursor-not-allowed`}
               />
+              {validationErrors.name && (
+                <p className='mt-1 text-sm text-red-600'>{validationErrors.name}</p>
+              )}
             </div>
             <div>
               <label className='block text-sm font-medium text-gray-700 mb-2'>
@@ -127,9 +202,15 @@ const BuildingsList: React.FC = () => {
                 type='text'
                 value={formData.address}
                 onChange={e => setFormData({ ...formData, address: e.target.value })}
+                disabled={isSubmitting}
                 required
-                className='w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500'
+                className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-green-500 ${
+                  validationErrors.address ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                } disabled:opacity-50 disabled:cursor-not-allowed`}
               />
+              {validationErrors.address && (
+                <p className='mt-1 text-sm text-red-600'>{validationErrors.address}</p>
+              )}
             </div>
             <div className='grid grid-cols-2 gap-4'>
               <div>
@@ -144,7 +225,8 @@ const BuildingsList: React.FC = () => {
                       buildingType: e.target.value as Building['buildingType'],
                     })
                   }
-                  className='w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500'
+                  disabled={isSubmitting}
+                  className='w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed'
                 >
                   <option value='residential'>{t('buildings.residential')}</option>
                   <option value='commercial'>{t('buildings.commercial')}</option>
@@ -160,7 +242,8 @@ const BuildingsList: React.FC = () => {
                   onChange={e =>
                     setFormData({ ...formData, roofType: e.target.value as Building['roofType'] })
                   }
-                  className='w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500'
+                  disabled={isSubmitting}
+                  className='w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed'
                 >
                   <option value='tile'>{t('roofTypes.tile')}</option>
                   <option value='metal'>{t('roofTypes.metal')}</option>
@@ -185,20 +268,35 @@ const BuildingsList: React.FC = () => {
                 type='number'
                 value={formData.roofSize}
                 onChange={e => setFormData({ ...formData, roofSize: e.target.value })}
-                className='w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500'
+                placeholder='in m²'
+                disabled={isSubmitting}
+                step='0.01'
+                min='0'
+                className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-green-500 ${
+                  validationErrors.roofSize ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                } disabled:opacity-50 disabled:cursor-not-allowed`}
               />
+              {validationErrors.roofSize && (
+                <p className='mt-1 text-sm text-red-600'>{validationErrors.roofSize}</p>
+              )}
             </div>
-            <div className='flex space-x-4'>
+            <div className='flex space-x-4 pt-4'>
               <button
                 type='submit'
-                className='px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium shadow-sm'
+                disabled={isSubmitting}
+                className='px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed'
               >
-                {t('buildings.createBuilding')}
+                {isSubmitting ? 'Creating...' : t('buildings.createBuilding')}
               </button>
               <button
                 type='button'
-                onClick={() => setShowForm(false)}
-                className='px-4 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition-colors text-sm font-medium shadow-sm'
+                onClick={() => {
+                  setShowForm(false);
+                  setValidationErrors({});
+                  setError(null);
+                }}
+                disabled={isSubmitting}
+                className='px-4 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition-colors text-sm font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed'
               >
                 {t('buildings.cancel')}
               </button>

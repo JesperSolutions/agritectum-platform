@@ -1,4 +1,4 @@
-import { Report, Branch, Customer, Employee } from '../types';
+import { Report, Branch, Customer, User } from '../types';
 
 /**
  * Caching service for API calls and data persistence

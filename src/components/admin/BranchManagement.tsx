@@ -18,14 +18,14 @@ import { useIntl } from '../../hooks/useIntl';
 import * as branchService from '../../services/branchService';
 import * as branchLogoService from '../../services/branchLogoService';
 import * as userService from '../../services/userService';
-import { Branch, Employee } from '../../types';
+import { Branch, User } from '../../types';
 import LoadingSpinner from '../common/LoadingSpinner';
 
 const BranchManagement: React.FC = () => {
   const { currentUser } = useAuth();
   const { t } = useIntl();
   const [branches, setBranches] = useState<Branch[]>([]);
-  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [employees, setEmployees] = useState<User[]>([]);
   const [selectedBranch, setSelectedBranch] = useState<Branch | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');

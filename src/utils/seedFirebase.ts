@@ -116,6 +116,7 @@ export async function seedTestDataBrowser() {
 
 // Make it available in browser console
 if (typeof window !== 'undefined') {
-  (window as any).seedTestData = seedTestDataBrowser;
+  const windowWithSeed = window as unknown as { seedTestData?: typeof seedTestDataBrowser };
+  windowWithSeed.seedTestData = seedTestDataBrowser;
   console.log('💡 Tip: Type seedTestData() in console to create test user');
 }

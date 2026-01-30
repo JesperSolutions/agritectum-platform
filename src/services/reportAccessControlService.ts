@@ -19,6 +19,19 @@ export interface AccessControlResult {
   remainingAccess?: number;
 }
 
+interface AccessControlUpdate {
+  accessControls: {
+    isPublic: boolean;
+    expirationDate: unknown;
+    accessPassword: string | null;
+    allowedEmails: string[];
+    maxAccessCount: number | null;
+    currentAccessCount: number;
+    lastAccessed: null;
+    updatedAt: unknown;
+  };
+}
+
 /**
  * Set access controls for a report
  */
@@ -29,7 +42,7 @@ export const setReportAccessControls = async (
   try {
     const reportRef = doc(db, 'reports', reportId);
 
-    const updateData: any = {
+    const updateData: AccessControlUpdate = {
       accessControls: {
         isPublic: settings.isPublic ?? false,
         expirationDate: settings.expirationDate ? serverTimestamp() : null,
@@ -42,7 +55,7 @@ export const setReportAccessControls = async (
       },
     };
 
-    await updateDoc(reportRef, updateData);
+    await updateDoc(reportRef, updateData as unknown as Record<string, unknown>);
     logger.log(`Access controls set for report ${reportId}`);
   } catch (error) {
     console.error('Error setting access controls:', error);

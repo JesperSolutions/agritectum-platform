@@ -80,8 +80,9 @@ export const detectCountryFromTimezone = (): string | null => {
 export const detectCountryFromLanguage = (): string | null => {
   try {
     // Check all browser languages, not just the first one
+    const navigatorWithLanguage = navigator as unknown as { userLanguage?: string };
     const languages = navigator.languages || [navigator.language] || [
-        (navigator as any).userLanguage,
+        navigatorWithLanguage.userLanguage,
       ];
 
     for (const language of languages) {

@@ -123,8 +123,9 @@ class MemoryManagementService {
     });
 
     // Force garbage collection if available
-    if (typeof window !== 'undefined' && (window as any).gc) {
-      (window as any).gc();
+    const windowWithGC = window as unknown as { gc?: () => void };
+    if (typeof window !== 'undefined' && windowWithGC.gc) {
+      windowWithGC.gc();
     }
 
     // Clear old memory stats
@@ -221,8 +222,9 @@ class MemoryManagementService {
    * Force garbage collection
    */
   forceGarbageCollection(): void {
-    if (typeof window !== 'undefined' && (window as any).gc) {
-      (window as any).gc();
+    const windowWithGC = window as unknown as { gc?: () => void };
+    if (typeof window !== 'undefined' && windowWithGC.gc) {
+      windowWithGC.gc();
     }
   }
 

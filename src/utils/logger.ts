@@ -7,8 +7,9 @@ export type OfferEvent =
 export function logOfferEvent(event: OfferEvent) {
   try {
     // Hook for GA or other analytics
-    (window as any).dataLayer = (window as any).dataLayer || [];
-    (window as any).dataLayer.push({ event: event.type, ...event });
+    const windowWithDataLayer = window as unknown as { dataLayer?: Array<Record<string, unknown>> };
+    windowWithDataLayer.dataLayer = windowWithDataLayer.dataLayer || [];
+    windowWithDataLayer.dataLayer.push({ event: event.type, ...event });
     if (process.env.NODE_ENV !== 'production') {
       // eslint-disable-next-line no-console
       console.log('analytics', event);
