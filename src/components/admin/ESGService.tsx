@@ -452,464 +452,349 @@ const ESGService: React.FC = () => {
   return (
     <>
       <style>{rangeInputStyles}</style>
-      <div className='min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-emerald-50'>
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8'>
-          {/* Modern Header with Gradient */}
-          <div className='relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-700 to-slate-800 p-8 shadow-2xl'>
-            <div className='absolute inset-0 bg-grid-white/10'></div>
-            <div className='relative'>
-              <div className='flex items-center space-x-3 mb-3'>
-                <div className='p-3 bg-white/20 backdrop-blur-sm rounded-2xl'>
-                  <Sparkles className='w-8 h-8 text-white' />
-                </div>
-                <div>
-                  <h1 className='text-4xl font-bold text-white tracking-tight'>
-                    {t('admin.esgService.title') || 'ESG Service'}
-                  </h1>
-                  <p className='text-emerald-50 text-lg mt-1'>
-                    {t('admin.esgService.subtitle') ||
-                      'Create ESG reports with intelligent roof allocation'}
-                  </p>
-                </div>
+      <div className='space-y-8'>
+        {/* Header */}
+        <div>
+          <h1 className='text-3xl font-bold text-gray-900'>
+            {t('admin.esgService.title') || 'ESG Service'}
+          </h1>
+          <p className='mt-2 text-gray-600'>
+            {t('admin.esgService.subtitle') ||
+              'Create ESG reports with intelligent roof allocation'}
+          </p>
+        </div>
+
+        {/* Customer Search Card */}
+        <div className='bg-white rounded-lg shadow p-6'>
+          <div className='flex items-center gap-2 mb-4'>
+            <Search className='w-5 h-5 text-gray-600' />
+            <h2 className='text-lg font-semibold text-gray-900'>
+              {t('admin.esgService.selectCustomer') || 'Select Customer'}
+            </h2>
+          </div>
+          <CustomerSearch onCustomerSelect={setSelectedCustomer} />
+          {selectedCustomer && (
+            <div className='mt-4 p-4 bg-slate-50 border border-slate-200 rounded-lg flex items-center gap-3'>
+              <CheckCircle className='w-5 h-5 text-green-600 flex-shrink-0' />
+              <div>
+                <span className='font-semibold text-gray-900'>{selectedCustomer.name}</span>
+                {selectedCustomer.email && (
+                  <span className='text-sm text-gray-600 ml-2'>({selectedCustomer.email})</span>
+                )}
               </div>
             </div>
-          </div>
+          )}
+        </div>
 
-          {/* Customer Search - Modern Card */}
-          <div className='group bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-slate-200/50 p-6 hover:shadow-xl transition-all duration-300'>
-            <div className='flex items-center space-x-3 mb-4'>
-              <div className='p-2 bg-gradient-to-br from-slate-600 to-slate-700 rounded-xl shadow-lg'>
-                <Search className='w-5 h-5 text-white' />
-              </div>
-              <h2 className='text-xl font-bold text-slate-800'>
-                {t('admin.esgService.selectCustomer') || 'Select Customer'}
+        {/* Building Selection */}
+        {selectedCustomer && (
+          <div className='bg-white rounded-lg shadow p-6'>
+            <div className='flex items-center gap-2 mb-4'>
+              <BuildingIcon className='w-5 h-5 text-gray-600' />
+              <h2 className='text-lg font-semibold text-gray-900'>
+                {t('admin.esgService.selectBuilding') || 'Select Building'}
               </h2>
             </div>
-            <CustomerSearch onCustomerSelect={setSelectedCustomer} />
-            {selectedCustomer && (
-              <div className='mt-4 flex items-center space-x-3 p-4 bg-gradient-to-r from-slate-50 to-slate-100 rounded-xl border border-slate-200'>
-                <CheckCircle className='w-5 h-5 text-slate-700' />
-                <div>
-                  <span className='font-semibold text-slate-900'>{selectedCustomer.name}</span>
-                  {selectedCustomer.email && (
-                    <span className='text-sm text-slate-600 ml-2'>({selectedCustomer.email})</span>
+
+            {loadingBuildings ? (
+              <div className='flex items-center justify-center py-8'>
+                <Loader2 className='w-6 h-6 text-gray-600 animate-spin' />
+              </div>
+            ) : (
+              <div className='space-y-3'>
+                {/* Search Input */}
+                <div className='relative'>
+                  <Search className='absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5' />
+                  <input
+                    type='text'
+                    placeholder={t('admin.esgService.searchBuildings') || 'Search buildings...'}
+                    value={searchTerm}
+                    onChange={e => setSearchTerm(e.target.value)}
+                    className='w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                  />
+                </div>
+
+                {/* Building List */}
+                <div className='space-y-2 max-h-80 overflow-y-auto'>
+                  {filteredBuildings.length === 0 ? (
+                    <div className='p-6 text-center text-gray-500'>
+                      <p>{t('admin.esgService.noBuildings') || 'No buildings found'}</p>
+                    </div>
+                  ) : (
+                    filteredBuildings.map(building => (
+                      <button
+                        key={building.id}
+                        onClick={() => handleBuildingSelect(building.id)}
+                        className={`w-full text-left p-3 rounded-lg border transition-all ${
+                          selectedBuilding?.id === building.id
+                            ? 'bg-blue-50 border-blue-300 shadow-sm'
+                            : 'bg-slate-50 border-gray-200 hover:bg-gray-50'
+                        }`}
+                      >
+                        <div className='flex items-center justify-between'>
+                          <div className='flex-1'>
+                            <p className='font-semibold text-gray-900'>{building.address}</p>
+                            <p className='text-sm text-gray-600 mt-1'>
+                              {building.roofType && t(`roofTypes.${building.roofType}`)}
+                              {building.roofSize && ` • ${building.roofSize} m²`}
+                            </p>
+                          </div>
+                          {selectedBuilding?.id === building.id && (
+                            <CheckCircle className='w-5 h-5 text-green-600 flex-shrink-0 ml-2' />
+                          )}
+                        </div>
+                      </button>
+                    ))
                   )}
                 </div>
               </div>
             )}
           </div>
+        )}
 
-          {/* Building Selection */}
-          {selectedCustomer && (
-            <div className='bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-slate-200/50 p-6 hover:shadow-xl transition-all duration-300'>
-              <div className='flex items-center space-x-3 mb-4'>
-                <div className='p-2 bg-gradient-to-br from-slate-600 to-slate-700 rounded-xl shadow-lg'>
-                  <BuildingIcon className='w-5 h-5 text-white' />
-                </div>
-                <h2 className='text-xl font-bold text-slate-800'>
-                  {t('admin.esgService.selectBuilding') || 'Select Building'}
-                </h2>
-              </div>
+        {/* Selected Building Form */}
+        {selectedBuilding && (
+          <div className='bg-white rounded-lg shadow overflow-hidden'>
+            {/* Form Header */}
+            <div className='border-b border-gray-200 p-6'>
+              <h2 className='text-2xl font-bold text-gray-900 flex items-center'>
+                <Calculator className='w-6 h-6 mr-2' />
+                ESG Service Report
+              </h2>
+              <p className='text-gray-600 mt-1'>{selectedBuilding.address}</p>
+            </div>
 
-              {loadingBuildings ? (
-                <div className='flex items-center justify-center py-12'>
-                  <div className='text-center'>
-                    <Loader2 className='w-8 h-8 text-purple-600 animate-spin mx-auto mb-2' />
-                    <p className='text-slate-600'>Loading buildings...</p>
-                  </div>
-                </div>
-              ) : (
-                <div className='space-y-4'>
-                  {/* Search Input */}
-                  <div className='relative'>
-                    <Search className='absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5' />
-                    <input
-                      type='text'
-                      placeholder={t('admin.esgService.searchBuildings') || 'Search buildings...'}
-                      value={searchTerm}
-                      onChange={e => setSearchTerm(e.target.value)}
-                      className='w-full pl-12 pr-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all'
-                    />
-                  </div>
-
-                  {/* Building List */}
-                  <div className='max-h-80 overflow-y-auto space-y-2 rounded-xl'>
-                    {filteredBuildings.length === 0 ? (
-                      <div className='p-8 text-center'>
-                        <BuildingIcon className='w-12 h-12 text-slate-300 mx-auto mb-2' />
-                        <p className='text-slate-500'>
-                          {t('admin.esgService.noBuildings') || 'No buildings found'}
-                        </p>
-                      </div>
-                    ) : (
-                      filteredBuildings.map(building => (
-                        <button
-                          key={building.id}
-                          onClick={() => handleBuildingSelect(building.id)}
-                          className={`w-full text-left p-4 rounded-xl transition-all duration-200 ${
-                            selectedBuilding?.id === building.id
-                              ? 'bg-gradient-to-r from-slate-100 to-slate-200 border-2 border-slate-400 shadow-md'
-                              : 'bg-slate-50 border border-slate-200 hover:bg-slate-100 hover:border-slate-300'
-                          }`}
-                        >
-                          <div className='flex items-center justify-between'>
-                            <div className='flex items-center space-x-3'>
-                              <div
-                                className={`p-2 rounded-lg ${
-                                  selectedBuilding?.id === building.id
-                                    ? 'bg-slate-600'
-                                    : 'bg-slate-300'
-                                }`}
-                              >
-                                <BuildingIcon className='w-4 h-4 text-white' />
-                              </div>
-                              <div>
-                                <p className='font-semibold text-slate-900'>{building.address}</p>
-                                <p className='text-sm text-slate-600'>
-                                  {building.roofType && t(`roofTypes.${building.roofType}`)}
-                                  {building.roofSize && ` • ${building.roofSize} m²`}
-                                </p>
-                              </div>
-                            </div>
-                            {selectedBuilding?.id === building.id && (
-                              <CheckCircle className='w-5 h-5 text-green-600' />
-                            )}
-                          </div>
-                        </button>
-                      ))
-                    )}
-                  </div>
+            <div className='p-6 space-y-6'>
+              {inlineError && (
+                <div className='bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3'>
+                  <AlertCircle className='w-5 h-5 text-red-600 flex-shrink-0 mt-0.5' />
+                  <p className='text-sm text-red-700'>{inlineError}</p>
                 </div>
               )}
-            </div>
-          )}
 
-          {/* Selected Building Form */}
-          {selectedBuilding && (
-            <div className='bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-slate-200/50 overflow-hidden'>
-              {/* Form Header with Gradient */}
-              <div className='bg-gradient-to-r from-slate-800 to-slate-700 p-6'>
-                <div className='flex items-center justify-between'>
-                  <div>
-                    <h2 className='text-2xl font-bold text-white flex items-center'>
-                      <Calculator className='w-6 h-6 mr-2' />
-                      ESG Service Report
-                    </h2>
-                    <p className='text-slate-300 mt-1'>{selectedBuilding.address}</p>
+              {/* Roof Size Input */}
+              <div>
+                <label htmlFor='roofSize' className='block text-sm font-semibold text-gray-900 mb-2'>
+                  Roof Size (m²)
+                </label>
+                <input
+                  type='number'
+                  id='roofSize'
+                  value={roofSize}
+                  onChange={e => setRoofSize(e.target.value)}
+                  className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                  placeholder='Enter roof size'
+                />
+              </div>
+
+              {/* Division Areas */}
+              <div>
+                <div className='flex items-center justify-between mb-4'>
+                  <h3 className='text-lg font-semibold text-gray-900'>Area Allocation</h3>
+                  <div
+                    className={`px-3 py-1 rounded-lg text-sm font-semibold ${
+                      Math.abs(totalPercentage - 100) < 0.1
+                        ? 'bg-green-100 text-green-700'
+                        : 'bg-red-100 text-red-700'
+                    }`}
+                  >
+                    {totalPercentage.toFixed(1)}%
                   </div>
-                  <div className='p-3 bg-white/10 rounded-xl backdrop-blur-sm'>
-                    <Leaf className='w-8 h-8 text-emerald-400' />
+                </div>
+
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                  {/* Green Roof */}
+                  <div className='bg-slate-50 rounded-lg p-4 border border-slate-200'>
+                    <div className='flex items-center justify-between mb-3'>
+                      <label className='text-sm font-semibold text-gray-900 flex items-center gap-2'>
+                        <Leaf className='w-4 h-4 text-green-600' />
+                        Green Roof
+                      </label>
+                      <span className='text-lg font-bold text-gray-900'>{divisions.greenRoof}%</span>
+                    </div>
+                    <input
+                      type='range'
+                      min='0'
+                      max='100'
+                      value={divisions.greenRoof}
+                      onChange={e =>
+                        handleDivisionChange('greenRoof', Number(e.target.value))
+                      }
+                      className='w-full'
+                    />
+                    <input
+                      type='number'
+                      min='0'
+                      max='100'
+                      value={divisions.greenRoof}
+                      onChange={e =>
+                        handleDivisionChange('greenRoof', Number(e.target.value))
+                      }
+                      className='w-full mt-2 px-3 py-1 border border-gray-300 rounded text-sm'
+                    />
+                    <p className='text-xs text-gray-600 mt-2'>
+                      CO₂ absorption, stormwater retention, improved insulation
+                    </p>
+                  </div>
+
+                  {/* NOx Reduction */}
+                  <div className='bg-slate-50 rounded-lg p-4 border border-slate-200'>
+                    <div className='flex items-center justify-between mb-3'>
+                      <label className='text-sm font-semibold text-gray-900 flex items-center gap-2'>
+                        <Wind className='w-4 h-4 text-blue-600' />
+                        NOₓ Reduction
+                      </label>
+                      <span className='text-lg font-bold text-gray-900'>{divisions.noxReduction}%</span>
+                    </div>
+                    <input
+                      type='range'
+                      min='0'
+                      max='100'
+                      value={divisions.noxReduction}
+                      onChange={e =>
+                        handleDivisionChange('noxReduction', Number(e.target.value))
+                      }
+                      className='w-full'
+                    />
+                    <input
+                      type='number'
+                      min='0'
+                      max='100'
+                      value={divisions.noxReduction}
+                      onChange={e =>
+                        handleDivisionChange('noxReduction', Number(e.target.value))
+                      }
+                      className='w-full mt-2 px-3 py-1 border border-gray-300 rounded text-sm'
+                    />
+                    <p className='text-xs text-gray-600 mt-2'>
+                      Photocatalytic coatings break down NOₓ pollutants
+                    </p>
+                  </div>
+
+                  {/* Cool Roof */}
+                  <div className='bg-slate-50 rounded-lg p-4 border border-slate-200'>
+                    <div className='flex items-center justify-between mb-3'>
+                      <label className='text-sm font-semibold text-gray-900 flex items-center gap-2'>
+                        <Zap className='w-4 h-4 text-cyan-600' />
+                        Cool Roof
+                      </label>
+                      <span className='text-lg font-bold text-gray-900'>{divisions.coolRoof}%</span>
+                    </div>
+                    <input
+                      type='range'
+                      min='0'
+                      max='100'
+                      value={divisions.coolRoof}
+                      onChange={e => handleDivisionChange('coolRoof', Number(e.target.value))}
+                      className='w-full'
+                    />
+                    <input
+                      type='number'
+                      min='0'
+                      max='100'
+                      value={divisions.coolRoof}
+                      onChange={e => handleDivisionChange('coolRoof', Number(e.target.value))}
+                      className='w-full mt-2 px-3 py-1 border border-gray-300 rounded text-sm'
+                    />
+                    <p className='text-xs text-gray-600 mt-2'>
+                      Reflective surfaces reduce cooling costs and enable solar panels
+                    </p>
+                  </div>
+
+                  {/* Social Activities */}
+                  <div className='bg-slate-50 rounded-lg p-4 border border-slate-200'>
+                    <div className='flex items-center justify-between mb-3'>
+                      <label className='text-sm font-semibold text-gray-900 flex items-center gap-2'>
+                        <Users className='w-4 h-4 text-purple-600' />
+                        Social Activities
+                      </label>
+                      <span className='text-lg font-bold text-gray-900'>{divisions.socialActivities}%</span>
+                    </div>
+                    <input
+                      type='range'
+                      min='0'
+                      max='100'
+                      value={divisions.socialActivities}
+                      onChange={e =>
+                        handleDivisionChange('socialActivities', Number(e.target.value))
+                      }
+                      className='w-full'
+                    />
+                    <input
+                      type='number'
+                      min='0'
+                      max='100'
+                      value={divisions.socialActivities}
+                      onChange={e =>
+                        handleDivisionChange('socialActivities', Number(e.target.value))
+                      }
+                      className='w-full mt-2 px-3 py-1 border border-gray-300 rounded text-sm'
+                    />
+                    <p className='text-xs text-gray-600 mt-2'>
+                      Community gardens and urban farming for social well-being
+                    </p>
                   </div>
                 </div>
               </div>
 
-              <div className='p-6 space-y-6'>
-                {inlineError && (
-                  <div className='bg-gradient-to-r from-red-50 to-rose-50 border-l-4 border-red-500 rounded-xl p-4 flex items-start'>
-                    <AlertCircle className='w-5 h-5 text-red-600 mr-3 flex-shrink-0 mt-0.5' />
-                    <p className='text-sm text-red-700 font-medium'>{inlineError}</p>
-                  </div>
-                )}
+              {/* Action Buttons */}
+              <div className='flex flex-col sm:flex-row gap-3 pt-4'>
+                <button
+                  onClick={handleCalculate}
+                  disabled={loadingCalculation}
+                  className='flex-1 flex items-center justify-center gap-2 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 font-semibold'
+                >
+                  {loadingCalculation ? (
+                    <>
+                      <Loader2 className='w-5 h-5 animate-spin' />
+                      Calculating...
+                    </>
+                  ) : (
+                    <>
+                      <Calculator className='w-5 h-5' />
+                      Calculate ESG Metrics
+                    </>
+                  )}
+                </button>
 
-                {/* Roof Size Input - Modern Design */}
-                <div className='bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl p-5 border border-slate-200'>
-                  <label
-                    htmlFor='roofSize'
-                    className='block text-sm font-bold text-slate-800 mb-3 flex items-center'
-                  >
-                    <BuildingIcon className='w-5 h-5 mr-2 text-slate-700' />
-                    Roof Size (m²)
-                  </label>
-                  <input
-                    type='number'
-                    id='roofSize'
-                    value={roofSize}
-                    onChange={e => setRoofSize(e.target.value)}
-                    className='w-full border-2 border-blue-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white font-semibold text-lg'
-                    placeholder='Enter roof size'
-                  />
-                </div>
-
-                {/* Division Areas - Card-based Design */}
-                <div className='space-y-4'>
-                  <div className='flex items-center justify-between'>
-                    <h3 className='text-xl font-bold text-slate-800 flex items-center'>
-                      <TrendingUp className='w-5 h-5 mr-2 text-emerald-600' />
-                      Area Allocation
-                    </h3>
-                    <div
-                      className={`px-4 py-2 rounded-xl font-bold text-lg ${
-                        Math.abs(totalPercentage - 100) < 0.1
-                          ? 'bg-gradient-to-r from-slate-600 to-slate-700 text-white shadow-lg'
-                          : 'bg-gradient-to-r from-red-500 to-red-600 text-white'
-                      }`}
+                {calculatedMetrics && (
+                  <>
+                    <button
+                      onClick={handleSave}
+                      disabled={saving}
+                      className='flex-1 flex items-center justify-center gap-2 bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 disabled:opacity-50 font-semibold'
                     >
-                      {totalPercentage.toFixed(1)}%
-                    </div>
-                  </div>
-
-                  <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                    {/* Green Roof */}
-                    <div className='group relative overflow-hidden bg-gradient-to-br from-slate-600 to-slate-700 rounded-2xl p-5 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1'>
-                      <div className='absolute inset-0 bg-white/10'></div>
-                      <div className='relative flex flex-col h-full'>
-                        <div className='flex items-center justify-between mb-3'>
-                          <div className='flex items-center space-x-2'>
-                            <div className='p-2 bg-white/20 rounded-lg backdrop-blur-sm'>
-                              <Leaf className='w-5 h-5 text-white' />
-                            </div>
-                            <label className='block text-sm font-bold text-white'>Green Roof</label>
-                          </div>
-                          <span className='text-2xl font-bold text-white'>
-                            {divisions.greenRoof}%
-                          </span>
-                        </div>
-                        <div className='flex-1 flex flex-col justify-between'>
-                          <input
-                            type='range'
-                            min='0'
-                            max='100'
-                            value={divisions.greenRoof}
-                            onChange={e =>
-                              handleDivisionChange('greenRoof', Number(e.target.value))
-                            }
-                            className='w-full h-2 bg-white/30 rounded-lg appearance-none cursor-pointer'
-                            style={{
-                              WebkitAppearance: 'none',
-                              appearance: 'none',
-                            }}
-                          />
-                          <input
-                            type='number'
-                            min='0'
-                            max='100'
-                            value={divisions.greenRoof}
-                            onChange={e =>
-                              handleDivisionChange('greenRoof', Number(e.target.value))
-                            }
-                            className='w-full mt-2 border-2 border-white/50 rounded-xl px-3 py-2 bg-white/20 text-white placeholder-white/60 font-bold focus:outline-none focus:ring-2 focus:ring-white/50'
-                          />
-                          <p className='text-xs text-white/80 mt-3 leading-relaxed'>
-                            CO₂ absorption, stormwater retention, improved insulation, and
-                            biodiversity support
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* NOx Reduction */}
-                    <div className='group relative overflow-hidden bg-gradient-to-br from-slate-500 to-slate-600 rounded-2xl p-5 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1'>
-                      <div className='absolute inset-0 bg-white/10'></div>
-                      <div className='relative flex flex-col h-full'>
-                        <div className='flex items-center justify-between mb-3'>
-                          <div className='flex items-center space-x-2'>
-                            <div className='p-2 bg-white/20 rounded-lg backdrop-blur-sm'>
-                              <Wind className='w-5 h-5 text-white' />
-                            </div>
-                            <label className='block text-sm font-bold text-white'>
-                              NOₓ Reduction
-                            </label>
-                          </div>
-                          <span className='text-2xl font-bold text-white'>
-                            {divisions.noxReduction}%
-                          </span>
-                        </div>
-                        <div className='flex-1 flex flex-col justify-between'>
-                          <input
-                            type='range'
-                            min='0'
-                            max='100'
-                            value={divisions.noxReduction}
-                            onChange={e =>
-                              handleDivisionChange('noxReduction', Number(e.target.value))
-                            }
-                            className='w-full h-2 bg-white/30 rounded-lg appearance-none cursor-pointer'
-                            style={{
-                              WebkitAppearance: 'none',
-                              appearance: 'none',
-                            }}
-                          />
-                          <input
-                            type='number'
-                            min='0'
-                            max='100'
-                            value={divisions.noxReduction}
-                            onChange={e =>
-                              handleDivisionChange('noxReduction', Number(e.target.value))
-                            }
-                            className='w-full mt-2 border-2 border-white/50 rounded-xl px-3 py-2 bg-white/20 text-white placeholder-white/60 font-bold focus:outline-none focus:ring-2 focus:ring-white/50'
-                          />
-                          <p className='text-xs text-white/80 mt-3 leading-relaxed'>
-                            Photocatalytic coatings break down NOₓ pollutants, improving air quality
-                            and reducing smog
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Cool Roof */}
-                    <div className='group relative overflow-hidden bg-gradient-to-br from-slate-700 to-slate-800 rounded-2xl p-5 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1'>
-                      <div className='absolute inset-0 bg-white/10'></div>
-                      <div className='relative flex flex-col h-full'>
-                        <div className='flex items-center justify-between mb-3'>
-                          <div className='flex items-center space-x-2'>
-                            <div className='p-2 bg-white/20 rounded-lg backdrop-blur-sm'>
-                              <Zap className='w-5 h-5 text-white' />
-                            </div>
-                            <label className='block text-sm font-bold text-white'>Cool Roof</label>
-                          </div>
-                          <span className='text-2xl font-bold text-white'>
-                            {divisions.coolRoof}%
-                          </span>
-                        </div>
-                        <div className='flex-1 flex flex-col justify-between'>
-                          <input
-                            type='range'
-                            min='0'
-                            max='100'
-                            value={divisions.coolRoof}
-                            onChange={e => handleDivisionChange('coolRoof', Number(e.target.value))}
-                            className='w-full h-2 bg-white/30 rounded-lg appearance-none cursor-pointer'
-                            style={{
-                              WebkitAppearance: 'none',
-                              appearance: 'none',
-                            }}
-                          />
-                          <input
-                            type='number'
-                            min='0'
-                            max='100'
-                            value={divisions.coolRoof}
-                            onChange={e => handleDivisionChange('coolRoof', Number(e.target.value))}
-                            className='w-full mt-2 border-2 border-white/50 rounded-xl px-3 py-2 bg-white/20 text-white placeholder-white/60 font-bold focus:outline-none focus:ring-2 focus:ring-white/50'
-                          />
-                          <p className='text-xs text-white/80 mt-3 leading-relaxed'>
-                            Reflective surfaces reduce cooling costs by up to 50%, ideal for solar
-                            panel installation
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Social Activities */}
-                    <div className='group relative overflow-hidden bg-gradient-to-br from-slate-500 to-slate-600 rounded-2xl p-5 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1'>
-                      <div className='absolute inset-0 bg-white/10'></div>
-                      <div className='relative flex flex-col h-full'>
-                        <div className='flex items-center justify-between mb-3'>
-                          <div className='flex items-center space-x-2'>
-                            <div className='p-2 bg-white/20 rounded-lg backdrop-blur-sm'>
-                              <Users className='w-5 h-5 text-white' />
-                            </div>
-                            <label className='block text-sm font-bold text-white'>
-                              Social Activities
-                            </label>
-                          </div>
-                          <span className='text-2xl font-bold text-white'>
-                            {divisions.socialActivities}%
-                          </span>
-                        </div>
-                        <div className='flex-1 flex flex-col justify-between'>
-                          <input
-                            type='range'
-                            min='0'
-                            max='100'
-                            value={divisions.socialActivities}
-                            onChange={e =>
-                              handleDivisionChange('socialActivities', Number(e.target.value))
-                            }
-                            className='w-full h-2 bg-white/30 rounded-lg appearance-none cursor-pointer'
-                            style={{
-                              WebkitAppearance: 'none',
-                              appearance: 'none',
-                            }}
-                          />
-                          <input
-                            type='number'
-                            min='0'
-                            max='100'
-                            value={divisions.socialActivities}
-                            onChange={e =>
-                              handleDivisionChange('socialActivities', Number(e.target.value))
-                            }
-                            className='w-full mt-2 border-2 border-white/50 rounded-xl px-3 py-2 bg-white/20 text-white placeholder-white/60 font-bold focus:outline-none focus:ring-2 focus:ring-white/50'
-                          />
-                          <p className='text-xs text-white/80 mt-3 leading-relaxed'>
-                            Community gardens, gathering spaces, and urban farming promote social
-                            well-being
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Action Buttons - Modern Design */}
-                <div className='flex flex-col sm:flex-row gap-4 pt-6'>
-                  <button
-                    onClick={handleCalculate}
-                    disabled={loadingCalculation}
-                    className='flex-1 group relative overflow-hidden bg-gradient-to-r from-slate-700 to-slate-800 text-white rounded-2xl px-6 py-4 font-bold text-lg shadow-lg hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none'
-                  >
-                    <div className='absolute inset-0 bg-white/20 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left'></div>
-                    <div className='relative flex items-center justify-center'>
-                      {loadingCalculation ? (
+                      {saving ? (
                         <>
-                          <Loader2 className='w-6 h-6 mr-2 animate-spin' />
-                          Calculating...
+                          <Loader2 className='w-5 h-5 animate-spin' />
+                          Saving...
                         </>
                       ) : (
                         <>
-                          <Calculator className='w-6 h-6 mr-2' />
-                          Calculate ESG Metrics
+                          <Save className='w-5 h-5' />
+                          Save Report
                         </>
                       )}
-                    </div>
-                  </button>
+                    </button>
 
-                  {calculatedMetrics && (
-                    <>
+                    {existingReportId && (
                       <button
-                        onClick={handleSave}
-                        disabled={saving}
-                        className='flex-1 group relative overflow-hidden bg-gradient-to-r from-slate-600 to-slate-700 text-white rounded-2xl px-6 py-4 font-bold text-lg shadow-lg hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none'
+                        onClick={handleGeneratePublicLink}
+                        className='flex-1 flex items-center justify-center gap-2 bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 font-semibold'
                       >
-                        <div className='absolute inset-0 bg-white/20 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left'></div>
-                        <div className='relative flex items-center justify-center'>
-                          {saving ? (
-                            <>
-                              <Loader2 className='w-6 h-6 mr-2 animate-spin' />
-                              Saving...
-                            </>
-                          ) : (
-                            <>
-                              <Save className='w-6 h-6 mr-2' />
-                              Save Report
-                            </>
-                          )}
-                        </div>
+                        <Share2 className='w-5 h-5' />
+                        Share Report
                       </button>
+                    )}
+                  </>
+                )}
+              </div>
 
-                      {existingReportId && (
-                        <button
-                          onClick={handleGeneratePublicLink}
-                          className='flex-1 group relative overflow-hidden bg-gradient-to-r from-slate-500 to-slate-600 text-white rounded-2xl px-6 py-4 font-bold text-lg shadow-lg hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300'
-                        >
-                          <div className='absolute inset-0 bg-white/20 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left'></div>
-                          <div className='relative flex items-center justify-center'>
-                            <Share2 className='w-6 h-6 mr-2' />
-                            Share Report
-                          </div>
-                        </button>
-                      )}
-                    </>
-                  )}
-                </div>
-
-                {/* Calculated Metrics Display - Roof For Good Style */}
-                {calculatedMetrics && (
-                  <div className='mt-8 space-y-6'>
-                    {/* Header with completion badge */}
-                    <div className='bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-2xl p-6 text-center'>
+              {/* Calculated Metrics Display - Roof For Good Style */}
+              {calculatedMetrics && (
+                <div className='mt-8 space-y-6'>
+                  {/* Header with completion badge */}
+                  <div className='bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-2xl p-6 text-center'>
                       <div className='flex items-center justify-center gap-2 mb-2'>
                         <CheckCircle className='w-6 h-6 text-green-600' />
                         <p className='text-green-700 font-semibold'>Analysis Complete</p>
@@ -1420,7 +1305,6 @@ const ESGService: React.FC = () => {
               </div>
             </div>
           )}
-        </div>
       </div>
     </>
   );

@@ -53,8 +53,10 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
   const { showSuccess, showError } = useToast();
   const currentLocale = locale as SupportedLocale;
 
-  // Determine if user is in read-only mode (inspectors)
-  const isReadOnly = currentUser?.role === 'inspector';
+  // Inspectors now have full access to create/edit customers (needed for field work)
+  // Only delete operations remain admin-only
+  const isReadOnly = false; // Changed from: currentUser?.role === 'inspector'
+  const canDelete = currentUser?.role !== 'inspector'; // Inspectors cannot delete customers
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -157,7 +159,9 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
   };
 
   useEffect(() => {
-    if (currentUser && (currentUser.role === 'superadmin' || currentUser.role === 'branchAdmin')) {
+    // Allow superadmins, branchAdmins, and inspectors to fetch customers
+    // Inspectors have read-only access (controlled by isReadOnly flag)
+    if (currentUser && (currentUser.role === 'superadmin' || currentUser.role === 'branchAdmin' || currentUser.role === 'inspector')) {
       fetchCustomers();
     }
   }, [currentUser]);
@@ -1078,14 +1082,16 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                                       <Edit className='h-4 w-4' />
                                     </button>
                                   </Tooltip>
-                                  <Tooltip content='Delete Customer'>
-                                    <button
-                                      onClick={() => handleDeleteCustomer(customer)}
-                                      className='text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50'
-                                    >
-                                      <Trash2 className='h-4 w-4' />
-                                    </button>
-                                  </Tooltip>
+                                  {canDelete && (
+                                    <Tooltip content='Delete Customer'>
+                                      <button
+                                        onClick={() => handleDeleteCustomer(customer)}
+                                        className='text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50'
+                                      >
+                                        <Trash2 className='h-4 w-4' />
+                                      </button>
+                                    </Tooltip>
+                                  )}
                                 </>
                               )}
                               {!isReadOnly && (
@@ -1227,13 +1233,15 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                     >
                       Export Data (GDPR)
                     </button>
-                    <button
-                      onClick={() => handleDeleteCustomer(selectedCustomer)}
-                      className='px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium shadow-sm flex items-center gap-2'
-                    >
-                      <Trash2 className='h-4 w-4 mr-2' />
-                      {t('common.delete')}
-                    </button>
+                    {canDelete && (
+                      <button
+                        onClick={() => handleDeleteCustomer(selectedCustomer)}
+                        className='px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium shadow-sm flex items-center gap-2'
+                      >
+                        <Trash2 className='h-4 w-4 mr-2' />
+                        {t('common.delete')}
+                      </button>
+                    )}
                   </>
                 )}
                 <button

@@ -1,36 +1,32 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+/**
+ * Scheduled Visits Manager for Building Owners
+ * Allows customers to schedule and view external service visits
+ */
+
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../contexts/ToastContext';
-import { getScheduledVisitsByCustomer, createScheduledVisit } from '../../services/scheduledVisitService';
+import { ScheduledVisit, Building, ExternalServiceProvider } from '../../types';
 import { getBuildingsByCustomer } from '../../services/buildingService';
 import { getExternalProvidersByCompany } from '../../services/externalProviderService';
-import { ScheduledVisit, Building, ExternalServiceProvider } from '../../types';
-import { Calendar, MapPin, User, CheckCircle, XCircle, ExternalLink, Plus, Clock, Download } from 'lucide-react';
+import * as scheduledVisitService from '../../services/scheduledVisitService';
+import { Calendar, Plus, Clock, MapPin, User, X } from 'lucide-react';
 import LoadingSpinner from '../common/LoadingSpinner';
-import FilterTabs from '../shared/filters/FilterTabs';
-import StatusBadge from '../shared/badges/StatusBadge';
-import IconLabel from '../shared/layouts/IconLabel';
-import ListCard from '../shared/cards/ListCard';
 import PageHeader from '../shared/layouts/PageHeader';
-import { formatDateTime, formatDate } from '../../utils/dateFormatter';
-import { Button } from '../ui/button';
-import { downloadICalFile, addToGoogleCalendar, addToOutlookCalendar } from '../../utils/calendarExport';
 
-const ScheduledVisitsList: React.FC = () => {
+const ScheduledVisitsManager: React.FC = () => {
   const { currentUser } = useAuth();
-  const navigate = useNavigate();
   const { showSuccess, showError } = useToast();
-  
-  const [visits, setVisits] = useState<ScheduledVisit[]>([]);
+
   const [buildings, setBuildings] = useState<Building[]>([]);
   const [providers, setProviders] = useState<ExternalServiceProvider[]>([]);
+  const [scheduledVisits, setScheduledVisits] = useState<ScheduledVisit[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<'all' | 'upcoming' | 'past'>('all');
   const [showForm, setShowForm] = useState(false);
+
+  // Current month for calendar
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [openCalendarMenu, setOpenCalendarMenu] = useState<string | null>(null);
-  
+
   // Form state
   const [selectedBuilding, setSelectedBuilding] = useState('');
   const [selectedProvider, setSelectedProvider] = useState('');
@@ -38,7 +34,6 @@ const ScheduledVisitsList: React.FC = () => {
   const [visitTime, setVisitTime] = useState('10:00');
   const [duration, setDuration] = useState(120);
   const [notes, setNotes] = useState('');
-  const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
@@ -52,14 +47,16 @@ const ScheduledVisitsList: React.FC = () => {
     setLoading(true);
     try {
       const customerId = currentUser.companyId || currentUser.uid;
-      const [visitsData, buildingsData, providersData] = await Promise.all([
-        getScheduledVisitsByCustomer(customerId),
-        getBuildingsByCustomer(customerId),
-        getExternalProvidersByCompany(customerId),
-      ]);
-      setVisits(visitsData);
-      setBuildings(buildingsData);
-      setProviders(providersData);
+
+      const buildingsList = await getBuildingsByCustomer(customerId);
+      setBuildings(buildingsList);
+
+      const providersList = await getExternalProvidersByCompany(customerId);
+      setProviders(providersList);
+
+      // Load visits for current customer
+      const visits = await scheduledVisitService.getScheduledVisitsForCustomer(customerId);
+      setScheduledVisits(visits);
     } catch (error) {
       console.error('Error loading data:', error);
       showError('Error loading data');
@@ -70,20 +67,22 @@ const ScheduledVisitsList: React.FC = () => {
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
+
     if (!selectedBuilding) newErrors.building = 'Building is required';
     if (!selectedProvider) newErrors.provider = 'Provider is required';
     if (!visitDate) newErrors.visitDate = 'Date is required';
     if (!visitTime) newErrors.visitTime = 'Time is required';
     if (duration < 30) newErrors.duration = 'Duration must be at least 30 minutes';
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleCreateVisit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!validateForm() || !currentUser) return;
 
-    setSubmitting(true);
     try {
       const customerId = currentUser.companyId || currentUser.uid;
       const building = buildings.find(b => b.id === selectedBuilding);
@@ -94,7 +93,7 @@ const ScheduledVisitsList: React.FC = () => {
         return;
       }
 
-      await createScheduledVisit({
+      const visit = {
         branchId: currentUser.branchId || '',
         customerId: customerId,
         customerName: currentUser.name || 'Building Owner',
@@ -110,7 +109,10 @@ const ScheduledVisitsList: React.FC = () => {
         status: 'scheduled' as const,
         description: notes,
         createdBy: currentUser.uid,
-      });
+        createdAt: new Date().toISOString(),
+      };
+
+      await scheduledVisitService.createScheduledVisit(visit);
 
       showSuccess('Visit scheduled successfully');
       setShowForm(false);
@@ -124,25 +126,8 @@ const ScheduledVisitsList: React.FC = () => {
     } catch (error) {
       console.error('Error scheduling visit:', error);
       showError('Failed to schedule visit');
-    } finally {
-      setSubmitting(false);
     }
   };
-
-  const now = new Date();
-  const filteredVisits = visits.filter(visit => {
-    const visitDate = new Date(visit.scheduledDate);
-    if (filter === 'upcoming') return visitDate >= now && visit.status === 'scheduled';
-    if (filter === 'past') return visitDate < now || visit.status !== 'scheduled';
-    return true;
-  });
-
-  const sortedVisits = [...filteredVisits].sort((a, b) => {
-    const dateA = new Date(a.scheduledDate).getTime();
-    const dateB = new Date(b.scheduledDate).getTime();
-    if (dateA !== dateB) return dateB - dateA;
-    return a.scheduledTime.localeCompare(b.scheduledTime);
-  });
 
   const getCalendarDays = () => {
     const year = currentDate.getFullYear();
@@ -151,17 +136,25 @@ const ScheduledVisitsList: React.FC = () => {
     const lastDay = new Date(year, month + 1, 0);
     const daysInMonth = lastDay.getDate();
     const startingDayOfWeek = firstDay.getDay();
+
     const days = [];
-    for (let i = 0; i < startingDayOfWeek; i++) days.push(null);
-    for (let i = 1; i <= daysInMonth; i++) days.push(new Date(year, month, i));
+    for (let i = 0; i < startingDayOfWeek; i++) {
+      days.push(null);
+    }
+    for (let i = 1; i <= daysInMonth; i++) {
+      days.push(new Date(year, month, i));
+    }
     return days;
   };
 
   const getVisitsForDate = (date: Date | null) => {
     if (!date) return [];
     const dateStr = date.toISOString().split('T')[0];
-    return visits.filter(v => v.scheduledDate === dateStr);
+    return scheduledVisits.filter(v => v.scheduledDate === dateStr);
   };
+
+  const calendarDays = getCalendarDays();
+  const monthName = currentDate.toLocaleString('default', { month: 'long', year: 'numeric' });
 
   if (loading) {
     return (
@@ -171,20 +164,12 @@ const ScheduledVisitsList: React.FC = () => {
     );
   }
 
-  const calendarDays = getCalendarDays();
-  const monthName = currentDate.toLocaleString('default', { month: 'long', year: 'numeric' });
-  const filterTabs = [
-    { value: 'all', label: 'All' },
-    { value: 'upcoming', label: 'Upcoming' },
-    { value: 'past', label: 'Past' },
-  ];
-
   return (
     <div className='space-y-6'>
       <div className='flex justify-between items-center'>
         <PageHeader
           title='Scheduled Visits'
-          subtitle='View and schedule external service visits'
+          subtitle='Schedule and manage external service visits'
         />
         <button
           onClick={() => setShowForm(!showForm)}
@@ -198,7 +183,7 @@ const ScheduledVisitsList: React.FC = () => {
       {showForm && (
         <div className='bg-white rounded-lg shadow p-6 border border-slate-200'>
           <h3 className='text-lg font-semibold mb-4'>Schedule a New Visit</h3>
-          <form onSubmit={handleCreateVisit} className='space-y-4'>
+          <form onSubmit={handleSubmit} className='space-y-4'>
             <div className='grid grid-cols-2 gap-4'>
               <div>
                 <label className='block text-sm font-medium text-gray-700 mb-1'>Building *</label>
@@ -303,17 +288,16 @@ const ScheduledVisitsList: React.FC = () => {
               </button>
               <button
                 type='submit'
-                disabled={submitting}
-                className='flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium disabled:opacity-50'
+                className='flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium'
               >
-                {submitting ? 'Scheduling...' : 'Schedule Visit'}
+                Schedule Visit
               </button>
             </div>
           </form>
         </div>
       )}
 
-      {/* Calendar View */}
+      {/* Calendar */}
       <div className='bg-white rounded-lg shadow p-6 border border-slate-200'>
         <div className='flex items-center justify-between mb-6'>
           <h3 className='text-lg font-semibold'>{monthName}</h3>
@@ -351,8 +335,9 @@ const ScheduledVisitsList: React.FC = () => {
         {/* Calendar grid */}
         <div className='grid grid-cols-7 gap-2'>
           {calendarDays.map((date, idx) => {
-            const visitsOnDate = getVisitsForDate(date);
+            const visits = getVisitsForDate(date);
             const isToday = date && new Date().toDateString() === date.toDateString();
+
             return (
               <div
                 key={idx}
@@ -366,7 +351,7 @@ const ScheduledVisitsList: React.FC = () => {
                       {date.getDate()}
                     </div>
                     <div className='space-y-1'>
-                      {visitsOnDate.map(visit => (
+                      {visits.map(visit => (
                         <div
                           key={visit.id}
                           className='text-xs bg-amber-100 text-amber-800 p-1 rounded truncate'
@@ -384,142 +369,44 @@ const ScheduledVisitsList: React.FC = () => {
         </div>
       </div>
 
-      <FilterTabs
-        tabs={filterTabs}
-        activeTab={filter}
-        onTabChange={value => setFilter(value as 'all' | 'upcoming' | 'past')}
-      />
-
-      {sortedVisits.length === 0 ? (
-        <div className='bg-white rounded-lg shadow p-12 text-center border border-slate-200'>
-          <Calendar className='w-16 h-16 text-gray-400 mx-auto mb-4' />
-          <p className='text-gray-600'>
-            No scheduled visits found
-          </p>
-        </div>
-      ) : (
-        <div className='space-y-4'>
-          {sortedVisits.map(visit => (
-            <ListCard key={visit.id}>
-              <div className='flex items-start justify-between mb-4'>
-                <div>
-                  <h3 className='font-semibold text-gray-900'>{visit.assignedInspectorName}</h3>
-                  <p className='text-sm text-gray-600'>{visit.status}</p>
-                </div>
-                <div className='flex items-center gap-2'>
-                  <div className='relative'>
-                    <button
-                      onClick={() => setOpenCalendarMenu(openCalendarMenu === visit.id ? null : visit.id)}
-                      className='p-2 hover:bg-gray-100 rounded-lg transition-colors'
-                      title='Add to calendar'
-                    >
-                      <Calendar className='w-5 h-5 text-blue-600' />
-                    </button>
-                    {openCalendarMenu === visit.id && (
-                      <div className='absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-10'>
-                        <button
-                          onClick={() => {
-                            downloadICalFile(visit);
-                            setOpenCalendarMenu(null);
-                          }}
-                          className='w-full text-left px-4 py-2 hover:bg-gray-50 text-sm border-b border-gray-100 flex items-center gap-2'
-                        >
-                          <Download className='w-4 h-4' />
-                          Download (.ics)
-                        </button>
-                        <button
-                          onClick={() => {
-                            addToGoogleCalendar(visit);
-                            setOpenCalendarMenu(null);
-                          }}
-                          className='w-full text-left px-4 py-2 hover:bg-gray-50 text-sm border-b border-gray-100'
-                        >
-                          Add to Google Calendar
-                        </button>
-                        <button
-                          onClick={() => {
-                            addToOutlookCalendar(visit);
-                            setOpenCalendarMenu(null);
-                          }}
-                          className='w-full text-left px-4 py-2 hover:bg-gray-50 text-sm'
-                        >
-                          Add to Outlook
-                        </button>
-                      </div>
-                    )}
+      {/* Visits list */}
+      <div className='bg-white rounded-lg shadow p-6 border border-slate-200'>
+        <h3 className='text-lg font-semibold mb-4'>Upcoming Visits</h3>
+        {scheduledVisits.length === 0 ? (
+          <p className='text-gray-600 text-center py-8'>No scheduled visits yet</p>
+        ) : (
+          <div className='space-y-3'>
+            {scheduledVisits
+              .sort((a, b) => a.scheduledDate.localeCompare(b.scheduledDate))
+              .map(visit => (
+                <div key={visit.id} className='border border-gray-200 rounded-lg p-4 hover:shadow-sm transition'>
+                  <div className='flex items-start justify-between mb-2'>
+                    <h4 className='font-semibold text-gray-900'>{visit.assignedInspectorName}</h4>
+                    <span className='text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded'>
+                      {visit.status}
+                    </span>
                   </div>
-                  <StatusBadge status={visit.status} />
+                  <div className='space-y-1 text-sm text-gray-600'>
+                    <div className='flex items-center gap-2'>
+                      <Calendar className='w-4 h-4' />
+                      {new Date(visit.scheduledDate).toLocaleDateString()}
+                    </div>
+                    <div className='flex items-center gap-2'>
+                      <Clock className='w-4 h-4' />
+                      {visit.scheduledTime} ({visit.duration} min)
+                    </div>
+                    <div className='flex items-center gap-2'>
+                      <MapPin className='w-4 h-4' />
+                      {visit.customerAddress}
+                    </div>
+                  </div>
                 </div>
-              </div>
-
-              <div className='grid grid-cols-1 md:grid-cols-3 gap-4 mt-4'>
-                <IconLabel
-                  icon={Calendar}
-                  label='Date & Time'
-                  value={`${formatDate(visit.scheduledDate)} ${visit.scheduledTime}`}
-                />
-                <IconLabel
-                  icon={MapPin}
-                  label='Location'
-                  value={visit.customerAddress}
-                />
-                <IconLabel
-                  icon={Clock}
-                  label='Duration'
-                  value={`${visit.duration} minutes`}
-                />
-              </div>
-
-              {visit.description && (
-                <p className='mt-4 text-sm text-gray-600'>{visit.description}</p>
-              )}
-
-              {visit.customerResponse === 'pending' && visit.status === 'scheduled' && (
-                <div className='mt-6 pt-4 border-t border-slate-200 flex gap-3'>
-                  <Button
-                    onClick={() =>
-                      navigate(
-                        `/portal/appointment/${visit.id}/respond?token=${visit.publicToken || ''}`
-                      )
-                    }
-                    className='flex-1 bg-green-600 hover:bg-green-700'
-                  >
-                    <CheckCircle className='w-4 h-4 mr-2' />
-                    Accept
-                  </Button>
-                  <Button
-                    onClick={() =>
-                      navigate(
-                        `/portal/appointment/${visit.id}/respond?token=${visit.publicToken || ''}`
-                      )
-                    }
-                    variant='outline'
-                    className='flex-1 border-red-300 text-red-700 hover:bg-red-50'
-                  >
-                    <XCircle className='w-4 h-4 mr-2' />
-                    Reject
-                  </Button>
-                </div>
-              )}
-
-              {visit.status === 'completed' && visit.reportId && (
-                <div className='mt-6 pt-4 border-t border-slate-200'>
-                  <Button
-                    onClick={() => window.open(`/report/view/${visit.reportId}`, '_blank')}
-                    variant='outline'
-                    className='w-full'
-                  >
-                    <ExternalLink className='w-4 h-4 mr-2' />
-                    View Inspection Report
-                  </Button>
-                </div>
-              )}
-            </ListCard>
-          ))}
-        </div>
-      )}
+              ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
 
-export default ScheduledVisitsList;
+export default ScheduledVisitsManager;

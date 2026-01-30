@@ -659,6 +659,32 @@ export interface ScheduledVisit {
 
 // Service Agreements Types
 
+export interface ExternalServiceProvider {
+  id: string;
+  companyName: string;
+  contactName: string;
+  email: string;
+  phone: string;
+  address?: string;
+  cvr?: string; // Danish company registration number
+  
+  // Ownership & Access
+  addedByCustomerId: string;
+  addedByCompanyId: string;
+  isShared: boolean; // If true, other customers in same company can use this provider
+  
+  // Platform Integration Status
+  invitationStatus: 'none' | 'invited' | 'accepted' | 'declined';
+  invitedAt?: string; // ISO timestamp
+  invitedBy?: string;
+  platformBranchId?: string; // Set when provider joins platform
+  
+  // Metadata
+  createdAt: string;
+  updatedAt: string;
+  notes?: string;
+}
+
 export interface ServiceAgreement {
   id: string;
   customerId: string;
@@ -666,7 +692,12 @@ export interface ServiceAgreement {
   customerAddress: string;
   customerEmail?: string;
   customerPhone?: string;
-  branchId: string;
+  
+  // Provider relationship - either internal branch OR external provider
+  providerType: 'internal' | 'external';
+  branchId?: string; // For internal providers (platform partners)
+  externalProviderId?: string; // For external providers
+  
   createdBy: string;
   createdByName: string;
   agreementType: 'maintenance' | 'inspection' | 'repair' | 'other';

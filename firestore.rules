@@ -204,6 +204,7 @@ service cloud.firestore {
         (isInspector() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
       );
       // Create requires branch match and creator match; allow main branch users across branches
+      // Inspectors can create customers (e.g., when on-site creating reports for new customers)
       allow create: if isAuthenticated() &&
         request.resource.data.createdBy == request.auth.uid &&
         (
@@ -212,11 +213,12 @@ service cloud.firestore {
         ) &&
         // Basic required fields - using actual field names from Customer interface (name, address)
         request.resource.data.keys().hasAll(["name", "branchId", "createdBy"]) &&
-        (isSuperadmin() || isBranchAdmin());
-      // Only admins can update customers
+        (isSuperadmin() || isBranchAdmin() || isInspector());
+      // Inspectors can update customer details (e.g., contact info) in their branch
       allow update: if isAuthenticated() && (
         isSuperadmin() ||
-        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
+        (isInspector() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
       );
       // Only admins can delete customers
       allow delete: if isAuthenticated() && (
@@ -522,7 +524,7 @@ service cloud.firestore {
       );
       
       // Customers can create buildings linked to their account
-      // Internal users can create buildings in their branch
+      // Internal users (inspectors, branch admins, superadmins) can create buildings in their branch
       allow create: if isAuthenticated() && (
         (isCustomer() && (
           request.resource.data.customerId == request.auth.uid ||
@@ -530,7 +532,8 @@ service cloud.firestore {
           (request.resource.data.companyId != null && request.resource.data.companyId == getUserCompanyId())
         )) ||
         (isSuperadmin() ||
-        (isBranchAdmin() && (request.resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")))
+        (isBranchAdmin() && (request.resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
+        (isInspector() && (request.resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")))
       ) &&
         request.resource.data.createdBy == request.auth.uid;
       
@@ -586,14 +589,31 @@ service cloud.firestore {
         ) && 
         request.resource.data.createdBy == request.auth.uid;
       
-      // Only internal users can update scheduled visits
-      // Customers cannot modify visits (read-only)
-      allow update: if isAuthenticated() && 
-        !isCustomer() && (
+      // Allow internal updates; and allow customers to respond (accept/reject) with ownership checks
+      allow update: if isAuthenticated() && (
+        // Internal users keep full update rights
+        (!isCustomer() && (
           isSuperadmin() ||
           (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
           (isInspector() && resource.data.assignedInspectorId == request.auth.uid)
-        );
+        )) ||
+        // Customers may set response on visits they own
+        (
+          isCustomer() && (
+            (resource.data.customerId == request.auth.uid || resource.data.customerId == getUserCompanyId()) ||
+            (resource.data.buildingId != null && 
+             exists(/databases/$(database)/documents/buildings/$(resource.data.buildingId)) &&
+             (get(/databases/$(database)/documents/buildings/$(resource.data.buildingId)).data.customerId == request.auth.uid ||
+              get(/databases/$(database)/documents/buildings/$(resource.data.buildingId)).data.customerId == getUserCompanyId())) ||
+            (resource.data.companyId != null && resource.data.companyId == getUserCompanyId())
+          ) &&
+          // Must set a valid response and matching status
+          (
+            (request.resource.data.customerResponse == 'accepted' && request.resource.data.status == 'scheduled') ||
+            (request.resource.data.customerResponse == 'rejected' && request.resource.data.status == 'cancelled')
+          )
+        )
+      );
       
       // Only internal users can delete scheduled visits
       allow delete: if isAuthenticated() && 
@@ -728,6 +748,34 @@ service cloud.firestore {
         isSuperadmin() ||
         (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
       );
+    }
+
+    // External Service Providers
+    match /externalServiceProviders/{providerId} {
+      // Customers can read providers they created or those shared with their company
+      allow get: if isAuthenticated() && isCustomer() && (
+        resource.data.addedByCustomerId == request.auth.uid ||
+        (resource.data.isShared == true && resource.data.addedByCompanyId == getUserCompanyId())
+      );
+      
+      // Customers can list providers in their company scope
+      allow list: if isAuthenticated() && isCustomer();
+      
+      // Customers can create external providers
+      allow create: if isAuthenticated() && isCustomer() &&
+        request.resource.data.addedByCustomerId == request.auth.uid &&
+        request.resource.data.addedByCompanyId == getUserCompanyId();
+      
+      // Users can update providers they created
+      allow update: if isAuthenticated() && isCustomer() &&
+        resource.data.addedByCustomerId == request.auth.uid;
+      
+      // Users can delete providers they created (if not linked to any agreements)
+      allow delete: if isAuthenticated() && isCustomer() &&
+        resource.data.addedByCustomerId == request.auth.uid;
+      
+      // Admins have full access
+      allow read, write: if isAuthenticated() && (isSuperadmin() || isBranchAdmin());
     }
   }
 }

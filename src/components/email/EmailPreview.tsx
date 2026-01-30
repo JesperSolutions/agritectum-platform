@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '../ui/dialog';
 import { Button } from '../ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Eye, Mail, Code, X } from 'lucide-react';
@@ -94,10 +94,15 @@ const EmailPreview: React.FC<EmailPreviewProps> = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className='max-w-4xl max-h-[90vh] overflow-hidden'>
         <DialogHeader className='flex flex-row items-center justify-between space-y-0 pb-4'>
-          <DialogTitle className='flex items-center space-x-2'>
-            <Eye className='h-5 w-5 text-blue-600' />
-            <span>Email Preview</span>
-          </DialogTitle>
+          <div className='flex flex-col'>
+            <DialogTitle className='flex items-center space-x-2'>
+              <Eye className='h-5 w-5 text-blue-600' />
+              <span>Email Preview</span>
+            </DialogTitle>
+            <DialogDescription className='sr-only'>
+              Preview the email content before sending.
+            </DialogDescription>
+          </div>
           <Button variant='ghost' size='sm' onClick={onClose} className='h-8 w-8 p-0'>
             <X className='h-4 w-4' />
           </Button>

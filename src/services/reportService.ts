@@ -345,14 +345,14 @@ export const createReport = async (
       buildingAddress: building?.address || buildingAddress, // Use building address as source of truth
       roofType: building?.roofType || reportData.roofType, // Prefer building's roof type
       roofSize: building?.roofSize || reportData.roofSize, // Prefer building's roof size
-      // Add building snapshot for audit trail
+      // Add building snapshot for audit trail - convert all undefined to null for Firestore compatibility
       buildingSnapshot: building
         ? {
             id: building.id,
             buildingId: building.id,
-            address: building.address,
-            buildingType: building.buildingType,
-            roofType: building.roofType,
+            address: building.address || null,
+            buildingType: building.buildingType || null, // Convert undefined to null
+            roofType: building.roofType || null,
             roofSize: building.roofSize || null, // Convert undefined to null for Firestore
             latitude: building.latitude || null, // Convert undefined to null for Firestore
             longitude: building.longitude || null, // Convert undefined to null for Firestore
@@ -362,7 +362,7 @@ export const createReport = async (
         : null, // Use null instead of undefined
     };
 
-    // Filter out undefined values to prevent Firestore errors
+    // Filter out undefined values to prevent Firestore errors (but keep null values)
     const cleanReportData = Object.fromEntries(
       Object.entries(reportWithBuilding).filter(([_, value]) => value !== undefined)
     );

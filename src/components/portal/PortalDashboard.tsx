@@ -303,7 +303,7 @@ const PortalDashboard: React.FC = () => {
       </div>
 
       {/* Summary Cards */}
-      <div className='grid grid-cols-1 md:grid-cols-4 gap-6'>
+      <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6'>
         <div className='bg-white rounded-lg shadow p-6'>
           <div className='flex items-center justify-between mb-2'>
             <div className='flex items-center gap-2'>
@@ -318,7 +318,7 @@ const PortalDashboard: React.FC = () => {
             <BuildingIcon className='w-8 h-8 text-slate-600' />
           </div>
           <p className='text-3xl font-bold text-gray-900'>{buildings.length}</p>
-          <div className='mt-3 flex items-center gap-2 text-xs font-medium'>
+          <div className='mt-3 flex flex-wrap items-center gap-2 text-xs font-medium'>
             <span className='px-2 py-1 rounded bg-slate-100 text-slate-700 border border-slate-300'>
               {gradeCounts.A}A
             </span>

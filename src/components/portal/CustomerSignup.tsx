@@ -23,6 +23,9 @@ import {
 } from 'lucide-react';
 import AgritectumLogo from '../AgritectumLogo';
 import LoadingSpinner from '../common/LoadingSpinner';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
 
 const CustomerSignup: React.FC = () => {
   const { token } = useParams<{ token: string }>();
@@ -307,182 +310,196 @@ const CustomerSignup: React.FC = () => {
 
   // Signup form
   return (
-    <div className='min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4'>
-      <div className='max-w-md w-full'>
-        {/* Logo */}
-        <div className='text-center mb-8'>
-          <AgritectumLogo className='h-12 mx-auto mb-4' />
-          <h1 className='text-2xl font-bold text-slate-900'>
-            {t('customerSignup.title') || 'Create Your Account'}
-          </h1>
-          <p className='text-slate-600 mt-2'>
-            {t('customerSignup.subtitle') ||
-              'Complete your registration to access the customer portal'}
-          </p>
-        </div>
-
-        {/* Invitation info */}
-        {invitation && (
-          <div className='bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6'>
-            <div className='flex items-start gap-3'>
-              <Building className='w-5 h-5 text-blue-600 mt-0.5' />
-              <div>
-                <p className='font-medium text-blue-900'>{invitation.customerName}</p>
-                <p className='text-sm text-blue-700 mt-1'>
-                  {t('customerSignup.invitationValid') || 'Invitation valid until'}:{' '}
-                  {formatExpiryDate(invitation.expiresAt)}
+    <div className='min-h-screen bg-slate-50'>
+      <div className='mx-auto max-w-5xl px-4 py-10 lg:py-16'>
+        <div className='grid gap-8 lg:grid-cols-[1.05fr_1fr] items-start'>
+          <div className='hidden lg:flex flex-col gap-6 rounded-2xl border border-slate-200 bg-white/80 p-8 shadow-material-3 backdrop-blur'>
+            <AgritectumLogo className='h-10' />
+            <div className='space-y-3'>
+              <p className='text-xs uppercase tracking-[0.3em] text-slate-500'>Customer portal</p>
+              <h1 className='text-3xl font-semibold text-slate-900'>
+                {t('customerSignup.title') || 'Create your Agritectum account'}
+              </h1>
+              <p className='text-base text-slate-600'>
+                {t('customerSignup.subtitle') ||
+                  'Register with your invitation to manage inspections, offers, and reports in one place.'}
+              </p>
+            </div>
+            <div className='grid grid-cols-2 gap-4 text-sm text-slate-700'>
+              <div className='rounded-xl border border-slate-100 bg-slate-50/60 p-4 shadow-material-1'>
+                <div className='flex items-center gap-2 text-slate-900 font-semibold'>
+                  <CheckCircle className='h-4 w-4 text-emerald-600' />
+                  {t('customerSignup.benefit1') || 'Secure invitations'}
+                </div>
+                <p className='mt-2 text-slate-600'>
+                  {t('customerSignup.benefit1Copy') || 'Only invited building owners can sign up for portal access.'}
+                </p>
+              </div>
+              <div className='rounded-xl border border-slate-100 bg-slate-50/60 p-4 shadow-material-1'>
+                <div className='flex items-center gap-2 text-slate-900 font-semibold'>
+                  <Clock className='h-4 w-4 text-blue-600' />
+                  {t('customerSignup.benefit2') || 'Track visits & offers'}
+                </div>
+                <p className='mt-2 text-slate-600'>
+                  {t('customerSignup.benefit2Copy') || 'See scheduled visits, offers, and reports for your buildings.'}
                 </p>
               </div>
             </div>
           </div>
-        )}
 
-        {/* Form */}
-        <div className='bg-white rounded-xl shadow-lg p-8'>
-          <form onSubmit={handleSubmit} className='space-y-5'>
-            {/* Display Name */}
-            <div>
-              <label className='block text-sm font-medium text-slate-700 mb-1'>
-                {t('customerSignup.form.name') || 'Your Name'} *
-              </label>
-              <div className='relative'>
-                <User className='absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400' />
-                <input
-                  type='text'
-                  value={formData.displayName}
-                  onChange={e => setFormData(prev => ({ ...prev, displayName: e.target.value }))}
-                  className='w-full pl-10 pr-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500'
-                  placeholder={t('customerSignup.form.namePlaceholder') || 'Enter your full name'}
-                  required
-                />
+          <div className='rounded-2xl border border-slate-200 bg-white p-6 shadow-material-4 lg:p-8'>
+            <div className='flex items-start justify-between gap-3 mb-6'>
+              <div>
+                <h2 className='text-xl font-semibold text-slate-900'>
+                  {t('customerSignup.form.title') || 'Finish your registration'}
+                </h2>
+                <p className='text-sm text-slate-600 mt-1'>
+                  {t('customerSignup.form.subtitle') || 'Use the details from your invitation to get started.'}
+                </p>
+              </div>
+              <div className='lg:hidden'>
+                <AgritectumLogo className='h-8' />
               </div>
             </div>
 
-            {/* Email */}
-            <div>
-              <label className='block text-sm font-medium text-slate-700 mb-1'>
-                {t('customerSignup.form.email') || 'Email Address'} *
-              </label>
-              <div className='relative'>
-                <Mail className='absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400' />
-                <input
-                  type='email'
-                  value={formData.email}
-                  onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                  className='w-full pl-10 pr-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500'
-                  placeholder={t('customerSignup.form.emailPlaceholder') || 'Enter your email'}
-                  required
-                />
-              </div>
-            </div>
-
-            {/* Password */}
-            <div>
-              <label className='block text-sm font-medium text-slate-700 mb-1'>
-                {t('customerSignup.form.password') || 'Password'} *
-              </label>
-              <div className='relative'>
-                <Lock className='absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400' />
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  value={formData.password}
-                  onChange={e => setFormData(prev => ({ ...prev, password: e.target.value }))}
-                  className='w-full pl-10 pr-12 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500'
-                  placeholder={
-                    t('customerSignup.form.passwordPlaceholder') ||
-                    'Create a password (min 8 characters)'
-                  }
-                  required
-                  minLength={8}
-                />
-                <button
-                  type='button'
-                  onClick={() => setShowPassword(!showPassword)}
-                  className='absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600'
-                >
-                  {showPassword ? <EyeOff className='w-5 h-5' /> : <Eye className='w-5 h-5' />}
-                </button>
-              </div>
-            </div>
-
-            {/* Confirm Password */}
-            <div>
-              <label className='block text-sm font-medium text-slate-700 mb-1'>
-                {t('customerSignup.form.confirmPassword') || 'Confirm Password'} *
-              </label>
-              <div className='relative'>
-                <Lock className='absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400' />
-                <input
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  value={formData.confirmPassword}
-                  onChange={e =>
-                    setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))
-                  }
-                  className='w-full pl-10 pr-12 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500'
-                  placeholder={
-                    t('customerSignup.form.confirmPasswordPlaceholder') || 'Confirm your password'
-                  }
-                  required
-                  minLength={8}
-                />
-                <button
-                  type='button'
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className='absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600'
-                >
-                  {showConfirmPassword ? (
-                    <EyeOff className='w-5 h-5' />
-                  ) : (
-                    <Eye className='w-5 h-5' />
-                  )}
-                </button>
-              </div>
-            </div>
-
-            {/* Error message */}
-            {error && (
-              <div className='bg-red-50 border border-red-200 rounded-lg p-3 flex items-start gap-2'>
-                <AlertTriangle className='w-5 h-5 text-red-600 flex-shrink-0 mt-0.5' />
-                <p className='text-sm text-red-700'>{error}</p>
+            {invitation && (
+              <div className='mb-6 rounded-xl border border-blue-100 bg-blue-50 p-4'>
+                <div className='flex items-start gap-3'>
+                  <Building className='w-5 h-5 text-blue-600 mt-0.5' />
+                  <div className='space-y-1'>
+                    <p className='font-semibold text-blue-900'>{invitation.customerName}</p>
+                    <p className='text-sm text-blue-700'>
+                      {t('customerSignup.invitationValid') || 'Invitation valid until'}:{' '}
+                      {formatExpiryDate(invitation.expiresAt)}
+                    </p>
+                  </div>
+                </div>
               </div>
             )}
 
-            {/* Submit button */}
-            <button
-              type='submit'
-              disabled={submitting}
-              className='w-full py-3 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center'
-            >
-              {submitting ? (
-                <>
-                  <LoadingSpinner size='sm' />
-                  <span className='ml-2'>
-                    {t('customerSignup.form.creating') || 'Creating account...'}
-                  </span>
-                </>
-              ) : (
-                t('customerSignup.form.submit') || 'Create Account'
-              )}
-            </button>
-          </form>
+            <form onSubmit={handleSubmit} className='space-y-4'>
+              <div className='space-y-1'>
+                <Label htmlFor='displayName'>{t('customerSignup.form.name') || 'Your Name'} *</Label>
+                <div className='relative'>
+                  <User className='absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400' />
+                  <Input
+                    id='displayName'
+                    value={formData.displayName}
+                    onChange={e => setFormData(prev => ({ ...prev, displayName: e.target.value }))}
+                    className='pl-11'
+                    placeholder={t('customerSignup.form.namePlaceholder') || 'Enter your full name'}
+                    autoComplete='name'
+                    required
+                  />
+                </div>
+              </div>
 
-          {/* Sign in link */}
-          <div className='mt-6 text-center'>
-            <p className='text-sm text-slate-600'>
-              {t('customerSignup.alreadyHaveAccount') || 'Already have an account?'}{' '}
-              <Link to='/portal/login' className='text-slate-700 font-medium hover:underline'>
+              <div className='space-y-1'>
+                <Label htmlFor='email'>{t('customerSignup.form.email') || 'Email Address'} *</Label>
+                <div className='relative'>
+                  <Mail className='absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400' />
+                  <Input
+                    id='email'
+                    type='email'
+                    value={formData.email}
+                    onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                    className='pl-11'
+                    placeholder={t('customerSignup.form.emailPlaceholder') || 'Enter your email'}
+                    autoComplete='email'
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className='space-y-1'>
+                <Label htmlFor='password'>{t('customerSignup.form.password') || 'Password'} *</Label>
+                <div className='relative'>
+                  <Lock className='absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400' />
+                  <Input
+                    id='password'
+                    type={showPassword ? 'text' : 'password'}
+                    value={formData.password}
+                    onChange={e => setFormData(prev => ({ ...prev, password: e.target.value }))}
+                    className='pl-11 pr-12'
+                    placeholder={
+                      t('customerSignup.form.passwordPlaceholder') || 'Create a password (min 8 characters)'
+                    }
+                    autoComplete='new-password'
+                    required
+                    minLength={8}
+                  />
+                  <button
+                    type='button'
+                    onClick={() => setShowPassword(!showPassword)}
+                    className='absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600'
+                  >
+                    {showPassword ? <EyeOff className='w-5 h-5' /> : <Eye className='w-5 h-5' />}
+                  </button>
+                </div>
+              </div>
+
+              <div className='space-y-1'>
+                <Label htmlFor='confirmPassword'>
+                  {t('customerSignup.form.confirmPassword') || 'Confirm Password'} *
+                </Label>
+                <div className='relative'>
+                  <Lock className='absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400' />
+                  <Input
+                    id='confirmPassword'
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    value={formData.confirmPassword}
+                    onChange={e => setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                    className='pl-11 pr-12'
+                    placeholder={
+                      t('customerSignup.form.confirmPasswordPlaceholder') || 'Confirm your password'
+                    }
+                    autoComplete='new-password'
+                    required
+                    minLength={8}
+                  />
+                  <button
+                    type='button'
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className='absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600'
+                  >
+                    {showConfirmPassword ? <EyeOff className='w-5 h-5' /> : <Eye className='w-5 h-5' />}
+                  </button>
+                </div>
+              </div>
+
+              {error && (
+                <div className='flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3'>
+                  <AlertTriangle className='w-5 h-5 text-red-600 flex-shrink-0 mt-0.5' />
+                  <p className='text-sm text-red-700'>{error}</p>
+                </div>
+              )}
+
+              <Button
+                type='submit'
+                disabled={submitting}
+                className='w-full justify-center'
+                size='lg'
+              >
+                {submitting ? (
+                  <>
+                    <LoadingSpinner size='sm' />
+                    <span className='ml-2'>
+                      {t('customerSignup.form.creating') || 'Creating account...'}
+                    </span>
+                  </>
+                ) : (
+                  t('customerSignup.form.submit') || 'Create Account'
+                )}
+              </Button>
+            </form>
+
+            <div className='mt-6 text-center text-sm text-slate-600'>
+              <span>{t('customerSignup.alreadyHaveAccount') || 'Already have an account?'}</span>{' '}
+              <Link to='/portal/login' className='font-semibold text-slate-800 hover:underline'>
                 {t('customerSignup.signIn') || 'Sign in'}
               </Link>
-            </p>
+            </div>
           </div>
-        </div>
-
-        {/* Footer */}
-        <div className='mt-6 text-center text-sm text-slate-500'>
-          <p>
-            © {new Date().getFullYear()} Agritectum ApS.{' '}
-            {t('common.allRightsReserved') || 'All rights reserved.'}
-          </p>
         </div>
       </div>
     </div>

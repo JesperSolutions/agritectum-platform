@@ -1,5 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
+} from '../ui/dialog';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -351,8 +358,11 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
       <DialogContent className='max-w-2xl max-h-[90vh] overflow-y-auto'>
         <DialogHeader>
           <DialogTitle className='text-2xl font-light'>
-            {isEditing ? t('schedule.form.editTitle') : t('schedule.form.createTitle')}
+            {isEditing ? t('schedule.editAppointment') : t('schedule.newAppointment')}
           </DialogTitle>
+          <DialogDescription className='sr-only'>
+            {isEditing ? t('schedule.editAppointment') : t('schedule.newAppointment')}
+          </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className='space-y-6'>
@@ -365,7 +375,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
 
             {/* Customer Search */}
             <div className='space-y-2'>
-              <Label htmlFor='customer-search'>{t('schedule.form.customerSearch')}</Label>
+              <Label htmlFor='customer-search'>{t('schedule.form.customer')}</Label>
               <div className='relative'>
                 <Input
                   id='customer-search'
@@ -401,7 +411,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
 
             <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
               <div className='space-y-2'>
-                <Label htmlFor='customerName'>{t('schedule.form.customerName')}</Label>
+                <Label htmlFor='customerName'>{t('schedule.form.customer')}</Label>
                 <Input
                   id='customerName'
                   type='text'
@@ -422,7 +432,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
               </div>
 
               <div className='space-y-2'>
-                <Label htmlFor='customerCompany'>{t('schedule.form.customerCompany')}</Label>
+                <Label htmlFor='customerCompany'>{t('schedule.form.address')}</Label>
                 <Input
                   id='customerCompany'
                   type='text'
@@ -433,7 +443,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
             </div>
 
             <div className='space-y-2'>
-              <Label htmlFor='customerAddress'>{t('schedule.form.customerAddress')}</Label>
+              <Label htmlFor='customerAddress'>{t('schedule.form.address')}</Label>
               <Input
                 id='customerAddress'
                 type='text'
@@ -455,7 +465,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
 
             <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
               <div className='space-y-2'>
-                <Label htmlFor='customerPhone'>{t('schedule.form.customerPhone')}</Label>
+                <Label htmlFor='customerPhone'>{t('common.phone')}</Label>
                 <Input
                   id='customerPhone'
                   type='tel'
@@ -465,7 +475,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
               </div>
 
               <div className='space-y-2'>
-                <Label htmlFor='customerEmail'>{t('schedule.form.customerEmail')}</Label>
+                <Label htmlFor='customerEmail'>{t('common.email')}</Label>
                 <Input
                   id='customerEmail'
                   type='email'
@@ -592,12 +602,12 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
             </div>
 
             <div className='space-y-2'>
-              <Label htmlFor='description'>{t('schedule.form.description')}</Label>
+                <Label htmlFor='description'>{t('schedule.form.notes')}</Label>
               <textarea
                 id='description'
                 value={description}
                 onChange={e => setDescription(e.target.value)}
-                placeholder={t('schedule.form.descriptionPlaceholder')}
+                  placeholder={t('schedule.form.notesPlaceholder')}
                 rows={3}
                 className='flex w-full rounded-material border border-input bg-gray-50 px-4 py-2.5 text-base font-light shadow-material-1 transition-all duration-material focus-visible:outline-none focus-visible:bg-white focus-visible:ring-2 focus-visible:ring-ring focus-visible:shadow-material-2 resize-none'
               />

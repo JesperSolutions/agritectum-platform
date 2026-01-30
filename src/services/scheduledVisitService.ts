@@ -242,6 +242,15 @@ async function filterVisitsForCustomer(
 }
 
 /**
+ * Get scheduled visits for customer (alias for getScheduledVisitsByCustomer)
+ */
+export const getScheduledVisitsForCustomer = async (
+  customerId: string
+): Promise<ScheduledVisit[]> => {
+  return getScheduledVisitsByCustomer(customerId);
+};
+
+/**
  * Get scheduled visits by customer ID
  */
 export const getScheduledVisitsByCustomer = async (
@@ -500,27 +509,35 @@ export const acceptScheduledVisit = async (
       updatedAt: now,
     });
 
-    // Update corresponding appointment if linked
+    // Update corresponding appointment if linked (best-effort; ignore permission errors)
     if (visit.appointmentId) {
-      const { updateAppointment } = await import('./appointmentService');
-      await updateAppointment(visit.appointmentId, {
-        customerResponse: 'accepted',
-        customerResponseAt: now,
-        status: 'scheduled',
-      });
-    }
-
-    // Send notifications
-    if (visit.appointmentId) {
-      const { getAppointment } = await import('./appointmentService');
-      const appointment = await getAppointment(visit.appointmentId);
-      if (appointment) {
-        const { notifyCustomerOfAcceptance } = await import('./appointmentNotificationService');
-        await notifyCustomerOfAcceptance(appointment, {
-          ...visit,
+      try {
+        const { updateAppointment } = await import('./appointmentService');
+        await updateAppointment(visit.appointmentId, {
           customerResponse: 'accepted',
           customerResponseAt: now,
+          status: 'scheduled',
         });
+      } catch (appointmentErr) {
+        console.warn('[scheduledVisitService] Could not update appointment on accept (non-blocking):', appointmentErr);
+      }
+    }
+
+    // Send notifications (best-effort; ignore failures)
+    if (visit.appointmentId) {
+      try {
+        const { getAppointment } = await import('./appointmentService');
+        const appointment = await getAppointment(visit.appointmentId);
+        if (appointment) {
+          const { notifyCustomerOfAcceptance } = await import('./appointmentNotificationService');
+          await notifyCustomerOfAcceptance(appointment, {
+            ...visit,
+            customerResponse: 'accepted',
+            customerResponseAt: now,
+          });
+        }
+      } catch (notifyErr) {
+        console.warn('[scheduledVisitService] Could not send acceptance notification (non-blocking):', notifyErr);
       }
     }
 
@@ -561,34 +578,46 @@ export const rejectScheduledVisit = async (
       updatedAt: now,
     });
 
-    // Cancel corresponding appointment if linked
+    // Cancel corresponding appointment if linked (best-effort; ignore permission errors)
     if (visit.appointmentId) {
-      const { cancelAppointment } = await import('./appointmentService');
-      await cancelAppointment(visit.appointmentId, reason || 'Rejected by customer');
+      try {
+        const { cancelAppointment } = await import('./appointmentService');
+        await cancelAppointment(visit.appointmentId, reason || 'Rejected by customer');
+      } catch (appointmentErr) {
+        console.warn('[scheduledVisitService] Could not cancel appointment on reject (non-blocking):', appointmentErr);
+      }
 
-      // Create rejected order record
-      const { createRejectedOrder } = await import('./rejectedOrderService');
-      await createRejectedOrder({
-        appointmentId: visit.appointmentId,
-        scheduledVisitId: visitId,
-        customerId: visit.customerId || '',
-        customerName: visit.customerName,
-        branchId: visit.branchId,
-        rejectedAt: now,
-        rejectedReason: reason,
-        createdBy: visit.createdBy,
-      });
+      // Create rejected order record (best-effort)
+      try {
+        const { createRejectedOrder } = await import('./rejectedOrderService');
+        await createRejectedOrder({
+          appointmentId: visit.appointmentId,
+          scheduledVisitId: visitId,
+          customerId: visit.customerId || '',
+          customerName: visit.customerName,
+          branchId: visit.branchId,
+          rejectedAt: now,
+          rejectedReason: reason,
+          createdBy: visit.createdBy,
+        });
+      } catch (orderErr) {
+        console.warn('[scheduledVisitService] Could not create rejected order (non-blocking):', orderErr);
+      }
 
-      // Send notifications
-      const { getAppointment } = await import('./appointmentService');
-      const appointment = await getAppointment(visit.appointmentId);
-      if (appointment) {
-        const { notifyOfRejection } = await import('./appointmentNotificationService');
-        await notifyOfRejection(
-          { ...appointment, customerResponse: 'rejected', customerResponseAt: now },
-          { ...visit, customerResponse: 'rejected', customerResponseAt: now },
-          reason
-        );
+      // Send notifications (best-effort)
+      try {
+        const { getAppointment } = await import('./appointmentService');
+        const appointment = await getAppointment(visit.appointmentId);
+        if (appointment) {
+          const { notifyOfRejection } = await import('./appointmentNotificationService');
+          await notifyOfRejection(
+            { ...appointment, customerResponse: 'rejected', customerResponseAt: now },
+            { ...visit, customerResponse: 'rejected', customerResponseAt: now },
+            reason
+          );
+        }
+      } catch (notifyErr) {
+        console.warn('[scheduledVisitService] Could not send rejection notification (non-blocking):', notifyErr);
       }
     }
 

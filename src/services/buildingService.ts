@@ -275,6 +275,55 @@ export const getBuildingsByCompany = async (companyId: string): Promise<Building
   }
 };
 
+/**
+ * Get all buildings visible to a roofer/branch admin (including customer-created buildings)
+ * Roofers see all buildings in their branch
+ * @param branchId - Branch ID
+ * @returns Array of buildings (branch-created + customer-created)
+ */
+export const getVisibleBuildingsForBranch = async (branchId: string): Promise<Building[]> => {
+  try {
+    const buildingsRef = collection(db, 'buildings');
+    
+    // Get all buildings for this branch (both branch-created and customer-created)
+    const q = query(
+      buildingsRef,
+      where('branchId', '==', branchId),
+      orderBy('createdAt', 'desc')
+    );
+    
+    const snapshot = await getDocs(q);
+    const buildings = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as Building[];
+
+    return buildings;
+  } catch (error: any) {
+    // Fallback if index is missing
+    if (error.code === 'failed-precondition' || error.message?.includes('index')) {
+      logger.warn('⚠️ Missing Firestore index. Falling back to client-side filtering.');
+      const buildingsRef = collection(db, 'buildings');
+      const snapshot = await getDocs(buildingsRef);
+      const allBuildings = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as Building[];
+
+      // Filter by branchId and sort
+      return allBuildings
+        .filter(building => building.branchId === branchId)
+        .sort((a, b) => {
+          const aDate = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+          const bDate = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+          return bDate - aDate;
+        });
+    }
+
+    throw new Error('Failed to fetch visible buildings for branch');
+  }
+};
+
 // Create a new building
 export const createBuilding = async (
   buildingData: Omit<Building, 'id' | 'createdAt'>
