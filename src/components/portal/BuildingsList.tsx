@@ -48,7 +48,7 @@ const BuildingsList: React.FC = () => {
       const data = await getBuildingsByCustomer(customerId);
       setBuildings(data || []);
     } catch (error: any) {
-      console.error('Error loading buildings:', error);
+      logger.error('Error loading buildings:', error);
       setError(error?.message || 'Failed to load buildings. Please try again.');
       setBuildings([]);
     } finally {
@@ -115,7 +115,7 @@ const BuildingsList: React.FC = () => {
       setError(null);
       await loadBuildings();
     } catch (error: any) {
-      console.error('Error creating building:', error);
+      logger.error('Error creating building:', error);
       setError(error?.message || 'Failed to create building. Please try again.');
     } finally {
       setIsSubmitting(false);

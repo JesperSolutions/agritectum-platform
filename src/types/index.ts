@@ -462,6 +462,16 @@ export interface ESGMetrics {
   waterManagementLitersPerYear?: number; // L/year water management
 }
 
+export interface BuildingDocument {
+  id: string; // Unique document ID
+  fileName: string;
+  fileSize: number; // Bytes
+  fileType: string; // MIME type
+  storagePath: string; // Path in Firebase Storage
+  uploadedAt: string; // ISO timestamp
+  uploadedBy: string; // User ID
+}
+
 export interface Building {
   id: string;
   name?: string; // Building name (e.g., "Main Office", "Warehouse")
@@ -478,6 +488,7 @@ export interface Building {
   branchId?: string;
   esgMetrics?: ESGMetrics; // Optional ESG metrics
   lastVerified?: string; // Last time building data was verified as accurate
+  documents?: BuildingDocument[]; // Max 5 documents of 3MB each
 }
 
 // Building history snapshot for audit trail
@@ -699,6 +710,8 @@ export interface ServiceAgreement {
   serviceFrequency: 'weekly' | 'monthly' | 'quarterly' | 'biannual' | 'annual' | 'custom';
   serviceInterval?: number; // For custom frequency
   status: 'active' | 'expired' | 'cancelled' | 'pending';
+  autoRenew?: boolean; // Auto-renew agreement when it expires
+  renewalTermMonths?: number; // Number of months for auto-renewal (defaults to 12)
   price?: number;
   currency?: string;
   notes?: string;

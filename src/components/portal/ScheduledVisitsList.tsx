@@ -34,12 +34,15 @@ const ScheduledVisitsList: React.FC = () => {
   // Form state
   const [selectedBuilding, setSelectedBuilding] = useState('');
   const [selectedProvider, setSelectedProvider] = useState('');
+  const [serviceType, setServiceType] = useState<'inspection' | 'cleaning' | 'repair' | 'emergency'>('inspection');
   const [visitDate, setVisitDate] = useState('');
   const [visitTime, setVisitTime] = useState('10:00');
   const [duration, setDuration] = useState(120);
   const [notes, setNotes] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [suggestedDate, setSuggestedDate] = useState<string | null>(null);
+  const [estimatedCost, setEstimatedCost] = useState<{ min: number; max: number } | null>(null);
 
   useEffect(() => {
     if (currentUser) {
@@ -67,6 +70,68 @@ const ScheduledVisitsList: React.FC = () => {
       setLoading(false);
     }
   };
+
+  // Smart suggestions based on selected building
+  useEffect(() => {
+    if (!selectedBuilding) {
+      setSuggestedDate(null);
+      setEstimatedCost(null);
+      return;
+    }
+
+    const building = buildings.find(b => b.id === selectedBuilding);
+    if (!building) return;
+
+    // Calculate suggested date based on last visit
+    const buildingVisits = visits.filter(v => v.buildingId === selectedBuilding);
+    if (buildingVisits.length > 0) {
+      const sortedVisits = buildingVisits.sort((a, b) => 
+        new Date(b.scheduledDate).getTime() - new Date(a.scheduledDate).getTime()
+      );
+      const lastVisit = sortedVisits[0];
+      const daysSince = Math.floor(
+        (Date.now() - new Date(lastVisit.scheduledDate).getTime()) / (1000 * 60 * 60 * 24)
+      );
+      
+      if (daysSince > 365) {
+        const recommended = new Date();
+        recommended.setDate(recommended.getDate() + 7); // Suggest next week
+        setSuggestedDate(recommended.toISOString().split('T')[0]);
+      } else {
+        setSuggestedDate(null);
+      }
+    }
+
+    // Calculate estimated cost based on building size and service type
+    const roofSize = building.roofSize || 100; // Default 100m² if not specified
+    let baseRate = 0;
+    
+    switch (serviceType) {
+      case 'inspection':
+        baseRate = 8; // DKK 8 per m²
+        break;
+      case 'cleaning':
+        baseRate = 15; // DKK 15 per m²
+        break;
+      case 'repair':
+        baseRate = 25; // DKK 25 per m²
+        break;
+      case 'emergency':
+        baseRate = 40; // DKK 40 per m² (premium)
+        break;
+    }
+
+    const minCost = Math.round(roofSize * baseRate * 0.8);
+    const maxCost = Math.round(roofSize * baseRate * 1.2);
+    setEstimatedCost({ min: minCost, max: maxCost });
+  }, [selectedBuilding, serviceType, buildings, visits]);
+
+  // Auto-select provider if only one exists
+  useEffect(() => {
+    if (providers.length === 1 && !selectedProvider) {
+      setSelectedProvider(providers[0].id);
+    }
+  }, [providers, selectedProvider]);
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
@@ -108,7 +173,7 @@ const ScheduledVisitsList: React.FC = () => {
         scheduledTime: visitTime,
         duration: duration,
         status: 'scheduled' as const,
-        description: notes,
+        description: `[${serviceType.toUpperCase()}] ${notes || `${serviceType.charAt(0).toUpperCase() + serviceType.slice(1)} service requested`}`,
         createdBy: currentUser.uid,
       });
 
@@ -237,6 +302,41 @@ const ScheduledVisitsList: React.FC = () => {
                 </select>
                 {errors.provider && <p className='text-xs text-red-600 mt-1'>{errors.provider}</p>}
               </div>
+            </div>
+
+            <div>
+              <label className='block text-sm font-medium text-gray-700 mb-1'>Service Type *</label>
+              <select
+                value={serviceType}
+                onChange={e => setServiceType(e.target.value as 'inspection' | 'cleaning' | 'repair' | 'emergency')}
+                className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+              >
+                <option value='inspection'>🔍 Inspection - Routine roof assessment</option>
+                <option value='cleaning'>🧹 Cleaning - Gutter & surface cleaning</option>
+                <option value='repair'>🔧 Repair - Fix identified issues</option>
+                <option value='emergency'>🚨 Emergency - Urgent attention needed</option>
+              </select>
+              
+              {estimatedCost && (
+                <div className='mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg'>
+                  <p className='text-sm font-medium text-blue-900'>Estimated Cost</p>
+                  <p className='text-lg font-bold text-blue-700'>
+                    DKK {estimatedCost.min.toLocaleString()} - {estimatedCost.max.toLocaleString()}
+                  </p>
+                  <p className='text-xs text-blue-600 mt-1'>
+                    Based on {serviceType} service for selected building
+                  </p>
+                </div>
+              )}
+              
+              {suggestedDate && (
+                <div className='mt-2 p-3 bg-amber-50 border border-amber-200 rounded-lg'>
+                  <p className='text-sm text-amber-800'>
+                    💡 <strong>Recommended:</strong> Schedule by {new Date(suggestedDate).toLocaleDateString()} 
+                    {' '}(Last inspection was over 365 days ago)
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className='grid grid-cols-3 gap-4'>

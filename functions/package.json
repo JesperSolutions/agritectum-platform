@@ -20,6 +20,8 @@
     "firebase-functions": "^6.0.1",
     "genkit": "^1.18.0",
     "genkit-cli": "^1.18.0",
+    "@sendgrid/mail": "^8.1.0",
+    "handlebars": "^4.7.8",
     "jspdf": "^3.0.3",
     "nodemailer": "^7.0.6",
     "puppeteer": "^24.26.0"

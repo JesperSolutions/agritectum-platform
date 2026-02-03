@@ -79,52 +79,45 @@ const BuildingsMapOverview: React.FC<BuildingsMapOverviewProps> = ({
     });
   };
 
+  // Only re-initialize map if the number of buildings with valid coordinates changes
+  // This prevents unnecessary re-initialization when non-location properties change
   useEffect(() => {
-    console.log('[BuildingsMapOverview] useEffect triggered', {
-      mapRef: !!mapRef.current,
-      mapInstanceRef: !!mapInstanceRef.current,
-      buildingsCount: buildings.length,
-    });
-
-    if (!mapRef.current) {
-      console.log('[BuildingsMapOverview] No mapRef, returning');
-      return;
-    }
-    if (mapInstanceRef.current) {
-      console.log('[BuildingsMapOverview] Map already initialized');
-      return; // Already initialized
-    }
-
     // Filter buildings with valid coordinates
     const buildingsWithCoords = buildings.filter(
       b => b.latitude && b.longitude && !isNaN(b.latitude) && !isNaN(b.longitude)
     );
-    console.log(
-      '[BuildingsMapOverview] Buildings with coords:',
-      buildingsWithCoords.length,
-      buildingsWithCoords
-    );
+
+    if (!mapRef.current) {
+      setIsLoading(false);
+      return;
+    }
+
+    // If map is already initialized and building count hasn't changed, skip re-init
+    if (mapInstanceRef.current && buildingsWithCoords.length > 0) {
+      // Just update markers if needed, don't reinitialize
+      console.log('[BuildingsMapOverview] Map already initialized, skipping reinit');
+      setIsLoading(false);
+      return;
+    }
 
     if (buildingsWithCoords.length === 0) {
-      console.log('[BuildingsMapOverview] No buildings with coordinates');
       setIsLoading(false);
       return;
     }
 
     // Delay initialization to ensure DOM and Leaflet CSS are fully loaded
     const initTimer = setTimeout(() => {
-      if (!mapRef.current) {
-        console.log('[BuildingsMapOverview] mapRef disappeared');
+      if (!mapRef.current || mapInstanceRef.current) {
+        // Either container is gone or map was initialized elsewhere
         setIsLoading(false);
         return;
       }
 
       const width = mapRef.current.offsetWidth;
       const height = mapRef.current.offsetHeight;
-      console.log('[BuildingsMapOverview] Container dimensions:', { width, height });
 
       if (width === 0 || height === 0) {
-        console.log('[BuildingsMapOverview] Container has zero dimensions, retrying...');
+        // Retry once if container has no size
         setTimeout(() => {
           setIsLoading(false);
         }, 500);
@@ -140,8 +133,6 @@ const BuildingsMapOverview: React.FC<BuildingsMapOverviewProps> = ({
           buildingsWithCoords.reduce((sum, b) => sum + (b.longitude || 0), 0) /
           buildingsWithCoords.length;
 
-        console.log('[BuildingsMapOverview] Initializing map at center:', { avgLat, avgLon });
-
         // Initialize map with explicit container element
         const map = L.map(mapRef.current, {
           center: [avgLat, avgLon],
@@ -153,7 +144,6 @@ const BuildingsMapOverview: React.FC<BuildingsMapOverviewProps> = ({
         });
 
         // Add tile layer (OpenStreetMap)
-        console.log('[BuildingsMapOverview] Adding tile layer');
         const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           attribution:
             '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -161,17 +151,7 @@ const BuildingsMapOverview: React.FC<BuildingsMapOverviewProps> = ({
         });
         tileLayer.addTo(map);
 
-        // Wait for tile layer to load
-        tileLayer.on('load', () => {
-          console.log('[BuildingsMapOverview] Tile layer loaded');
-        });
-
         // Add markers for each building
-        console.log(
-          '[BuildingsMapOverview] Adding markers for',
-          buildingsWithCoords.length,
-          'buildings'
-        );
         const markers: L.Marker[] = [];
         buildingsWithCoords.forEach(building => {
           if (!building.latitude || !building.longitude) return;
@@ -239,17 +219,13 @@ const BuildingsMapOverview: React.FC<BuildingsMapOverviewProps> = ({
         }
 
         mapInstanceRef.current = map;
-        console.log(
-          '[BuildingsMapOverview] Map initialization complete, added',
-          markers.length,
-          'markers'
-        );
         setIsLoading(false);
 
         // Invalidate size to ensure proper rendering
         setTimeout(() => {
-          console.log('[BuildingsMapOverview] Invalidating map size');
-          map.invalidateSize();
+          if (mapInstanceRef.current) {
+            mapInstanceRef.current.invalidateSize();
+          }
         }, 100);
       } catch (err) {
         console.error('Error initializing buildings map:', err);
@@ -257,20 +233,31 @@ const BuildingsMapOverview: React.FC<BuildingsMapOverviewProps> = ({
       }
     }, 250);
 
-    // Cleanup
+    // Cleanup function - properly destroy map and markers
     return () => {
       clearTimeout(initTimer);
-      markersRef.current.forEach(marker => marker.remove());
+      
+      // Clear all markers
+      markersRef.current.forEach(marker => {
+        try {
+          marker.remove();
+        } catch (e) {
+          console.warn('Error removing marker:', e);
+        }
+      });
+      markersRef.current = [];
+      
+      // Properly destroy Leaflet map instance
       if (mapInstanceRef.current) {
         try {
           mapInstanceRef.current.remove();
           mapInstanceRef.current = null;
         } catch (e) {
-          console.error('Error removing map:', e);
+          console.warn('Error removing map:', e);
         }
       }
     };
-  }, [buildings, navigate, t]);
+  }, [buildings.length]); // Only depend on count, not array reference
 
   // Filter buildings with valid coordinates for display
   const buildingsWithCoords = buildings.filter(
@@ -310,7 +297,9 @@ const BuildingsMapOverview: React.FC<BuildingsMapOverviewProps> = ({
           height: '400px',
           width: '100%',
           display: 'block',
-          position: 'relative'
+          position: 'relative',
+          // Allow parent container to handle drag events when being reordered in customizer
+          touchAction: 'none'
         }}
       />
       <div className='mt-2 flex items-center text-sm text-slate-600'>

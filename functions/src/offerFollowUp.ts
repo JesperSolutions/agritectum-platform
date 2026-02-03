@@ -1,5 +1,6 @@
 import * as functions from 'firebase-functions/v1';
 import * as admin from 'firebase-admin';
+import { getEmailCenterConfig, isEmailServiceEnabled } from './emailCenter';
 
 /**
  * Cloud Function: Check for offers needing follow-up
@@ -11,6 +12,8 @@ export const checkOfferFollowUps = functions.pubsub
   .onRun(async _context => {
     const db = admin.firestore();
     const now = new Date();
+    const { mode, provider } = getEmailCenterConfig();
+    const emailEnabled = isEmailServiceEnabled();
 
     try {
       console.log('Checking for offers needing follow-up...');
@@ -44,7 +47,7 @@ export const checkOfferFollowUps = functions.pubsub
           offersNeedingFollowUp.push(doc.id);
 
           // Send notification to inspector
-          await sendFollowUpNotification(doc.id, offer, daysSinceSent);
+          await sendFollowUpNotification(doc.id, offer, daysSinceSent, emailEnabled, mode, provider);
         }
 
         // Check if needs escalation (14 days)
@@ -52,7 +55,7 @@ export const checkOfferFollowUps = functions.pubsub
           offersNeedingEscalation.push(doc.id);
 
           // Send escalation notification to branch admin
-          await sendEscalationNotification(doc.id, offer, daysSinceSent);
+          await sendEscalationNotification(doc.id, offer, daysSinceSent, emailEnabled, mode, provider);
         }
 
         // Check if expired (30 days)
@@ -99,7 +102,10 @@ async function sendFollowUpNotification(
   offerId: string,
   offer: any,
   daysSinceSent: number
-): Promise<void> {
+    daysSinceSent: number,
+    emailEnabled: boolean,
+    mode: string,
+    provider: string
   try {
     // Get inspector information
     const inspectorRef = admin.firestore().collection('users').doc(offer.createdBy);
@@ -134,7 +140,7 @@ async function sendFollowUpNotification(
     // Send email notification to inspector
     const db = admin.firestore();
     if (inspector && inspector.email) {
-      await db.collection('mail').add({
+      if (inspector && inspector.email && emailEnabled) {
         to: inspector.email,
         template: {
           name: 'offer-reminder',
@@ -183,7 +189,10 @@ async function sendFollowUpNotification(
 async function sendEscalationNotification(
   offerId: string,
   offer: any,
-  daysSinceSent: number
+    daysSinceSent: number,
+    emailEnabled: boolean,
+    mode: string,
+    provider: string
 ): Promise<void> {
   try {
     // Get branch admin
@@ -203,6 +212,7 @@ async function sendEscalationNotification(
     const db = admin.firestore();
     const branchAdmin = branchAdminsSnapshot.docs[0].data();
 
+      if (emailEnabled) {
     await db.collection('mail').add({
       to: branchAdmin.email,
       template: {
@@ -216,6 +226,9 @@ async function sendEscalationNotification(
         },
       },
     });
+      } else {
+        console.log('Email service disabled, skipping escalation email', { mode, provider, offerId });
+      }
 
     // Create in-app notification for branch admin
     await db.collection('notifications').add({
@@ -262,6 +275,8 @@ export const testOfferFollowUp = functions.https.onCall(async (data, context) =>
   }
 
   try {
+    const { mode, provider } = getEmailCenterConfig();
+    const emailEnabled = isEmailServiceEnabled();
     const offerDoc = await admin.firestore().collection('offers').doc(offerId).get();
 
     if (!offerDoc.exists) {
@@ -274,7 +289,7 @@ export const testOfferFollowUp = functions.https.onCall(async (data, context) =>
         (Date.now() - offer.sentAt.toMillis()) / (1000 * 60 * 60 * 24)
       );
 
-      await sendFollowUpNotification(offerId, offer, daysSinceSent);
+      await sendFollowUpNotification(offerId, offer, daysSinceSent, emailEnabled, mode, provider);
     }
 
     return {
@@ -298,6 +313,8 @@ export const publicRespondToOffer = functions.https.onCall(async (data, _context
   }
   try {
     const db = admin.firestore();
+    const { mode, provider } = getEmailCenterConfig();
+    const emailEnabled = isEmailServiceEnabled();
     const ref = db.collection('offers').doc(offerId);
     const snap = await ref.get();
     if (!snap.exists) throw new functions.https.HttpsError('not-found', 'Offer not found');
@@ -324,7 +341,7 @@ export const publicRespondToOffer = functions.https.onCall(async (data, _context
       if (offer.createdBy) {
         const userSnap = await db.collection('users').doc(offer.createdBy).get();
         const inspectorEmail = userSnap.exists ? userSnap.get('email') : undefined;
-        if (inspectorEmail) {
+        if (inspectorEmail && emailEnabled) {
           await db.collection('mail').add({
             to: inspectorEmail,
             template: {
@@ -336,6 +353,12 @@ export const publicRespondToOffer = functions.https.onCall(async (data, _context
                 currency: offer.currency,
               },
             },
+          });
+        } else if (inspectorEmail && !emailEnabled) {
+          console.log('Email service disabled, skipping offer accepted email', {
+            mode,
+            provider,
+            offerId,
           });
         }
       }
@@ -354,7 +377,7 @@ export const publicRespondToOffer = functions.https.onCall(async (data, _context
       if (offer.createdBy) {
         const userSnap = await db.collection('users').doc(offer.createdBy).get();
         const inspectorEmail = userSnap.exists ? userSnap.get('email') : undefined;
-        if (inspectorEmail) {
+        if (inspectorEmail && emailEnabled) {
           await db.collection('mail').add({
             to: inspectorEmail,
             template: {
@@ -365,6 +388,12 @@ export const publicRespondToOffer = functions.https.onCall(async (data, _context
                 rejectionReason: reason || '',
               },
             },
+          });
+        } else if (inspectorEmail && !emailEnabled) {
+          console.log('Email service disabled, skipping offer rejected email', {
+            mode,
+            provider,
+            offerId,
           });
         }
       }
@@ -402,6 +431,11 @@ export const publicRespondToOffer = functions.https.onCall(async (data, _context
  */
 export const checkEmailHealth = functions.https.onCall(async (_data, context) => {
   try {
+    const { mode, provider } = getEmailCenterConfig();
+    const emailEnabled = isEmailServiceEnabled();
+    if (!emailEnabled) {
+      return { status: 'disabled', mode, provider };
+    }
     // Write a test mail document (dummy email, not delivered, gets picked up by extension)
     const db = admin.firestore();
     await db.collection('mail').add({

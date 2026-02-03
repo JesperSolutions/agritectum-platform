@@ -1,5 +1,6 @@
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import { getFirestore } from 'firebase-admin/firestore';
+import { getEmailCenterConfig, isEmailServiceEnabled } from './emailCenter';
 
 export interface MailPayload {
   to: string | string[];
@@ -44,6 +45,18 @@ export const queueMail = onCall(
 
       const db = getFirestore();
       const recipients = Array.isArray(data.to) ? data.to : [data.to];
+
+      const { mode, provider } = getEmailCenterConfig();
+      if (!isEmailServiceEnabled()) {
+        console.log('Email queue skipped (email service disabled)', { mode, provider });
+        return {
+          success: false,
+          enqueued: 0,
+          suppressed: 0,
+          skipped: recipients.length,
+          reason: 'email_service_disabled',
+        };
+      }
 
       // Check development environment restrictions
       const isDevelopment =
@@ -250,6 +263,18 @@ export const queueBulkMail = onCall(
 
     if (!data.emails || !Array.isArray(data.emails) || data.emails.length === 0) {
       throw new HttpsError('invalid-argument', 'Emails array is required');
+    }
+
+    const { mode, provider } = getEmailCenterConfig();
+    if (!isEmailServiceEnabled()) {
+      console.log('Bulk email queue skipped (email service disabled)', { mode, provider });
+      return {
+        success: false,
+        enqueued: 0,
+        suppressed: 0,
+        skipped: data.emails.length,
+        reason: 'email_service_disabled',
+      };
     }
 
     if (data.emails.length > 50) {

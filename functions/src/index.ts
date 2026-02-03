@@ -17,6 +17,10 @@ if (admin.apps.length === 0) {
 // Email functions for Trigger Email extension
 import { queueMail, queueBulkMail } from './emailQueue';
 import { mailerWebhook, addSuppression, removeSuppression, getSuppressions } from './mailerWebhook';
+// SendGrid functions (disabled by default via EMAIL_SERVICE_MODE)
+import { sendgridEmailTrigger } from './sendgridEmailTrigger';
+import { sendgridWebhook } from './sendgridWebhook';
+import { retryFailedSendgridEmails } from './retryFailedSendgridEmails';
 
 // User management functions
 import { setUserClaims, setUserClaimsHttp } from './setUserClaims';
@@ -68,6 +72,7 @@ setGlobalOptions({
 // Export email functions
 export { queueMail, queueBulkMail };
 export { mailerWebhook, addSuppression, removeSuppression, getSuppressions };
+export { sendgridEmailTrigger, sendgridWebhook, retryFailedSendgridEmails };
 
 // Export user management functions
 export { setUserClaims, setUserClaimsHttp };

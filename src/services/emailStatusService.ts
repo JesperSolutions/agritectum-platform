@@ -28,7 +28,7 @@ export interface EmailLog {
   subject: string;
   template: string;
   reportId?: string;
-  status: 'sent' | 'failed' | 'pending';
+  status: 'sent' | 'failed' | 'pending' | 'disabled';
   errorMessage?: string;
 }
 

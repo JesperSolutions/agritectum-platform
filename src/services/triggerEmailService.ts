@@ -14,6 +14,7 @@ import {
 } from 'firebase/firestore';
 import { Report, Branch, Issue, RecommendedAction } from '../types';
 import { createEmailNotification } from './notificationService';
+import { getEmailCenterConfig, isEmailServiceDisabled, isEmailServiceLogOnly } from './emailCenter';
 
 // Initialize Firestore collections
 const MAIL_COLLECTION = 'mail';
@@ -40,7 +41,7 @@ export interface EmailLog {
   templateId: string;
   sentAt: Date;
   sentBy: string;
-  status: 'pending' | 'processing' | 'sent' | 'failed';
+  status: 'pending' | 'processing' | 'sent' | 'failed' | 'disabled';
   errorMessage?: string;
   messageId?: string;
   deliveryInfo?: {
@@ -628,6 +629,43 @@ export const sendEmail = async (
   emailRequest: EmailRequest
 ): Promise<{ success: boolean; messageId?: string; error?: string }> => {
   try {
+    const { mode, provider, disabledReason } = getEmailCenterConfig();
+
+    if (isEmailServiceDisabled() || isEmailServiceLogOnly()) {
+      const reason =
+        disabledReason ||
+        (mode === 'log-only' ? 'Email service is in log-only mode' : 'Email service is disabled');
+
+      let logId: string | null = null;
+      try {
+        logId = await logEmailRequest({
+          reportId: emailRequest.reportId,
+          customerEmail: Array.isArray(emailRequest.to) ? emailRequest.to[0] : emailRequest.to,
+          customerName: emailRequest.customerName,
+          subject: `Template: ${emailRequest.template.name}`,
+          templateId: emailRequest.template.name,
+          sentBy: emailRequest.sentBy,
+          status: 'disabled',
+          errorMessage: reason,
+        });
+      } catch (logError) {
+        logger.warn('⚠️ Email logging failed while disabled:', logError);
+      }
+
+      logger.warn('📧 Email send skipped (service disabled/log-only)', {
+        mode,
+        provider,
+        template: emailRequest.template.name,
+        to: emailRequest.to,
+      });
+
+      return {
+        success: false,
+        messageId: logId || undefined,
+        error: 'EMAIL_SERVICE_DISABLED',
+      };
+    }
+
     logger.log('📧 Sending email via Trigger Email extension:', {
       to: emailRequest.to,
       template: emailRequest.template.name,
@@ -745,6 +783,8 @@ export const sendReportEmail = async (
       } catch (notificationError) {
         logger.warn('Failed to create email notification:', notificationError);
       }
+    } else if (result.error === 'EMAIL_SERVICE_DISABLED') {
+      logger.warn('📧 Email service is disabled - skipping notifications');
     } else {
       console.error('❌ Email sending failed:', result.error);
 

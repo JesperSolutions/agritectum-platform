@@ -73,7 +73,7 @@ const CustomerSignup: React.FC = () => {
           }
         }
       } catch (err) {
-        console.error('Error validating invitation:', err);
+        logger.error('Error validating invitation:', err);
         setError('Failed to validate invitation. Please try again.');
       } finally {
         setLoading(false);
@@ -159,7 +159,7 @@ const CustomerSignup: React.FC = () => {
 
       setSuccess(true);
     } catch (err: any) {
-      console.error('Error creating account:', err);
+      logger.error('Error creating account:', err);
       if (err.code === 'auth/email-already-in-use') {
         setError('An account with this email already exists. Please sign in instead.');
       } else if (err.code === 'auth/weak-password') {

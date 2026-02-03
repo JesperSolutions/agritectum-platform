@@ -16,6 +16,7 @@ import { db } from '../config/firebase';
 import { logger } from '../utils/logger';
 import { Offer, OfferStatus, OfferStatusHistory, User } from '../types';
 import { getFunctions, httpsCallable } from 'firebase/functions';
+import { enqueueEmail } from './emailCenter';
 
 /**
  * Create a new offer from a report
@@ -208,23 +209,28 @@ export const sendOfferToCustomer = async (offerId: string): Promise<void> => {
       throw new Error('Offer not found');
     }
 
-    // Add to mail collection for Trigger Email extension
-    const mailRef = collection(db, 'mail');
-    await addDoc(mailRef, {
-      to: offer.customerEmail,
-      template: {
-        name: 'offer-sent',
-        data: {
-          customerName: offer.customerName,
-          offerTitle: offer.title,
-          offerDescription: offer.description,
-          totalAmount: offer.totalAmount,
-          currency: offer.currency,
-          validUntil: offer.validUntil,
-          publicLink: `${window.location.origin}/offer/public/${offerId}`,
+    await enqueueEmail(
+      {
+        to: offer.customerEmail,
+        template: {
+          name: 'offer-sent',
+          data: {
+            customerName: offer.customerName,
+            offerTitle: offer.title,
+            offerDescription: offer.description,
+            totalAmount: offer.totalAmount,
+            currency: offer.currency,
+            validUntil: offer.validUntil,
+            publicLink: `${window.location.origin}/offer/public/${offerId}`,
+          },
         },
       },
-    });
+      {
+        reportId: offer.reportId || offerId,
+        customerName: offer.customerName,
+        sentBy: offer.createdBy,
+      }
+    );
 
     // Update offer
     const offerRef = doc(db, 'offers', offerId);
@@ -285,20 +291,28 @@ export const acceptOffer = async (
     );
 
     // Send confirmation email to inspector
-    const mailRef = collection(db, 'mail');
     const inspectorEmail = await getUserEmailByUid(offer.createdBy);
-    await addDoc(mailRef, {
-      to: inspectorEmail || undefined,
-      template: {
-        name: 'offer-accepted',
-        data: {
-          customerName: offer.customerName,
-          offerTitle: offer.title,
-          totalAmount: offer.totalAmount,
-          currency: offer.currency,
+    if (inspectorEmail) {
+      await enqueueEmail(
+        {
+          to: inspectorEmail,
+          template: {
+            name: 'offer-accepted',
+            data: {
+              customerName: offer.customerName,
+              offerTitle: offer.title,
+              totalAmount: offer.totalAmount,
+              currency: offer.currency,
+            },
+          },
         },
-      },
-    });
+        {
+          reportId: offer.reportId || offerId,
+          customerName: offer.customerName,
+          sentBy: offer.createdBy,
+        }
+      );
+    }
   } catch (error) {
     console.error('Error accepting offer:', error);
     throw new Error('Failed to accept offer');
@@ -343,19 +357,27 @@ export const rejectOffer = async (
     );
 
     // Send notification email to inspector
-    const mailRef = collection(db, 'mail');
     const inspectorEmail = await getUserEmailByUid(offer.createdBy);
-    await addDoc(mailRef, {
-      to: inspectorEmail || undefined,
-      template: {
-        name: 'offer-rejected',
-        data: {
-          customerName: offer.customerName,
-          offerTitle: offer.title,
-          rejectionReason: reason,
+    if (inspectorEmail) {
+      await enqueueEmail(
+        {
+          to: inspectorEmail,
+          template: {
+            name: 'offer-rejected',
+            data: {
+              customerName: offer.customerName,
+              offerTitle: offer.title,
+              rejectionReason: reason,
+            },
+          },
         },
-      },
-    });
+        {
+          reportId: offer.reportId || offerId,
+          customerName: offer.customerName,
+          sentBy: offer.createdBy,
+        }
+      );
+    }
   } catch (error) {
     console.error('Error rejecting offer:', error);
     throw new Error('Failed to reject offer');
@@ -435,23 +457,28 @@ export const sendReminderToCustomer = async (offerId: string): Promise<void> => 
     const now = new Date();
     const daysSinceSent = Math.floor((now.getTime() - sentDate.getTime()) / (1000 * 60 * 60 * 24));
 
-    // Add to mail collection
-    const mailRef = collection(db, 'mail');
-    await addDoc(mailRef, {
-      to: offer.customerEmail,
-      template: {
-        name: 'offer-reminder',
-        data: {
-          customerName: offer.customerName,
-          offerTitle: offer.title,
-          totalAmount: offer.totalAmount,
-          currency: offer.currency,
-          daysSinceSent,
-          validUntil: offer.validUntil,
-          publicLink: `${window.location.origin}/offer/public/${offerId}`,
+    await enqueueEmail(
+      {
+        to: offer.customerEmail,
+        template: {
+          name: 'offer-reminder',
+          data: {
+            customerName: offer.customerName,
+            offerTitle: offer.title,
+            totalAmount: offer.totalAmount,
+            currency: offer.currency,
+            daysSinceSent,
+            validUntil: offer.validUntil,
+            publicLink: `${window.location.origin}/offer/public/${offerId}`,
+          },
         },
       },
-    });
+      {
+        reportId: offer.reportId || offerId,
+        customerName: offer.customerName,
+        sentBy: offer.createdBy,
+      }
+    );
 
     // Update offer
     const offerRef = doc(db, 'offers', offerId);

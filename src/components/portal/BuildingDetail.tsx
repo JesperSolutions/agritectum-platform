@@ -13,7 +13,8 @@ import {
 import { getReportsByBuildingId } from '../../services/reportService';
 import { getServiceAgreementsByBuilding } from '../../services/serviceAgreementService';
 import { getESGServiceReportsByBuilding } from '../../services/esgService';
-import { Building, Report, ServiceAgreement, ESGServiceReport } from '../../types';
+import { Building, Report, ServiceAgreement, ESGServiceReport, BuildingDocument } from '../../types';
+import DocumentUpload from './DocumentUpload';
 import {
   Building as BuildingIcon,
   MapPin,
@@ -200,7 +201,7 @@ const BuildingDetail: React.FC = () => {
       await loadBuilding();
       await loadRelatedData(); // Reload to refresh map if address changed
     } catch (error) {
-      console.error('Error updating building:', error);
+      logger.error('Error updating building:', error);
     }
   };
 
@@ -511,6 +512,21 @@ const BuildingDetail: React.FC = () => {
               </div>
             )}
           </div>
+        </div>
+      )}
+
+      {/* Document Upload Section */}
+      {!editing && building && currentUser && (
+        <div className='bg-white rounded-lg shadow p-6 border border-slate-200'>
+          <DocumentUpload
+            buildingId={building.id}
+            documents={building.documents || []}
+            onDocumentsChange={(documents: BuildingDocument[]) => {
+              setBuilding({ ...building, documents });
+            }}
+            userId={currentUser.uid}
+            isEditable={true}
+          />
         </div>
       )}
 

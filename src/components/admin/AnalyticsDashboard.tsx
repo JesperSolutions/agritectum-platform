@@ -49,7 +49,7 @@ import { formatCurrencyAmount, getCurrencyCode } from '../../utils/currency';
 import type { SupportedLocale } from '../../utils/geolocation';
 import { logger } from '../../utils/logger';
 
-const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
+const COLORS = ['#0f172a', '#1e293b', '#475569', '#64748b', '#94a3b8', '#cbd5e1'];
 
 interface AnalyticsData {
   // KPIs & Metrics
@@ -1058,14 +1058,16 @@ const AnalyticsDashboard: React.FC = () => {
                     <Line
                       type='monotone'
                       dataKey='reports'
-                      stroke='#3b82f6'
+                      stroke='#0f172a'
                       name={t('analytics.reports')}
+                      strokeWidth={2}
                     />
                     <Line
                       type='monotone'
                       dataKey='revenue'
-                      stroke='#10b981'
+                      stroke='#475569'
                       name={t('analytics.revenue')}
+                      strokeWidth={2}
                     />
                   </RechartsLineChart>
                 </ResponsiveContainer>
@@ -1309,8 +1311,8 @@ const AnalyticsDashboard: React.FC = () => {
                       <YAxis />
                       <Tooltip />
                       <Legend />
-                      <Bar dataKey='count' fill='#3b82f6' name={t('analytics.reports')} />
-                      <Bar dataKey='revenue' fill='#10b981' name={t('analytics.revenue')} />
+                      <Bar dataKey='count' fill='#0f172a' name={t('analytics.reports')} />
+                      <Bar dataKey='revenue' fill='#475569' name={t('analytics.revenue')} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -1318,26 +1320,26 @@ const AnalyticsDashboard: React.FC = () => {
             </div>
 
             <div className='mt-6 grid grid-cols-1 md:grid-cols-3 gap-4'>
-              <div className='text-center p-4 bg-blue-50 rounded-lg'>
-                <Clock className='w-8 h-8 text-blue-600 mx-auto mb-2' />
-                <p className='text-2xl font-bold text-blue-600'>
+              <div className='text-center p-4 bg-slate-50 rounded-lg border border-slate-200'>
+                <Clock className='w-8 h-8 text-slate-700 mx-auto mb-2' />
+                <p className='text-2xl font-bold text-slate-900'>
                   {Math.round(analyticsData.averageTimeToSend)}
                 </p>
-                <p className='text-sm text-blue-600'>{t('analytics.avgDaysToSend')}</p>
+                <p className='text-sm text-slate-600'>{t('analytics.avgDaysToSend')}</p>
               </div>
-              <div className='text-center p-4 bg-green-50 rounded-lg'>
-                <CheckCircle className='w-8 h-8 text-green-600 mx-auto mb-2' />
-                <p className='text-2xl font-bold text-green-600'>
+              <div className='text-center p-4 bg-slate-50 rounded-lg border border-slate-200'>
+                <CheckCircle className='w-8 h-8 text-slate-700 mx-auto mb-2' />
+                <p className='text-2xl font-bold text-slate-900'>
                   {Math.round(analyticsData.completionRate)}%
                 </p>
-                <p className='text-sm text-green-600'>{t('analytics.completionRate')}</p>
+                <p className='text-sm text-slate-600'>{t('analytics.completionRate')}</p>
               </div>
-              <div className='text-center p-4 bg-purple-50 rounded-lg'>
-                <Activity className='w-8 h-8 text-purple-600 mx-auto mb-2' />
-                <p className='text-2xl font-bold text-purple-600'>
+              <div className='text-center p-4 bg-slate-50 rounded-lg border border-slate-200'>
+                <Activity className='w-8 h-8 text-slate-700 mx-auto mb-2' />
+                <p className='text-2xl font-bold text-slate-900'>
                   {analyticsData.reportsByRoofType.length}
                 </p>
-                <p className='text-sm text-purple-600'>{t('analytics.roofTypes')}</p>
+                <p className='text-sm text-slate-600'>{t('analytics.roofTypes')}</p>
               </div>
             </div>
           </div>
@@ -1374,25 +1376,25 @@ const AnalyticsDashboard: React.FC = () => {
                   {analyticsData.totalServiceAgreements}
                 </p>
               </div>
-              <div className='bg-white border-2 border-green-200 p-6 rounded-xl shadow-sm'>
+              <div className='bg-white border-2 border-slate-200 p-6 rounded-xl shadow-sm'>
                 <div className='flex items-center mb-2'>
-                  <CheckCircle className='w-5 h-5 text-green-600 mr-2' />
-                  <p className='text-green-600 text-sm font-medium'>
+                  <CheckCircle className='w-5 h-5 text-slate-600 mr-2' />
+                  <p className='text-slate-600 text-sm font-medium'>
                     {t('analytics.activeServiceAgreements') || 'Active Agreements'}
                   </p>
                 </div>
-                <p className='text-3xl font-bold text-green-900'>
+                <p className='text-3xl font-bold text-slate-900'>
                   {analyticsData.activeServiceAgreements}
                 </p>
               </div>
-              <div className='bg-white border-2 border-blue-200 p-6 rounded-xl shadow-sm'>
+              <div className='bg-white border-2 border-slate-200 p-6 rounded-xl shadow-sm'>
                 <div className='flex items-center mb-2'>
-                  <DollarSign className='w-5 h-5 text-blue-600 mr-2' />
-                  <p className='text-blue-600 text-sm font-medium'>
+                  <DollarSign className='w-5 h-5 text-slate-600 mr-2' />
+                  <p className='text-slate-600 text-sm font-medium'>
                     {t('analytics.serviceAgreementRevenue') || 'Agreement Revenue'}
                   </p>
                 </div>
-                <p className='text-3xl font-bold text-blue-900'>
+                <p className='text-3xl font-bold text-slate-900'>
                   {formatCurrencyAmount(analyticsData.serviceAgreementRevenue, currentLocale)}
                 </p>
               </div>

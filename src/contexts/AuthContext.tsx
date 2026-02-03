@@ -192,44 +192,52 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  // Helper function to wait for custom claims with exponential backoff
+  const waitForClaims = async (firebaseUser: FirebaseUser, maxAttempts: number = 5): Promise<CustomClaims> => {
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      await firebaseUser.getIdToken(true);
+      const tokenResult = await getIdTokenResult(firebaseUser);
+      const claims = tokenResult.claims as CustomClaims;
+      
+      if (claims.permissionLevel !== undefined && claims.permissionLevel !== null) {
+        return claims;
+      }
+      
+      // Exponential backoff: 100ms, 200ms, 400ms, 800ms, 1600ms
+      if (attempt < maxAttempts) {
+        await new Promise(resolve => setTimeout(resolve, 100 * Math.pow(2, attempt - 1)));
+      }
+    }
+    
+    throw new Error('Claims not propagated after maximum attempts');
+  };
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async firebaseUser => {
       setLoading(true);
 
       if (firebaseUser) {
         try {
-          // Force refresh the token to get updated claims (wait up to 5 seconds)
-          await firebaseUser.getIdToken(true);
-
-          // Add a small delay to ensure claims are propagated
-          await new Promise(resolve => setTimeout(resolve, 500));
-
-          const tokenResult = await getIdTokenResult(firebaseUser);
-          const claims = tokenResult.claims as CustomClaims;
-
-          // Check if claims are missing - force logout if so
-          const hasPermissionLevel =
-            claims.permissionLevel !== undefined && claims.permissionLevel !== null;
-          const hasBranchId = claims.branchId !== undefined || claims.permissionLevel === 2; // Superadmin doesn't need branchId
-
-          if (!hasPermissionLevel) {
-            console.error('⚠️ Missing permissionLevel claim. Forcing logout...');
-            alert('Your account permissions need to be updated. Please log out and log back in.');
-            await signOut(auth);
-            setCurrentUser(null);
-            setFirebaseUser(null);
-            setLoading(false);
-            return;
-          }
+          // Wait for claims to propagate with retry logic
+          const claims = await waitForClaims(firebaseUser);
 
           const user = await parseUserFromFirebase(firebaseUser);
           setCurrentUser(user);
           setFirebaseUser(firebaseUser);
         } catch (error: any) {
           const { logger } = await import('../utils/logger');
-          logger.error('Error parsing user:', error);
-          setCurrentUser(null);
-          setFirebaseUser(null);
+          
+          if (error.message?.includes('Claims not propagated')) {
+            logger.error('Missing permissionLevel claim after retries', { uid: firebaseUser.uid });
+            // Sign out user if claims never arrive
+            await signOut(auth);
+            setCurrentUser(null);
+            setFirebaseUser(null);
+          } else {
+            logger.error('Error parsing user:', error);
+            setCurrentUser(null);
+            setFirebaseUser(null);
+          }
         }
       } else {
         setCurrentUser(null);

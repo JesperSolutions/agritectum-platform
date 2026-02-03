@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { getServiceAgreementsByCustomer } from '../../services/serviceAgreementService';
+import { getServiceAgreementsByCustomer, updateServiceAgreement } from '../../services/serviceAgreementService';
+import { useToast } from '../../contexts/ToastContext';
 import { ServiceAgreement } from '../../types';
-import { FileCheck, Calendar, Plus, Building2, Users } from 'lucide-react';
+import { FileCheck, Calendar, Plus, Building2, Users, RefreshCw } from 'lucide-react';
 import LoadingSpinner from '../common/LoadingSpinner';
 import FilterTabs from '../shared/filters/FilterTabs';
 import StatusBadge from '../shared/badges/StatusBadge';
@@ -14,10 +15,12 @@ import { formatDate } from '../../utils/dateFormatter';
 
 const ServiceAgreementsList: React.FC = () => {
   const { currentUser } = useAuth();
+  const { showSuccess, showError } = useToast();
   const [agreements, setAgreements] = useState<ServiceAgreement[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'active' | 'expired' | 'cancelled' | 'pending'>('all');
   const [showAddProviderForm, setShowAddProviderForm] = useState(false);
+  const [updatingAgreement, setUpdatingAgreement] = useState<string | null>(null);
 
   useEffect(() => {
     if (currentUser) {
@@ -63,6 +66,35 @@ const ServiceAgreementsList: React.FC = () => {
   const handleProviderAdded = () => {
     setShowAddProviderForm(false);
     loadAgreements();
+  };
+
+  const handleAutoRenewToggle = async (agreementId: string, currentValue: boolean) => {
+    if (!currentUser) return;
+    
+    setUpdatingAgreement(agreementId);
+    try {
+      await updateServiceAgreement(agreementId, {
+        autoRenew: !currentValue,
+        renewalTermMonths: !currentValue ? 12 : undefined, // Default to 12 months if enabling
+        updatedAt: new Date().toISOString(),
+      });
+      
+      // Update local state
+      setAgreements(prev =>
+        prev.map(agreement =>
+          agreement.id === agreementId
+            ? { ...agreement, autoRenew: !currentValue, renewalTermMonths: !currentValue ? 12 : undefined }
+            : agreement
+        )
+      );
+      
+      showSuccess(`Auto-renewal ${!currentValue ? 'enabled' : 'disabled'} successfully`);
+    } catch (error) {
+      console.error('Error updating auto-renewal:', error);
+      showError('Failed to update auto-renewal setting');
+    } finally {
+      setUpdatingAgreement(null);
+    }
   };
 
   return (
@@ -147,6 +179,50 @@ const ServiceAgreementsList: React.FC = () => {
 
               {agreement.description && (
                 <p className='mt-4 text-sm text-gray-600'>{agreement.description}</p>
+              )}
+
+              {/* Auto-Renewal Toggle */}
+              {agreement.status === 'active' && (
+                <div className='mt-4 pt-4 border-t border-gray-200'>
+                  <div className='flex items-center justify-between'>
+                    <div className='flex items-center gap-2'>
+                      <RefreshCw className={`w-5 h-5 ${agreement.autoRenew ? 'text-green-600' : 'text-gray-400'}`} />
+                      <div>
+                        <p className='text-sm font-medium text-gray-900'>Auto-Renewal</p>
+                        <p className='text-xs text-gray-500'>
+                          {agreement.autoRenew
+                            ? `Agreement will automatically renew for ${agreement.renewalTermMonths || 12} months`
+                            : 'Agreement will expire and require manual renewal'}
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => handleAutoRenewToggle(agreement.id, agreement.autoRenew || false)}
+                      disabled={updatingAgreement === agreement.id}
+                      className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                        agreement.autoRenew ? 'bg-green-600 focus:ring-green-500' : 'bg-gray-200 focus:ring-gray-300'
+                      } ${updatingAgreement === agreement.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      role='switch'
+                      aria-checked={agreement.autoRenew}
+                    >
+                      <span className='sr-only'>Toggle auto-renewal</span>
+                      <span
+                        aria-hidden='true'
+                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                          agreement.autoRenew ? 'translate-x-5' : 'translate-x-0'
+                        }`}
+                      />
+                    </button>
+                  </div>
+                  {agreement.autoRenew && (
+                    <div className='mt-2 bg-green-50 border border-green-200 rounded-lg p-3'>
+                      <p className='text-xs text-green-800'>
+                        ✓ This agreement will automatically renew on {formatDate(agreement.endDate)} for another{' '}
+                        {agreement.renewalTermMonths || 12} months. You'll receive a notification 30 days before renewal.
+                      </p>
+                    </div>
+                  )}
+                </div>
               )}
             </ListCard>
           ))}

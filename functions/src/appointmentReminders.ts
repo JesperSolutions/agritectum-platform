@@ -1,5 +1,6 @@
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import * as admin from 'firebase-admin';
+import { getEmailCenterConfig, isEmailServiceEnabled } from './emailCenter';
 
 /**
  * Scheduled Cloud Function that runs daily at 6 AM to send appointment reminders
@@ -34,6 +35,8 @@ export const sendAppointmentReminders = onSchedule(
       console.log(`📋 Found ${appointmentsSnapshot.size} appointments for tomorrow`);
 
       const reminderPromises: Promise<void>[] = [];
+      const { mode, provider } = getEmailCenterConfig();
+      const emailEnabled = isEmailServiceEnabled();
 
       for (const appointmentDoc of appointmentsSnapshot.docs) {
         const appointment = appointmentDoc.data();
@@ -105,7 +108,7 @@ export const sendAppointmentReminders = onSchedule(
           }
 
           // Send email reminder to customer
-          if (appointment.customerEmail) {
+          if (appointment.customerEmail && emailEnabled) {
             reminderPromises.push(
               db
                 .collection('mail')
@@ -126,6 +129,12 @@ export const sendAppointmentReminders = onSchedule(
                   console.log(`✅ Customer reminder email queued for appointment ${appointmentId}`);
                 })
             );
+          } else if (appointment.customerEmail && !emailEnabled) {
+            console.log('Email service disabled, skipping customer reminder email', {
+              appointmentId,
+              mode,
+              provider,
+            });
           }
         }
 
@@ -161,7 +170,7 @@ export const sendAppointmentReminders = onSchedule(
               .collection('users')
               .doc(appointment.assignedInspectorId)
               .get();
-            if (rooferDoc.exists && rooferDoc.data()?.email) {
+            if (rooferDoc.exists && rooferDoc.data()?.email && emailEnabled) {
               reminderPromises.push(
                 db
                   .collection('mail')
@@ -182,6 +191,12 @@ export const sendAppointmentReminders = onSchedule(
                     console.log(`✅ Roofer reminder email queued for appointment ${appointmentId}`);
                   })
               );
+            } else if (rooferDoc.exists && rooferDoc.data()?.email && !emailEnabled) {
+              console.log('Email service disabled, skipping roofer reminder email', {
+                appointmentId,
+                mode,
+                provider,
+              });
             }
           } catch (error) {
             console.error(`Error sending roofer email for appointment ${appointmentId}:`, error);

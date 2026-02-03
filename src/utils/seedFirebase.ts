@@ -5,6 +5,7 @@
 
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { getFirestore, doc, writeBatch } from 'firebase/firestore';
+import { logger } from './logger';
 import {
   testUserDK,
   testCustomerDK,
@@ -16,13 +17,13 @@ import {
 
 export async function seedTestDataBrowser() {
   try {
-    console.log('🌱 Starting Firebase seeding in browser...\n');
+    logger.log('🌱 Starting Firebase seeding in browser...\n');
 
     const auth = getAuth();
     const db = getFirestore();
 
     // Create test user
-    console.log('👤 Creating test user account...');
+    logger.log('👤 Creating test user account...');
     let userCredential;
     try {
       userCredential = await createUserWithEmailAndPassword(
@@ -30,12 +31,12 @@ export async function seedTestDataBrowser() {
         testUserDK.email,
         testUserDK.password
       );
-      console.log('✅ User created:', testUserDK.email);
+      logger.log('✅ User created:', testUserDK.email);
     } catch (error: unknown) {
       const firebaseError = error as { code?: string };
       if (firebaseError.code === 'auth/email-already-in-use') {
-        console.log('⚠️  User already exists:', testUserDK.email);
-        console.log('   Proceeding to update data...\n');
+        logger.log('⚠️  User already exists:', testUserDK.email);
+        logger.log('   Proceeding to update data...\n');
         // Try to get the user ID from the test data
         userCredential = { user: { uid: testUserDK.uid } };
       } else {
@@ -47,7 +48,7 @@ export async function seedTestDataBrowser() {
     const batch = writeBatch(db);
 
     // Store user profile
-    console.log('📝 Storing user profile...');
+    logger.log('📝 Storing user profile...');
     batch.set(doc(db, 'users', userId), {
       ...testUserDK,
       uid: userId,
@@ -55,14 +56,14 @@ export async function seedTestDataBrowser() {
     });
 
     // Store customer
-    console.log('🏢 Creating test customer...');
+    logger.log('🏢 Creating test customer...');
     batch.set(doc(db, 'customers', testCustomerDK.id), {
       ...testCustomerDK,
       createdAt: new Date(testCustomerDK.createdAt),
     });
 
     // Store buildings
-    console.log('🏭 Creating test buildings...');
+    logger.log('🏭 Creating test buildings...');
     batch.set(doc(db, 'buildings', testBuildingDK1.id), {
       ...testBuildingDK1,
       createdAt: testBuildingDK1.createdAt,
@@ -74,7 +75,7 @@ export async function seedTestDataBrowser() {
     });
 
     // Store reports
-    console.log('📊 Creating test reports...');
+    logger.log('📊 Creating test reports...');
     batch.set(doc(db, 'reports', testReportDK1.id), {
       ...testReportDK1,
       inspectionDate: testReportDK1.inspectionDate,
@@ -92,31 +93,29 @@ export async function seedTestDataBrowser() {
     });
 
     // Commit batch
-    console.log('💾 Committing to Firebase...');
+    logger.log('💾 Committing to Firebase...');
     await batch.commit();
 
-    console.log('\n✅ Seeding completed successfully!\n');
-    console.log('📋 Test Account Details:');
-    console.log('   Email: test@agritectum.dk');
-    console.log('   Password: TestUser123!');
-    console.log('   Branch: Agritectum Danmark');
-    console.log('   Role: Inspector\n');
-    console.log('📚 Data created:');
-    console.log('   ✓ 1 User account');
-    console.log('   ✓ 1 Customer (Test Kunde A/S)');
-    console.log('   ✓ 2 Buildings (Kontorhotel + Lager)');
-    console.log('   ✓ 2 Reports (with findings & recommendations)\n');
+    logger.log('\n✅ Seeding completed successfully!\n');
+    logger.log('📋 Test Account Details:');
+    logger.log('   Email: test@agritectum.dk');
+    logger.log('   Password: TestUser123!');
+    logger.log('   Branch: Agritectum Danmark');
+    logger.log('   Role: Inspector\n');
+    logger.log('📚 Data created:');
+    logger.log('   ✓ 1 User account');
+    logger.log('   ✓ 1 Customer (Test Kunde A/S)');
+    logger.log('   ✓ 2 Buildings (Kontorhotel + Lager)');
+    logger.log('   ✓ 2 Reports (with findings & recommendations)\n');
 
     return true;
   } catch (error) {
-    console.error('❌ Error seeding data:', error);
+    logger.error('❌ Error seeding data:', error);
     return false;
   }
 }
 
-// Make it available in browser console
-if (typeof window !== 'undefined') {
-  const windowWithSeed = window as unknown as { seedTestData?: typeof seedTestDataBrowser };
-  windowWithSeed.seedTestData = seedTestDataBrowser;
-  console.log('💡 Tip: Type seedTestData() in console to create test user');
-}
+// NOTE: seedTestData() is intentionally NOT exposed to window in production
+// This prevents users from creating unauthorized test accounts
+// For development seeding, use Firebase Admin SDK or the QA Testing Page
+

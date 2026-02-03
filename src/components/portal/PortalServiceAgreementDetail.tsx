@@ -49,7 +49,7 @@ const PortalServiceAgreementDetail: React.FC = () => {
       }
       setAgreement(data);
     } catch (err: any) {
-      console.error('Error loading service agreement:', err);
+      logger.error('Error loading service agreement:', err);
       setError(err.message || 'Failed to load service agreement');
     } finally {
       setLoading(false);

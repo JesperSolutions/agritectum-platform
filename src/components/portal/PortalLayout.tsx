@@ -19,7 +19,7 @@ const PortalLayout: React.FC = () => {
       await logout();
       navigate('/portal/login');
     } catch (error) {
-      console.error('Logout error:', error);
+      logger.error('Logout error:', error);
     }
   };
 

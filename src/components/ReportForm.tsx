@@ -1450,21 +1450,28 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                           'firebase/firestore'
                         );
                         const { serverTimestamp } = await import('firebase/firestore');
-                        const mailRef = mailCollection(db, 'mail');
+                        const { enqueueEmail } = await import('../services/emailCenter');
                         const reportLink = `${window.location.origin}/report/view/${reportId}`;
 
                         if (appointment.customerEmail) {
-                          await addDoc(mailRef, {
-                            to: appointment.customerEmail,
-                            template: {
-                              name: 'report-completed',
-                              data: {
-                                customerName: appointment.customerName,
-                                reportLink: reportLink,
-                                appointmentDate: appointment.scheduledDate,
+                          await enqueueEmail(
+                            {
+                              to: appointment.customerEmail,
+                              template: {
+                                name: 'report-completed',
+                                data: {
+                                  customerName: appointment.customerName,
+                                  reportLink: reportLink,
+                                  appointmentDate: appointment.scheduledDate,
+                                },
                               },
                             },
-                          });
+                            {
+                              reportId: reportId,
+                              customerName: appointment.customerName,
+                              sentBy: updatedReport.createdBy,
+                            }
+                          );
                         }
 
                         if (appointment.customerId) {

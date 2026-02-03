@@ -62,7 +62,7 @@ const CreateServiceAgreementForm: React.FC<CreateServiceAgreementFormProps> = ({
       const providers = await getExternalProvidersByCompany(companyId);
       setExternalProviders(providers);
     } catch (error) {
-      console.error('Error loading data:', error);
+      logger.error('Error loading data:', error);
       showError('Error loading data');
     } finally {
       setLoading(false);
@@ -127,7 +127,7 @@ const CreateServiceAgreementForm: React.FC<CreateServiceAgreementFormProps> = ({
       onSuccess();
       onClose();
     } catch (error) {
-      console.error('Error creating service agreement:', error);
+      logger.error('Error creating service agreement:', error);
       showError('Failed to create service agreement');
     } finally {
       setSubmitting(false);

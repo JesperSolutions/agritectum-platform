@@ -2,6 +2,7 @@ import { addDoc, collection, doc, updateDoc, query, where, getDocs } from 'fireb
 import { db } from '../config/firebase';
 import { Employee } from '../types';
 import { logger } from '../utils/logger';
+import { enqueueEmail } from './emailCenter';
 
 // Generate a secure temporary password (16+ characters for "strong" rating)
 export const generateTemporaryPassword = (): string => {
@@ -70,10 +71,17 @@ export const sendUserInvitation = async (
       },
     };
 
-    // Add document to mail collection to trigger email
-    const mailRef = await addDoc(collection(db, 'mail'), mailDoc);
+    const result = await enqueueEmail(mailDoc, {
+      reportId: employee.id,
+      customerName: employee.displayName,
+      sentBy: invitedBy,
+    });
 
-    logger.log('✅ User invitation email created:', mailRef.id);
+    if (result.success) {
+      logger.log('✅ User invitation email created:', result.messageId);
+    } else if (result.skipped) {
+      logger.log('⚠️ User invitation email skipped (disabled):', employee.email);
+    }
 
     return { success: true };
   } catch (error) {

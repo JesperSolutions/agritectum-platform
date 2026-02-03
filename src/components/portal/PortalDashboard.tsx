@@ -5,6 +5,12 @@ import { getBuildingsByCustomer } from '../../services/buildingService';
 import { getServiceAgreementsByCustomer } from '../../services/serviceAgreementService';
 import { getScheduledVisitsByCustomer } from '../../services/scheduledVisitService';
 import { getReportsByCustomerId } from '../../services/reportService';
+import {
+  getDashboardPreferences,
+  saveDashboardPreferences,
+  resetToDefaults,
+  DashboardWidget,
+} from '../../services/dashboardCustomizationService';
 import { Building, ServiceAgreement, ScheduledVisit, Report } from '../../types';
 import {
   Building as BuildingIcon,
@@ -14,11 +20,16 @@ import {
   AlertTriangle,
   Info,
   HelpCircle,
+  Sliders,
 } from 'lucide-react';
 import { useIntl } from '../../hooks/useIntl';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { logger } from '../../utils/logger';
 import BuildingsMapOverview from './BuildingsMapOverview';
+import PortfolioHealthReport from './PortfolioHealthReport';
+import DashboardCustomizer from './DashboardCustomizer';
+import ComponentErrorBoundary from '../common/ComponentErrorBoundary';
+import { useToast } from '../../contexts/ToastContext';
 
 type BuildingStatus = 'good' | 'check-soon' | 'urgent';
 type HealthGrade = 'A' | 'B' | 'C' | 'D' | 'F';
@@ -34,29 +45,62 @@ interface BuildingWithStatus extends Building {
 const PortalDashboard: React.FC = () => {
   const { currentUser } = useAuth();
   const { t } = useIntl();
+  const { showSuccess, showError } = useToast();
   const [buildings, setBuildings] = useState<BuildingWithStatus[]>([]);
   const [agreements, setAgreements] = useState<ServiceAgreement[]>([]);
   const [visits, setVisits] = useState<ScheduledVisit[]>([]);
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showCustomizer, setShowCustomizer] = useState(false);
+  const [widgets, setWidgets] = useState<DashboardWidget[]>([]);
 
   useEffect(() => {
     if (currentUser) {
-      loadDashboardData();
+      // Load preferences first, then load data selectively
+      loadDashboardPreferences();
     }
   }, [currentUser]);
 
-  const loadDashboardData = async () => {
+  const loadDashboardPreferences = async () => {
+    if (!currentUser) return;
+    try {
+      const prefs = await getDashboardPreferences(currentUser.uid);
+      setWidgets(prefs.widgets);
+      // Load dashboard data AFTER preferences are loaded
+      loadDashboardData(prefs.widgets);
+    } catch (error) {
+      logger.error('Error loading dashboard preferences:', error);
+      // Silently fail - use defaults, load all data
+      loadDashboardData([]);
+    }
+  };
+
+  const loadDashboardData = async (widgetConfig: DashboardWidget[] = widgets) => {
     if (!currentUser) return;
 
     setLoading(true);
     try {
-      // Load buildings - use companyId (linked customer/company document) not user uid
+      // Load buildings - always needed for most widgets
       const customerId = currentUser.companyId || currentUser.uid;
       const buildingsData = await getBuildingsByCustomer(customerId);
 
-      // Load reports to calculate building status
-      const reportsData = await getReportsByCustomerId(customerId);
+      // Determine which datasets to load based on enabled widgets
+      const enabledWidgets = widgetConfig.length > 0 ? widgetConfig : widgets;
+      const hasReportWidgets = enabledWidgets.some(w =>
+        w.enabled && ['portfolioHealthSummary', 'portfolioHealthReport', 'buildingsNeedingAttention'].includes(w.name)
+      );
+      const hasAgreementWidgets = enabledWidgets.some(w =>
+        w.enabled && ['serviceAgreements', 'serviceAgreementMonitor'].includes(w.name)
+      );
+      const hasVisitWidgets = enabledWidgets.some(w =>
+        w.enabled && ['upcomingVisits', 'pendingAppointments'].includes(w.name)
+      );
+
+      // Load reports only if needed
+      let reportsData: Report[] = [];
+      if (hasReportWidgets || buildingsData.length > 0) {
+        reportsData = await getReportsByCustomerId(customerId);
+      }
       setReports(reportsData);
 
       // Calculate status for each building
@@ -150,13 +194,17 @@ const PortalDashboard: React.FC = () => {
 
       setBuildings(buildingsWithStatus);
 
-      // Load service agreements
-      const agreementsData = await getServiceAgreementsByCustomer(customerId);
-      setAgreements(agreementsData);
+      // Load service agreements only if needed
+      if (hasAgreementWidgets) {
+        const agreementsData = await getServiceAgreementsByCustomer(customerId);
+        setAgreements(agreementsData);
+      }
 
-      // Load scheduled visits
-      const visitsData = await getScheduledVisitsByCustomer(customerId);
-      setVisits(visitsData);
+      // Load scheduled visits only if needed
+      if (hasVisitWidgets) {
+        const visitsData = await getScheduledVisitsByCustomer(customerId);
+        setVisits(visitsData);
+      }
     } catch (error) {
       logger.error('Error loading dashboard data:', error);
     } finally {
@@ -172,12 +220,13 @@ const PortalDashboard: React.FC = () => {
     );
   }
 
-  const activeAgreements = agreements.filter(a => a.status === 'active');
-  const upcomingVisits = visits
+  // Calculate derived data
+  const activeAgreementsList = agreements.filter(a => a.status === 'active');
+  const upcomingVisitsList = visits
     .filter(v => v.status === 'scheduled' && new Date(v.scheduledDate) >= new Date())
     .sort((a, b) => a.scheduledDate.localeCompare(b.scheduledDate))
     .slice(0, 5);
-  const pendingAcceptances = visits
+  const pendingAcceptancesList = visits
     .filter(v => v.customerResponse === 'pending' && v.status === 'scheduled')
     .sort((a, b) => a.scheduledDate.localeCompare(b.scheduledDate));
 
@@ -222,6 +271,18 @@ const PortalDashboard: React.FC = () => {
       return (b.daysSinceInspection || 999999) - (a.daysSinceInspection || 999999);
     })
     .slice(0, 5);
+
+  const statistics = {
+    activeAgreements: activeAgreementsList,
+    upcomingVisits: upcomingVisitsList,
+    pendingAcceptances: pendingAcceptancesList,
+    statusCounts,
+    gradeCounts,
+    avgHealthScore,
+    totalCosts,
+    avgCostPerBuilding,
+    buildingsNeedingAttention,
+  };
 
   const getStatusIcon = (status: BuildingStatus) => {
     switch (status) {
@@ -271,323 +332,438 @@ const PortalDashboard: React.FC = () => {
     }
   };
 
-  return (
-    <div className='space-y-8'>
-      <div>
-        <h1 className='text-3xl font-bold text-gray-900'>
-          {currentUser?.displayName
-            ? t('dashboard.welcomeBack', { name: currentUser.displayName })
-            : t('dashboard.subtitle')}
-        </h1>
-        <p className='mt-2 text-gray-600'>{t('dashboard.subtitle')}</p>
-      </div>
+  const handleSaveWidgetPreferences = async (updatedWidgets: DashboardWidget[]) => {
+    if (!currentUser) return;
+    try {
+      // Update local state immediately for responsive UI
+      setWidgets(updatedWidgets);
+      // Persist to Firestore
+      await saveDashboardPreferences(currentUser.uid, updatedWidgets);
+      showSuccess('Dashboard customization saved');
+    } catch (error) {
+      logger.error('Error saving dashboard preferences:', error);
+      showError('Failed to save dashboard preferences');
+    }
+  };
 
-      {/* Health Score Legend */}
-      <div className='bg-slate-50 border border-slate-200 rounded-lg p-5'>
-        <div className='flex items-start gap-3'>
-          <div className='bg-slate-600 rounded-lg p-2 flex-shrink-0'>
-            <Info className='w-4 h-4 text-white' />
-          </div>
-          <div className='flex-1'>
-            <h3 className='text-sm font-semibold text-slate-900 mb-3'>
-              {t('portal.healthScores.title')}
-            </h3>
-            <p className='text-sm text-slate-700 leading-relaxed mb-3'>
-              {t('portal.healthScores.explanation')}
-            </p>
-            <p className='text-xs text-slate-600 leading-relaxed'>
-              <strong>{t('portal.healthScores.howCalculated')}:</strong> {t('portal.healthScores.howCalculatedDesc')}
-            </p>
-          </div>
-        </div>
-      </div>
+  const handleResetWidgets = async () => {
+    if (!currentUser) return;
+    try {
+      await resetToDefaults(currentUser.uid);
+      await loadDashboardPreferences();
+      showSuccess('Dashboard reset to defaults');
+    } catch (error) {
+      logger.error('Error resetting dashboard:', error);
+      showError('Failed to reset dashboard');
+    }
+  };
 
-      {/* Summary Cards */}
-      <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6'>
-        <div className='bg-white rounded-lg shadow p-6'>
-          <div className='flex items-center justify-between mb-2'>
-            <div className='flex items-center gap-2'>
-              <p className='text-sm font-medium text-gray-600'>{t('portal.stats.buildings')}</p>
-              <div className='group relative'>
-                <HelpCircle className='w-4 h-4 text-gray-400 cursor-help' />
-                <div className='absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity w-48 z-10'>
-                  {t('portal.stats.buildingsDesc')}
-                </div>
+  const isWidgetEnabled = (widgetName: string): boolean => {
+    const widget = widgets.find(w => w.name === widgetName);
+    return widget ? widget.enabled : true; // Default to enabled if not found
+  };
+
+  // Get sorted widgets for rendering in customized order
+  const getSortedEnabledWidgets = () => {
+    const sorted = [...widgets]
+      .filter(w => w.enabled)
+      .sort((a, b) => a.order - b.order);
+    
+    // Log widget order for debugging
+    if (sorted.length > 0 && process.env.NODE_ENV === 'development') {
+      console.debug('Dashboard widget order:', sorted.map((w, i) => `${i + 1}. ${w.label} (order=${w.order})`));
+    }
+    
+    return sorted.map(w => w.name);
+  };
+
+  const renderWidgetContent = (widgetName: string): React.ReactNode => {
+    switch (widgetName) {
+      case 'healthScoreLegend':
+        return (
+          <div className='bg-slate-50 border border-slate-200 rounded-lg p-5'>
+            <div className='flex items-start gap-3'>
+              <div className='bg-slate-600 rounded-lg p-2 flex-shrink-0'>
+                <Info className='w-4 h-4 text-white' />
+              </div>
+              <div className='flex-1'>
+                <h3 className='text-sm font-semibold text-slate-900 mb-3'>
+                  {t('portal.healthScores.title')}
+                </h3>
+                <p className='text-sm text-slate-700 leading-relaxed mb-3'>
+                  {t('portal.healthScores.explanation')}
+                </p>
+                <p className='text-xs text-slate-600 leading-relaxed'>
+                  <strong>{t('portal.healthScores.howCalculated')}:</strong> {t('portal.healthScores.howCalculatedDesc')}
+                </p>
               </div>
             </div>
-            <BuildingIcon className='w-8 h-8 text-slate-600' />
           </div>
-          <p className='text-3xl font-bold text-gray-900'>{buildings.length}</p>
-          <div className='mt-3 flex flex-wrap items-center gap-2 text-xs font-medium'>
-            <span className='px-2 py-1 rounded bg-slate-100 text-slate-700 border border-slate-300'>
-              {gradeCounts.A}A
-            </span>
-            <span className='px-2 py-1 rounded bg-slate-100 text-slate-700 border border-slate-300'>
-              {gradeCounts.B}B
-            </span>
-            <span className='px-2 py-1 rounded bg-slate-100 text-slate-700 border border-slate-300'>
-              {gradeCounts.C}C
-            </span>
-            <span className='px-2 py-1 rounded bg-slate-100 text-slate-700 border border-slate-300'>
-              {gradeCounts.D}D
-            </span>
-            <span className='px-2 py-1 rounded bg-slate-100 text-slate-700 border border-slate-300'>
-              {gradeCounts.F}F
-            </span>
-          </div>
-          <Link
-            to='/portal/buildings'
-            className='mt-4 inline-flex items-center text-sm font-medium text-slate-600 hover:text-slate-700'
-          >
-            {t('dashboard.viewAll')} <ArrowRight className='ml-1 w-4 h-4' />
-          </Link>
-        </div>
+        );
 
-        <div className='bg-white rounded-lg shadow p-6'>
-          <div className='flex items-center justify-between mb-2'>
-            <div className='flex items-center gap-2'>
-              <p className='text-sm font-medium text-gray-600'>{t('portal.stats.portfolioHealth')}</p>
-              <div className='group relative'>
-                <HelpCircle className='w-4 h-4 text-gray-400 cursor-help' />
-                <div className='absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity w-56 z-10'>
-                  {t('portal.stats.portfolioHealthDesc')}
-                </div>
-              </div>
-            </div>
-            <div className='w-8 h-8 flex items-center justify-center rounded-lg border-2 border-slate-300 bg-slate-50'>
-              <span className='text-xl font-bold text-slate-700'>
-                {avgHealthScore >= 90
-                  ? 'A'
-                  : avgHealthScore >= 80
-                    ? 'B'
-                    : avgHealthScore >= 70
-                      ? 'C'
-                      : avgHealthScore >= 60
-                        ? 'D'
-                        : 'F'}
-              </span>
-            </div>
-          </div>
-          <p className='text-3xl font-bold text-gray-900'>{avgHealthScore}</p>
-          <p className='text-xs text-gray-500 mt-1'>{t('portal.stats.averageScore')}</p>
-        </div>
-
-        <div className='bg-white rounded-lg shadow p-6'>
-          <div className='flex items-center justify-between mb-2'>
-            <div className='flex items-center gap-2'>
-              <p className='text-sm font-medium text-gray-600'>{t('portal.stats.totalCosts')}</p>
-              <div className='group relative'>
-                <HelpCircle className='w-4 h-4 text-gray-400 cursor-help' />
-                <div className='absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity w-56 z-10'>
-                  {t('portal.stats.totalCostsDesc')}
-                </div>
-              </div>
-            </div>
-            <FileCheck className='w-8 h-8 text-slate-600' />
-          </div>
-          <p className='text-3xl font-bold text-gray-900'>
-            {totalCosts > 0 ? `${Math.round(totalCosts / 1000)}k` : '—'}
-          </p>
-          <p className='text-xs text-gray-500 mt-1'>
-            {avgCostPerBuilding > 0
-              ? `${Math.round(avgCostPerBuilding / 1000)}k ${t('portal.stats.avgPerBuilding')}`
-              : 'SEK'}
-          </p>
-        </div>
-
-        <div className='bg-white rounded-lg shadow p-6'>
-          <div className='flex items-center justify-between mb-2'>
-            <div className='flex items-center gap-2'>
-              <p className='text-sm font-medium text-gray-600'>{t('portal.stats.upcomingInspections')}</p>
-              <div className='group relative'>
-                <HelpCircle className='w-4 h-4 text-gray-400 cursor-help' />
-                <div className='absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity w-48 z-10'>
-                  {t('portal.stats.upcomingInspectionsDesc')}
-                </div>
-              </div>
-            </div>
-            <Calendar className='w-8 h-8 text-slate-600' />
-          </div>
-          <p className='text-3xl font-bold text-gray-900'>{upcomingVisits.length}</p>
-          <Link
-            to='/portal/scheduled-visits'
-            className='mt-4 inline-flex items-center text-sm font-medium text-slate-600 hover:text-slate-700'
-          >
-            {t('dashboard.viewAll')} <ArrowRight className='ml-1 w-4 h-4' />
-          </Link>
-        </div>
-      </div>
-
-      {/* Buildings Needing Attention */}
-      {buildingsNeedingAttention.length > 0 && (
-        <div className='bg-white rounded-lg shadow'>
-          <div className='p-6 border-b border-gray-200'>
-            <div className='flex items-center gap-2'>
-              <AlertTriangle className='w-5 h-5 text-slate-600' />
-              <h2 className='text-xl font-semibold text-gray-900'>Buildings Needing Attention</h2>
-            </div>
-            <p className='text-sm text-gray-600 mt-1'>
-              Properties that need inspection or maintenance soon
-            </p>
-          </div>
-          <div className='p-6'>
-            <div className='space-y-3'>
-              {buildingsNeedingAttention.map(building => (
-                <Link
-                  key={building.id}
-                  to={`/portal/buildings/${building.id}`}
-                  className='flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-slate-50 transition-colors'
-                >
-                  <div className='flex-1'>
-                    <div className='flex items-center gap-3'>
-                      <div className='flex flex-col items-center'>
-                        <div
-                          className={`w-10 h-10 rounded-lg flex items-center justify-center border-2 ${getGradeColor(building.healthGrade)}`}
-                        >
-                          <span className='text-xl font-bold'>{building.healthGrade}</span>
-                        </div>
-                        <span className='text-xs text-gray-500 mt-1'>{building.healthScore}</span>
-                      </div>
-                      <div>
-                        <p className='font-medium text-gray-900'>{building.address}</p>
-                        <p className='text-sm text-gray-600 mt-1'>
-                          {building.lastInspectionDate
-                            ? `Last inspected: ${new Date(building.lastInspectionDate).toLocaleDateString()} (${building.daysSinceInspection} days ago)`
-                            : 'Never inspected'}
-                        </p>
-                      </div>
+      case 'statsCards':
+        return (
+          <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6'>
+            <div className='bg-white rounded-lg shadow p-6'>
+              <div className='flex items-center justify-between mb-2'>
+                <div className='flex items-center gap-2'>
+                  <p className='text-sm font-medium text-gray-600'>{t('portal.stats.buildings')}</p>
+                  <div className='group relative'>
+                    <HelpCircle className='w-4 h-4 text-gray-400 cursor-help' />
+                    <div className='absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity w-48 z-10'>
+                      {t('portal.stats.buildingsDesc')}
                     </div>
                   </div>
-                  <span
-                    className={`px-3 py-1 text-xs font-medium rounded-full border ${getStatusColor(building.status)}`}
-                  >
-                    {getStatusText(building.status)}
-                  </span>
-                </Link>
-              ))}
-            </div>
-            {buildings.filter(b => b.status === 'urgent' || b.status === 'check-soon').length >
-              5 && (
+                </div>
+                <BuildingIcon className='w-8 h-8 text-slate-600' />
+              </div>
+              <p className='text-3xl font-bold text-gray-900'>{buildings.length}</p>
+              <div className='mt-3 flex flex-wrap items-center gap-2 text-xs font-medium'>
+                <span className='px-2 py-1 rounded bg-slate-100 text-slate-700 border border-slate-300'>
+                  {statistics.gradeCounts.A}A
+                </span>
+                <span className='px-2 py-1 rounded bg-slate-100 text-slate-700 border border-slate-300'>
+                  {statistics.gradeCounts.B}B
+                </span>
+                <span className='px-2 py-1 rounded bg-slate-100 text-slate-700 border border-slate-300'>
+                  {statistics.gradeCounts.C}C
+                </span>
+                <span className='px-2 py-1 rounded bg-slate-100 text-slate-700 border border-slate-300'>
+                  {statistics.gradeCounts.D}D
+                </span>
+                <span className='px-2 py-1 rounded bg-slate-100 text-slate-700 border border-slate-300'>
+                  {statistics.gradeCounts.F}F
+                </span>
+              </div>
               <Link
                 to='/portal/buildings'
                 className='mt-4 inline-flex items-center text-sm font-medium text-slate-600 hover:text-slate-700'
               >
-                View All Buildings <ArrowRight className='ml-1 w-4 h-4' />
+                {t('dashboard.viewAll')} <ArrowRight className='ml-1 w-4 h-4' />
               </Link>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Pending Acceptances */}
-      {pendingAcceptances.length > 0 && (
-        <div className='bg-yellow-50 border border-yellow-200 rounded-lg shadow'>
-          <div className='p-6 border-b border-yellow-200'>
-            <h2 className='text-xl font-semibold text-gray-900'>
-              {t('schedule.visits.respondToAppointment')}
-            </h2>
-            <p className='text-sm text-gray-600 mt-1'>{t('schedule.visits.respondSubtitle')}</p>
-          </div>
-          <div className='p-6'>
-            <div className='space-y-4'>
-              {pendingAcceptances.map(visit => (
-                <div
-                  key={visit.id}
-                  className='flex items-center justify-between p-4 border border-yellow-300 rounded-lg bg-white hover:bg-yellow-50'
-                >
-                  <div>
-                    <p className='font-medium text-gray-900'>{visit.title}</p>
-                    <p className='text-sm text-gray-600 mt-1'>
-                      {new Date(visit.scheduledDate).toLocaleDateString()} at {visit.scheduledTime}
-                    </p>
-                    <p className='text-sm text-gray-500 mt-1'>{visit.customerAddress}</p>
-                  </div>
-                  <Link
-                    to={`/portal/appointment/${visit.id}/respond?token=${visit.publicToken || ''}`}
-                    className='px-4 py-2 text-sm font-medium bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors'
-                  >
-                    {t('schedule.visits.respondToAppointment')}
-                  </Link>
-                </div>
-              ))}
             </div>
-          </div>
-        </div>
-      )}
 
-      {/* Upcoming Visits */}
-      {upcomingVisits.length > 0 && (
-        <div className='bg-white rounded-lg shadow'>
-          <div className='p-6 border-b border-gray-200'>
-            <h2 className='text-xl font-semibold text-gray-900'>
-              {t('dashboard.scheduledVisits.title')}
-            </h2>
-          </div>
-          <div className='p-6'>
-            <div className='space-y-4'>
-              {upcomingVisits.map(visit => (
-                <div
-                  key={visit.id}
-                  className='flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50'
-                >
-                  <div>
-                    <p className='font-medium text-gray-900'>{visit.title}</p>
-                    <p className='text-sm text-gray-600 mt-1'>
-                      {new Date(visit.scheduledDate).toLocaleDateString()} at {visit.scheduledTime}
-                    </p>
-                    {visit.buildingId && (
-                      <p className='text-sm text-gray-500 mt-1'>{visit.customerAddress}</p>
-                    )}
+            <div className='bg-white rounded-lg shadow p-6'>
+              <div className='flex items-center justify-between mb-2'>
+                <div className='flex items-center gap-2'>
+                  <p className='text-sm font-medium text-gray-600'>{t('portal.stats.portfolioHealth')}</p>
+                  <div className='group relative'>
+                    <HelpCircle className='w-4 h-4 text-gray-400 cursor-help' />
+                    <div className='absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity w-56 z-10'>
+                      {t('portal.stats.portfolioHealthDesc')}
+                    </div>
                   </div>
-                  <span className='px-3 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full'>
-                    {visit.status}
+                </div>
+                <div className='w-8 h-8 flex items-center justify-center rounded-lg border-2 border-slate-300 bg-slate-50'>
+                  <span className='text-xl font-bold text-slate-700'>
+                    {statistics.avgHealthScore >= 90
+                      ? 'A'
+                      : statistics.avgHealthScore >= 80
+                        ? 'B'
+                        : statistics.avgHealthScore >= 70
+                          ? 'C'
+                          : statistics.avgHealthScore >= 60
+                            ? 'D'
+                            : 'F'}
                   </span>
                 </div>
-              ))}
+              </div>
+              <p className='text-3xl font-bold text-gray-900'>{statistics.avgHealthScore}</p>
+              <p className='text-xs text-gray-500 mt-1'>{t('portal.stats.averageScore')}</p>
+            </div>
+
+            <div className='bg-white rounded-lg shadow p-6'>
+              <div className='flex items-center justify-between mb-2'>
+                <div className='flex items-center gap-2'>
+                  <p className='text-sm font-medium text-gray-600'>{t('portal.stats.totalCosts')}</p>
+                  <div className='group relative'>
+                    <HelpCircle className='w-4 h-4 text-gray-400 cursor-help' />
+                    <div className='absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity w-56 z-10'>
+                      {t('portal.stats.totalCostsDesc')}
+                    </div>
+                  </div>
+                </div>
+                <FileCheck className='w-8 h-8 text-slate-600' />
+              </div>
+              <p className='text-3xl font-bold text-gray-900'>
+                {statistics.totalCosts > 0 ? `${Math.round(statistics.totalCosts / 1000)}k` : '—'}
+              </p>
+              <p className='text-xs text-gray-500 mt-1'>
+                {statistics.avgCostPerBuilding > 0
+                  ? `${Math.round(statistics.avgCostPerBuilding / 1000)}k ${t('portal.stats.avgPerBuilding')}`
+                  : 'SEK'}
+              </p>
+            </div>
+
+            <div className='bg-white rounded-lg shadow p-6'>
+              <div className='flex items-center justify-between mb-2'>
+                <div className='flex items-center gap-2'>
+                  <p className='text-sm font-medium text-gray-600'>{t('portal.stats.upcomingInspections')}</p>
+                  <div className='group relative'>
+                    <HelpCircle className='w-4 h-4 text-gray-400 cursor-help' />
+                    <div className='absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity w-48 z-10'>
+                      {t('portal.stats.upcomingInspectionsDesc')}
+                    </div>
+                  </div>
+                </div>
+                <Calendar className='w-8 h-8 text-slate-600' />
+              </div>
+              <p className='text-3xl font-bold text-gray-900'>{statistics.upcomingVisits.length}</p>
+              <Link
+                to='/portal/scheduled-visits'
+                className='mt-4 inline-flex items-center text-sm font-medium text-slate-600 hover:text-slate-700'
+              >
+                {t('dashboard.viewAll')} <ArrowRight className='ml-1 w-4 h-4' />
+              </Link>
             </div>
           </div>
+        );
+
+      case 'buildingsNeedingAttention':
+        if (statistics.buildingsNeedingAttention.length === 0) return null;
+        return (
+          <div className='bg-white rounded-lg shadow'>
+            <div className='p-6 border-b border-gray-200'>
+              <div className='flex items-center gap-2'>
+                <AlertTriangle className='w-5 h-5 text-slate-600' />
+                <h2 className='text-xl font-semibold text-gray-900'>Buildings Needing Attention</h2>
+              </div>
+              <p className='text-sm text-gray-600 mt-1'>
+                Properties that need inspection or maintenance soon
+              </p>
+            </div>
+            <div className='p-6'>
+              <div className='space-y-3'>
+                {statistics.buildingsNeedingAttention.map(building => (
+                  <Link
+                    key={building.id}
+                    to={`/portal/buildings/${building.id}`}
+                    className='flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-slate-50 transition-colors'
+                  >
+                    <div className='flex-1'>
+                      <div className='flex items-center gap-3'>
+                        <div className='flex flex-col items-center'>
+                          <div
+                            className={`w-10 h-10 rounded-lg flex items-center justify-center border-2 ${getGradeColor(building.healthGrade)}`}
+                          >
+                            <span className='text-xl font-bold'>{building.healthGrade}</span>
+                          </div>
+                          <span className='text-xs text-gray-500 mt-1'>{building.healthScore}</span>
+                        </div>
+                        <div>
+                          <p className='font-medium text-gray-900'>{building.address}</p>
+                          <p className='text-sm text-gray-600 mt-1'>
+                            {building.lastInspectionDate
+                              ? `Last inspected: ${new Date(building.lastInspectionDate).toLocaleDateString()} (${building.daysSinceInspection} days ago)`
+                              : 'Never inspected'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <span
+                      className={`px-3 py-1 text-xs font-medium rounded-full border ${getStatusColor(building.status)}`}
+                    >
+                      {getStatusText(building.status)}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+              {buildings.filter(b => b.status === 'urgent' || b.status === 'check-soon').length > 5 && (
+                <div className='mt-4 pt-4 border-t border-gray-200 flex items-center justify-between'>
+                  <p className='text-xs text-gray-500'>
+                    Showing 5 of {buildings.filter(b => b.status === 'urgent' || b.status === 'check-soon').length} buildings
+                  </p>
+                  <Link
+                    to='/portal/buildings'
+                    className='inline-flex items-center text-sm font-medium text-slate-600 hover:text-slate-700'
+                  >
+                    View All <ArrowRight className='ml-1 w-4 h-4' />
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+
+      case 'portfolioHealthReport':
+        if (buildings.length === 0) return null;
+        return (
+          <ComponentErrorBoundary componentName='Portfolio Health Report'>
+            <PortfolioHealthReport 
+              buildings={buildings} 
+              reports={reports}
+              onExportPDF={() => {
+                alert('PDF export feature coming soon!');
+              }}
+            />
+          </ComponentErrorBoundary>
+        );
+
+      case 'pendingAppointments':
+        if (statistics.pendingAcceptances.length === 0) return null;
+        return (
+          <div className='bg-yellow-50 border border-yellow-200 rounded-lg shadow'>
+            <div className='p-6 border-b border-yellow-200'>
+              <h2 className='text-xl font-semibold text-gray-900'>
+                {t('schedule.visits.respondToAppointment')}
+              </h2>
+              <p className='text-sm text-gray-600 mt-1'>{t('schedule.visits.respondSubtitle')}</p>
+            </div>
+            <div className='p-6'>
+              <div className='space-y-4'>
+                {pendingAcceptances.map(visit => (
+                  <div
+                    key={visit.id}
+                    className='flex items-center justify-between p-4 border border-yellow-300 rounded-lg bg-white hover:bg-yellow-50'
+                  >
+                    <div>
+                      <p className='font-medium text-gray-900'>{visit.title}</p>
+                      <p className='text-sm text-gray-600 mt-1'>
+                        {new Date(visit.scheduledDate).toLocaleDateString()} at {visit.scheduledTime}
+                      </p>
+                      <p className='text-sm text-gray-500 mt-1'>{visit.customerAddress}</p>
+                    </div>
+                    <Link
+                      to={`/portal/appointment/${visit.id}/respond?token=${visit.publicToken || ''}`}
+                      className='px-4 py-2 text-sm font-medium bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors'
+                    >
+                      {t('schedule.visits.respondToAppointment')}
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'upcomingVisits':
+        if (statistics.upcomingVisits.length === 0) return null;
+        return (
+          <div className='bg-white rounded-lg shadow'>
+            <div className='p-6 border-b border-gray-200'>
+              <h2 className='text-xl font-semibold text-gray-900'>
+                {t('dashboard.scheduledVisits.title')}
+              </h2>
+            </div>
+            <div className='p-6'>
+              <div className='space-y-4'>
+                {statistics.upcomingVisits.map(visit => (
+                  <div
+                    key={visit.id}
+                    className='flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50'
+                  >
+                    <div>
+                      <p className='font-medium text-gray-900'>{visit.title}</p>
+                      <p className='text-sm text-gray-600 mt-1'>
+                        {new Date(visit.scheduledDate).toLocaleDateString()} at {visit.scheduledTime}
+                      </p>
+                      {visit.buildingId && (
+                        <p className='text-sm text-gray-500 mt-1'>{visit.customerAddress}</p>
+                      )}
+                    </div>
+                    <span className='px-3 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full'>
+                      {visit.status}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              {visits.filter(v => v.status === 'scheduled' && new Date(v.scheduledDate) >= new Date()).length > 5 && (
+                <div className='mt-4 pt-4 border-t border-gray-200 flex items-center justify-between'>
+                  <p className='text-xs text-gray-500'>
+                    Showing 5 of {visits.filter(v => v.status === 'scheduled' && new Date(v.scheduledDate) >= new Date()).length} visits
+                  </p>
+                  <Link
+                    to='/portal/scheduled-visits'
+                    className='inline-flex items-center text-sm font-medium text-slate-600 hover:text-slate-700'
+                  >
+                    View All <ArrowRight className='ml-1 w-4 h-4' />
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+
+      case 'buildingsMap':
+        return (
+          <div className='bg-white rounded-lg shadow'>
+            <div className='p-6 border-b border-gray-200'>
+              <h2 className='text-xl font-semibold text-gray-900'>
+                {t('dashboard.map.title') || 'Your Buildings'}
+              </h2>
+              <p className='text-sm text-gray-600 mt-1'>
+                {t('dashboard.map.subtitle') || 'Overview of all your property locations'}
+              </p>
+            </div>
+            <div className='p-6'>
+              <ComponentErrorBoundary componentName='Buildings Map'>
+                <BuildingsMapOverview buildings={buildings} />
+              </ComponentErrorBoundary>
+            </div>
+          </div>
+        );
+
+      case 'quickActions':
+        return (
+          <div className='bg-white rounded-lg shadow p-6'>
+            <h2 className='text-xl font-semibold text-gray-900 mb-4'>
+              {t('dashboard.quickActions.title')}
+            </h2>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+              <Link
+                to='/portal/buildings'
+                className='p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors'
+              >
+                <BuildingIcon className='w-6 h-6 text-green-600 mb-2' />
+                <p className='font-medium text-gray-900'>{t('navigation.buildings')}</p>
+                <p className='text-sm text-gray-600 mt-1'>{t('dashboard.branchInfo.address')}</p>
+              </Link>
+              <Link
+                to='/portal/profile'
+                className='p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors'
+              >
+                <FileCheck className='w-6 h-6 text-slate-600 mb-2' />
+                <p className='font-medium text-gray-900'>{t('navigation.profile')}</p>
+                <p className='text-sm text-gray-600 mt-1'>{t('dashboard.personalWorkspace')}</p>
+              </Link>
+            </div>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className='space-y-8'>
+      {/* Header with Customize Button */}
+      <div className='flex items-start justify-between'>
+        <button
+          onClick={() => setShowCustomizer(true)}
+          className='flex items-center gap-2 px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors shadow-sm whitespace-nowrap'
+          title='Customize dashboard sections'
+        >
+          <Sliders className='w-4 h-4' />
+          Customize
+        </button>
+      </div>
+
+      {/* Render widgets in customized order */}
+      {getSortedEnabledWidgets().map((widgetName) => (
+        <div key={widgetName}>
+          {renderWidgetContent(widgetName)}
         </div>
+      ))}
+
+      {/* Dashboard Customizer Modal */}
+      {showCustomizer && (
+        <DashboardCustomizer
+          widgets={widgets}
+          onSave={handleSaveWidgetPreferences}
+          onClose={() => setShowCustomizer(false)}
+        />
       )}
-
-      {/* Buildings Map Overview */}
-      <div className='bg-white rounded-lg shadow'>
-        <div className='p-6 border-b border-gray-200'>
-          <h2 className='text-xl font-semibold text-gray-900'>
-            {t('dashboard.map.title') || 'Your Buildings'}
-          </h2>
-          <p className='text-sm text-gray-600 mt-1'>
-            {t('dashboard.map.subtitle') || 'Overview of all your property locations'}
-          </p>
-        </div>
-        <div className='p-6'>
-          <BuildingsMapOverview buildings={buildings} />
-        </div>
-      </div>
-
-      {/* Quick Actions */}
-      <div className='bg-white rounded-lg shadow p-6'>
-        <h2 className='text-xl font-semibold text-gray-900 mb-4'>
-          {t('dashboard.quickActions.title')}
-        </h2>
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-          <Link
-            to='/portal/buildings'
-            className='p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors'
-          >
-            <BuildingIcon className='w-6 h-6 text-green-600 mb-2' />
-            <p className='font-medium text-gray-900'>{t('navigation.buildings')}</p>
-            <p className='text-sm text-gray-600 mt-1'>{t('dashboard.branchInfo.address')}</p>
-          </Link>
-          <Link
-            to='/portal/profile'
-            className='p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors'
-          >
-            <FileCheck className='w-6 h-6 text-blue-600 mb-2' />
-            <p className='font-medium text-gray-900'>{t('navigation.profile')}</p>
-            <p className='text-sm text-gray-600 mt-1'>{t('dashboard.personalWorkspace')}</p>
-          </Link>
-        </div>
-      </div>
     </div>
   );
 };

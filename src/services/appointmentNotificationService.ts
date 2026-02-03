@@ -2,6 +2,7 @@ import { collection, doc, addDoc, getDoc, serverTimestamp } from 'firebase/fires
 import { db } from '../config/firebase';
 import { Appointment, ScheduledVisit } from '../types';
 import { logger } from '../utils/logger';
+import { enqueueEmail } from './emailCenter';
 
 /**
  * Generate a unique public token for customer access
@@ -20,23 +21,29 @@ export const notifyCustomerOfAppointment = async (
   try {
     // Send email notification to customer
     if (appointment.customerEmail) {
-      const mailRef = collection(db, 'mail');
       const publicLink = `${window.location.origin}/portal/appointment/${scheduledVisit.id}/respond?token=${scheduledVisit.publicToken}`;
 
-      await addDoc(mailRef, {
-        to: appointment.customerEmail,
-        template: {
-          name: 'appointment-created',
-          data: {
-            customerName: appointment.customerName,
-            appointmentDate: appointment.scheduledDate,
-            appointmentTime: appointment.scheduledTime,
-            inspectorName: appointment.assignedInspectorName,
-            address: appointment.customerAddress,
-            publicLink: publicLink,
+      await enqueueEmail(
+        {
+          to: appointment.customerEmail,
+          template: {
+            name: 'appointment-created',
+            data: {
+              customerName: appointment.customerName,
+              appointmentDate: appointment.scheduledDate,
+              appointmentTime: appointment.scheduledTime,
+              inspectorName: appointment.assignedInspectorName,
+              address: appointment.customerAddress,
+              publicLink: publicLink,
+            },
           },
         },
-      });
+        {
+          reportId: appointment.id,
+          customerName: appointment.customerName,
+          sentBy: appointment.createdBy,
+        }
+      );
     }
 
     // Create in-app notification for customer (if they have an account)
@@ -78,21 +85,26 @@ export const notifyCustomerOfAcceptance = async (
   try {
     // Send confirmation email
     if (appointment.customerEmail) {
-      const mailRef = collection(db, 'mail');
-
-      await addDoc(mailRef, {
-        to: appointment.customerEmail,
-        template: {
-          name: 'appointment-accepted',
-          data: {
-            customerName: appointment.customerName,
-            appointmentDate: appointment.scheduledDate,
-            appointmentTime: appointment.scheduledTime,
-            inspectorName: appointment.assignedInspectorName,
-            address: appointment.customerAddress,
+      await enqueueEmail(
+        {
+          to: appointment.customerEmail,
+          template: {
+            name: 'appointment-accepted',
+            data: {
+              customerName: appointment.customerName,
+              appointmentDate: appointment.scheduledDate,
+              appointmentTime: appointment.scheduledTime,
+              inspectorName: appointment.assignedInspectorName,
+              address: appointment.customerAddress,
+            },
           },
         },
-      });
+        {
+          reportId: appointment.id,
+          customerName: appointment.customerName,
+          sentBy: appointment.createdBy,
+        }
+      );
     }
 
     // Create in-app notification
@@ -171,19 +183,25 @@ export const notifyOfRejection = async (
       const userRef = doc(db, 'users', appointment.createdBy);
       const userSnap = await getDoc(userRef);
       if (userSnap.exists() && userSnap.data().email) {
-        const mailRef = collection(db, 'mail');
-        await addDoc(mailRef, {
-          to: userSnap.data().email,
-          template: {
-            name: 'appointment-rejected',
-            data: {
-              customerName: appointment.customerName,
-              appointmentDate: appointment.scheduledDate,
-              appointmentTime: appointment.scheduledTime,
-              reason: reason || 'No reason provided',
+        await enqueueEmail(
+          {
+            to: userSnap.data().email,
+            template: {
+              name: 'appointment-rejected',
+              data: {
+                customerName: appointment.customerName,
+                appointmentDate: appointment.scheduledDate,
+                appointmentTime: appointment.scheduledTime,
+                reason: reason || 'No reason provided',
+              },
             },
           },
-        });
+          {
+            reportId: appointment.id,
+            customerName: appointment.customerName,
+            sentBy: appointment.createdBy,
+          }
+        );
       }
     } catch (emailError) {
       console.error('Error sending rejection email:', emailError);
@@ -225,20 +243,26 @@ export const sendAppointmentReminders = async (
 
     // Send email reminder to customer
     if (appointment.customerEmail) {
-      const mailRef = collection(db, 'mail');
-      await addDoc(mailRef, {
-        to: appointment.customerEmail,
-        template: {
-          name: 'appointment-reminder',
-          data: {
-            customerName: appointment.customerName,
-            appointmentDate: appointment.scheduledDate,
-            appointmentTime: appointment.scheduledTime,
-            inspectorName: appointment.assignedInspectorName,
-            address: appointment.customerAddress,
+      await enqueueEmail(
+        {
+          to: appointment.customerEmail,
+          template: {
+            name: 'appointment-reminder',
+            data: {
+              customerName: appointment.customerName,
+              appointmentDate: appointment.scheduledDate,
+              appointmentTime: appointment.scheduledTime,
+              inspectorName: appointment.assignedInspectorName,
+              address: appointment.customerAddress,
+            },
           },
         },
-      });
+        {
+          reportId: appointment.id,
+          customerName: appointment.customerName,
+          sentBy: appointment.createdBy,
+        }
+      );
     }
 
     // Notify roofer

@@ -419,6 +419,9 @@ service cloud.firestore {
         (resource.data.createdBy == request.auth.uid || 
          (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"));
       
+      // Allow customers to list offers (for queries)
+      allow list: if isAuthenticated() && isCustomer();
+      
       // Create offers - authenticated users in their branch
       allow create: if isAuthenticated() && (
         isSuperadmin() ||
@@ -713,6 +716,16 @@ service cloud.firestore {
          request.resource.data.branchId == resource.data.branchId &&
          request.resource.data.createdBy == resource.data.createdBy)
       ) || (
+        // Customer update for auto-renewal (only specific fields)
+        isAuthenticated() && isCustomer() && (
+          resource.data.customerId == request.auth.uid ||
+          resource.data.customerId == getUserCompanyId() ||
+          (resource.data.companyId != null && resource.data.companyId == getUserCompanyId())
+        ) && (
+          // Only allow updating autoRenew and renewalTermMonths fields
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['autoRenew', 'renewalTermMonths', 'updatedAt'])
+        )
+      ) || (
         // Authenticated admin updates
         isAuthenticated() && (
           isSuperadmin() ||
@@ -752,6 +765,16 @@ service cloud.firestore {
       
       // Admins have full access
       allow read, write: if isAuthenticated() && (isSuperadmin() || isBranchAdmin());
+    }
+
+    // Dashboard Preferences - User customization of dashboard widgets
+    match /dashboardPreferences/{userId} {
+      // Users can only read/write their own preferences
+      allow get, list: if isAuthenticated() && request.auth.uid == userId;
+      
+      allow create, update, delete: if isAuthenticated() && 
+        request.auth.uid == userId &&
+        request.resource.data.userId == userId;
     }
   }
 }
