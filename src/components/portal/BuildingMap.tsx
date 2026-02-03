@@ -3,6 +3,7 @@ import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { MapPin, Loader2, AlertCircle } from 'lucide-react';
 import { useIntl } from '../../hooks/useIntl';
+import { logger } from '../../utils/logger';
 
 interface BuildingMapProps {
   latitude?: number;
@@ -63,7 +64,7 @@ const BuildingMap: React.FC<BuildingMapProps> = ({
           setIsLoading(false);
         }
       } catch (err) {
-        console.error('Error geocoding address:', err);
+        logger.error('Error geocoding address:', err);
         setError(t('buildings.map.geocodeError') || 'Failed to load map location');
         setIsLoading(false);
       }
@@ -185,12 +186,12 @@ const BuildingMap: React.FC<BuildingMapProps> = ({
           try {
             map.remove();
           } catch (e) {
-            console.error('Error removing map:', e);
+            logger.warn('Error removing map:', e);
           }
         }
       };
     } catch (err) {
-      console.error('Error initializing map:', err);
+      logger.error('Error initializing map:', err);
       setError(t('buildings.map.initError') || 'Failed to initialize map');
       setIsLoading(false);
     }

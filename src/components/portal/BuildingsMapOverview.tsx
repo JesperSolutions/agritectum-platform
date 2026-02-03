@@ -4,6 +4,7 @@ import 'leaflet/dist/leaflet.css';
 import { MapPin, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useIntl } from '../../hooks/useIntl';
+import { logger } from '../../utils/logger';
 
 interface Building {
   id: string;
@@ -95,7 +96,7 @@ const BuildingsMapOverview: React.FC<BuildingsMapOverviewProps> = ({
     // If map is already initialized and building count hasn't changed, skip re-init
     if (mapInstanceRef.current && buildingsWithCoords.length > 0) {
       // Just update markers if needed, don't reinitialize
-      console.log('[BuildingsMapOverview] Map already initialized, skipping reinit');
+      logger.debug('[BuildingsMapOverview] Map already initialized, skipping reinit');
       setIsLoading(false);
       return;
     }
@@ -228,7 +229,7 @@ const BuildingsMapOverview: React.FC<BuildingsMapOverviewProps> = ({
           }
         }, 100);
       } catch (err) {
-        console.error('Error initializing buildings map:', err);
+        logger.error('Error initializing buildings map:', err);
         setIsLoading(false);
       }
     }, 250);
@@ -242,7 +243,7 @@ const BuildingsMapOverview: React.FC<BuildingsMapOverviewProps> = ({
         try {
           marker.remove();
         } catch (e) {
-          console.warn('Error removing marker:', e);
+          logger.warn('Error removing marker:', e);
         }
       });
       markersRef.current = [];
@@ -253,7 +254,7 @@ const BuildingsMapOverview: React.FC<BuildingsMapOverviewProps> = ({
           mapInstanceRef.current.remove();
           mapInstanceRef.current = null;
         } catch (e) {
-          console.warn('Error removing map:', e);
+          logger.warn('Error removing map:', e);
         }
       }
     };

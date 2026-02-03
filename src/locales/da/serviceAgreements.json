@@ -264,5 +264,18 @@
   "serviceAgreement.detail.sending": "Sender...",
   "serviceAgreement.detail.sent": "Serviceaftale sendt til kunde",
   "serviceAgreement.detail.sendError": "Kunne ikke sende serviceaftale",
-  "serviceAgreement.detail.noEmail": "Kunde email er påkrævet for at sende aftalen"
+  "serviceAgreement.detail.noEmail": "Kunde email er påkrævet for at sende aftalen",
+
+  "serviceAgreement.portal.title": "Serviceaftaler",
+  "serviceAgreement.portal.subtitle": "Administrer dine serviceaftaler med taglæggere",
+  "serviceAgreement.portal.external": "Ekstern",
+  "serviceAgreement.portal.platformPartner": "Platform Partner",
+  "serviceAgreement.portal.autoRenewal": "Automatisk fornyelse",
+  "serviceAgreement.portal.autoRenewEnabled": "Aftalen fornyes automatisk i {months} måneder",
+  "serviceAgreement.portal.autoRenewDisabled": "Aftalen udløber og kræver manuel fornyelse",
+  "serviceAgreement.portal.autoRenewConfirmation": "Denne aftale fornyes automatisk den {date} i yderligere {months} måneder. Du modtager en påmindelse 30 dage før fornyelse.",
+  "serviceAgreement.portal.autoRenewSuccess": "Automatisk fornyelse {status} med succes",
+  "serviceAgreement.portal.autoRenewError": "Kunne ikke opdatere indstilling for automatisk fornyelse",
+  "serviceAgreement.portal.enabled": "aktiveret",
+  "serviceAgreement.portal.disabled": "deaktiveret"
 }

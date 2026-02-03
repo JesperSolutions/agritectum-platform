@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../contexts/ToastContext';
+import { useIntl } from '../../hooks/useIntl';
+import { logger } from '../../utils/logger';
 import { getScheduledVisitsByCustomer, createScheduledVisit } from '../../services/scheduledVisitService';
 import { getBuildingsByCustomer } from '../../services/buildingService';
 import { getExternalProvidersByCompany } from '../../services/externalProviderService';
 import { ScheduledVisit, Building, ExternalServiceProvider } from '../../types';
 import { Calendar, MapPin, User, CheckCircle, XCircle, ExternalLink, Plus, Clock, Download } from 'lucide-react';
 import LoadingSpinner from '../common/LoadingSpinner';
+import { VisitsListSkeleton } from '../common/SkeletonLoader';
 import FilterTabs from '../shared/filters/FilterTabs';
 import StatusBadge from '../shared/badges/StatusBadge';
 import IconLabel from '../shared/layouts/IconLabel';
@@ -16,11 +19,13 @@ import PageHeader from '../shared/layouts/PageHeader';
 import { formatDateTime, formatDate } from '../../utils/dateFormatter';
 import { Button } from '../ui/button';
 import { downloadICalFile, addToGoogleCalendar, addToOutlookCalendar } from '../../utils/calendarExport';
+import { getCurrencyCode } from '../../utils/currency';
 
 const ScheduledVisitsList: React.FC = () => {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
   const { showSuccess, showError } = useToast();
+  const { t } = useIntl();
   
   const [visits, setVisits] = useState<ScheduledVisit[]>([]);
   const [buildings, setBuildings] = useState<Building[]>([]);
@@ -64,7 +69,7 @@ const ScheduledVisitsList: React.FC = () => {
       setBuildings(buildingsData);
       setProviders(providersData);
     } catch (error) {
-      console.error('Error loading data:', error);
+      logger.error('Error loading data:', error);
       showError('Error loading data');
     } finally {
       setLoading(false);
@@ -187,7 +192,7 @@ const ScheduledVisitsList: React.FC = () => {
       setNotes('');
       loadData();
     } catch (error) {
-      console.error('Error scheduling visit:', error);
+      logger.error('Error scheduling visit:', error);
       showError('Failed to schedule visit');
     } finally {
       setSubmitting(false);
@@ -230,8 +235,12 @@ const ScheduledVisitsList: React.FC = () => {
 
   if (loading) {
     return (
-      <div className='flex items-center justify-center h-64'>
-        <LoadingSpinner size='lg' />
+      <div className='space-y-6'>
+        <PageHeader
+          title={t('schedule.portal.title')}
+          subtitle={t('schedule.portal.subtitle')}
+        />
+        <VisitsListSkeleton count={5} />
       </div>
     );
   }
@@ -239,34 +248,34 @@ const ScheduledVisitsList: React.FC = () => {
   const calendarDays = getCalendarDays();
   const monthName = currentDate.toLocaleString('default', { month: 'long', year: 'numeric' });
   const filterTabs = [
-    { value: 'all', label: 'All' },
-    { value: 'upcoming', label: 'Upcoming' },
-    { value: 'past', label: 'Past' },
+    { value: 'all', label: t('schedule.portal.all') },
+    { value: 'upcoming', label: t('schedule.portal.upcoming') },
+    { value: 'past', label: t('schedule.portal.past') },
   ];
 
   return (
     <div className='space-y-6'>
       <div className='flex justify-between items-center'>
         <PageHeader
-          title='Scheduled Visits'
-          subtitle='View and schedule external service visits'
+          title={t('schedule.portal.title')}
+          subtitle={t('schedule.portal.subtitle')}
         />
         <button
           onClick={() => setShowForm(!showForm)}
           className='flex items-center gap-2 px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium shadow-sm'
         >
           <Plus className='w-5 h-5' />
-          Schedule Visit
+          {t('schedule.portal.requestVisit')}
         </button>
       </div>
 
       {showForm && (
         <div className='bg-white rounded-lg shadow p-6 border border-slate-200'>
-          <h3 className='text-lg font-semibold mb-4'>Schedule a New Visit</h3>
+          <h3 className='text-lg font-semibold mb-4'>{t('schedule.portal.scheduleNewVisit')}</h3>
           <form onSubmit={handleCreateVisit} className='space-y-4'>
             <div className='grid grid-cols-2 gap-4'>
               <div>
-                <label className='block text-sm font-medium text-gray-700 mb-1'>Building *</label>
+                <label className='block text-sm font-medium text-gray-700 mb-1'>{t('schedule.portal.building')} *</label>
                 <select
                   value={selectedBuilding}
                   onChange={e => setSelectedBuilding(e.target.value)}
@@ -274,7 +283,7 @@ const ScheduledVisitsList: React.FC = () => {
                     errors.building ? 'border-red-300' : 'border-gray-300'
                   }`}
                 >
-                  <option value=''>Select building...</option>
+                  <option value=''>{t('schedule.portal.selectBuilding')}</option>
                   {buildings.map(b => (
                     <option key={b.id} value={b.id}>
                       {b.name || b.address}
@@ -285,7 +294,7 @@ const ScheduledVisitsList: React.FC = () => {
               </div>
 
               <div>
-                <label className='block text-sm font-medium text-gray-700 mb-1'>Provider *</label>
+                <label className='block text-sm font-medium text-gray-700 mb-1'>{t('schedule.portal.provider')} *</label>
                 <select
                   value={selectedProvider}
                   onChange={e => setSelectedProvider(e.target.value)}
@@ -293,7 +302,7 @@ const ScheduledVisitsList: React.FC = () => {
                     errors.provider ? 'border-red-300' : 'border-gray-300'
                   }`}
                 >
-                  <option value=''>Select provider...</option>
+                  <option value=''>{t('schedule.portal.selectProvider')}</option>
                   {providers.map(p => (
                     <option key={p.id} value={p.id}>
                       {p.companyName}
@@ -305,26 +314,26 @@ const ScheduledVisitsList: React.FC = () => {
             </div>
 
             <div>
-              <label className='block text-sm font-medium text-gray-700 mb-1'>Service Type *</label>
+              <label className='block text-sm font-medium text-gray-700 mb-1'>{t('schedule.portal.serviceType')} *</label>
               <select
                 value={serviceType}
                 onChange={e => setServiceType(e.target.value as 'inspection' | 'cleaning' | 'repair' | 'emergency')}
                 className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
               >
-                <option value='inspection'>🔍 Inspection - Routine roof assessment</option>
-                <option value='cleaning'>🧹 Cleaning - Gutter & surface cleaning</option>
-                <option value='repair'>🔧 Repair - Fix identified issues</option>
-                <option value='emergency'>🚨 Emergency - Urgent attention needed</option>
+                <option value='inspection'>{t('schedule.portal.serviceType.inspection')}</option>
+                <option value='cleaning'>{t('schedule.portal.serviceType.cleaning')}</option>
+                <option value='repair'>{t('schedule.portal.serviceType.repair')}</option>
+                <option value='emergency'>{t('schedule.portal.serviceType.emergency')}</option>
               </select>
               
               {estimatedCost && (
                 <div className='mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg'>
-                  <p className='text-sm font-medium text-blue-900'>Estimated Cost</p>
+                  <p className='text-sm font-medium text-blue-900'>{t('schedule.portal.estimatedCost')}</p>
                   <p className='text-lg font-bold text-blue-700'>
-                    DKK {estimatedCost.min.toLocaleString()} - {estimatedCost.max.toLocaleString()}
+                    {getCurrencyCode()} {estimatedCost.min.toLocaleString()} - {estimatedCost.max.toLocaleString()}
                   </p>
                   <p className='text-xs text-blue-600 mt-1'>
-                    Based on {serviceType} service for selected building
+                    {t('schedule.portal.estimatedCostNote', { serviceType })}
                   </p>
                 </div>
               )}
@@ -332,8 +341,7 @@ const ScheduledVisitsList: React.FC = () => {
               {suggestedDate && (
                 <div className='mt-2 p-3 bg-amber-50 border border-amber-200 rounded-lg'>
                   <p className='text-sm text-amber-800'>
-                    💡 <strong>Recommended:</strong> Schedule by {new Date(suggestedDate).toLocaleDateString()} 
-                    {' '}(Last inspection was over 365 days ago)
+                    💡 <strong>{t('schedule.portal.recommended')}:</strong> {t('schedule.portal.scheduleBy')} {new Date(suggestedDate).toLocaleDateString()} 
                   </p>
                 </div>
               )}
@@ -341,7 +349,7 @@ const ScheduledVisitsList: React.FC = () => {
 
             <div className='grid grid-cols-3 gap-4'>
               <div>
-                <label className='block text-sm font-medium text-gray-700 mb-1'>Date *</label>
+                <label className='block text-sm font-medium text-gray-700 mb-1'>{t('schedule.portal.date')} *</label>
                 <input
                   type='date'
                   value={visitDate}
@@ -354,7 +362,7 @@ const ScheduledVisitsList: React.FC = () => {
               </div>
 
               <div>
-                <label className='block text-sm font-medium text-gray-700 mb-1'>Time *</label>
+                <label className='block text-sm font-medium text-gray-700 mb-1'>{t('schedule.portal.time')} *</label>
                 <input
                   type='time'
                   value={visitTime}
@@ -367,7 +375,7 @@ const ScheduledVisitsList: React.FC = () => {
               </div>
 
               <div>
-                <label className='block text-sm font-medium text-gray-700 mb-1'>Duration (min) *</label>
+                <label className='block text-sm font-medium text-gray-700 mb-1'>{t('schedule.portal.duration')} *</label>
                 <input
                   type='number'
                   value={duration}
@@ -383,11 +391,11 @@ const ScheduledVisitsList: React.FC = () => {
             </div>
 
             <div>
-              <label className='block text-sm font-medium text-gray-700 mb-1'>Notes</label>
+              <label className='block text-sm font-medium text-gray-700 mb-1'>{t('schedule.portal.notes')}</label>
               <textarea
                 value={notes}
                 onChange={e => setNotes(e.target.value)}
-                placeholder='Any additional details about the visit...'
+                placeholder={t('schedule.portal.notesPlaceholder')}
                 rows={2}
                 className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
               />
@@ -399,14 +407,14 @@ const ScheduledVisitsList: React.FC = () => {
                 onClick={() => setShowForm(false)}
                 className='flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium'
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 type='submit'
                 disabled={submitting}
                 className='flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium disabled:opacity-50'
               >
-                {submitting ? 'Scheduling...' : 'Schedule Visit'}
+                {submitting ? t('schedule.portal.scheduling') : t('schedule.portal.requestVisit')}
               </button>
             </div>
           </form>
@@ -422,26 +430,26 @@ const ScheduledVisitsList: React.FC = () => {
               onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1))}
               className='px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50'
             >
-              ← Prev
+              ← {t('schedule.portal.prev')}
             </button>
             <button
               onClick={() => setCurrentDate(new Date())}
               className='px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50'
             >
-              Today
+              {t('schedule.portal.today')}
             </button>
             <button
               onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1))}
               className='px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50'
             >
-              Next →
+              {t('schedule.portal.next')} →
             </button>
           </div>
         </div>
 
         {/* Day headers */}
         <div className='grid grid-cols-7 gap-2 mb-2'>
-          {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+          {[t('schedule.portal.sun'), t('schedule.portal.mon'), t('schedule.portal.tue'), t('schedule.portal.wed'), t('schedule.portal.thu'), t('schedule.portal.fri'), t('schedule.portal.sat')].map(day => (
             <div key={day} className='text-center font-semibold text-sm text-gray-600 py-2'>
               {day}
             </div>
@@ -494,7 +502,7 @@ const ScheduledVisitsList: React.FC = () => {
         <div className='bg-white rounded-lg shadow p-12 text-center border border-slate-200'>
           <Calendar className='w-16 h-16 text-gray-400 mx-auto mb-4' />
           <p className='text-gray-600'>
-            No scheduled visits found
+            {t('schedule.portal.noVisits')}
           </p>
         </div>
       ) : (
@@ -525,7 +533,7 @@ const ScheduledVisitsList: React.FC = () => {
                           className='w-full text-left px-4 py-2 hover:bg-gray-50 text-sm border-b border-gray-100 flex items-center gap-2'
                         >
                           <Download className='w-4 h-4' />
-                          Download (.ics)
+                          {t('schedule.portal.downloadIcs')}
                         </button>
                         <button
                           onClick={() => {
@@ -534,7 +542,7 @@ const ScheduledVisitsList: React.FC = () => {
                           }}
                           className='w-full text-left px-4 py-2 hover:bg-gray-50 text-sm border-b border-gray-100'
                         >
-                          Add to Google Calendar
+                          {t('schedule.portal.addToGoogle')}
                         </button>
                         <button
                           onClick={() => {
@@ -543,7 +551,7 @@ const ScheduledVisitsList: React.FC = () => {
                           }}
                           className='w-full text-left px-4 py-2 hover:bg-gray-50 text-sm'
                         >
-                          Add to Outlook
+                          {t('schedule.portal.addToOutlook')}
                         </button>
                       </div>
                     )}
@@ -555,18 +563,18 @@ const ScheduledVisitsList: React.FC = () => {
               <div className='grid grid-cols-1 md:grid-cols-3 gap-4 mt-4'>
                 <IconLabel
                   icon={Calendar}
-                  label='Date & Time'
+                  label={t('schedule.portal.dateAndTime')}
                   value={`${formatDate(visit.scheduledDate)} ${visit.scheduledTime}`}
                 />
                 <IconLabel
                   icon={MapPin}
-                  label='Location'
+                  label={t('schedule.portal.location')}
                   value={visit.customerAddress}
                 />
                 <IconLabel
                   icon={Clock}
-                  label='Duration'
-                  value={`${visit.duration} minutes`}
+                  label={t('schedule.portal.durationLabel')}
+                  value={`${visit.duration} ${t('schedule.portal.minutes')}`}
                 />
               </div>
 
@@ -585,7 +593,7 @@ const ScheduledVisitsList: React.FC = () => {
                     className='flex-1 bg-green-600 hover:bg-green-700'
                   >
                     <CheckCircle className='w-4 h-4 mr-2' />
-                    Accept
+                    {t('schedule.portal.accept')}
                   </Button>
                   <Button
                     onClick={() =>
@@ -597,7 +605,7 @@ const ScheduledVisitsList: React.FC = () => {
                     className='flex-1 border-red-300 text-red-700 hover:bg-red-50'
                   >
                     <XCircle className='w-4 h-4 mr-2' />
-                    Reject
+                    {t('schedule.portal.reject')}
                   </Button>
                 </div>
               )}
@@ -610,7 +618,7 @@ const ScheduledVisitsList: React.FC = () => {
                     className='w-full'
                   >
                     <ExternalLink className='w-4 h-4 mr-2' />
-                    View Inspection Report
+                    {t('schedule.portal.viewReport')}
                   </Button>
                 </div>
               )}

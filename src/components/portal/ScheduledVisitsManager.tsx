@@ -6,6 +6,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../contexts/ToastContext';
+import { logger } from '../../utils/logger';
 import { ScheduledVisit, Building, ExternalServiceProvider } from '../../types';
 import { getBuildingsByCustomer } from '../../services/buildingService';
 import { getExternalProvidersByCompany } from '../../services/externalProviderService';
@@ -58,7 +59,7 @@ const ScheduledVisitsManager: React.FC = () => {
       const visits = await scheduledVisitService.getScheduledVisitsForCustomer(customerId);
       setScheduledVisits(visits);
     } catch (error) {
-      console.error('Error loading data:', error);
+      logger.error('Error loading data:', error);
       showError('Error loading data');
     } finally {
       setLoading(false);
@@ -124,7 +125,7 @@ const ScheduledVisitsManager: React.FC = () => {
       setNotes('');
       loadData();
     } catch (error) {
-      console.error('Error scheduling visit:', error);
+      logger.error('Error scheduling visit:', error);
       showError('Failed to schedule visit');
     }
   };

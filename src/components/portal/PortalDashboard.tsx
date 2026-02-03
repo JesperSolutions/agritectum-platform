@@ -21,15 +21,19 @@ import {
   Info,
   HelpCircle,
   Sliders,
+  Wallet,
 } from 'lucide-react';
 import { useIntl } from '../../hooks/useIntl';
 import LoadingSpinner from '../common/LoadingSpinner';
+import { PortalDashboardSkeleton } from '../common/SkeletonLoader';
 import { logger } from '../../utils/logger';
 import BuildingsMapOverview from './BuildingsMapOverview';
 import PortfolioHealthReport from './PortfolioHealthReport';
 import DashboardCustomizer from './DashboardCustomizer';
 import ComponentErrorBoundary from '../common/ComponentErrorBoundary';
 import { useToast } from '../../contexts/ToastContext';
+import { ProgressRing, GradeDistribution, StatusIndicator } from '../common/DashboardVisuals';
+import { getCurrencyCode } from '../../utils/currency';
 
 type BuildingStatus = 'good' | 'check-soon' | 'urgent';
 type HealthGrade = 'A' | 'B' | 'C' | 'D' | 'F';
@@ -214,8 +218,8 @@ const PortalDashboard: React.FC = () => {
 
   if (loading) {
     return (
-      <div className='flex items-center justify-center h-64'>
-        <LoadingSpinner size='lg' />
+      <div className='p-6'>
+        <PortalDashboardSkeleton />
       </div>
     );
   }
@@ -371,7 +375,7 @@ const PortalDashboard: React.FC = () => {
     
     // Log widget order for debugging
     if (sorted.length > 0 && process.env.NODE_ENV === 'development') {
-      console.debug('Dashboard widget order:', sorted.map((w, i) => `${i + 1}. ${w.label} (order=${w.order})`));
+      logger.debug('Dashboard widget order:', sorted.map((w, i) => `${i + 1}. ${w.label} (order=${w.order})`));
     }
     
     return sorted.map(w => w.name);
@@ -381,20 +385,37 @@ const PortalDashboard: React.FC = () => {
     switch (widgetName) {
       case 'healthScoreLegend':
         return (
-          <div className='bg-slate-50 border border-slate-200 rounded-lg p-5'>
-            <div className='flex items-start gap-3'>
-              <div className='bg-slate-600 rounded-lg p-2 flex-shrink-0'>
-                <Info className='w-4 h-4 text-white' />
+          <div className='bg-gradient-to-br from-slate-50 to-white border border-slate-200 rounded-xl p-6 animate-fade-in'>
+            <div className='flex items-start gap-4'>
+              <div className='w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-slate-600 to-slate-700 flex-shrink-0 shadow-sm'>
+                <Info className='w-6 h-6 text-white' />
               </div>
               <div className='flex-1'>
-                <h3 className='text-sm font-semibold text-slate-900 mb-3'>
+                <h3 className='text-base font-semibold text-slate-900 mb-2'>
                   {t('portal.healthScores.title')}
                 </h3>
-                <p className='text-sm text-slate-700 leading-relaxed mb-3'>
+                <p className='text-sm text-slate-600 leading-relaxed mb-4'>
                   {t('portal.healthScores.explanation')}
                 </p>
-                <p className='text-xs text-slate-600 leading-relaxed'>
-                  <strong>{t('portal.healthScores.howCalculated')}:</strong> {t('portal.healthScores.howCalculatedDesc')}
+                
+                {/* Grade legend */}
+                <div className='flex flex-wrap gap-2 mb-4'>
+                  {[
+                    { grade: 'A', color: 'bg-green-100 text-green-700 border-green-200', range: '90-100' },
+                    { grade: 'B', color: 'bg-blue-100 text-blue-700 border-blue-200', range: '80-89' },
+                    { grade: 'C', color: 'bg-amber-100 text-amber-700 border-amber-200', range: '70-79' },
+                    { grade: 'D', color: 'bg-orange-100 text-orange-700 border-orange-200', range: '60-69' },
+                    { grade: 'F', color: 'bg-red-100 text-red-700 border-red-200', range: '0-59' },
+                  ].map(({ grade, color, range }) => (
+                    <div key={grade} className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border ${color}`}>
+                      <span className='text-base'>{grade}</span>
+                      <span className='text-[10px] opacity-75'>({range})</span>
+                    </div>
+                  ))}
+                </div>
+                
+                <p className='text-xs text-slate-500 leading-relaxed'>
+                  <strong className='text-slate-700'>{t('portal.healthScores.howCalculated')}:</strong> {t('portal.healthScores.howCalculatedDesc')}
                 </p>
               </div>
             </div>
@@ -404,49 +425,60 @@ const PortalDashboard: React.FC = () => {
       case 'statsCards':
         return (
           <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6'>
-            <div className='bg-white rounded-lg shadow p-6'>
-              <div className='flex items-center justify-between mb-2'>
-                <div className='flex items-center gap-2'>
-                  <p className='text-sm font-medium text-gray-600'>{t('portal.stats.buildings')}</p>
-                  <div className='group relative'>
-                    <HelpCircle className='w-4 h-4 text-gray-400 cursor-help' />
-                    <div className='absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity w-48 z-10'>
-                      {t('portal.stats.buildingsDesc')}
+            {/* Buildings Card */}
+            <div 
+              className='relative bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 overflow-hidden animate-fade-in'
+              style={{ animationDelay: '0ms' }}
+            >
+              <div className='absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-slate-500 to-slate-600' />
+              <div className='p-6'>
+                <div className='flex items-start justify-between'>
+                  <div className='flex-1'>
+                    <div className='flex items-center gap-2'>
+                      <p className='text-sm font-medium text-slate-600'>{t('portal.stats.buildings')}</p>
+                      <div className='group relative'>
+                        <HelpCircle className='w-4 h-4 text-gray-400 cursor-help' />
+                        <div className='absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity w-48 z-10'>
+                          {t('portal.stats.buildingsDesc')}
+                        </div>
+                      </div>
                     </div>
+                    <p className='text-3xl font-bold text-gray-900 mt-2 tabular-nums'>{buildings.length}</p>
+                  </div>
+                  <div className='w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-slate-500 to-slate-600 group-hover:scale-110 transition-transform duration-300'>
+                    <BuildingIcon className='w-6 h-6 text-white' />
                   </div>
                 </div>
-                <BuildingIcon className='w-8 h-8 text-slate-600' />
+                
+                {/* Grade Distribution Bar */}
+                <div className='mt-4'>
+                  <GradeDistribution 
+                    grades={statistics.gradeCounts} 
+                    height='sm'
+                    showLabels={true}
+                    showCounts={true}
+                  />
+                </div>
+                
+                <Link
+                  to='/portal/buildings'
+                  className='mt-4 inline-flex items-center text-sm font-medium text-slate-600 hover:text-slate-800 group/link'
+                >
+                  {t('dashboard.viewAll')} 
+                  <ArrowRight className='ml-1 w-4 h-4 transition-transform group-hover/link:translate-x-0.5' />
+                </Link>
               </div>
-              <p className='text-3xl font-bold text-gray-900'>{buildings.length}</p>
-              <div className='mt-3 flex flex-wrap items-center gap-2 text-xs font-medium'>
-                <span className='px-2 py-1 rounded bg-slate-100 text-slate-700 border border-slate-300'>
-                  {statistics.gradeCounts.A}A
-                </span>
-                <span className='px-2 py-1 rounded bg-slate-100 text-slate-700 border border-slate-300'>
-                  {statistics.gradeCounts.B}B
-                </span>
-                <span className='px-2 py-1 rounded bg-slate-100 text-slate-700 border border-slate-300'>
-                  {statistics.gradeCounts.C}C
-                </span>
-                <span className='px-2 py-1 rounded bg-slate-100 text-slate-700 border border-slate-300'>
-                  {statistics.gradeCounts.D}D
-                </span>
-                <span className='px-2 py-1 rounded bg-slate-100 text-slate-700 border border-slate-300'>
-                  {statistics.gradeCounts.F}F
-                </span>
-              </div>
-              <Link
-                to='/portal/buildings'
-                className='mt-4 inline-flex items-center text-sm font-medium text-slate-600 hover:text-slate-700'
-              >
-                {t('dashboard.viewAll')} <ArrowRight className='ml-1 w-4 h-4' />
-              </Link>
             </div>
 
-            <div className='bg-white rounded-lg shadow p-6'>
-              <div className='flex items-center justify-between mb-2'>
-                <div className='flex items-center gap-2'>
-                  <p className='text-sm font-medium text-gray-600'>{t('portal.stats.portfolioHealth')}</p>
+            {/* Portfolio Health Card with Progress Ring */}
+            <div 
+              className='relative bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 overflow-hidden animate-fade-in'
+              style={{ animationDelay: '100ms' }}
+            >
+              <div className='absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500 to-green-600' />
+              <div className='p-6'>
+                <div className='flex items-center gap-2 mb-4'>
+                  <p className='text-sm font-medium text-slate-600'>{t('portal.stats.portfolioHealth')}</p>
                   <div className='group relative'>
                     <HelpCircle className='w-4 h-4 text-gray-400 cursor-help' />
                     <div className='absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity w-56 z-10'>
@@ -454,67 +486,101 @@ const PortalDashboard: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                <div className='w-8 h-8 flex items-center justify-center rounded-lg border-2 border-slate-300 bg-slate-50'>
-                  <span className='text-xl font-bold text-slate-700'>
-                    {statistics.avgHealthScore >= 90
-                      ? 'A'
-                      : statistics.avgHealthScore >= 80
-                        ? 'B'
-                        : statistics.avgHealthScore >= 70
-                          ? 'C'
-                          : statistics.avgHealthScore >= 60
-                            ? 'D'
-                            : 'F'}
-                  </span>
+                
+                <div className='flex justify-center'>
+                  <ProgressRing
+                    value={statistics.avgHealthScore}
+                    max={100}
+                    size='md'
+                    grade={
+                      statistics.avgHealthScore >= 90 ? 'A' :
+                      statistics.avgHealthScore >= 80 ? 'B' :
+                      statistics.avgHealthScore >= 70 ? 'C' :
+                      statistics.avgHealthScore >= 60 ? 'D' : 'F'
+                    }
+                    sublabel={t('portal.stats.averageScore')}
+                  />
                 </div>
               </div>
-              <p className='text-3xl font-bold text-gray-900'>{statistics.avgHealthScore}</p>
-              <p className='text-xs text-gray-500 mt-1'>{t('portal.stats.averageScore')}</p>
             </div>
 
-            <div className='bg-white rounded-lg shadow p-6'>
-              <div className='flex items-center justify-between mb-2'>
-                <div className='flex items-center gap-2'>
-                  <p className='text-sm font-medium text-gray-600'>{t('portal.stats.totalCosts')}</p>
-                  <div className='group relative'>
-                    <HelpCircle className='w-4 h-4 text-gray-400 cursor-help' />
-                    <div className='absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity w-56 z-10'>
-                      {t('portal.stats.totalCostsDesc')}
+            {/* Total Costs Card */}
+            <div 
+              className='relative bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 overflow-hidden animate-fade-in'
+              style={{ animationDelay: '200ms' }}
+            >
+              <div className='absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-blue-600' />
+              <div className='p-6'>
+                <div className='flex items-start justify-between'>
+                  <div className='flex-1'>
+                    <div className='flex items-center gap-2'>
+                      <p className='text-sm font-medium text-slate-600'>{t('portal.stats.totalCosts')}</p>
+                      <div className='group relative'>
+                        <HelpCircle className='w-4 h-4 text-gray-400 cursor-help' />
+                        <div className='absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity w-56 z-10'>
+                          {t('portal.stats.totalCostsDesc')}
+                        </div>
+                      </div>
                     </div>
+                    <p className='text-3xl font-bold text-gray-900 mt-2 tabular-nums'>
+                      {statistics.totalCosts > 0 ? `${Math.round(statistics.totalCosts / 1000)}k` : '—'}
+                    </p>
+                    <p className='text-xs text-gray-500 mt-1'>
+                      {statistics.avgCostPerBuilding > 0
+                        ? `${Math.round(statistics.avgCostPerBuilding / 1000)}k ${t('portal.stats.avgPerBuilding')}`
+                        : getCurrencyCode()}
+                    </p>
+                  </div>
+                  <div className='w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-blue-500 to-blue-600'>
+                    <Wallet className='w-6 h-6 text-white' />
                   </div>
                 </div>
-                <FileCheck className='w-8 h-8 text-slate-600' />
               </div>
-              <p className='text-3xl font-bold text-gray-900'>
-                {statistics.totalCosts > 0 ? `${Math.round(statistics.totalCosts / 1000)}k` : '—'}
-              </p>
-              <p className='text-xs text-gray-500 mt-1'>
-                {statistics.avgCostPerBuilding > 0
-                  ? `${Math.round(statistics.avgCostPerBuilding / 1000)}k ${t('portal.stats.avgPerBuilding')}`
-                  : 'SEK'}
-              </p>
             </div>
 
-            <div className='bg-white rounded-lg shadow p-6'>
-              <div className='flex items-center justify-between mb-2'>
-                <div className='flex items-center gap-2'>
-                  <p className='text-sm font-medium text-gray-600'>{t('portal.stats.upcomingInspections')}</p>
-                  <div className='group relative'>
-                    <HelpCircle className='w-4 h-4 text-gray-400 cursor-help' />
-                    <div className='absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity w-48 z-10'>
-                      {t('portal.stats.upcomingInspectionsDesc')}
+            {/* Upcoming Inspections Card */}
+            <div 
+              className='relative bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 overflow-hidden animate-fade-in'
+              style={{ animationDelay: '300ms' }}
+            >
+              <div className='absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-amber-600' />
+              <div className='p-6'>
+                <div className='flex items-start justify-between'>
+                  <div className='flex-1'>
+                    <div className='flex items-center gap-2'>
+                      <p className='text-sm font-medium text-slate-600'>{t('portal.stats.upcomingInspections')}</p>
+                      <div className='group relative'>
+                        <HelpCircle className='w-4 h-4 text-gray-400 cursor-help' />
+                        <div className='absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity w-48 z-10'>
+                          {t('portal.stats.upcomingInspectionsDesc')}
+                        </div>
+                      </div>
+                    </div>
+                    <p className='text-3xl font-bold text-gray-900 mt-2 tabular-nums'>{statistics.upcomingVisits.length}</p>
+                    
+                    {/* Status indicators */}
+                    <div className='flex items-center gap-3 mt-3'>
+                      <StatusIndicator 
+                        status={statistics.statusCounts.urgent > 0 ? 'urgent' : 'neutral'} 
+                        label={`${statistics.statusCounts.urgent} urgent`}
+                        pulse={statistics.statusCounts.urgent > 0}
+                        size='sm'
+                      />
                     </div>
                   </div>
+                  <div className='w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-amber-500 to-amber-600'>
+                    <Calendar className='w-6 h-6 text-white' />
+                  </div>
                 </div>
-                <Calendar className='w-8 h-8 text-slate-600' />
+                
+                <Link
+                  to='/portal/scheduled-visits'
+                  className='mt-4 inline-flex items-center text-sm font-medium text-slate-600 hover:text-slate-800 group/link'
+                >
+                  {t('dashboard.viewAll')} 
+                  <ArrowRight className='ml-1 w-4 h-4 transition-transform group-hover/link:translate-x-0.5' />
+                </Link>
               </div>
-              <p className='text-3xl font-bold text-gray-900'>{statistics.upcomingVisits.length}</p>
-              <Link
-                to='/portal/scheduled-visits'
-                className='mt-4 inline-flex items-center text-sm font-medium text-slate-600 hover:text-slate-700'
-              >
-                {t('dashboard.viewAll')} <ArrowRight className='ml-1 w-4 h-4' />
-              </Link>
             </div>
           </div>
         );
@@ -522,36 +588,41 @@ const PortalDashboard: React.FC = () => {
       case 'buildingsNeedingAttention':
         if (statistics.buildingsNeedingAttention.length === 0) return null;
         return (
-          <div className='bg-white rounded-lg shadow'>
-            <div className='p-6 border-b border-gray-200'>
-              <div className='flex items-center gap-2'>
-                <AlertTriangle className='w-5 h-5 text-slate-600' />
-                <h2 className='text-xl font-semibold text-gray-900'>Buildings Needing Attention</h2>
+          <div className='bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden animate-fade-in'>
+            <div className='p-6 border-b border-gray-200 bg-gradient-to-r from-slate-50 to-white'>
+              <div className='flex items-center gap-3'>
+                <div className='w-10 h-10 rounded-xl flex items-center justify-center bg-amber-100'>
+                  <AlertTriangle className='w-5 h-5 text-amber-600' />
+                </div>
+                <div>
+                  <h2 className='text-lg font-semibold text-gray-900'>Buildings Needing Attention</h2>
+                  <p className='text-sm text-gray-500'>
+                    Properties that need inspection or maintenance soon
+                  </p>
+                </div>
               </div>
-              <p className='text-sm text-gray-600 mt-1'>
-                Properties that need inspection or maintenance soon
-              </p>
             </div>
             <div className='p-6'>
               <div className='space-y-3'>
-                {statistics.buildingsNeedingAttention.map(building => (
+                {statistics.buildingsNeedingAttention.map((building, index) => (
                   <Link
                     key={building.id}
                     to={`/portal/buildings/${building.id}`}
-                    className='flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-slate-50 transition-colors'
+                    className='flex items-center justify-between p-4 border border-gray-200 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 group animate-fade-in'
+                    style={{ animationDelay: `${index * 50}ms` }}
                   >
                     <div className='flex-1'>
                       <div className='flex items-center gap-3'>
                         <div className='flex flex-col items-center'>
                           <div
-                            className={`w-10 h-10 rounded-lg flex items-center justify-center border-2 ${getGradeColor(building.healthGrade)}`}
+                            className={`w-12 h-12 rounded-xl flex items-center justify-center border-2 ${getGradeColor(building.healthGrade)} transition-transform group-hover:scale-105`}
                           >
                             <span className='text-xl font-bold'>{building.healthGrade}</span>
                           </div>
-                          <span className='text-xs text-gray-500 mt-1'>{building.healthScore}</span>
+                          <span className='text-xs text-gray-500 mt-1 font-medium'>{building.healthScore}/100</span>
                         </div>
                         <div>
-                          <p className='font-medium text-gray-900'>{building.address}</p>
+                          <p className='font-medium text-gray-900 group-hover:text-slate-700 transition-colors'>{building.address}</p>
                           <p className='text-sm text-gray-600 mt-1'>
                             {building.lastInspectionDate
                               ? `Last inspected: ${new Date(building.lastInspectionDate).toLocaleDateString()} (${building.daysSinceInspection} days ago)`
@@ -560,11 +631,19 @@ const PortalDashboard: React.FC = () => {
                         </div>
                       </div>
                     </div>
-                    <span
-                      className={`px-3 py-1 text-xs font-medium rounded-full border ${getStatusColor(building.status)}`}
-                    >
-                      {getStatusText(building.status)}
-                    </span>
+                    <div className='flex items-center gap-3'>
+                      <StatusIndicator 
+                        status={building.status === 'urgent' ? 'urgent' : 'warning'}
+                        pulse={building.status === 'urgent'}
+                        size='md'
+                      />
+                      <span
+                        className={`px-3 py-1.5 text-xs font-semibold rounded-full border ${getStatusColor(building.status)}`}
+                      >
+                        {getStatusText(building.status)}
+                      </span>
+                      <ArrowRight className='w-4 h-4 text-slate-400 group-hover:text-slate-600 group-hover:translate-x-0.5 transition-all' />
+                    </div>
                   </Link>
                 ))}
               </div>
@@ -575,9 +654,9 @@ const PortalDashboard: React.FC = () => {
                   </p>
                   <Link
                     to='/portal/buildings'
-                    className='inline-flex items-center text-sm font-medium text-slate-600 hover:text-slate-700'
+                    className='inline-flex items-center text-sm font-medium text-slate-600 hover:text-slate-800 group/link'
                   >
-                    View All <ArrowRight className='ml-1 w-4 h-4' />
+                    View All <ArrowRight className='ml-1 w-4 h-4 transition-transform group-hover/link:translate-x-0.5' />
                   </Link>
                 </div>
               )}
@@ -602,30 +681,53 @@ const PortalDashboard: React.FC = () => {
       case 'pendingAppointments':
         if (statistics.pendingAcceptances.length === 0) return null;
         return (
-          <div className='bg-yellow-50 border border-yellow-200 rounded-lg shadow'>
-            <div className='p-6 border-b border-yellow-200'>
-              <h2 className='text-xl font-semibold text-gray-900'>
-                {t('schedule.visits.respondToAppointment')}
-              </h2>
-              <p className='text-sm text-gray-600 mt-1'>{t('schedule.visits.respondSubtitle')}</p>
+          <div className='bg-gradient-to-br from-amber-50 to-yellow-50 border border-amber-200 rounded-xl shadow-sm overflow-hidden animate-fade-in'>
+            <div className='p-6 border-b border-amber-200 bg-gradient-to-r from-amber-100/50 to-transparent'>
+              <div className='flex items-center gap-3'>
+                <div className='relative'>
+                  <div className='w-10 h-10 rounded-xl flex items-center justify-center bg-amber-500'>
+                    <Calendar className='w-5 h-5 text-white' />
+                  </div>
+                  <span className='absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center animate-pulse'>
+                    {statistics.pendingAcceptances.length}
+                  </span>
+                </div>
+                <div>
+                  <h2 className='text-lg font-semibold text-gray-900'>
+                    {t('schedule.visits.respondToAppointment')}
+                  </h2>
+                  <p className='text-sm text-amber-700'>{t('schedule.visits.respondSubtitle')}</p>
+                </div>
+              </div>
             </div>
             <div className='p-6'>
-              <div className='space-y-4'>
-                {pendingAcceptances.map(visit => (
+              <div className='space-y-3'>
+                {pendingAcceptances.map((visit, index) => (
                   <div
                     key={visit.id}
-                    className='flex items-center justify-between p-4 border border-yellow-300 rounded-lg bg-white hover:bg-yellow-50'
+                    className='flex items-center justify-between p-4 border border-amber-200 rounded-xl bg-white hover:bg-amber-50 transition-all duration-200 group animate-fade-in'
+                    style={{ animationDelay: `${index * 50}ms` }}
                   >
-                    <div>
-                      <p className='font-medium text-gray-900'>{visit.title}</p>
-                      <p className='text-sm text-gray-600 mt-1'>
-                        {new Date(visit.scheduledDate).toLocaleDateString()} at {visit.scheduledTime}
-                      </p>
-                      <p className='text-sm text-gray-500 mt-1'>{visit.customerAddress}</p>
+                    <div className='flex items-center gap-4'>
+                      <div className='flex flex-col items-center justify-center w-14 h-14 rounded-xl bg-amber-100 border border-amber-200'>
+                        <span className='text-xs font-medium text-amber-600'>
+                          {new Date(visit.scheduledDate).toLocaleDateString(undefined, { month: 'short' })}
+                        </span>
+                        <span className='text-lg font-bold text-amber-800'>
+                          {new Date(visit.scheduledDate).getDate()}
+                        </span>
+                      </div>
+                      <div>
+                        <p className='font-medium text-gray-900'>{visit.title}</p>
+                        <p className='text-sm text-gray-600 mt-0.5'>
+                          {visit.scheduledTime}
+                        </p>
+                        <p className='text-sm text-gray-500 mt-0.5'>{visit.customerAddress}</p>
+                      </div>
                     </div>
                     <Link
                       to={`/portal/appointment/${visit.id}/respond?token=${visit.publicToken || ''}`}
-                      className='px-4 py-2 text-sm font-medium bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors'
+                      className='px-4 py-2 text-sm font-semibold bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-lg hover:from-amber-600 hover:to-amber-700 transition-all duration-200 shadow-sm hover:shadow group-hover:scale-105'
                     >
                       {t('schedule.visits.respondToAppointment')}
                     </Link>
@@ -639,31 +741,53 @@ const PortalDashboard: React.FC = () => {
       case 'upcomingVisits':
         if (statistics.upcomingVisits.length === 0) return null;
         return (
-          <div className='bg-white rounded-lg shadow'>
-            <div className='p-6 border-b border-gray-200'>
-              <h2 className='text-xl font-semibold text-gray-900'>
-                {t('dashboard.scheduledVisits.title')}
-              </h2>
+          <div className='bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden animate-fade-in'>
+            <div className='p-6 border-b border-gray-200 bg-gradient-to-r from-slate-50 to-white'>
+              <div className='flex items-center gap-3'>
+                <div className='w-10 h-10 rounded-xl flex items-center justify-center bg-green-100'>
+                  <Calendar className='w-5 h-5 text-green-600' />
+                </div>
+                <div>
+                  <h2 className='text-lg font-semibold text-gray-900'>
+                    {t('dashboard.scheduledVisits.title')}
+                  </h2>
+                  <p className='text-sm text-gray-500'>Your next scheduled inspections</p>
+                </div>
+              </div>
             </div>
             <div className='p-6'>
-              <div className='space-y-4'>
-                {statistics.upcomingVisits.map(visit => (
+              <div className='space-y-3'>
+                {statistics.upcomingVisits.map((visit, index) => (
                   <div
                     key={visit.id}
-                    className='flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50'
+                    className='flex items-center justify-between p-4 border border-gray-200 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 group animate-fade-in'
+                    style={{ animationDelay: `${index * 50}ms` }}
                   >
-                    <div>
-                      <p className='font-medium text-gray-900'>{visit.title}</p>
-                      <p className='text-sm text-gray-600 mt-1'>
-                        {new Date(visit.scheduledDate).toLocaleDateString()} at {visit.scheduledTime}
-                      </p>
-                      {visit.buildingId && (
-                        <p className='text-sm text-gray-500 mt-1'>{visit.customerAddress}</p>
-                      )}
+                    <div className='flex items-center gap-4'>
+                      <div className='flex flex-col items-center justify-center w-14 h-14 rounded-xl bg-slate-100 border border-slate-200'>
+                        <span className='text-xs font-medium text-slate-500'>
+                          {new Date(visit.scheduledDate).toLocaleDateString(undefined, { month: 'short' })}
+                        </span>
+                        <span className='text-lg font-bold text-slate-900'>
+                          {new Date(visit.scheduledDate).getDate()}
+                        </span>
+                      </div>
+                      <div>
+                        <p className='font-medium text-gray-900'>{visit.title}</p>
+                        <p className='text-sm text-gray-600 mt-0.5'>
+                          {visit.scheduledTime}
+                        </p>
+                        {visit.buildingId && (
+                          <p className='text-sm text-gray-500 mt-0.5'>{visit.customerAddress}</p>
+                        )}
+                      </div>
                     </div>
-                    <span className='px-3 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full'>
-                      {visit.status}
-                    </span>
+                    <div className='flex items-center gap-2'>
+                      <StatusIndicator status='good' size='sm' />
+                      <span className='px-3 py-1.5 text-xs font-semibold bg-green-100 text-green-700 rounded-full border border-green-200'>
+                        {visit.status}
+                      </span>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -674,9 +798,9 @@ const PortalDashboard: React.FC = () => {
                   </p>
                   <Link
                     to='/portal/scheduled-visits'
-                    className='inline-flex items-center text-sm font-medium text-slate-600 hover:text-slate-700'
+                    className='inline-flex items-center text-sm font-medium text-slate-600 hover:text-slate-800 group/link'
                   >
-                    View All <ArrowRight className='ml-1 w-4 h-4' />
+                    View All <ArrowRight className='ml-1 w-4 h-4 transition-transform group-hover/link:translate-x-0.5' />
                   </Link>
                 </div>
               )}
@@ -686,18 +810,27 @@ const PortalDashboard: React.FC = () => {
 
       case 'buildingsMap':
         return (
-          <div className='bg-white rounded-lg shadow'>
-            <div className='p-6 border-b border-gray-200'>
-              <h2 className='text-xl font-semibold text-gray-900'>
-                {t('dashboard.map.title') || 'Your Buildings'}
-              </h2>
-              <p className='text-sm text-gray-600 mt-1'>
-                {t('dashboard.map.subtitle') || 'Overview of all your property locations'}
-              </p>
+          <div className='bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden animate-fade-in'>
+            <div className='p-6 border-b border-gray-200 bg-gradient-to-r from-slate-50 to-white'>
+              <div className='flex items-center gap-3'>
+                <div className='w-10 h-10 rounded-xl flex items-center justify-center bg-blue-100'>
+                  <BuildingIcon className='w-5 h-5 text-blue-600' />
+                </div>
+                <div>
+                  <h2 className='text-lg font-semibold text-gray-900'>
+                    {t('dashboard.map.title') || 'Your Buildings'}
+                  </h2>
+                  <p className='text-sm text-gray-500'>
+                    {t('dashboard.map.subtitle') || 'Overview of all your property locations'}
+                  </p>
+                </div>
+              </div>
             </div>
-            <div className='p-6'>
+            <div className='p-4'>
               <ComponentErrorBoundary componentName='Buildings Map'>
-                <BuildingsMapOverview buildings={buildings} />
+                <div className='rounded-xl overflow-hidden border border-slate-200'>
+                  <BuildingsMapOverview buildings={buildings} />
+                </div>
               </ComponentErrorBoundary>
             </div>
           </div>
@@ -705,26 +838,35 @@ const PortalDashboard: React.FC = () => {
 
       case 'quickActions':
         return (
-          <div className='bg-white rounded-lg shadow p-6'>
-            <h2 className='text-xl font-semibold text-gray-900 mb-4'>
-              {t('dashboard.quickActions.title')}
-            </h2>
+          <div className='bg-white rounded-xl shadow-sm border border-slate-200 p-6 animate-fade-in'>
+            <div className='flex items-center gap-3 mb-5'>
+              <div className='w-10 h-10 rounded-xl flex items-center justify-center bg-slate-100'>
+                <ArrowRight className='w-5 h-5 text-slate-600' />
+              </div>
+              <h2 className='text-lg font-semibold text-gray-900'>
+                {t('dashboard.quickActions.title')}
+              </h2>
+            </div>
             <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
               <Link
                 to='/portal/buildings'
-                className='p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors'
+                className='p-5 border border-gray-200 rounded-xl hover:bg-slate-50 hover:border-slate-300 hover:-translate-y-0.5 transition-all duration-200 group'
               >
-                <BuildingIcon className='w-6 h-6 text-green-600 mb-2' />
-                <p className='font-medium text-gray-900'>{t('navigation.buildings')}</p>
-                <p className='text-sm text-gray-600 mt-1'>{t('dashboard.branchInfo.address')}</p>
+                <div className='w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br from-green-500 to-green-600 mb-3 group-hover:scale-105 transition-transform'>
+                  <BuildingIcon className='w-5 h-5 text-white' />
+                </div>
+                <p className='font-semibold text-gray-900'>{t('navigation.buildings')}</p>
+                <p className='text-sm text-gray-500 mt-1'>{t('dashboard.branchInfo.address')}</p>
               </Link>
               <Link
                 to='/portal/profile'
-                className='p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors'
+                className='p-5 border border-gray-200 rounded-xl hover:bg-slate-50 hover:border-slate-300 hover:-translate-y-0.5 transition-all duration-200 group'
               >
-                <FileCheck className='w-6 h-6 text-slate-600 mb-2' />
-                <p className='font-medium text-gray-900'>{t('navigation.profile')}</p>
-                <p className='text-sm text-gray-600 mt-1'>{t('dashboard.personalWorkspace')}</p>
+                <div className='w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br from-slate-500 to-slate-600 mb-3 group-hover:scale-105 transition-transform'>
+                  <FileCheck className='w-5 h-5 text-white' />
+                </div>
+                <p className='font-semibold text-gray-900'>{t('navigation.profile')}</p>
+                <p className='text-sm text-gray-500 mt-1'>{t('dashboard.personalWorkspace')}</p>
               </Link>
             </div>
           </div>

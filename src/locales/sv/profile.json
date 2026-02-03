@@ -1,4 +1,6 @@
 {
+  "profile.title": "Profil",
+  "profile.subtitle": "Hantera dina kontouppgifter",
   "profile.accountInformation": "Kontoinformation",
   "profile.email": "E-post",
   "profile.displayName": "Namn",

@@ -6,6 +6,7 @@ import { getBuildingsByCustomer, createBuilding } from '../../services/buildingS
 import { Building } from '../../types';
 import { Building as BuildingIcon, Plus, MapPin, AlertCircle } from 'lucide-react';
 import LoadingSpinner from '../common/LoadingSpinner';
+import { BuildingsListSkeleton } from '../common/SkeletonLoader';
 import ListCard from '../shared/cards/ListCard';
 import PageHeader from '../shared/layouts/PageHeader';
 import IconLabel from '../shared/layouts/IconLabel';
@@ -124,8 +125,12 @@ const BuildingsList: React.FC = () => {
 
   if (loading) {
     return (
-      <div className='flex items-center justify-center h-64'>
-        <LoadingSpinner size='lg' />
+      <div className='space-y-6'>
+        <PageHeader
+          title={t('buildings.title') || 'My Buildings'}
+          subtitle={t('buildings.subtitle') || 'Manage your properties'}
+        />
+        <BuildingsListSkeleton count={4} />
       </div>
     );
   }

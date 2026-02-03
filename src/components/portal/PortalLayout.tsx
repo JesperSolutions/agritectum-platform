@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useIntl } from '../../hooks/useIntl';
+import { logger } from '../../utils/logger';
+import { SkipLink } from '../common/AccessibilityComponents';
 import Breadcrumb from '../navigation/Breadcrumb';
 import { Home, LogOut, Building, FileCheck, Calendar, User, Menu, X } from 'lucide-react';
 import AgritectumLogo from '../AgritectumLogo';
@@ -60,6 +62,9 @@ const PortalLayout: React.FC = () => {
 
   return (
     <div className='min-h-screen bg-slate-50'>
+      {/* Skip link for keyboard navigation */}
+      <SkipLink targetId='main-content' />
+      
       {/* Mobile menu overlay */}
       {isMobileMenuOpen && (
         <div className='fixed inset-0 z-40 lg:hidden'>
@@ -95,7 +100,7 @@ const PortalLayout: React.FC = () => {
               </div>
 
               {/* Navigation */}
-              <nav className='flex-1 px-4 space-y-1'>
+              <nav className='flex-1 px-4 space-y-1' aria-label='Mobile navigation'>
                 {navigationItems.map(item => {
                   const Icon = item.icon;
                   const isActive = isActiveRoute(item.path);
@@ -154,7 +159,7 @@ const PortalLayout: React.FC = () => {
             </div>
 
             {/* Navigation */}
-            <nav className='flex-1 px-4 space-y-1'>
+            <nav className='flex-1 px-4 space-y-1' aria-label='Main navigation'>
               {navigationItems.map(item => {
                 const Icon = item.icon;
                 const isActive = isActiveRoute(item.path);
@@ -162,6 +167,7 @@ const PortalLayout: React.FC = () => {
                   <Link
                     key={item.path}
                     to={item.path}
+                    aria-current={isActive ? 'page' : undefined}
                     className={`flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-all ${
                       isActive
                         ? 'bg-slate-200 text-slate-900 shadow-sm font-semibold'
@@ -181,9 +187,10 @@ const PortalLayout: React.FC = () => {
             <div className='flex-shrink-0 px-4 py-4 border-t border-slate-200'>
               <button
                 onClick={handleLogout}
+                aria-label={t('common.signOut') || 'Sign out of your account'}
                 className='flex items-center space-x-3 px-3 py-3 text-slate-700 hover:bg-slate-100 rounded-lg transition-all w-full font-medium hover:text-slate-900'
               >
-                <LogOut className='w-5 h-5' />
+                <LogOut className='w-5 h-5' aria-hidden='true' />
                 <span>{t('common.signOut') || 'Logout'}</span>
               </button>
             </div>
@@ -198,8 +205,11 @@ const PortalLayout: React.FC = () => {
               <button
                 onClick={() => setIsMobileMenuOpen(true)}
                 className='p-2 rounded-md text-slate-700 hover:bg-slate-100'
+                aria-label='Open navigation menu'
+                aria-expanded={isMobileMenuOpen}
+                aria-controls='mobile-menu'
               >
-                <Menu className='w-6 h-6' />
+                <Menu className='w-6 h-6' aria-hidden='true' />
               </button>
               <Link to='/portal/dashboard' className='flex items-center space-x-2'>
                 <AgritectumLogo size='sm' />
@@ -215,7 +225,7 @@ const PortalLayout: React.FC = () => {
             </div>
           </header>
 
-          <main className='flex-1'>
+          <main id='main-content' className='flex-1' role='main'>
             <div className='py-6'>
               <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
                 {/* Breadcrumb Navigation */}

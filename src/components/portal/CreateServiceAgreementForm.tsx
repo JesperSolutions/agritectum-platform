@@ -13,6 +13,7 @@ import { getExternalProvidersByCompany } from '../../services/externalProviderSe
 import * as serviceAgreementService from '../../services/serviceAgreementService';
 import { X, AlertCircle } from 'lucide-react';
 import LoadingSpinner from '../common/LoadingSpinner';
+import { getCurrencyCode } from '../../utils/currency';
 
 interface CreateServiceAgreementFormProps {
   onClose: () => void;
@@ -41,7 +42,7 @@ const CreateServiceAgreementForm: React.FC<CreateServiceAgreementFormProps> = ({
   const [endDate, setEndDate] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
-  const [currency, setCurrency] = useState('DKK');
+  const [currency, setCurrency] = useState(getCurrencyCode());
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 

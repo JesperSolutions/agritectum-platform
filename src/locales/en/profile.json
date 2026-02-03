@@ -1,4 +1,6 @@
 {
+  "profile.title": "Profile",
+  "profile.subtitle": "Manage your account information",
   "profile.accountInformation": "Account Information",
   "profile.email": "Email",
   "profile.displayName": "Name",

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useIntl } from '../../hooks/useIntl';
+import { logger } from '../../utils/logger';
 import {
   getScheduledVisit,
   acceptScheduledVisit,
@@ -66,7 +67,7 @@ const AcceptAppointmentView: React.FC = () => {
 
       setVisit(fetchedVisit);
     } catch (err: any) {
-      console.error('Error loading scheduled visit:', err);
+      logger.error('Error loading scheduled visit:', err);
       setError(err.message || t('schedule.visits.loadError') || 'Failed to load scheduled visit');
     } finally {
       setLoading(false);
@@ -93,7 +94,7 @@ const AcceptAppointmentView: React.FC = () => {
       );
       navigate('/portal/scheduled-visits');
     } catch (err: any) {
-      console.error('Error accepting appointment:', err);
+      logger.error('Error accepting appointment:', err);
       alert(
         err.message ||
           t('schedule.visits.acceptError') ||
@@ -126,7 +127,7 @@ const AcceptAppointmentView: React.FC = () => {
         );
         navigate('/portal/scheduled-visits');
       } catch (err: any) {
-        console.error('Error rejecting appointment:', err);
+        logger.error('Error rejecting appointment:', err);
         alert(
           err.message ||
             t('schedule.visits.rejectError') ||

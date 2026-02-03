@@ -1,4 +1,6 @@
 {
+  "profile.title": "Profil",
+  "profile.subtitle": "Administrer dine kontooplysninger",
   "profile.accountInformation": "Kontoinformation",
   "profile.email": "E-mail",
   "profile.displayName": "Navn",

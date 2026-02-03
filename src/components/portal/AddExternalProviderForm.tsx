@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useIntl } from '../../hooks/useIntl';
 import { useToast } from '../../contexts/ToastContext';
+import { logger } from '../../utils/logger';
 import { ExternalServiceProvider } from '../../types';
 import { createExternalProvider, searchExistingProviders } from '../../services/externalProviderService';
 import { X, Building, Mail, Phone, MapPin, FileText, AlertCircle, CheckCircle } from 'lucide-react';
@@ -75,7 +76,7 @@ const AddExternalProviderForm: React.FC<AddExternalProviderFormProps> = ({
       );
       setDuplicateProviders(existing);
     } catch (error) {
-      console.error('Error searching duplicates:', error);
+      logger.error('Error searching duplicates:', error);
     } finally {
       setSearchingDuplicates(false);
     }
@@ -105,7 +106,7 @@ const AddExternalProviderForm: React.FC<AddExternalProviderFormProps> = ({
       showSuccess(t('externalProvider.created') || 'External provider added successfully');
       onSuccess(providerId);
     } catch (error) {
-      console.error('Error creating provider:', error);
+      logger.error('Error creating provider:', error);
       showError(t('externalProvider.createError') || 'Failed to add external provider');
     } finally {
       setLoading(false);

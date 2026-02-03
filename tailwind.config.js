@@ -128,6 +128,62 @@ export default {
         16: '4rem', // 64px (8dp)
         24: '6rem', // 96px (12dp)
       },
+      // Custom animations for micro-interactions
+      keyframes: {
+        'fade-in': {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        'fade-out': {
+          '0%': { opacity: '1' },
+          '100%': { opacity: '0' },
+        },
+        'slide-up': {
+          '0%': { transform: 'translateY(8px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        'slide-down': {
+          '0%': { transform: 'translateY(-8px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        'scale-in': {
+          '0%': { transform: 'scale(0.95)', opacity: '0' },
+          '100%': { transform: 'scale(1)', opacity: '1' },
+        },
+        'scale-out': {
+          '0%': { transform: 'scale(1)', opacity: '1' },
+          '100%': { transform: 'scale(0.95)', opacity: '0' },
+        },
+        'bounce-subtle': {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-2px)' },
+        },
+        'pulse-subtle': {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.85' },
+        },
+        'shimmer': {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' },
+        },
+        'wiggle': {
+          '0%, 100%': { transform: 'rotate(0deg)' },
+          '25%': { transform: 'rotate(-2deg)' },
+          '75%': { transform: 'rotate(2deg)' },
+        },
+      },
+      animation: {
+        'fade-in': 'fade-in 0.2s ease-out',
+        'fade-out': 'fade-out 0.2s ease-out',
+        'slide-up': 'slide-up 0.25s ease-out',
+        'slide-down': 'slide-down 0.25s ease-out',
+        'scale-in': 'scale-in 0.2s ease-out',
+        'scale-out': 'scale-out 0.2s ease-out',
+        'bounce-subtle': 'bounce-subtle 0.4s ease-in-out',
+        'pulse-subtle': 'pulse-subtle 2s ease-in-out infinite',
+        'shimmer': 'shimmer 2s linear infinite',
+        'wiggle': 'wiggle 0.3s ease-in-out',
+      },
     },
   },
   plugins: [require('tailwindcss-animate')],
