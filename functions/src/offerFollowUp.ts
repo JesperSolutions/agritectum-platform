@@ -101,11 +101,11 @@ export const checkOfferFollowUps = functions.pubsub
 async function sendFollowUpNotification(
   offerId: string,
   offer: any,
-  daysSinceSent: number
-    daysSinceSent: number,
-    emailEnabled: boolean,
-    mode: string,
-    provider: string
+  daysSinceSent: number,
+  emailEnabled: boolean,
+  mode: string,
+  provider: string
+) {
   try {
     // Get inspector information
     const inspectorRef = admin.firestore().collection('users').doc(offer.createdBy);
@@ -139,8 +139,8 @@ async function sendFollowUpNotification(
 
     // Send email notification to inspector
     const db = admin.firestore();
-    if (inspector && inspector.email) {
-      if (inspector && inspector.email && emailEnabled) {
+    if (inspector && inspector.email && emailEnabled) {
+      await db.collection('mail').add({
         to: inspector.email,
         template: {
           name: 'offer-reminder',
@@ -153,19 +153,21 @@ async function sendFollowUpNotification(
           },
         },
       });
+    }
 
-      // Create in-app notification for inspector
-      await db.collection('notifications').add({
-        userId: offer.createdBy,
-        type: 'offer_followup',
-        title: 'Offer Follow-up Required',
-        message: `Offer for ${offer.customerName} has been pending for ${daysSinceSent} days. Please follow up with the customer.`,
-        link: `/offers/${offerId}`,
-        read: false,
-        createdAt: admin.firestore.FieldValue.serverTimestamp(),
-      });
+    // Create in-app notification for inspector
+    await db.collection('notifications').add({
+      userId: offer.createdBy,
+      type: 'offer_followup',
+      title: 'Offer Follow-up Required',
+      message: `Offer for ${offer.customerName} has been pending for ${daysSinceSent} days. Please follow up with the customer.`,
+      link: `/offers/${offerId}`,
+      read: false,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
 
-      // Log communication
+    // Log communication
+    if (inspector?.email) {
       await db.collection('emailLogs').add({
         offerId,
         type: 'followup_reminder',

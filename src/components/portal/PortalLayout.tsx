@@ -5,9 +5,11 @@ import { useIntl } from '../../hooks/useIntl';
 import { logger } from '../../utils/logger';
 import { SkipLink } from '../common/AccessibilityComponents';
 import Breadcrumb from '../navigation/Breadcrumb';
-import { Home, LogOut, Building, FileCheck, Calendar, User, Menu, X } from 'lucide-react';
+import { Home, LogOut, Building, FileCheck, Calendar, User, Menu, X, Leaf, CreditCard } from 'lucide-react';
 import AgritectumLogo from '../AgritectumLogo';
 import { NotificationBell } from '../notifications/NotificationBell';
+import { StripeProvider } from '../../contexts/StripeContext';
+import GDPRConsentFlow from '../legal/GDPRConsentFlow';
 
 const PortalLayout: React.FC = () => {
   const { currentUser, logout } = useAuth();
@@ -39,6 +41,11 @@ const PortalLayout: React.FC = () => {
       path: '/portal/dashboard',
     },
     {
+      label: 'ESG Overview',
+      icon: Leaf,
+      path: '/portal/esg-overview',
+    },
+    {
       label: t('navigation.buildings'),
       icon: Building,
       path: '/portal/buildings',
@@ -54,6 +61,11 @@ const PortalLayout: React.FC = () => {
       path: '/portal/scheduled-visits',
     },
     {
+      label: 'Billing',
+      icon: CreditCard,
+      path: '/portal/billing',
+    },
+    {
       label: t('navigation.profile'),
       icon: User,
       path: '/portal/profile',
@@ -61,7 +73,8 @@ const PortalLayout: React.FC = () => {
   ];
 
   return (
-    <div className='min-h-screen bg-slate-50'>
+    <StripeProvider>
+      <div className='min-h-screen bg-slate-50'>
       {/* Skip link for keyboard navigation */}
       <SkipLink targetId='main-content' />
       
@@ -240,7 +253,11 @@ const PortalLayout: React.FC = () => {
           </main>
         </div>
       </div>
+
+      {/* GDPR Consent Flow */}
+      <GDPRConsentFlow />
     </div>
+    </StripeProvider>
   );
 };
 

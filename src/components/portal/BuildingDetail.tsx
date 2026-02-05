@@ -63,6 +63,22 @@ const BuildingDetail: React.FC = () => {
     buildingType: 'residential' as Building['buildingType'],
     roofType: 'tile' as Building['roofType'],
     roofSize: '',
+    // ESG Features
+    hasSolarPanels: false,
+    solarPanelCount: '',
+    solarCapacity: '',
+    solarInstallationDate: '',
+    hasWhiteRoof: false,
+    whiteRoofArea: '',
+    whiteRoofReflectance: '85',
+    whiteRoofInstallationDate: '',
+    hasNoxTreatment: false,
+    noxType: 'SCR' as 'SCR' | 'EGR' | 'DPF',
+    noxInstallationDate: '',
+    hasGreenRoof: false,
+    greenRoofArea: '',
+    greenRoofType: 'extensive' as 'intensive' | 'extensive' | 'semi-intensive',
+    greenRoofInstallationDate: '',
   });
 
   useEffect(() => {
@@ -125,6 +141,13 @@ const BuildingDetail: React.FC = () => {
         buildingType: data.buildingType || 'residential',
         roofType: data.roofType || 'tile',
         roofSize: data.roofSize?.toString() || '',
+        hasNoxTreatment: data.esgMetrics?.features?.noxTreatment?.installed || false,
+        noxType: data.esgMetrics?.features?.noxTreatment?.type || 'SCR',
+        noxInstallationDate: data.esgMetrics?.features?.noxTreatment?.installationDate || '',
+        hasGreenRoof: data.esgMetrics?.features?.greenRoof?.installed || false,
+        greenRoofArea: data.esgMetrics?.features?.greenRoof?.area?.toString() || '',
+        greenRoofType: data.esgMetrics?.features?.greenRoof?.type || 'extensive',
+        greenRoofInstallationDate: data.esgMetrics?.features?.greenRoof?.installationDate || '',
       });
       setLoading(false);
     } catch (error: any) {
@@ -191,11 +214,74 @@ const BuildingDetail: React.FC = () => {
     if (!buildingId) return;
 
     try {
+      // Build ESG metrics object
+      const esgMetrics: any = {};
+      
+      if (formData.hasSolarPanels || formData.hasWhiteRoof || formData.hasNoxTreatment || formData.hasGreenRoof) {
+        esgMetrics.features = {};
+        
+        if (formData.hasSolarPanels) {
+          esgMetrics.features.solarPanels = {
+            installed: true,
+            count: formData.solarPanelCount ? parseInt(formData.solarPanelCount) : undefined,
+            capacity: formData.solarCapacity ? parseFloat(formData.solarCapacity) : undefined,
+            installationDate: formData.solarInstallationDate || undefined,
+          };
+        }
+        
+        if (formData.hasWhiteRoof && formData.whiteRoofArea) {
+          esgMetrics.features.whiteRoof = {
+            installed: true,
+            area: parseFloat(formData.whiteRoofArea),
+            reflectance: parseFloat(formData.whiteRoofReflectance),
+            installationDate: formData.whiteRoofInstallationDate || undefined,
+          };
+        }
+        
+        if (formData.hasNoxTreatment) {
+          esgMetrics.features.noxTreatment = {
+            installed: true,
+            type: formData.noxType,
+            installationDate: formData.noxInstallationDate || undefined,
+          };
+        }
+        
+        if (formData.hasGreenRoof && formData.greenRoofArea) {
+          esgMetrics.features.greenRoof = {
+            installed: true,
+            area: parseFloat(formData.greenRoofArea),
+            type: formData.greenRoofType,
+            installationDate: formData.greenRoofInstallationDate || undefined,
+          };
+        }
+      }
+      
+      // Calculate CO2 metrics based on features
+      const solarCapacity = formData.hasSolarPanels && formData.solarCapacity 
+        ? parseFloat(formData.solarCapacity) 
+        : 0;
+      const annualCO2Offset = Math.round(solarCapacity * 1200); // 1.2 tons CO2/kW/year
+      
+      // Estimate building's carbon footprint based on roof size and usage patterns
+      // Typical building: ~0.5 kg CO2/m²/year
+      const roofSize = formData.roofSize ? parseFloat(formData.roofSize) : 0;
+      const estimatedCarbonFootprint = Math.round(roofSize * 0.5);
+      
       await updateBuilding(buildingId, {
         address: formData.address,
         buildingType: formData.buildingType,
         roofType: formData.roofType,
         roofSize: formData.roofSize ? parseFloat(formData.roofSize) : undefined,
+        esgMetrics: Object.keys(esgMetrics).length > 0 ? {
+          ...esgMetrics,
+          carbonFootprint: estimatedCarbonFootprint,
+          annualCO2Offset: annualCO2Offset,
+          sustainabilityScore: annualCO2Offset > 0 ? Math.min(100, Math.round((annualCO2Offset / estimatedCarbonFootprint) * 100)) : 0,
+        } : {
+          carbonFootprint: estimatedCarbonFootprint,
+          annualCO2Offset: 0,
+          sustainabilityScore: 0,
+        },
       });
       setEditing(false);
       await loadBuilding();
@@ -221,6 +307,13 @@ const BuildingDetail: React.FC = () => {
 
   const activeAgreements = serviceAgreements.filter(a => a.status === 'active');
   const pastAgreements = serviceAgreements.filter(a => a.status !== 'active');
+
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
   if (loading) {
     return (
@@ -282,14 +375,59 @@ const BuildingDetail: React.FC = () => {
           <ArrowLeft className='w-4 h-4 mr-2' />
           {t('buildings.backToBuildings') || t('dashboard.viewAll') || 'Back to Buildings'}
         </Link>
-        <button
-          onClick={() => setShowDeleteDialog(true)}
-          className='inline-flex items-center px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg border border-red-200 transition-colors'
-          title='Delete building'
-        >
-          <Trash2 className='w-4 h-4 mr-2' />
-          Delete
-        </button>
+        <div className='flex items-center gap-2'>
+          {!editing && (
+            <button
+              onClick={() => {
+                setFormData({
+                  address: building.address,
+                  buildingType: building.buildingType,
+                  roofType: building.roofType,
+                  roofSize: building.roofSize?.toString() || '',
+                  hasSolarPanels: building.esgMetrics?.features?.solarPanels?.installed || false,
+                  solarPanelCount: building.esgMetrics?.features?.solarPanels?.count?.toString() || '',
+                  solarCapacity: building.esgMetrics?.features?.solarPanels?.capacity?.toString() || '',
+                  solarInstallationDate: building.esgMetrics?.features?.solarPanels?.installationDate || '',
+                  hasWhiteRoof: building.esgMetrics?.features?.whiteRoof?.installed || false,
+                  whiteRoofArea: building.esgMetrics?.features?.whiteRoof?.area?.toString() || '',
+                  whiteRoofReflectance: building.esgMetrics?.features?.whiteRoof?.reflectance?.toString() || '85',
+                  whiteRoofInstallationDate: building.esgMetrics?.features?.whiteRoof?.installationDate || '',
+                  hasNoxTreatment: building.esgMetrics?.features?.noxTreatment?.installed || false,
+                  noxType: (building.esgMetrics?.features?.noxTreatment?.type as 'SCR' | 'EGR' | 'DPF') || 'SCR',
+                  noxInstallationDate: building.esgMetrics?.features?.noxTreatment?.installationDate || '',
+                  hasGreenRoof: building.esgMetrics?.features?.greenRoof?.installed || false,
+                  greenRoofArea: building.esgMetrics?.features?.greenRoof?.area?.toString() || '',
+                  greenRoofType: (building.esgMetrics?.features?.greenRoof?.type as 'intensive' | 'extensive' | 'semi-intensive') || 'extensive',
+                  greenRoofInstallationDate: building.esgMetrics?.features?.greenRoof?.installationDate || '',
+                });
+                setEditing(true);
+              }}
+              className='inline-flex items-center px-4 py-2 text-green-600 hover:bg-green-50 rounded-lg border border-green-200 transition-colors'
+              title='Edit building'
+            >
+              <Edit className='w-4 h-4 mr-2' />
+              {t('buildings.edit') || 'Edit'}
+            </button>
+          )}
+          {editing && (
+            <button
+              onClick={() => setEditing(false)}
+              className='inline-flex items-center px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg border border-gray-200 transition-colors'
+              title='Cancel editing'
+            >
+              <X className='w-4 h-4 mr-2' />
+              Cancel
+            </button>
+          )}
+          <button
+            onClick={() => setShowDeleteDialog(true)}
+            className='inline-flex items-center px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg border border-red-200 transition-colors'
+            title='Delete building'
+          >
+            <Trash2 className='w-4 h-4 mr-2' />
+            Delete
+          </button>
+        </div>
       </div>
 
       {/* Page Header with Stats */}
@@ -301,39 +439,48 @@ const BuildingDetail: React.FC = () => {
           }
         />
         <div className='mt-6 grid grid-cols-1 md:grid-cols-3 gap-4'>
-          <div className='bg-slate-50 rounded-lg p-4 border border-slate-200'>
+          <button
+            onClick={() => scrollToSection('reports-section')}
+            className='bg-slate-50 rounded-lg p-4 border border-slate-200 hover:bg-slate-100 hover:border-slate-300 transition-all cursor-pointer text-left'
+          >
             <div className='flex items-center space-x-3'>
               <FileText className='w-8 h-8 text-slate-600' />
               <div>
                 <p className='text-2xl font-bold text-slate-900'>{reports.length}</p>
                 <p className='text-sm text-slate-600'>
-                  {t('buildings.reports.total') || 'Reports'}
+                  {t('buildings.reports.total') || 'Rapporter'}
                 </p>
               </div>
             </div>
-          </div>
-          <div className='bg-slate-50 rounded-lg p-4 border border-slate-200'>
+          </button>
+          <button
+            onClick={() => scrollToSection('agreements-section')}
+            className='bg-slate-50 rounded-lg p-4 border border-slate-200 hover:bg-slate-100 hover:border-slate-300 transition-all cursor-pointer text-left'
+          >
             <div className='flex items-center space-x-3'>
               <FileCheck className='w-8 h-8 text-slate-600' />
               <div>
                 <p className='text-2xl font-bold text-slate-900'>{activeAgreements.length}</p>
                 <p className='text-sm text-slate-600'>
-                  {t('buildings.serviceAgreements.active') || 'Active Agreements'}
+                  {t('buildings.serviceAgreements.active') || 'Aktive aftaler'}
                 </p>
               </div>
             </div>
-          </div>
-          <div className='bg-slate-50 rounded-lg p-4 border border-slate-200'>
+          </button>
+          <button
+            onClick={() => scrollToSection('activity-section')}
+            className='bg-slate-50 rounded-lg p-4 border border-slate-200 hover:bg-slate-100 hover:border-slate-300 transition-all cursor-pointer text-left'
+          >
             <div className='flex items-center space-x-3'>
               <Activity className='w-8 h-8 text-slate-600' />
               <div>
                 <p className='text-2xl font-bold text-slate-900'>{activities.length}</p>
                 <p className='text-sm text-slate-600'>
-                  {t('buildings.activity.total') || 'Total Activities'}
+                  {t('buildings.activity.total') || 'Samlet aktiviteter'}
                 </p>
               </div>
             </div>
-          </div>
+          </button>
         </div>
       </div>
 
@@ -413,6 +560,239 @@ const BuildingDetail: React.FC = () => {
                 className='w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500'
               />
             </div>
+            
+            {/* ESG Features Section */}
+            <div className='border-t border-gray-200 pt-4 mt-4'>
+              <h3 className='text-lg font-semibold text-gray-900 mb-4'>{t('buildings.esgFeatures') || 'ESG Features'}</h3>
+              
+              {/* Solar Panels */}
+              <div className='bg-yellow-50 rounded-lg p-4 mb-4'>
+                <div className='flex items-center mb-3'>
+                  <input
+                    type='checkbox'
+                    id='editHasSolarPanels'
+                    checked={formData.hasSolarPanels}
+                    onChange={e => setFormData({ ...formData, hasSolarPanels: e.target.checked })}
+                    className='w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500'
+                  />
+                  <label htmlFor='editHasSolarPanels' className='ml-2 text-sm font-medium text-gray-900'>
+                    {t('buildings.hasSolarPanels') || 'Has Solar Panels (Solpaneler)'}
+                  </label>
+                </div>
+                
+                {formData.hasSolarPanels && (
+                  <div className='grid grid-cols-3 gap-3 mt-3'>
+                    <div>
+                      <label className='block text-sm font-medium text-gray-700 mb-1'>
+                        {t('buildings.solarPanelCount') || 'Panel Count'}
+                      </label>
+                      <input
+                        type='number'
+                        value={formData.solarPanelCount}
+                        onChange={e => setFormData({ ...formData, solarPanelCount: e.target.value })}
+                        placeholder='0'
+                        step='1'
+                        min='0'
+                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 text-sm'
+                      />
+                    </div>
+                    <div>
+                      <label className='block text-sm font-medium text-gray-700 mb-1'>
+                        {t('buildings.solarCapacity') || 'Capacity (kW)'}
+                      </label>
+                      <input
+                        type='number'
+                        value={formData.solarCapacity}
+                        onChange={e => setFormData({ ...formData, solarCapacity: e.target.value })}
+                        placeholder='0'
+                        step='0.1'
+                        min='0'
+                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 text-sm'
+                      />
+                    </div>
+                    <div>
+                      <label className='block text-sm font-medium text-gray-700 mb-1'>
+                        {t('buildings.installationDate') || 'Installation Date'}
+                      </label>
+                      <input
+                        type='date'
+                        value={formData.solarInstallationDate}
+                        onChange={e => setFormData({ ...formData, solarInstallationDate: e.target.value })}
+                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 text-sm'
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+              
+              {/* White Roof */}
+              <div className='bg-gray-50 rounded-lg p-4 mb-4'>
+                <div className='flex items-center mb-3'>
+                  <input
+                    type='checkbox'
+                    id='editHasWhiteRoof'
+                    checked={formData.hasWhiteRoof}
+                    onChange={e => setFormData({ ...formData, hasWhiteRoof: e.target.checked })}
+                    className='w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500'
+                  />
+                  <label htmlFor='editHasWhiteRoof' className='ml-2 text-sm font-medium text-gray-900'>
+                    {t('buildings.hasWhiteRoof') || 'Has White Roof (Hvidt Tag)'}
+                  </label>
+                </div>
+                
+                {formData.hasWhiteRoof && (
+                  <div className='grid grid-cols-3 gap-3 mt-3'>
+                    <div>
+                      <label className='block text-sm font-medium text-gray-700 mb-1'>
+                        {t('buildings.whiteRoofArea') || 'Area (m²)'}
+                      </label>
+                      <input
+                        type='number'
+                        value={formData.whiteRoofArea}
+                        onChange={e => setFormData({ ...formData, whiteRoofArea: e.target.value })}
+                        placeholder='0'
+                        step='0.01'
+                        min='0'
+                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 text-sm'
+                      />
+                    </div>
+                    <div>
+                      <label className='block text-sm font-medium text-gray-700 mb-1'>
+                        {t('buildings.whiteRoofReflectance') || 'Reflectance (%)'}
+                      </label>
+                      <input
+                        type='number'
+                        value={formData.whiteRoofReflectance}
+                        onChange={e => setFormData({ ...formData, whiteRoofReflectance: e.target.value })}
+                        placeholder='85'
+                        step='1'
+                        min='0'
+                        max='100'
+                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 text-sm'
+                      />
+                    </div>
+                    <div>
+                      <label className='block text-sm font-medium text-gray-700 mb-1'>
+                        Installation Date
+                      </label>
+                      <input
+                        type='date'
+                        value={formData.whiteRoofInstallationDate}
+                        onChange={e => setFormData({ ...formData, whiteRoofInstallationDate: e.target.value })}
+                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 text-sm'
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+              
+              {/* NOx Treatment */}
+              <div className='bg-blue-50 rounded-lg p-4 mb-4'>
+                <div className='flex items-center mb-3'>
+                  <input
+                    type='checkbox'
+                    id='editHasNoxTreatment'
+                    checked={formData.hasNoxTreatment}
+                    onChange={e => setFormData({ ...formData, hasNoxTreatment: e.target.checked })}
+                    className='w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500'
+                  />
+                  <label htmlFor='editHasNoxTreatment' className='ml-2 text-sm font-medium text-gray-900'>
+                    {t('buildings.hasNoxTreatment') || 'Has NOx Treatment System'}
+                  </label>
+                </div>
+                
+                {formData.hasNoxTreatment && (
+                  <div className='grid grid-cols-2 gap-3 mt-3'>
+                    <div>
+                      <label className='block text-sm font-medium text-gray-700 mb-1'>
+                        {t('buildings.noxType') || 'Treatment Type'}
+                      </label>
+                      <select
+                        value={formData.noxType}
+                        onChange={e => setFormData({ ...formData, noxType: e.target.value as typeof formData.noxType })}
+                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 text-sm'
+                      >
+                        <option value='SCR'>{t('buildings.noxTypeSCR') || 'SCR (Selective Catalytic Reduction)'}</option>
+                        <option value='EGR'>{t('buildings.noxTypeEGR') || 'EGR (Exhaust Gas Recirculation)'}</option>
+                        <option value='DPF'>{t('buildings.noxTypeDPF') || 'DPF (Diesel Particulate Filter)'}</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className='block text-sm font-medium text-gray-700 mb-1'>
+                        Installation Date
+                      </label>
+                      <input
+                        type='date'
+                        value={formData.noxInstallationDate}
+                        onChange={e => setFormData({ ...formData, noxInstallationDate: e.target.value })}
+                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 text-sm'
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+              
+              {/* Green Roof */}
+              <div className='bg-green-50 rounded-lg p-4'>
+                <div className='flex items-center mb-3'>
+                  <input
+                    type='checkbox'
+                    id='editHasGreenRoof'
+                    checked={formData.hasGreenRoof}
+                    onChange={e => setFormData({ ...formData, hasGreenRoof: e.target.checked })}
+                    className='w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500'
+                  />
+                  <label htmlFor='editHasGreenRoof' className='ml-2 text-sm font-medium text-gray-900'>
+                    {t('buildings.hasGreenRoof') || 'Has Green Roof'}
+                  </label>
+                </div>
+                
+                {formData.hasGreenRoof && (
+                  <div className='grid grid-cols-3 gap-3 mt-3'>
+                    <div>
+                      <label className='block text-sm font-medium text-gray-700 mb-1'>
+                        Area (m²)
+                      </label>
+                      <input
+                        type='number'
+                        value={formData.greenRoofArea}
+                        onChange={e => setFormData({ ...formData, greenRoofArea: e.target.value })}
+                        placeholder='0'
+                        step='0.01'
+                        min='0'
+                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 text-sm'
+                      />
+                    </div>
+                    <div>
+                      <label className='block text-sm font-medium text-gray-700 mb-1'>
+                        {t('buildings.greenRoofType') || 'Type'}
+                      </label>
+                      <select
+                        value={formData.greenRoofType}
+                        onChange={e => setFormData({ ...formData, greenRoofType: e.target.value as typeof formData.greenRoofType })}
+                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 text-sm'
+                      >
+                        <option value='extensive'>{t('buildings.greenRoofExtensive') || 'Extensive'}</option>
+                        <option value='intensive'>{t('buildings.greenRoofIntensive') || 'Intensive'}</option>
+                        <option value='semi-intensive'>{t('buildings.greenRoofSemiIntensive') || 'Semi-intensive'}</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className='block text-sm font-medium text-gray-700 mb-1'>
+                        Installation Date
+                      </label>
+                      <input
+                        type='date'
+                        value={formData.greenRoofInstallationDate}
+                        onChange={e => setFormData({ ...formData, greenRoofInstallationDate: e.target.value })}
+                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 text-sm'
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+            
             <button
               type='submit'
               className='flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium shadow-sm'
@@ -532,7 +912,7 @@ const BuildingDetail: React.FC = () => {
 
       {/* Reports Section */}
       {!editing && (
-        <div className='bg-white rounded-lg shadow p-6 border border-slate-200'>
+        <div id='reports-section' className='bg-white rounded-lg shadow p-6 border border-slate-200'>
           <h2 className='text-xl font-semibold mb-4 flex items-center'>
             <FileText className='w-5 h-5 mr-2' />
             {t('buildings.reports.title') || 'Inspection Reports'}
@@ -595,7 +975,7 @@ const BuildingDetail: React.FC = () => {
 
       {/* Service Agreements Section */}
       {!editing && (
-        <div className='bg-white rounded-lg shadow p-6 border border-slate-200'>
+        <div id='agreements-section' className='bg-white rounded-lg shadow p-6 border border-slate-200'>
           <h2 className='text-xl font-semibold mb-4 flex items-center'>
             <FileCheck className='w-5 h-5 mr-2' />
             {t('buildings.serviceAgreements.title') || 'Service Agreements'}
@@ -801,7 +1181,7 @@ const BuildingDetail: React.FC = () => {
 
       {/* Activity Timeline */}
       {!editing && (
-        <div className='bg-white rounded-lg shadow p-6 border border-slate-200'>
+        <div id='activity-section' className='bg-white rounded-lg shadow p-6 border border-slate-200'>
           <h2 className='text-xl font-semibold mb-4 flex items-center'>
             <Activity className='w-5 h-5 mr-2' />
             {t('buildings.activity.title') || 'Activity Timeline'}

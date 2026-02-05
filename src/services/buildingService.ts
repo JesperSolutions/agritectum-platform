@@ -336,6 +336,19 @@ export const createBuilding = async (
       throw new Error('User must be authenticated');
     }
 
+    // Check subscription tier limit for customers
+    if (buildingData.customerId) {
+      const { canAddBuilding } = await import('./subscriptionTierService');
+      const tierCheck = await canAddBuilding(buildingData.customerId);
+      
+      if (!tierCheck.allowed) {
+        const error: any = new Error(tierCheck.reason || 'Cannot add more buildings');
+        error.code = 'TIER_LIMIT_EXCEEDED';
+        error.details = tierCheck;
+        throw error;
+      }
+    }
+
     // Geocode address if provided
     let latitude: number | undefined;
     let longitude: number | undefined;
@@ -361,7 +374,11 @@ export const createBuilding = async (
 
     const docRef = await addDoc(buildingsRef, sanitizedBuilding);
     return docRef.id;
-  } catch (error) {
+  } catch (error: any) {
+    // Re-throw tier limit errors with their original message
+    if (error.code === 'TIER_LIMIT_EXCEEDED') {
+      throw error;
+    }
     throw new Error('Failed to create building');
   }
 };

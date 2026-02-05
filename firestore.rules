@@ -109,6 +109,11 @@ service cloud.firestore {
       
       // Allow authenticated users to delete users
       allow delete: if isAuthenticated();
+      
+      // Preferences subcollection (onboarding, settings, etc.)
+      match /preferences/{document=**} {
+        allow read, write: if isAuthenticated() && request.auth.uid == userId;
+      }
     }
     
     // Branches collection
@@ -485,49 +490,68 @@ service cloud.firestore {
     
     // Buildings collection
     match /buildings/{buildingId} {
-      // Customers can read their own buildings (by customerId matching uid or companyId)
+      // Anyone authenticated can read a building if:
+      // - They own it (customerId matches their UID or companyId)
+      // - They are internal users (branchAdmin, inspector, superadmin)
       allow read: if isAuthenticated() && (
-        isCustomer() && (
-          resource.data.customerId == request.auth.uid ||
-          resource.data.customerId == getUserCompanyId() ||
-          (resource.data.companyId != null && resource.data.companyId == getUserCompanyId())
-        ) ||
+        // You can read if you own the building (customerId matches your uid)
+        resource.data.customerId == request.auth.uid ||
+        // You can read if it belongs to your company
+        resource.data.customerId == getUserCompanyId() ||
+        (resource.data.companyId != null && resource.data.companyId == getUserCompanyId()) ||
+        // Internal users can read buildings in their branch
         isSuperadmin() ||
-        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
-        (isInspector() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+        (isBranchAdmin() && resource.data.branchId == getUserBranchId()) ||
+        (isInspector() && resource.data.branchId == getUserBranchId())
       );
       
-      // Customers can create buildings linked to their account
-      // Internal users (inspectors, branch admins, superadmins) can create buildings in their branch
+      // Authenticated users can create buildings
       allow create: if isAuthenticated() && (
-        (isCustomer() && (
-          request.resource.data.customerId == request.auth.uid ||
-          request.resource.data.customerId == getUserCompanyId() ||
-          (request.resource.data.companyId != null && request.resource.data.companyId == getUserCompanyId())
-        )) ||
-        (isSuperadmin() ||
-        (isBranchAdmin() && (request.resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
-        (isInspector() && (request.resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")))
+        // Must specify either customerId or companyId
+        request.resource.data.keys().hasAny(["customerId", "companyId"])
       ) &&
         request.resource.data.createdBy == request.auth.uid &&
         // Required fields validation
-        request.resource.data.keys().hasAll(["address", "createdBy", "createdAt"]) &&
-        // Must have EITHER customerId OR companyId (not both, not neither)
-        ((request.resource.data.keys().hasAny(["customerId"]) && !request.resource.data.keys().hasAny(["companyId"])) ||
-         (!request.resource.data.keys().hasAny(["customerId"]) && request.resource.data.keys().hasAny(["companyId"])));
+        request.resource.data.keys().hasAll(["address", "createdBy", "createdAt"]);
       
-      // Customers can update their own buildings
+      // Users can update buildings they own
       // Internal users can update buildings in their branch
       allow update: if isAuthenticated() && (
-        (isCustomer() && (
-          resource.data.customerId == request.auth.uid ||
-          resource.data.customerId == getUserCompanyId() ||
-          (resource.data.companyId != null && resource.data.companyId == getUserCompanyId())
-        )) ||
+        // You can update if you own the building (customerId matches your uid)
+        resource.data.customerId == request.auth.uid ||
+        // You can update if it belongs to your company
+        resource.data.customerId == getUserCompanyId() ||
+        (resource.data.companyId != null && resource.data.companyId == getUserCompanyId()) ||
+        // Internal users can update buildings in their branch
         isSuperadmin() ||
         (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
         (isInspector() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
       );
+
+      // Building history subcollection
+      match /history/{historyId} {
+        // Owners and internal users can read history
+        allow read: if isAuthenticated() && (
+          get(/databases/$(database)/documents/buildings/$(buildingId)).data.customerId == request.auth.uid ||
+          get(/databases/$(database)/documents/buildings/$(buildingId)).data.customerId == getUserCompanyId() ||
+          (get(/databases/$(database)/documents/buildings/$(buildingId)).data.companyId != null &&
+           get(/databases/$(database)/documents/buildings/$(buildingId)).data.companyId == getUserCompanyId()) ||
+          isSuperadmin() ||
+          (isBranchAdmin() && (get(/databases/$(database)/documents/buildings/$(buildingId)).data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
+          (isInspector() && (get(/databases/$(database)/documents/buildings/$(buildingId)).data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+        );
+
+        // Owners and internal users can create history entries
+        allow create: if isAuthenticated() && (
+          get(/databases/$(database)/documents/buildings/$(buildingId)).data.customerId == request.auth.uid ||
+          get(/databases/$(database)/documents/buildings/$(buildingId)).data.customerId == getUserCompanyId() ||
+          (get(/databases/$(database)/documents/buildings/$(buildingId)).data.companyId != null &&
+           get(/databases/$(database)/documents/buildings/$(buildingId)).data.companyId == getUserCompanyId()) ||
+          isSuperadmin() ||
+          (isBranchAdmin() && (get(/databases/$(database)/documents/buildings/$(buildingId)).data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
+          (isInspector() && (get(/databases/$(database)/documents/buildings/$(buildingId)).data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+        );
+      }
       
       // Customers can delete their own buildings
       // Internal users can delete buildings in their branch
@@ -775,6 +799,46 @@ service cloud.firestore {
       allow create, update, delete: if isAuthenticated() && 
         request.auth.uid == userId &&
         request.resource.data.userId == userId;
+    }
+
+    // Subscription Plans - Public read access for all authenticated users
+    match /subscriptionPlans/{planId} {
+      // All authenticated users can read subscription plans
+      allow read: if isAuthenticated();
+      
+      // Only admins can write subscription plans
+      allow write: if isAuthenticated() && (isSuperadmin() || isBranchAdmin());
+    }
+
+    // Customers collection - Holds customer subscription and billing info
+    match /customers/{customerId} {
+      // Customers can read their own document
+      allow read: if isAuthenticated() && request.auth.uid == customerId;
+      
+      // Admins can read any customer
+      allow read: if isAuthenticated() && (isSuperadmin() || isBranchAdmin());
+      
+      // Allow customers to create/update their own document
+      allow write: if isAuthenticated() && request.auth.uid == customerId;
+      
+      // Admins can write customer documents
+      allow write: if isAuthenticated() && (isSuperadmin() || isBranchAdmin());
+      
+      // Subcollections for subscriptions, payment methods, and invoices
+      match /subscriptions/{subscriptionId} {
+        allow read, write: if isAuthenticated() && request.auth.uid == customerId;
+        allow read, write: if isAuthenticated() && (isSuperadmin() || isBranchAdmin());
+      }
+      
+      match /paymentMethods/{methodId} {
+        allow read, write: if isAuthenticated() && request.auth.uid == customerId;
+        allow read, write: if isAuthenticated() && (isSuperadmin() || isBranchAdmin());
+      }
+      
+      match /invoices/{invoiceId} {
+        allow read: if isAuthenticated() && request.auth.uid == customerId;
+        allow read, write: if isAuthenticated() && (isSuperadmin() || isBranchAdmin());
+      }
     }
   }
 }

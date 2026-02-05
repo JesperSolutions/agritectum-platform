@@ -45,8 +45,7 @@ export const resetUserPassword = onCall(
         throw new Error('Missing required field: userId');
       }
 
-      // Get target user's record
-      const targetUserRecord = await admin.auth().getUser(userId);
+      // Get target user's Firestore record
       const targetUserDoc = await admin.firestore().collection('users').doc(userId).get();
 
       if (!targetUserDoc.exists) {

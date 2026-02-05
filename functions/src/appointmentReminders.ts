@@ -29,7 +29,7 @@ export const sendAppointmentReminders = onSchedule(
 
       if (appointmentsSnapshot.empty) {
         console.log('✅ No appointments found for tomorrow');
-        return null;
+        return;
       }
 
       console.log(`📋 Found ${appointmentsSnapshot.size} appointments for tomorrow`);
@@ -221,7 +221,7 @@ export const sendAppointmentReminders = onSchedule(
       console.log(
         `✅ Reminder job completed. Processed ${appointmentsSnapshot.size} appointments.`
       );
-      return null;
+      return;
     } catch (error) {
       console.error('❌ Error in appointment reminder job:', error);
       throw error;

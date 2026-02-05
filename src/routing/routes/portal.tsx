@@ -13,6 +13,9 @@ import {
   LazyAcceptAppointmentView,
   LazyPortalCustomerProfile,
   LazyReportView,
+  LazyESGOverview,
+  LazyPricingTable,
+  LazyBillingDashboard,
   LoadingFallback,
 } from '../../components/LazyComponents';
 
@@ -39,6 +42,15 @@ export const portalRoutes: RouteObject[] = [
         element: (
           <Suspense fallback={<LoadingFallback />}>
             <LazyPortalDashboard />
+          </Suspense>
+        ),
+        errorElement: <RouteErrorBoundary />,
+      },
+      {
+        path: 'esg-overview',
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <LazyESGOverview />
           </Suspense>
         ),
         errorElement: <RouteErrorBoundary />,
@@ -111,6 +123,24 @@ export const portalRoutes: RouteObject[] = [
         element: (
           <Suspense fallback={<LoadingFallback />}>
             <LazyPortalCustomerProfile />
+          </Suspense>
+        ),
+        errorElement: <RouteErrorBoundary />,
+      },
+      {
+        path: 'pricing',
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <LazyPricingTable />
+          </Suspense>
+        ),
+        errorElement: <RouteErrorBoundary />,
+      },
+      {
+        path: 'billing',
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <LazyBillingDashboard />
           </Suspense>
         ),
         errorElement: <RouteErrorBoundary />,

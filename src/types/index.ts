@@ -460,6 +460,125 @@ export interface ESGMetrics {
   co2ReductionKgPerYear?: number; // kg CO₂/year reduction
   energySavingsKwhPerYear?: number; // kWh/year energy savings
   waterManagementLitersPerYear?: number; // L/year water management
+  
+  // ESG Features tracking
+  features?: {
+    solarPanels?: {
+      installed: boolean;
+      count?: number;
+      installationDate?: string;
+      capacity?: number; // kW
+      annualOutput?: number; // kWh
+      efficiency?: number; // 0-100%
+    };
+    noxTreatment?: {
+      installed: boolean;
+      type?: string; // e.g., "SCR", "EGR", "DPF"
+      installationDate?: string;
+      efficiency?: number; // 0-100%
+    };
+    whiteRoof?: {
+      installed: boolean;
+      area?: number; // m²
+      reflectance?: number; // 0-100%
+      installationDate?: string;
+    };
+    greenRoof?: {
+      installed: boolean;
+      area?: number; // m²
+      type?: string; // e.g., "intensive", "extensive", "semi-intensive"
+      installationDate?: string;
+    };
+    blueRoof?: {
+      installed: boolean;
+      area?: number; // m²
+      storageCapacity?: number; // liters
+      installationDate?: string;
+    };
+    rainwaterHarvesting?: {
+      installed: boolean;
+      storageCapacity?: number; // liters
+      installationDate?: string;
+    };
+    geothermal?: {
+      installed: boolean;
+      capacity?: number; // kW
+      installationDate?: string;
+    };
+    windTurbines?: {
+      installed: boolean;
+      count?: number;
+      capacity?: number; // kW
+      annualOutput?: number; // kWh
+    };
+  };
+}
+
+// ESG Portfolio Level Metrics
+export interface ESGPortfolioMetrics {
+  totalBuildings: number;
+  totalRoofArea: number; // m²
+  roofAreaUtilizationPercentage: number; // 0-100
+  
+  // Solar metrics
+  totalSolarPanels: number;
+  totalSolarCapacity: number; // kW
+  totalSolarOutput: number; // kWh/year
+  buildingsWithSolar: number;
+  solarPenetration: number; // 0-100%
+  
+  // NOx Treatment
+  buildingsWithNoxTreatment: number;
+  noxTreatmentPenetration: number; // 0-100%
+  
+  // White Roof
+  totalWhiteRoofArea: number; // m²
+  whiteRoofCoverage: number; // 0-100%
+  buildingsWithWhiteRoof: number;
+  
+  // Green Roof
+  totalGreenRoofArea: number; // m²
+  greenRoofCoverage: number; // 0-100%
+  buildingsWithGreenRoof: number;
+  
+  // Blue Roof
+  totalBlueRoofArea: number; // m²
+  blueRoofCoverage: number; // 0-100%
+  totalWaterStorageCapacity: number; // liters
+  buildingsWithBlueRoof: number;
+  
+  // CO2 metrics
+  totalCO2Footprint: number; // kg CO₂/year
+  totalCO2Offset: number; // kg CO₂/year
+  netCO2Footprint: number; // kg CO₂/year after offsets
+  
+  // Overall sustainability
+  averageSustainabilityScore: number; // 0-100
+  portfolioRating: string; // Overall rating
+  
+  // Underutilization insights
+  underutilizedBuildings: BuildingESGInsight[];
+  highPotentialBuildings: BuildingESGInsight[];
+}
+
+// Building-level ESG insights
+export interface BuildingESGInsight {
+  buildingId: string;
+  buildingName: string;
+  roofArea: number; // m²
+  utilizationScore: number; // 0-100 (higher = more utilized)
+  sustainabilityPotentialScore: number; // 0-100
+  potentialSolarCapacity: number; // kW possible
+  potentialCO2Reduction: number; // kg CO₂/year possible
+  estimatedInvestmentRequired: number; // EUR
+  roi: number; // years
+  quickWins: string[]; // Easy improvements
+  priorityRecommendations: {
+    feature: string;
+    priority: 'critical' | 'high' | 'medium' | 'low';
+    impact: string;
+    estimatedCost: number;
+  }[];
 }
 
 export interface BuildingDocument {
@@ -489,6 +608,24 @@ export interface Building {
   esgMetrics?: ESGMetrics; // Optional ESG metrics
   lastVerified?: string; // Last time building data was verified as accurate
   documents?: BuildingDocument[]; // Max 5 documents of 3MB each
+  
+  // Enhanced metadata
+  constructionYear?: number;
+  numberOfFloors?: number;
+  totalArea?: number; // Total building area in m²
+  conditionScore?: number; // 0-100 rating
+  lastRenovationDate?: string;
+  
+  // Emergency & Contact
+  emergencyContact?: EmergencyContact;
+  propertyManager?: PropertyManager;
+  accessInstructions?: string;
+  
+  // Financial
+  acquisitionDate?: string;
+  acquisitionCost?: number;
+  currentValue?: number;
+  annualDepreciation?: number;
 }
 
 // Building history snapshot for audit trail
@@ -803,4 +940,316 @@ export interface Notification {
     appointmentId?: string;
     buildingId?: string;
   };
+}
+
+// ============================================================================
+// Enhanced Building Owner Types
+// ============================================================================
+
+// Emergency Contact
+export interface EmergencyContact {
+  name: string;
+  phone: string;
+  email?: string;
+  relationship: string;
+  available24_7: boolean;
+}
+
+// Property Manager
+export interface PropertyManager {
+  id?: string;
+  name: string;
+  company?: string;
+  phone: string;
+  email: string;
+}
+
+// Enhanced Document Management
+export interface EnhancedBuildingDocument {
+  id: string;
+  buildingId: string;
+  name: string;
+  category: DocumentCategory;
+  fileUrl: string;
+  fileSize: number;
+  mimeType: string;
+  version: number;
+  expirationDate?: string;
+  uploadedBy: string;
+  uploadedAt: string;
+  updatedAt: string;
+  tags?: string[];
+  notes?: string;
+  previousVersions?: DocumentVersion[];
+}
+
+export type DocumentCategory =
+  | 'permit'
+  | 'insurance'
+  | 'warranty'
+  | 'inspection'
+  | 'maintenance'
+  | 'financial'
+  | 'legal'
+  | 'other';
+
+export interface DocumentVersion {
+  version: number;
+  fileUrl: string;
+  uploadedBy: string;
+  uploadedAt: string;
+  changeNote?: string;
+}
+
+// Financial Tracking
+export interface BuildingFinancialRecord {
+  id: string;
+  buildingId: string;
+  type: 'income' | 'expense' | 'maintenance' | 'improvement' | 'tax' | 'insurance';
+  category: string;
+  amount: number;
+  currency: string;
+  date: string;
+  description: string;
+  invoiceUrl?: string;
+  taxDeductible: boolean;
+  relatedEntityId?: string; // Link to service agreement, report, etc.
+  createdBy: string;
+  createdAt: string;
+}
+
+export interface BuildingFinancialSummary {
+  buildingId: string;
+  totalIncome: number;
+  totalExpenses: number;
+  maintenanceCosts: number;
+  improvementCosts: number;
+  taxesPaid: number;
+  insuranceCosts: number;
+  netCashFlow: number;
+  roi: number;
+  period: {
+    start: string;
+    end: string;
+  };
+}
+
+// Portfolio Analytics
+export interface PortfolioMetrics {
+  totalBuildings: number;
+  totalValue: number;
+  totalArea: number;
+  averageConditionScore: number;
+  totalAnnualCosts: number;
+  totalAnnualIncome: number;
+  portfolioROI: number;
+  buildingsRequiringAttention: number;
+  upcomingMaintenanceCount: number;
+  expiringDocumentsCount: number;
+}
+
+export interface BuildingComparison {
+  buildingId: string;
+  buildingName: string;
+  address: string;
+  totalCosts: number;
+  costPerSqm: number;
+  maintenanceFrequency: number;
+  conditionScore: number;
+  lastInspectionDate?: string;
+  issuesCount: number;
+}
+
+// Predictive Maintenance
+export interface MaintenancePrediction {
+  buildingId: string;
+  buildingName: string;
+  predictionType: 'inspection_due' | 'repair_recommended' | 'seasonal_maintenance' | 'urgent';
+  priority: 'low' | 'medium' | 'high' | 'critical';
+  recommendedAction: string;
+  estimatedCost?: {
+    min: number;
+    max: number;
+  };
+  dueDate?: string;
+  reasoning: string;
+  confidence: number; // 0-100
+}
+
+// Emergency Protocols
+export interface EmergencyProtocol {
+  id: string;
+  buildingId: string;
+  type: 'fire' | 'flood' | 'structural' | 'weather' | 'security' | 'other';
+  title: string;
+  description: string;
+  steps: string[];
+  emergencyContacts: EmergencyContact[];
+  documentUrls?: string[];
+  lastReviewedDate?: string;
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface IncidentReport {
+  id: string;
+  buildingId: string;
+  type: 'fire' | 'flood' | 'structural' | 'weather' | 'security' | 'injury' | 'other';
+  severity: 'minor' | 'moderate' | 'major' | 'critical';
+  title: string;
+  description: string;
+  occurredAt: string;
+  reportedBy: string;
+  reportedAt: string;
+  status: 'reported' | 'investigating' | 'resolved' | 'closed';
+  actionsTaken?: string[];
+  photos?: string[];
+  cost?: number;
+  insuranceClaim?: {
+    claimNumber: string;
+    claimAmount: number;
+    status: 'pending' | 'approved' | 'denied' | 'paid';
+  };
+  resolvedAt?: string;
+}
+
+// ============================================
+// PAYMENT & SUBSCRIPTION TYPES
+// ============================================
+
+export type BillingCycle = 'monthly' | 'annual' | 'semi-annual';
+export type SubscriptionStatus = 'active' | 'paused' | 'canceled' | 'past_due' | 'trial';
+
+export interface SubscriptionPlan {
+  id: string;
+  name: string;
+  description: string;
+  price: number; // Amount in øre (smallest unit, e.g., 29900 = 299 DKK)
+  currency: 'DKK' | 'EUR' | 'SEK'; // Nordic currencies
+  billingCycle: BillingCycle;
+  buildingLimit: number; // Max buildings allowed
+  features: string[];
+  stripePriceId: string;
+  isActive: boolean;
+  tier: 'starter' | 'professional' | 'enterprise';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Subscription {
+  id: string;
+  customerId: string;
+  planId: string;
+  stripeSubscriptionId: string;
+  status: SubscriptionStatus;
+  
+  billingCycle: BillingCycle;
+  amount: number; // Price in øre
+  currency: 'DKK' | 'EUR' | 'SEK';
+  
+  currentPeriodStart: string; // ISO date
+  currentPeriodEnd: string; // ISO date
+  canceledAt?: string;
+  cancelReason?: string;
+  
+  autoRenew: boolean;
+  trialEndsAt?: string;
+  
+  createdAt: string;
+  updatedAt: string;
+  metadata?: Record<string, string>;
+}
+
+export interface Invoice {
+  id: string;
+  customerId: string;
+  subscriptionId: string;
+  stripeInvoiceId: string;
+  
+  amount: number; // Total in øre
+  currency: 'DKK' | 'EUR' | 'SEK';
+  
+  status: 'draft' | 'open' | 'paid' | 'void' | 'uncollectible';
+  paidAt?: string;
+  
+  invoiceNumber: string;
+  invoiceDate: string;
+  dueDate: string;
+  
+  lineItems: InvoiceLineItem[];
+  
+  pdfUrl?: string;
+  hostedUrl?: string;
+  
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface InvoiceLineItem {
+  id: string;
+  description: string;
+  amount: number; // In øre
+  quantity: number;
+  unitPrice: number; // In øre
+  category: 'subscription' | 'addon' | 'service' | 'support';
+}
+
+export interface PaymentMethod {
+  id: string;
+  customerId: string;
+  stripePaymentMethodId: string;
+  
+  type: 'card' | 'bank_account';
+  
+  // Card details
+  cardBrand?: string; // 'visa', 'mastercard', etc.
+  cardLast4?: string;
+  cardExpMonth?: number;
+  cardExpYear?: number;
+  
+  // Bank account details
+  bankCountry?: string;
+  bankAccountLast4?: string;
+  
+  isDefault: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BillingContact {
+  id: string;
+  customerId: string;
+  
+  fullName: string;
+  email: string;
+  phone?: string;
+  
+  address: {
+    street: string;
+    city: string;
+    postalCode: string;
+    country: string;
+  };
+  
+  companyName?: string;
+  cvr?: string; // Danish CVR number
+  
+  isPrimary: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CustomerBilling {
+  customerId: string;
+  currentSubscription?: Subscription;
+  paymentMethods: PaymentMethod[];
+  billingContacts: BillingContact[];
+  invoiceHistory: Invoice[];
+  
+  totalSpent: number; // In øre
+  nextBillingDate?: string;
+  
+  createdAt: string;
+  updatedAt: string;
 }

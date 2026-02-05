@@ -51,6 +51,14 @@ import { generateReportPDF } from './simplePdfService';
 import { onCustomerUserCreate } from './onCustomerUserCreate';
 import { onBuildingCreate } from './onBuildingCreate';
 
+// Stripe payment functions
+import {
+  createSubscriptionCheckout,
+  updateSubscription,
+  cancelSubscription,
+  stripeWebhook,
+} from './stripe/payments';
+
 // Relationship validation functions - Phase 3
 import {
   validateReportBuilding,
@@ -99,6 +107,18 @@ export { generateReportPDF };
 // Export customer and building functions
 export { onCustomerUserCreate };
 export { onBuildingCreate };
+
+// Export Stripe payment functions
+export { createSubscriptionCheckout };
+export { updateSubscription };
+export { cancelSubscription };
+export { stripeWebhook };
+
+// Export GDPR & Data Retention functions
+export { deleteStaleDraftReports };
+export { deleteInactiveAccounts };
+export { deleteUserAccount };
+export { exportUserData };
 
 // Export relationship validation functions - Phase 3
 export { validateReportBuilding };
