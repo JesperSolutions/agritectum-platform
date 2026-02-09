@@ -1,6 +1,6 @@
 // Version will be derived from package.json version + deploy timestamp to ensure fresh cache per deploy
 // During build/deploy a script can replace the BUILD_VERSION token with the current version/timestamp.
-const BUILD_VERSION = 'v1.0.4-20260120-1600'; // e.g. v1.0.3-20260112
+const BUILD_VERSION = 'v1.0.4-20260206-1200'; // e.g. v1.0.3-20260112
 const CACHE_NAME = `agritectum-${BUILD_VERSION}`;
 const OFFLINE_URL = '/offline.html';
 

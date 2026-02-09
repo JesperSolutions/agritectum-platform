@@ -178,35 +178,83 @@ service cloud.firestore {
       );
     }
     
-    // Customers collection
+    // Customers collection - Holds customer info and billing subcollections
     match /customers/{customerId} {
+      // Customers can read/write their own document (by uid or companyId)
+      allow read, write: if isAuthenticated() && (
+        request.auth.uid == customerId ||
+        (isCustomer() && getUserCompanyId() == customerId)
+      );
+      
+      // Internal staff can manage customers
       allow read: if isAuthenticated() && (
         isSuperadmin() ||
         (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
         (isInspector() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
       );
-      // Create requires branch match and creator match; allow main branch users across branches
-      // Inspectors can create customers (e.g., when on-site creating reports for new customers)
-      allow create: if isAuthenticated() &&
-        request.resource.data.createdBy == request.auth.uid &&
-        (
-          request.resource.data.branchId == getUserBranchId() ||
-          getUserBranchId() == "main"
-        ) &&
-        // Basic required fields - using actual field names from Customer interface (name, address)
-        request.resource.data.keys().hasAll(["name", "branchId", "createdBy"]) &&
-        (isSuperadmin() || isBranchAdmin() || isInspector());
-      // Inspectors can update customer details (e.g., contact info) in their branch
-      allow update: if isAuthenticated() && (
+      
+      allow create: if isAuthenticated() && (
+        (isCustomer() && getUserCompanyId() == customerId) ||
+        (request.resource.data.createdBy == request.auth.uid && (isSuperadmin() || isBranchAdmin() || isInspector()))
+      );
+      
+      allow update, delete: if isAuthenticated() && (
         isSuperadmin() ||
         (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
         (isInspector() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
       );
-      // Only admins can delete customers
-      allow delete: if isAuthenticated() && (
-        isSuperadmin() ||
-        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
-      );
+      
+      // Billing subcollections - allow customers to access by uid or companyId
+      match /subscriptions/{subscriptionId} {
+        allow read, write: if isAuthenticated() && (
+          request.auth.uid == customerId ||
+          (isCustomer() && getUserCompanyId() == customerId)
+        );
+        allow read, write: if isAuthenticated() && (isSuperadmin() || isBranchAdmin());
+      }
+      
+      match /paymentMethods/{methodId} {
+        allow read, write: if isAuthenticated() && (
+          request.auth.uid == customerId ||
+          (isCustomer() && getUserCompanyId() == customerId)
+        );
+        allow read, write: if isAuthenticated() && (isSuperadmin() || isBranchAdmin());
+      }
+      
+      match /invoices/{invoiceId} {
+        allow read: if isAuthenticated() && (
+          request.auth.uid == customerId ||
+          (isCustomer() && getUserCompanyId() == customerId)
+        );
+        allow read, write: if isAuthenticated() && (isSuperadmin() || isBranchAdmin());
+      }
+      
+      match /billingContacts/{contactId} {
+        allow read, write: if isAuthenticated() && (
+          request.auth.uid == customerId ||
+          (isCustomer() && getUserCompanyId() == customerId)
+        );
+        allow read, write: if isAuthenticated() && (isSuperadmin() || isBranchAdmin());
+      }
+
+      // Stripe Payments extension sessions
+      match /checkout_sessions/{sessionId} {
+        allow read, write: if isAuthenticated() && (
+          request.auth.uid == customerId ||
+          (isCustomer() && getUserCompanyId() == customerId) ||
+          isSuperadmin() ||
+          isBranchAdmin()
+        );
+      }
+
+      match /portal_sessions/{sessionId} {
+        allow read, write: if isAuthenticated() && (
+          request.auth.uid == customerId ||
+          (isCustomer() && getUserCompanyId() == customerId) ||
+          isSuperadmin() ||
+          isBranchAdmin()
+        );
+      }
     }
     
     // Customer invitations collection - for customer signup links
@@ -808,37 +856,6 @@ service cloud.firestore {
       
       // Only admins can write subscription plans
       allow write: if isAuthenticated() && (isSuperadmin() || isBranchAdmin());
-    }
-
-    // Customers collection - Holds customer subscription and billing info
-    match /customers/{customerId} {
-      // Customers can read their own document
-      allow read: if isAuthenticated() && request.auth.uid == customerId;
-      
-      // Admins can read any customer
-      allow read: if isAuthenticated() && (isSuperadmin() || isBranchAdmin());
-      
-      // Allow customers to create/update their own document
-      allow write: if isAuthenticated() && request.auth.uid == customerId;
-      
-      // Admins can write customer documents
-      allow write: if isAuthenticated() && (isSuperadmin() || isBranchAdmin());
-      
-      // Subcollections for subscriptions, payment methods, and invoices
-      match /subscriptions/{subscriptionId} {
-        allow read, write: if isAuthenticated() && request.auth.uid == customerId;
-        allow read, write: if isAuthenticated() && (isSuperadmin() || isBranchAdmin());
-      }
-      
-      match /paymentMethods/{methodId} {
-        allow read, write: if isAuthenticated() && request.auth.uid == customerId;
-        allow read, write: if isAuthenticated() && (isSuperadmin() || isBranchAdmin());
-      }
-      
-      match /invoices/{invoiceId} {
-        allow read: if isAuthenticated() && request.auth.uid == customerId;
-        allow read, write: if isAuthenticated() && (isSuperadmin() || isBranchAdmin());
-      }
     }
   }
 }

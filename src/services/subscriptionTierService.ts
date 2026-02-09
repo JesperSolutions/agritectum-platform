@@ -1,31 +1,16 @@
-import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, getDoc, limit } from 'firebase/firestore';
 import { db } from '../config/firebase';
-import { SubscriptionPlan } from '../types';
+import { SubscriptionPlan, Subscription } from '../types';
 import { logger } from '../utils/logger';
 
 /**
  * Get user's active subscription
  */
-export const getUserSubscription = async (customerId: string) => {
+export const getUserSubscription = async (customerId: string): Promise<Subscription | null> => {
   try {
-    const customerRef = doc(db, 'customers', customerId);
-    const customerDoc = await getDoc(customerRef);
-    
-    if (!customerDoc.exists()) {
-      return null;
-    }
-
-    const customerData = customerDoc.data();
-    if (!customerData.activeSubscription) {
-      return null;
-    }
-
-    // Get subscription details
+    // Query subscriptions directly - no need to check parent document
     const subscriptionsRef = collection(db, `customers/${customerId}/subscriptions`);
-    const subQuery = query(
-      subscriptionsRef,
-      where('stripeSubscriptionId', '==', customerData.activeSubscription)
-    );
+    const subQuery = query(subscriptionsRef, where('status', '==', 'active'), limit(1));
     
     const subSnapshot = await getDocs(subQuery);
     if (subSnapshot.empty) {
@@ -35,7 +20,7 @@ export const getUserSubscription = async (customerId: string) => {
     return {
       id: subSnapshot.docs[0].id,
       ...subSnapshot.docs[0].data(),
-    };
+    } as Subscription;
   } catch (error) {
     logger.error('Error getting user subscription:', error);
     return null;
@@ -104,7 +89,7 @@ export const canAddBuilding = async (customerId: string): Promise<{
     }
 
     // Get plan details
-    const plan = await getSubscriptionPlan(subscription.plan || subscription.stripePriceId);
+    const plan = await getSubscriptionPlan(subscription.planId);
     
     if (!plan) {
       return {
@@ -154,7 +139,7 @@ export const hasFeatureAccess = async (
       return false;
     }
 
-    const plan = await getSubscriptionPlan(subscription.plan || subscription.stripePriceId);
+    const plan = await getSubscriptionPlan(subscription.planId);
     
     if (!plan) {
       return false;

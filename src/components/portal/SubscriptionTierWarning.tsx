@@ -23,17 +23,24 @@ const SubscriptionTierWarning: React.FC = () => {
   }, [currentUser]);
 
   const checkTierInfo = async () => {
-    if (!currentUser?.companyId) {
+    const billingCustomerId = currentUser?.companyId || currentUser?.uid;
+    const fallbackCustomerId = currentUser?.uid;
+    if (!billingCustomerId) {
       setLoading(false);
       return;
     }
 
     try {
       setLoading(true);
-      const customerId = currentUser.companyId || currentUser.uid;
+      const customerId = billingCustomerId;
       
-      // Get subscription
-      const subscription = await getUserSubscription(customerId);
+      // Get subscription (fallback to uid if needed)
+      let subscriptionCustomerId = customerId;
+      let subscription = await getUserSubscription(customerId);
+      if (!subscription && fallbackCustomerId && fallbackCustomerId !== customerId) {
+        subscriptionCustomerId = fallbackCustomerId;
+        subscription = await getUserSubscription(fallbackCustomerId);
+      }
       if (!subscription) {
         setLoading(false);
         return;
@@ -47,7 +54,7 @@ const SubscriptionTierWarning: React.FC = () => {
       }
 
       // Get current count
-      const canAdd = await canAddBuilding(customerId);
+      const canAdd = await canAddBuilding(subscriptionCustomerId);
       
       if (canAdd.currentCount !== undefined && plan.buildingLimit) {
         const percentageUsed = (canAdd.currentCount / plan.buildingLimit) * 100;

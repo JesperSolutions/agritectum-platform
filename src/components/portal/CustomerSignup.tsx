@@ -151,6 +151,18 @@ const CustomerSignup: React.FC = () => {
         invitationToken: token,
       });
 
+      // Create billing/customer document in Firestore (keyed by UID for billing queries)
+      await setDoc(doc(db, 'customers', user.uid), {
+        uid: user.uid,
+        email: formData.email,
+        displayName: formData.displayName,
+        companyId: invitation.companyId,
+        branchId: invitation.branchId,
+        isActive: true,
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
+      });
+
       // Mark invitation as used
       await markInvitationUsed(token, user.uid);
 

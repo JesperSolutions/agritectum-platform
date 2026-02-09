@@ -3,14 +3,22 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useIntl } from '../../hooks/useIntl';
 import { updateCustomerProfile } from '../../services/userAuthService';
 import LoadingSpinner from '../common/LoadingSpinner';
-import { Globe, DollarSign } from 'lucide-react';
+import { Globe, DollarSign, User } from 'lucide-react';
 import { storeLocale } from '../../utils/geolocation';
 import { storeCurrency, getCurrencyCode } from '../../utils/currency';
 import type { SupportedLocale } from '../../utils/geolocation';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Badge } from '../ui/badge';
+import { useToast } from '../../hooks/use-toast';
 
 const CustomerProfile: React.FC = () => {
   const { currentUser, firebaseUser } = useAuth();
   const { t, locale } = useIntl();
+  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     displayName: '',
@@ -18,13 +26,10 @@ const CustomerProfile: React.FC = () => {
     address: '',
     companyName: '',
   });
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [selectedLanguage, setSelectedLanguage] = useState<SupportedLocale>(
     locale as SupportedLocale
   );
-  const [languageSaved, setLanguageSaved] = useState(false);
   const [selectedCurrency, setSelectedCurrency] = useState<string>('DKK');
-  const [currencySaved, setCurrencySaved] = useState(false);
 
   // Initialize currency on component mount
   useEffect(() => {
@@ -69,8 +74,10 @@ const CustomerProfile: React.FC = () => {
   const handleLanguageChange = (newLanguage: SupportedLocale) => {
     setSelectedLanguage(newLanguage);
     storeLocale(newLanguage, true);
-    setLanguageSaved(true);
-    setTimeout(() => setLanguageSaved(false), 3000);
+    toast({
+      title: 'Language updated',
+      description: `Language changed to ${languages.find(l => l.code === newLanguage)?.name}. Reloading...`,
+    });
     const newCurrency = getCurrencyCode(newLanguage);
     setSelectedCurrency(newCurrency);
     setTimeout(() => {
@@ -81,8 +88,10 @@ const CustomerProfile: React.FC = () => {
   const handleCurrencyChange = (newCurrency: string) => {
     setSelectedCurrency(newCurrency);
     storeCurrency(newCurrency);
-    setCurrencySaved(true);
-    setTimeout(() => setCurrencySaved(false), 3000);
+    toast({
+      title: 'Currency updated',
+      description: `Currency changed to ${currencies.find(c => c.code === newCurrency)?.name}. Reloading...`,
+    });
     setTimeout(() => {
       window.location.reload();
     }, 1000);
@@ -93,7 +102,6 @@ const CustomerProfile: React.FC = () => {
     if (!currentUser) return;
 
     setLoading(true);
-    setMessage(null);
 
     try {
       // Update display name in Firebase Auth
@@ -108,218 +116,236 @@ const CustomerProfile: React.FC = () => {
         companyName: formData.companyName || undefined,
       });
 
-      setMessage({ type: 'success', text: 'Profile updated successfully' });
+      toast({
+        title: 'Profile updated',
+        description: 'Your profile information has been saved successfully',
+      });
     } catch (error: any) {
-      setMessage({ type: 'error', text: error.message || 'Failed to update profile' });
+      toast({
+        title: 'Update failed',
+        description: error.message || 'Failed to update profile',
+        variant: 'destructive',
+      });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className='space-y-6'>
-      <div>
-        <h1 className='text-3xl font-bold text-gray-900'>{t('profile.title') || 'Profile'}</h1>
-        <p className='mt-2 text-gray-600'>
-          {t('profile.subtitle') || 'Manage your account information'}
+    <div className='max-w-5xl mx-auto p-6'>
+      {/* Page Header */}
+      <div className='mb-6'>
+        <h1 className='text-3xl font-light tracking-tight text-slate-900'>
+          {t('profile.title') || 'Profile Settings'}
+        </h1>
+        <p className='text-slate-600 mt-2'>
+          {t('profile.subtitle') || 'Manage your account information and preferences'}
         </p>
       </div>
 
-      {/* Language Settings */}
-      <div className='bg-white rounded-lg shadow p-6 border border-slate-200'>
-        <h2 className='text-xl font-semibold text-gray-900 mb-4 flex items-center'>
-          <Globe className='w-5 h-5 mr-2 text-gray-600' />
-          {t('profile.languageSettings') || 'Language Settings'}
-        </h2>
+      {/* Tab Navigation */}
+      <Tabs defaultValue='preferences' className='space-y-6'>
+        <TabsList className='w-full justify-start bg-slate-100 rounded-material'>
+          <TabsTrigger value='preferences' className='data-[state=active]:bg-white rounded-material'>
+            <Globe className='h-4 w-4 mr-2' />
+            Preferences
+          </TabsTrigger>
+          <TabsTrigger value='profile' className='data-[state=active]:bg-white rounded-material'>
+            <User className='h-4 w-4 mr-2' />
+            Profile Information
+          </TabsTrigger>
+        </TabsList>
 
-        <div className='space-y-4'>
-          <div>
-            <p className='text-sm text-gray-600 mb-4'>
-              {t('profile.currentLanguage') || 'Currently Selected Language'}:{' '}
-              <span className='font-semibold text-gray-900'>
-                {languages.find(l => l.code === selectedLanguage)?.name}
-              </span>
-            </p>
-          </div>
+        {/* Preferences Tab */}
+        <TabsContent value='preferences' className='space-y-6'>
+          {/* Language Settings */}
+          <Card className='rounded-material shadow-material-2'>
+            <CardHeader>
+              <CardTitle className='flex items-center gap-2'>
+                <Globe className='h-5 w-5 text-slate-600' />
+                {t('profile.languageSettings') || 'Language Settings'}
+              </CardTitle>
+              <CardDescription>
+                Choose your preferred language for the interface
+              </CardDescription>
+            </CardHeader>
+            <CardContent className='space-y-4'>
+              <div className='flex items-center gap-2'>
+                <span className='text-sm text-slate-600'>Current Language:</span>
+                <Badge variant='secondary'>
+                  {languages.find(l => l.code === selectedLanguage)?.name}
+                </Badge>
+              </div>
 
-          {languageSaved && (
-            <div className='p-4 bg-green-50 border border-green-200 rounded-lg text-green-800 text-sm'>
-              ✓ {t('profile.languageSaved') || 'Language preference saved'}
-            </div>
-          )}
+              <div className='grid grid-cols-2 md:grid-cols-3 gap-3'>
+                {languages.map(lang => (
+                  <button
+                    key={lang.code}
+                    onClick={() => handleLanguageChange(lang.code)}
+                    className={`p-4 rounded-material border-2 transition-all text-left ${
+                      selectedLanguage === lang.code
+                        ? 'border-slate-900 bg-slate-50'
+                        : 'border-slate-200 bg-white hover:border-slate-300'
+                    }`}
+                  >
+                    <p className='text-2xl mb-2'>{lang.flag}</p>
+                    <p
+                      className={`text-sm font-medium ${selectedLanguage === lang.code ? 'text-slate-900' : 'text-slate-700'}`}
+                    >
+                      {lang.name}
+                    </p>
+                  </button>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
 
-          <div className='grid grid-cols-2 md:grid-cols-3 gap-3'>
-            {languages.map(lang => (
-              <button
-                key={lang.code}
-                onClick={() => handleLanguageChange(lang.code)}
-                className={`p-4 rounded-lg border-2 transition-all text-left ${
-                  selectedLanguage === lang.code
-                    ? 'border-green-500 bg-green-50'
-                    : 'border-gray-200 bg-white hover:border-gray-300'
-                }`}
-              >
-                <p className='text-xl mb-2'>{lang.flag}</p>
-                <p
-                  className={`text-sm font-medium ${selectedLanguage === lang.code ? 'text-green-900' : 'text-gray-900'}`}
-                >
-                  {lang.name}
-                </p>
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
+          {/* Currency Settings */}
+          <Card className='rounded-material shadow-material-2'>
+            <CardHeader>
+              <CardTitle className='flex items-center gap-2'>
+                <DollarSign className='h-5 w-5 text-slate-600' />
+                {t('profile.currencySettings') || 'Currency Settings'}
+              </CardTitle>
+              <CardDescription>
+                Choose your preferred currency for pricing display
+              </CardDescription>
+            </CardHeader>
+            <CardContent className='space-y-4'>
+              <div className='flex items-center gap-2'>
+                <span className='text-sm text-slate-600'>Current Currency:</span>
+                <Badge variant='secondary'>
+                  {currencies.find(c => c.code === selectedCurrency)?.name} ({selectedCurrency})
+                </Badge>
+              </div>
 
-      {/* Currency Settings */}
-      <div className='bg-white rounded-lg shadow p-6 border border-slate-200'>
-        <h2 className='text-xl font-semibold text-gray-900 mb-4 flex items-center'>
-          <DollarSign className='w-5 h-5 mr-2 text-gray-600' />
-          {t('profile.currencySettings') || 'Currency Settings'}
-        </h2>
+              <div className='grid grid-cols-2 md:grid-cols-3 gap-3'>
+                {currencies.map(currency => (
+                  <button
+                    key={currency.code}
+                    onClick={() => handleCurrencyChange(currency.code)}
+                    className={`p-4 rounded-material border-2 transition-all text-left ${
+                      selectedCurrency === currency.code
+                        ? 'border-slate-900 bg-slate-50'
+                        : 'border-slate-200 bg-white hover:border-slate-300'
+                    }`}
+                  >
+                    <p className='text-2xl mb-2'>{currency.country}</p>
+                    <p
+                      className={`text-sm font-medium ${selectedCurrency === currency.code ? 'text-slate-900' : 'text-slate-700'}`}
+                    >
+                      {currency.code}
+                    </p>
+                    <p
+                      className={`text-xs ${selectedCurrency === currency.code ? 'text-slate-600' : 'text-slate-500'}`}
+                    >
+                      {currency.symbol}
+                    </p>
+                  </button>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-        <div className='space-y-4'>
-          <div>
-            <p className='text-sm text-gray-600 mb-4'>
-              {t('profile.currentCurrency') || 'Currently Selected Currency'}:{' '}
-              <span className='font-semibold text-gray-900'>
-                {currencies.find(c => c.code === selectedCurrency)?.name} ({selectedCurrency})
-              </span>
-            </p>
-          </div>
+        {/* Profile Information Tab */}
+        <TabsContent value='profile'>
+          <Card className='rounded-material shadow-material-2'>
+            <CardHeader>
+              <CardTitle className='flex items-center gap-2'>
+                <User className='h-5 w-5 text-slate-600' />
+                Profile Information
+              </CardTitle>
+              <CardDescription>
+                Update your personal and company information
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit} className='space-y-6'>
+                <div className='space-y-2'>
+                  <Label htmlFor='email'>Email</Label>
+                  <Input
+                    id='email'
+                    type='email'
+                    value={currentUser?.email || ''}
+                    disabled
+                    className='bg-slate-50 text-slate-500'
+                  />
+                  <p className='text-sm text-slate-500'>Email cannot be changed</p>
+                </div>
 
-          {currencySaved && (
-            <div className='p-4 bg-green-50 border border-green-200 rounded-lg text-green-800 text-sm'>
-              ✓ {t('profile.currencySaved') || 'Currency preference saved'}
-            </div>
-          )}
+                <div className='space-y-2'>
+                  <Label htmlFor='displayName'>
+                    Full Name <span className='text-red-600'>*</span>
+                  </Label>
+                  <Input
+                    id='displayName'
+                    name='displayName'
+                    type='text'
+                    value={formData.displayName}
+                    onChange={handleChange}
+                    required
+                    placeholder='Enter your full name'
+                  />
+                </div>
 
-          <div className='grid grid-cols-2 md:grid-cols-3 gap-3'>
-            {currencies.map(currency => (
-              <button
-                key={currency.code}
-                onClick={() => handleCurrencyChange(currency.code)}
-                className={`p-4 rounded-lg border-2 transition-all text-left ${
-                  selectedCurrency === currency.code
-                    ? 'border-green-500 bg-green-50'
-                    : 'border-gray-200 bg-white hover:border-gray-300'
-                }`}
-              >
-                <p className='text-xl mb-2'>{currency.country}</p>
-                <p
-                  className={`text-sm font-medium ${selectedCurrency === currency.code ? 'text-green-900' : 'text-gray-900'}`}
-                >
-                  {currency.code}
-                </p>
-                <p
-                  className={`text-xs ${selectedCurrency === currency.code ? 'text-green-700' : 'text-gray-600'}`}
-                >
-                  {currency.symbol}
-                </p>
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
+                <div className='space-y-2'>
+                  <Label htmlFor='phone'>Phone</Label>
+                  <Input
+                    id='phone'
+                    name='phone'
+                    type='tel'
+                    value={formData.phone}
+                    onChange={handleChange}
+                    placeholder='+45 12 34 56 78'
+                  />
+                </div>
 
-      {/* Profile Information */}
-      <div className='bg-white rounded-lg shadow p-6'>
-        <form onSubmit={handleSubmit} className='space-y-6'>
-          {message && (
-            <div
-              className={`p-4 rounded-md ${
-                message.type === 'success'
-                  ? 'bg-green-50 text-green-800 border border-green-200'
-                  : 'bg-red-50 text-red-800 border border-red-200'
-              }`}
-            >
-              {message.text}
-            </div>
-          )}
+                <div className='space-y-2'>
+                  <Label htmlFor='address'>Address</Label>
+                  <Input
+                    id='address'
+                    name='address'
+                    type='text'
+                    value={formData.address}
+                    onChange={handleChange}
+                    placeholder='Street address, city, postal code'
+                  />
+                </div>
 
-          <div>
-            <label htmlFor='email' className='block text-sm font-medium text-gray-700 mb-2'>
-              Email
-            </label>
-            <input
-              id='email'
-              type='email'
-              value={currentUser?.email || ''}
-              disabled
-              className='w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500'
-            />
-            <p className='mt-1 text-sm text-gray-500'>Email cannot be changed</p>
-          </div>
+                <div className='space-y-2'>
+                  <Label htmlFor='companyName'>Company Name</Label>
+                  <Input
+                    id='companyName'
+                    name='companyName'
+                    type='text'
+                    value={formData.companyName}
+                    onChange={handleChange}
+                    placeholder='Your company name (optional)'
+                  />
+                </div>
 
-          <div>
-            <label htmlFor='displayName' className='block text-sm font-medium text-gray-700 mb-2'>
-              Full Name *
-            </label>
-            <input
-              id='displayName'
-              name='displayName'
-              type='text'
-              value={formData.displayName}
-              onChange={handleChange}
-              required
-              className='w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500'
-            />
-          </div>
-
-          <div>
-            <label htmlFor='phone' className='block text-sm font-medium text-gray-700 mb-2'>
-              Phone
-            </label>
-            <input
-              id='phone'
-              name='phone'
-              type='tel'
-              value={formData.phone}
-              onChange={handleChange}
-              className='w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500'
-            />
-          </div>
-
-          <div>
-            <label htmlFor='address' className='block text-sm font-medium text-gray-700 mb-2'>
-              Address
-            </label>
-            <input
-              id='address'
-              name='address'
-              type='text'
-              value={formData.address}
-              onChange={handleChange}
-              className='w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500'
-            />
-          </div>
-
-          <div>
-            <label htmlFor='companyName' className='block text-sm font-medium text-gray-700 mb-2'>
-              Company Name
-            </label>
-            <input
-              id='companyName'
-              name='companyName'
-              type='text'
-              value={formData.companyName}
-              onChange={handleChange}
-              className='w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500'
-            />
-          </div>
-
-          <div className='flex justify-end'>
-            <button
-              type='submit'
-              disabled={loading}
-              className='px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2'
-            >
-              {loading ? <LoadingSpinner size='sm' className='mr-2' /> : null}
-              Save Changes
-            </button>
-          </div>
-        </form>
-      </div>
+                <div className='flex justify-end pt-4 border-t'>
+                  <Button
+                    type='submit'
+                    disabled={loading}
+                    className='min-w-[120px]'
+                  >
+                    {loading ? (
+                      <>
+                        <LoadingSpinner size='sm' className='mr-2' />
+                        Saving...
+                      </>
+                    ) : (
+                      'Save Changes'
+                    )}
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

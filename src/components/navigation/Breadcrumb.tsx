@@ -86,6 +86,23 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({
     '/report/new': { label: t('navigation.newTagReport'), icon: <FileText className='w-4 h-4' /> },
     '/report/edit': { label: t('navigation.editReport'), icon: <FileText className='w-4 h-4' /> },
     '/report/view': { label: t('navigation.viewReport'), icon: <FileText className='w-4 h-4' /> },
+    
+    // Portal routes
+    '/portal': { label: t('navigation.home'), icon: <Home className='w-4 h-4' /> },
+    '/portal/dashboard': { label: t('navigation.dashboard'), icon: <Home className='w-4 h-4' /> },
+    '/portal/esg-overview': { label: 'ESG Overview', icon: <Leaf className='w-4 h-4' /> },
+    '/portal/buildings': { label: t('navigation.buildings'), icon: <Building className='w-4 h-4' /> },
+    '/portal/service-agreements': {
+      label: t('navigation.serviceAgreements') || 'Service Agreements',
+      icon: <FileCheck className='w-4 h-4' />,
+    },
+    '/portal/scheduled-visits': {
+      label: t('navigation.scheduledVisits') || 'Scheduled Visits',
+      icon: <Calendar className='w-4 h-4' />,
+    },
+    '/portal/billing': { label: 'Billing', icon: <DollarSign className='w-4 h-4' /> },
+    '/portal/profile': { label: t('navigation.profile') || 'Profile', icon: <User className='w-4 h-4' /> },
+    '/portal/reports': { label: t('navigation.reports'), icon: <FileText className='w-4 h-4' /> },
   };
 
   // Generate breadcrumb items from current path
@@ -97,11 +114,16 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({
     const pathSegments = location.pathname.split('/').filter(Boolean);
     const breadcrumbs: BreadcrumbItem[] = [];
 
+    // Determine home path based on context
+    const isPortal = location.pathname.startsWith('/portal');
+    const homePath = isPortal ? '/portal/dashboard' : '/dashboard';
+    const homeLabel = t('navigation.home');
+
     // Add home if enabled
-    if (showHome && location.pathname !== '/dashboard') {
+    if (showHome && location.pathname !== '/dashboard' && location.pathname !== '/portal/dashboard') {
       breadcrumbs.push({
-        label: t('navigation.home'),
-        path: '/dashboard',
+        label: homeLabel,
+        path: homePath,
         icon: <Home className='w-4 h-4' />,
       });
     }
@@ -170,6 +192,12 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({
     }
     if (params.offerId === id) {
       return t('navigation.offerDetails');
+    }
+    if (params.buildingId === id) {
+      return t('navigation.buildingDetails') || 'Building Details';
+    }
+    if (params.agreementId === id) {
+      return 'Agreement Details';
     }
 
     return null;

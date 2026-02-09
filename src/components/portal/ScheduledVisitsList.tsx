@@ -8,7 +8,7 @@ import { getScheduledVisitsByCustomer, createScheduledVisit } from '../../servic
 import { getBuildingsByCustomer } from '../../services/buildingService';
 import { getExternalProvidersByCompany } from '../../services/externalProviderService';
 import { ScheduledVisit, Building, ExternalServiceProvider } from '../../types';
-import { Calendar, MapPin, User, CheckCircle, XCircle, ExternalLink, Plus, Clock, Download } from 'lucide-react';
+import { Calendar, MapPin, User, CheckCircle, XCircle, ExternalLink, Plus, Clock, Download, List, Grid } from 'lucide-react';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { VisitsListSkeleton } from '../common/SkeletonLoader';
 import FilterTabs from '../shared/filters/FilterTabs';
@@ -35,6 +35,7 @@ const ScheduledVisitsList: React.FC = () => {
   const [showForm, setShowForm] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [openCalendarMenu, setOpenCalendarMenu] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list');
   
   // Form state
   const [selectedBuilding, setSelectedBuilding] = useState('');
@@ -54,6 +55,23 @@ const ScheduledVisitsList: React.FC = () => {
       loadData();
     }
   }, [currentUser]);
+
+  // Close calendar menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (openCalendarMenu) {
+        const target = event.target as HTMLElement;
+        if (!target.closest('.calendar-menu-container')) {
+          setOpenCalendarMenu(null);
+        }
+      }
+    };
+
+    if (openCalendarMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [openCalendarMenu]);
 
   const loadData = async () => {
     if (!currentUser) return;
@@ -255,18 +273,50 @@ const ScheduledVisitsList: React.FC = () => {
 
   return (
     <div className='space-y-6'>
-      <div className='flex justify-between items-center'>
+      <div className='flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4'>
         <PageHeader
           title={t('schedule.portal.title')}
           subtitle={t('schedule.portal.subtitle')}
         />
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className='flex items-center gap-2 px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium shadow-sm'
-        >
-          <Plus className='w-5 h-5' />
-          {t('schedule.portal.requestVisit')}
-        </button>
+        <div className='flex items-center gap-2'>
+          {/* View mode toggle */}
+          <div className='flex bg-slate-100 rounded-lg p-1'>
+            <button
+              onClick={() => setViewMode('list')}
+              className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center gap-2 ${
+                viewMode === 'list'
+                  ? 'bg-white text-slate-900 shadow-sm'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+              aria-label='List view'
+            >
+              <List className='w-4 h-4' />
+              <span className='hidden sm:inline'>List</span>
+            </button>
+            <button
+              onClick={() => setViewMode('calendar')}
+              className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center gap-2 ${
+                viewMode === 'calendar'
+                  ? 'bg-white text-slate-900 shadow-sm'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+              aria-label='Calendar view'
+            >
+              <Grid className='w-4 h-4' />
+              <span className='hidden sm:inline'>Calendar</span>
+            </button>
+          </div>
+
+          <button
+            onClick={() => setShowForm(!showForm)}
+            data-action="schedule-visit"
+            className='flex items-center gap-2 px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium shadow-sm'
+          >
+            <Plus className='w-5 h-5' />
+            <span className='hidden sm:inline'>{t('schedule.portal.requestVisit')}</span>
+            <span className='sm:hidden'>Add</span>
+          </button>
+        </div>
       </div>
 
       {showForm && (
@@ -422,81 +472,104 @@ const ScheduledVisitsList: React.FC = () => {
       )}
 
       {/* Calendar View */}
-      <div className='bg-white rounded-lg shadow p-6 border border-slate-200'>
-        <div className='flex items-center justify-between mb-6'>
-          <h3 className='text-lg font-semibold'>{monthName}</h3>
-          <div className='flex gap-2'>
-            <button
-              onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1))}
-              className='px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50'
-            >
-              ← {t('schedule.portal.prev')}
-            </button>
-            <button
-              onClick={() => setCurrentDate(new Date())}
-              className='px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50'
-            >
-              {t('schedule.portal.today')}
-            </button>
-            <button
-              onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1))}
-              className='px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50'
-            >
-              {t('schedule.portal.next')} →
-            </button>
+      {viewMode === 'calendar' && (
+        <div className='bg-white rounded-lg shadow p-4 sm:p-6 border border-slate-200'>
+          <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6'>
+            <h3 className='text-lg font-semibold'>{monthName}</h3>
+            <div className='flex gap-2'>
+              <button
+                onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1))}
+                className='px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50'
+              >
+                ← <span className='hidden sm:inline'>{t('schedule.portal.prev')}</span>
+              </button>
+              <button
+                onClick={() => setCurrentDate(new Date())}
+                className='px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50'
+              >
+                {t('schedule.portal.today')}
+              </button>
+              <button
+                onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1))}
+                className='px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50'
+              >
+                <span className='hidden sm:inline'>{t('schedule.portal.next')}</span> →
+              </button>
+            </div>
+          </div>
+
+          {/* Day headers */}
+          <div className='hidden sm:grid grid-cols-7 gap-2 mb-2'>
+            {[t('schedule.portal.sun'), t('schedule.portal.mon'), t('schedule.portal.tue'), t('schedule.portal.wed'), t('schedule.portal.thu'), t('schedule.portal.fri'), t('schedule.portal.sat')].map(day => (
+              <div key={day} className='text-center font-semibold text-sm text-gray-600 py-2'>
+                {day}
+              </div>
+            ))}
+          </div>
+
+          {/* Mobile: Compact day headers */}
+          <div className='grid sm:hidden grid-cols-7 gap-1 mb-2'>
+            {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, idx) => (
+              <div key={idx} className='text-center font-semibold text-xs text-gray-600 py-1'>
+                {day}
+              </div>
+            ))}
+          </div>
+
+          {/* Calendar grid */}
+          <div className='grid grid-cols-7 gap-1 sm:gap-2'>
+            {calendarDays.map((date, idx) => {
+              const visitsOnDate = getVisitsForDate(date);
+              const isToday = date && new Date().toDateString() === date.toDateString();
+              return (
+                <div
+                  key={idx}
+                  className={`min-h-16 sm:min-h-24 p-1 sm:p-2 border rounded-lg ${
+                    date ? 'bg-white' : 'bg-gray-50'
+                  } ${isToday ? 'border-blue-500 bg-blue-50' : 'border-gray-200'}`}
+                >
+                  {date && (
+                    <>
+                      <div className={`text-xs sm:text-sm font-semibold mb-1 ${isToday ? 'text-blue-600' : 'text-gray-900'}`}>
+                        {date.getDate()}
+                      </div>
+                      <div className='space-y-1'>
+                        {visitsOnDate.slice(0, 2).map(visit => (
+                          <div
+                            key={visit.id}
+                            className='text-xs bg-amber-100 text-amber-800 px-1 py-0.5 rounded truncate cursor-pointer hover:bg-amber-200'
+                            title={`${visit.scheduledTime} - ${visit.assignedInspectorName}`}
+                            onClick={() => {
+                              setFilter('all');
+                              setViewMode('list');
+                            }}
+                          >
+                            <span className='hidden sm:inline'>{visit.scheduledTime}</span>
+                            <span className='sm:hidden'>•</span>
+                          </div>
+                        ))}
+                        {visitsOnDate.length > 2 && (
+                          <div className='text-xs text-gray-500 px-1'>
+                            +{visitsOnDate.length - 2} more
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
+      )}
 
-        {/* Day headers */}
-        <div className='grid grid-cols-7 gap-2 mb-2'>
-          {[t('schedule.portal.sun'), t('schedule.portal.mon'), t('schedule.portal.tue'), t('schedule.portal.wed'), t('schedule.portal.thu'), t('schedule.portal.fri'), t('schedule.portal.sat')].map(day => (
-            <div key={day} className='text-center font-semibold text-sm text-gray-600 py-2'>
-              {day}
-            </div>
-          ))}
-        </div>
-
-        {/* Calendar grid */}
-        <div className='grid grid-cols-7 gap-2'>
-          {calendarDays.map((date, idx) => {
-            const visitsOnDate = getVisitsForDate(date);
-            const isToday = date && new Date().toDateString() === date.toDateString();
-            return (
-              <div
-                key={idx}
-                className={`min-h-24 p-2 border rounded-lg ${
-                  date ? 'bg-white' : 'bg-gray-50'
-                } ${isToday ? 'border-blue-500 bg-blue-50' : 'border-gray-200'}`}
-              >
-                {date && (
-                  <>
-                    <div className={`text-sm font-semibold mb-1 ${isToday ? 'text-blue-600' : 'text-gray-900'}`}>
-                      {date.getDate()}
-                    </div>
-                    <div className='space-y-1'>
-                      {visitsOnDate.map(visit => (
-                        <div
-                          key={visit.id}
-                          className='text-xs bg-amber-100 text-amber-800 p-1 rounded truncate'
-                          title={`${visit.scheduledTime} - ${visit.assignedInspectorName}`}
-                        >
-                          {visit.scheduledTime}
-                        </div>
-                      ))}
-                    </div>
-                  </>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      <FilterTabs
-        tabs={filterTabs}
-        activeTab={filter}
-        onTabChange={value => setFilter(value as 'all' | 'upcoming' | 'past')}
-      />
+      {viewMode === 'list' && (
+        <>
+          <FilterTabs
+            tabs={filterTabs}
+            activeTab={filter}
+            onTabChange={value => setFilter(value as 'all' | 'upcoming' | 'past')}
+          />
 
       {sortedVisits.length === 0 ? (
         <div className='bg-white rounded-lg shadow p-12 text-center border border-slate-200'>
@@ -515,11 +588,13 @@ const ScheduledVisitsList: React.FC = () => {
                   <p className='text-sm text-gray-600'>{visit.status}</p>
                 </div>
                 <div className='flex items-center gap-2'>
-                  <div className='relative'>
+                  <div className='relative calendar-menu-container'>
                     <button
                       onClick={() => setOpenCalendarMenu(openCalendarMenu === visit.id ? null : visit.id)}
                       className='p-2 hover:bg-gray-100 rounded-lg transition-colors'
                       title='Add to calendar'
+                      aria-label='Add to calendar'
+                      aria-expanded={openCalendarMenu === visit.id}
                     >
                       <Calendar className='w-5 h-5 text-blue-600' />
                     </button>
@@ -625,6 +700,8 @@ const ScheduledVisitsList: React.FC = () => {
             </ListCard>
           ))}
         </div>
+      )}
+        </>
       )}
     </div>
   );

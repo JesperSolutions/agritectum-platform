@@ -6,28 +6,44 @@
 import { ScheduledVisit } from '../types';
 
 /**
- * Convert a date string (YYYY-MM-DD) and time string (HH:MM) to ISO 8601 format
+ * Parse scheduled date and time and convert to Date object
  */
-const toISODateTime = (dateStr: string, timeStr: string): string => {
-  return `${dateStr.replace(/-/g, '')}T${timeStr.replace(/:/g, '')}00`;
+const parseVisitDateTime = (dateStr: string, timeStr: string): Date => {
+  // dateStr format: "2025-10-02"
+  // timeStr format: "10:00"
+  const [hours, minutes] = timeStr.split(':').map(Number);
+  const date = new Date(dateStr);
+  date.setHours(hours, minutes, 0, 0);
+  return date;
+};
+
+/**
+ * Convert a Date object to iCal format (YYYYMMDDTHHMMSSZ for UTC)
+ */
+const toICalFormat = (date: Date): string => {
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(date.getUTCDate()).padStart(2, '0');
+  const hours = String(date.getUTCHours()).padStart(2, '0');
+  const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+  const seconds = String(date.getUTCSeconds()).padStart(2, '0');
+  return `${year}${month}${day}T${hours}${minutes}${seconds}Z`;
 };
 
 /**
  * Generate an iCal event string for a scheduled visit
  */
 export const generateICalEvent = (visit: ScheduledVisit): string => {
-  const startDateTime = toISODateTime(visit.scheduledDate, visit.scheduledTime);
-  const endDate = new Date(visit.scheduledDate);
-  endDate.setMinutes(endDate.getMinutes() + visit.duration);
-  const endDateTime = toISODateTime(
-    endDate.toISOString().split('T')[0],
-    `${String(endDate.getHours()).padStart(2, '0')}:${String(endDate.getMinutes()).padStart(2, '0')}`
-  );
+  const startDate = parseVisitDateTime(visit.scheduledDate, visit.scheduledTime);
+  const endDate = new Date(startDate.getTime() + visit.duration * 60 * 1000);
 
-  const uid = `${visit.id}@agritectum-platform`;
-  const dtstamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+  const startDateTime = toICalFormat(startDate);
+  const endDateTime = toICalFormat(endDate);
+
+  const uid = `${visit.id}@agritectum-platform.com`;
+  const dtstamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
   
-  // Escape special characters in text fields
+  // Escape special characters in text fields per RFC 5545
   const escape = (str: string): string => {
     return str
       .replace(/\\/g, '\\\\')
@@ -52,6 +68,7 @@ SUMMARY:${summary}
 DESCRIPTION:${description}
 LOCATION:${escape(visit.customerAddress)}
 STATUS:CONFIRMED
+SEQUENCE:0
 END:VEVENT`;
 };
 
@@ -89,12 +106,22 @@ export const downloadICalFile = (visit: ScheduledVisit): void => {
  * Generate a Google Calendar add URL
  */
 export const generateGoogleCalendarUrl = (visit: ScheduledVisit): string => {
-  const startDateTime = `${visit.scheduledDate.replace(/-/g, '')}T${visit.scheduledTime.replace(/:/g, '')}00`;
-  const endDate = new Date(visit.scheduledDate);
-  endDate.setMinutes(endDate.getMinutes() + visit.duration);
-  const endDateTime = `${endDate.toISOString().split('T')[0].replace(/-/g, '')}T${String(
-    endDate.getHours()
-  ).padStart(2, '0')}${String(endDate.getMinutes()).padStart(2, '0')}00`;
+  const startDate = parseVisitDateTime(visit.scheduledDate, visit.scheduledTime);
+  const endDate = new Date(startDate.getTime() + visit.duration * 60 * 1000);
+
+  // Google Calendar uses format: YYYYMMDDTHHMMSSZ for UTC times
+  const formatForGoogle = (date: Date): string => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    return `${year}${month}${day}T${hours}${minutes}${seconds}`;
+  };
+
+  const startDateTime = formatForGoogle(startDate);
+  const endDateTime = formatForGoogle(endDate);
 
   const title = `Inspection - ${visit.customerAddress}`;
   const description = `Inspector: ${visit.assignedInspectorName}\nDuration: ${visit.duration} minutes${
@@ -107,6 +134,7 @@ export const generateGoogleCalendarUrl = (visit: ScheduledVisit): string => {
     dates: `${startDateTime}/${endDateTime}`,
     details: description,
     location: visit.customerAddress,
+    trp: 'false', // Don't show timezone picker
   });
 
   return `https://calendar.google.com/calendar/render?${params.toString()}`;
@@ -124,9 +152,10 @@ export const addToGoogleCalendar = (visit: ScheduledVisit): void => {
  * Generate Microsoft Outlook add URL
  */
 export const generateOutlookCalendarUrl = (visit: ScheduledVisit): string => {
-  const startDateTime = new Date(`${visit.scheduledDate}T${visit.scheduledTime}`).toISOString();
-  const endDate = new Date(`${visit.scheduledDate}T${visit.scheduledTime}`);
-  endDate.setMinutes(endDate.getMinutes() + visit.duration);
+  const startDate = parseVisitDateTime(visit.scheduledDate, visit.scheduledTime);
+  const endDate = new Date(startDate.getTime() + visit.duration * 60 * 1000);
+
+  const startDateTime = startDate.toISOString();
   const endDateTime = endDate.toISOString();
 
   const title = `Inspection - ${visit.customerAddress}`;
@@ -142,9 +171,10 @@ export const generateOutlookCalendarUrl = (visit: ScheduledVisit): string => {
     subject: title,
     body: description,
     location: visit.customerAddress,
+    allday: 'false',
   });
 
-  return `https://outlook.live.com/calendar/0/compose?${params.toString()}`;
+  return `https://outlook.live.com/calendar/0/deeplink/compose?${params.toString()}`;
 };
 
 /**

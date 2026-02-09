@@ -6,7 +6,8 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useAuth } from './AuthContext';
 import { httpsCallable } from 'firebase/functions';
-import { functions } from '../config/firebase';
+import { doc, setDoc, getDoc, collection, addDoc, onSnapshot } from 'firebase/firestore';
+import { functions, db } from '../config/firebase';
 import { getCustomerBilling, getSubscriptionPlans } from '../services/paymentService';
 import {
   Subscription,
@@ -54,11 +55,12 @@ export const StripeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [error, setError] = useState<string | null>(null);
 
   const userId = currentUser?.uid ?? firebaseUser?.uid;
+  const stripeCustomerId = userId;
   const userEmail = currentUser?.email ?? firebaseUser?.email ?? '';
 
   // Fetch billing data
   const refreshBillingData = useCallback(async () => {
-    if (!userId) {
+    if (!stripeCustomerId) {
       setCurrentSubscription(null);
       setPaymentMethods([]);
       setInvoices([]);
@@ -69,7 +71,23 @@ export const StripeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       setLoading(true);
       setError(null);
 
-      const billing = await getCustomerBilling(userId);
+      // Ensure customer document exists (for existing users who signed up before this was implemented)
+      const customerDocRef = doc(db, 'customers', stripeCustomerId);
+      const customerDocSnap = await getDoc(customerDocRef);
+      
+      if (!customerDocSnap.exists()) {
+        // Create customer document if it doesn't exist
+        await setDoc(customerDocRef, {
+          uid: userId,
+          companyId: currentUser?.companyId ?? null,
+          email: userEmail,
+          isActive: true,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        }, { merge: true });
+      }
+
+      const billing = await getCustomerBilling(stripeCustomerId);
       setCurrentSubscription(billing.currentSubscription || null);
       setPaymentMethods(billing.paymentMethods);
       setInvoices(billing.invoiceHistory);
@@ -79,7 +97,7 @@ export const StripeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     } finally {
       setLoading(false);
     }
-  }, [userId]);
+  }, [stripeCustomerId, userEmail, userId, currentUser?.companyId]);
 
   // Fetch plans
   useEffect(() => {
@@ -114,29 +132,95 @@ export const StripeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
         logger.info('Starting checkout for plan:', planId);
 
-        // Call Cloud Function
-        const createCheckout = httpsCallable(functions, 'createSubscriptionCheckout');
-        const response = await createCheckout({
-          customerId: userId,
-          planId,
-          email: userEmail,
-          successUrl: `${window.location.origin}/portal/billing?success=true`,
-          cancelUrl: `${window.location.origin}/portal/billing?cancelled=true`,
-        });
+        const plan = plans.find((entry) => entry.id === planId);
+        let stripePriceId = plan?.stripePriceId;
 
-        const data = response.data as { sessionId?: string };
-        if (!data.sessionId) {
-          throw new Error('No session ID returned');
+        if (!stripePriceId) {
+          const planRef = doc(db, 'subscriptionPlans', planId);
+          const planSnap = await getDoc(planRef);
+          stripePriceId = planSnap.exists() ? (planSnap.data()?.stripePriceId as string) : '';
+
+          if (!stripePriceId) {
+            logger.error('Missing stripePriceId for plan', {
+              planId,
+              planFromState: plan || null,
+              planFromDb: planSnap.exists() ? planSnap.data() : null,
+            });
+            throw new Error('Plan has no Stripe price ID');
+          }
         }
 
-        logger.info('Checkout session created:', data.sessionId);
+        // Use Firestore Stripe Payments extension flow
+        if (!stripeCustomerId) {
+          throw new Error('User not authenticated');
+        }
 
-        // Redirect to Stripe Checkout
-        const stripeCheckoutUrl = `https://checkout.stripe.com/pay/${data.sessionId}`;
-        logger.info('Redirecting to:', stripeCheckoutUrl);
-        
-        // Open in new window for testing
-        window.open(stripeCheckoutUrl, '_blank');
+        const checkoutSessionsRef = collection(
+          db,
+          `customers/${stripeCustomerId}/checkout_sessions`
+        );
+
+        const checkoutDocRef = await addDoc(checkoutSessionsRef, {
+          price: stripePriceId,
+          success_url: `${window.location.origin}/portal/billing?success=true`,
+          cancel_url: `${window.location.origin}/portal/billing?cancelled=true`,
+          allow_promotion_codes: true,
+          metadata: {
+            customerId: stripeCustomerId,
+            companyId: currentUser?.companyId ?? '',
+            planId,
+          },
+        });
+
+        const checkoutUrl = await new Promise<string>((resolve, reject) => {
+          let unsubscribe = () => {};
+
+          const timeoutId = window.setTimeout(() => {
+            unsubscribe();
+            reject(new Error('Checkout session timed out'));
+          }, 30000);
+
+          unsubscribe = onSnapshot(
+            checkoutDocRef,
+            (snapshot) => {
+              const data = snapshot.data() as
+                | { url?: string; sessionId?: string; error?: { message?: string } }
+                | undefined;
+
+              if (!data) {
+                return;
+              }
+
+              if (data.error) {
+                window.clearTimeout(timeoutId);
+                unsubscribe();
+                reject(new Error(data.error.message || 'Failed to create checkout session'));
+                return;
+              }
+
+              if (data.url) {
+                window.clearTimeout(timeoutId);
+                unsubscribe();
+                resolve(data.url);
+                return;
+              }
+
+              if (data.sessionId) {
+                window.clearTimeout(timeoutId);
+                unsubscribe();
+                resolve(`https://checkout.stripe.com/pay/${data.sessionId}`);
+              }
+            },
+            (error) => {
+              window.clearTimeout(timeoutId);
+              unsubscribe();
+              reject(error);
+            }
+          );
+        });
+
+        logger.info('Checkout session created:', checkoutUrl);
+        window.open(checkoutUrl, '_blank');
       } catch (err) {
         console.error('Error selecting plan:', err);
         setError(err instanceof Error ? err.message : 'Failed to start checkout');
@@ -145,7 +229,7 @@ export const StripeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setLoading(false);
       }
     },
-    [userEmail, userId]
+    [stripeCustomerId, userEmail, currentUser?.companyId, plans]
   );
 
   const upgradePlan = useCallback(

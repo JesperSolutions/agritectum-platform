@@ -80,8 +80,7 @@ export async function getCustomerSubscription(
 ): Promise<Subscription | null> {
   try {
     const q = query(
-      collection(db, 'subscriptions'),
-      where('customerId', '==', customerId),
+      collection(db, `customers/${customerId}/subscriptions`),
       where('status', '==', 'active'),
       limit(1)
     );
@@ -105,8 +104,7 @@ export async function getCustomerSubscriptionHistory(
 ): Promise<Subscription[]> {
   try {
     const q = query(
-      collection(db, 'subscriptions'),
-      where('customerId', '==', customerId),
+      collection(db, `customers/${customerId}/subscriptions`),
       orderBy('createdAt', 'desc')
     );
     const snapshot = await getDocs(q);
@@ -165,7 +163,7 @@ export async function createSubscription(
       },
     };
 
-    const docRef = await addDoc(collection(db, 'subscriptions'), subscription);
+    const docRef = await addDoc(collection(db, `customers/${customerId}/subscriptions`), subscription);
     return docRef.id;
   } catch (error) {
     console.error('Error creating subscription:', error);
@@ -177,11 +175,12 @@ export async function createSubscription(
  * Cancel a subscription
  */
 export async function cancelSubscription(
+  customerId: string,
   subscriptionId: string,
   reason?: string
 ): Promise<void> {
   try {
-    await updateDoc(doc(db, 'subscriptions', subscriptionId), {
+    await updateDoc(doc(db, `customers/${customerId}/subscriptions`, subscriptionId), {
       status: 'canceled',
       canceledAt: new Date().toISOString(),
       cancelReason: reason || 'User initiated',
@@ -199,8 +198,7 @@ export async function cancelSubscription(
 export async function getCustomerInvoices(customerId: string): Promise<Invoice[]> {
   try {
     const q = query(
-      collection(db, 'invoices'),
-      where('customerId', '==', customerId),
+      collection(db, `customers/${customerId}/invoices`),
       orderBy('invoiceDate', 'desc')
     );
     const snapshot = await getDocs(q);
@@ -217,9 +215,12 @@ export async function getCustomerInvoices(customerId: string): Promise<Invoice[]
 /**
  * Store a new invoice
  */
-export async function storeInvoice(invoiceData: Omit<Invoice, 'id'>): Promise<string> {
+export async function storeInvoice(
+  customerId: string,
+  invoiceData: Omit<Invoice, 'id'>
+): Promise<string> {
   try {
-    const docRef = await addDoc(collection(db, 'invoices'), {
+    const docRef = await addDoc(collection(db, `customers/${customerId}/invoices`), {
       ...invoiceData,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -237,8 +238,7 @@ export async function storeInvoice(invoiceData: Omit<Invoice, 'id'>): Promise<st
 export async function getPaymentMethods(customerId: string): Promise<PaymentMethod[]> {
   try {
     const q = query(
-      collection(db, 'paymentMethods'),
-      where('customerId', '==', customerId),
+      collection(db, `customers/${customerId}/paymentMethods`),
       orderBy('createdAt', 'desc')
     );
     const snapshot = await getDocs(q);
@@ -267,7 +267,7 @@ export async function savePaymentMethod(
       const existing = await getPaymentMethods(customerId);
       for (const method of existing) {
         if (method.isDefault) {
-          await updateDoc(doc(db, 'paymentMethods', method.id), {
+          await updateDoc(doc(db, `customers/${customerId}/paymentMethods`, method.id), {
             isDefault: false,
           });
         }
@@ -295,7 +295,7 @@ export async function savePaymentMethod(
       pmData.bankAccountLast4 = paymentMethod.us_bank_account.last4;
     }
 
-    const docRef = await addDoc(collection(db, 'paymentMethods'), pmData);
+    const docRef = await addDoc(collection(db, `customers/${customerId}/paymentMethods`), pmData);
     return docRef.id;
   } catch (error) {
     console.error('Error saving payment method:', error);
@@ -306,9 +306,12 @@ export async function savePaymentMethod(
 /**
  * Delete a payment method
  */
-export async function deletePaymentMethod(paymentMethodId: string): Promise<void> {
+export async function deletePaymentMethod(
+  customerId: string,
+  paymentMethodId: string
+): Promise<void> {
   try {
-    await deleteDoc(doc(db, 'paymentMethods', paymentMethodId));
+    await deleteDoc(doc(db, `customers/${customerId}/paymentMethods`, paymentMethodId));
   } catch (error) {
     console.error('Error deleting payment method:', error);
     throw error;
@@ -318,11 +321,12 @@ export async function deletePaymentMethod(paymentMethodId: string): Promise<void
 /**
  * Get or create billing contact
  */
-export async function getBillingContact(customerId: string): Promise<BillingContact | null> {
+export async function getBillingContact(
+  customerId: string
+): Promise<BillingContact | null> {
   try {
     const q = query(
-      collection(db, 'billingContacts'),
-      where('customerId', '==', customerId),
+      collection(db, `customers/${customerId}/billingContacts`),
       where('isPrimary', '==', true),
       limit(1)
     );
@@ -358,10 +362,10 @@ export async function saveBillingContact(
     };
 
     if (existing) {
-      await updateDoc(doc(db, 'billingContacts', existing.id), contactData);
+      await updateDoc(doc(db, `customers/${customerId}/billingContacts`, existing.id), contactData);
       return existing.id;
     } else {
-      const docRef = await addDoc(collection(db, 'billingContacts'), contactData);
+      const docRef = await addDoc(collection(db, `customers/${customerId}/billingContacts`), contactData);
       return docRef.id;
     }
   } catch (error) {

@@ -7,12 +7,12 @@
  */
 
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
+import { defineSecret } from 'firebase-functions/params';
 import * as admin from 'firebase-admin';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2023-10-16',
-});
+// Define the secret parameter
+const stripeSecretKey = defineSecret('STRIPE_SECRET_KEY');
 
 const db = admin.firestore();
 
@@ -21,7 +21,13 @@ const db = admin.firestore();
 // ============================================
 
 export const createSubscriptionCheckout = onCall(
+  { secrets: [stripeSecretKey] },
   async (request) => {
+    // Initialize Stripe with the secret
+    const stripe = new Stripe(stripeSecretKey.value(), {
+      apiVersion: '2023-10-16',
+    });
+
     // Verify authentication
     if (!request.auth) {
       throw new HttpsError('unauthenticated', 'User must be authenticated');
@@ -29,9 +35,13 @@ export const createSubscriptionCheckout = onCall(
 
     const { customerId, planId, email, successUrl, cancelUrl } = request.data;
 
-    // Verify user owns customerId
+    // Verify user owns customerId (uid or companyId)
     if (request.auth.uid !== customerId) {
-      throw new HttpsError('permission-denied', 'Cannot create checkout for other users');
+      const userDoc = await db.collection('users').doc(request.auth.uid).get();
+      const userCompanyId = userDoc.exists ? userDoc.data()?.companyId : null;
+      if (userCompanyId !== customerId) {
+        throw new HttpsError('permission-denied', 'Cannot create checkout for other users');
+      }
     }
 
     try {
@@ -106,7 +116,13 @@ export const createSubscriptionCheckout = onCall(
 // ============================================
 
 export const updateSubscription = onCall(
+  { secrets: [stripeSecretKey] },
   async (request) => {
+    // Initialize Stripe with the secret
+    const stripe = new Stripe(stripeSecretKey.value(), {
+      apiVersion: '2023-10-16',
+    });
+
     if (!request.auth) {
       throw new HttpsError('unauthenticated', 'User must be authenticated');
     }
@@ -121,7 +137,13 @@ export const updateSubscription = onCall(
       }
 
       const subscription = subDoc.data();
-      if (!subscription || subscription.customerId !== request.auth.uid) {
+      if (!subscription) {
+        throw new HttpsError('not-found', 'Subscription data not found');
+      }
+      
+      const userDoc = await db.collection('users').doc(request.auth.uid).get();
+      const userCompanyId = userDoc.exists ? userDoc.data()?.companyId : null;
+      if (subscription.customerId !== request.auth.uid && subscription.customerId !== userCompanyId) {
         throw new HttpsError('permission-denied', 'Cannot update other users subscriptions');
       }
 
@@ -166,7 +188,13 @@ export const updateSubscription = onCall(
 // ============================================
 
 export const cancelSubscription = onCall(
+  { secrets: [stripeSecretKey] },
   async (request) => {
+    // Initialize Stripe with the secret
+    const stripe = new Stripe(stripeSecretKey.value(), {
+      apiVersion: '2023-10-16',
+    });
+
     if (!request.auth) {
       throw new HttpsError('unauthenticated', 'User must be authenticated');
     }
@@ -181,7 +209,13 @@ export const cancelSubscription = onCall(
       }
 
       const subscription = subDoc.data();
-      if (!subscription || subscription.customerId !== request.auth.uid) {
+      if (!subscription) {
+        throw new HttpsError('not-found', 'Subscription data not found');
+      }
+      
+      const userDoc = await db.collection('users').doc(request.auth.uid).get();
+      const userCompanyId = userDoc.exists ? userDoc.data()?.companyId : null;
+      if (subscription.customerId !== request.auth.uid && subscription.customerId !== userCompanyId) {
         throw new HttpsError('permission-denied', 'Cannot cancel other users subscriptions');
       }
 
@@ -213,37 +247,44 @@ export const cancelSubscription = onCall(
 
 import { onRequest } from 'firebase-functions/v2/https';
 
-export const stripeWebhook = onRequest(async (req, res) => {
-  const sig = req.headers['stripe-signature'] as string;
-  let event: Stripe.Event;
+export const stripeWebhook = onRequest(
+  { secrets: [stripeSecretKey] },
+  async (req, res) => {
+    // Initialize Stripe with the secret
+    const stripe = new Stripe(stripeSecretKey.value(), {
+      apiVersion: '2023-10-16',
+    });
 
-  try {
-    event = stripe.webhooks.constructEvent(
-      req.rawBody || req.body,
-      sig,
-      process.env.STRIPE_WEBHOOK_SECRET || ''
-    );
-  } catch (error) {
-    console.error('Webhook signature verification failed:', error);
-    res.status(400).send('Webhook Error: Invalid signature');
-    return;
-  }
+    const sig = req.headers['stripe-signature'] as string;
+    let event: Stripe.Event;
 
-  try {
-    // Handle subscription events
-    if (event.type === 'customer.subscription.created') {
-      await handleSubscriptionCreated(event.data.object as Stripe.Subscription);
-    } else if (event.type === 'customer.subscription.updated') {
-      await handleSubscriptionUpdated(event.data.object as Stripe.Subscription);
+    try {
+      event = stripe.webhooks.constructEvent(
+        req.rawBody || req.body,
+        sig,
+        process.env.STRIPE_WEBHOOK_SECRET || ''
+      );
+    } catch (error) {
+      console.error('Webhook signature verification failed:', error);
+      res.status(400).send('Webhook Error: Invalid signature');
+      return;
+    }
+
+    try {
+      // Handle subscription events
+      if (event.type === 'customer.subscription.created') {
+        await handleSubscriptionCreated(event.data.object as Stripe.Subscription, stripe);
+      } else if (event.type === 'customer.subscription.updated') {
+      await handleSubscriptionUpdated(event.data.object as Stripe.Subscription, stripe);
     } else if (event.type === 'customer.subscription.deleted') {
-      await handleSubscriptionDeleted(event.data.object as Stripe.Subscription);
+      await handleSubscriptionDeleted(event.data.object as Stripe.Subscription, stripe);
     }
 
     // Handle payment events
     else if (event.type === 'invoice.payment_succeeded') {
-      await handleInvoicePaymentSucceeded(event.data.object as Stripe.Invoice);
+      await handleInvoicePaymentSucceeded(event.data.object as Stripe.Invoice, stripe);
     } else if (event.type === 'invoice.payment_failed') {
-      await handleInvoicePaymentFailed(event.data.object as Stripe.Invoice);
+      await handleInvoicePaymentFailed(event.data.object as Stripe.Invoice, stripe);
     }
 
     res.json({ received: true });
@@ -251,13 +292,14 @@ export const stripeWebhook = onRequest(async (req, res) => {
     console.error('Error processing webhook:', error);
     res.status(500).send('Internal Server Error');
   }
-});
+  }
+);
 
 // ============================================
 // WEBHOOK HANDLERS
 // ============================================
 
-async function handleSubscriptionCreated(stripeSubscription: Stripe.Subscription) {
+async function handleSubscriptionCreated(stripeSubscription: Stripe.Subscription, stripe: Stripe) {
   console.log('Subscription created:', stripeSubscription.id);
 
   // Get customer UID from Stripe metadata
@@ -303,7 +345,7 @@ async function handleSubscriptionCreated(stripeSubscription: Stripe.Subscription
   });
 }
 
-async function handleSubscriptionUpdated(stripeSubscription: Stripe.Subscription) {
+async function handleSubscriptionUpdated(stripeSubscription: Stripe.Subscription, stripe: Stripe) {
   console.log('Subscription updated:', stripeSubscription.id);
 
   // Find subscription in Firestore
@@ -335,7 +377,7 @@ async function handleSubscriptionUpdated(stripeSubscription: Stripe.Subscription
   });
 }
 
-async function handleSubscriptionDeleted(stripeSubscription: Stripe.Subscription) {
+async function handleSubscriptionDeleted(stripeSubscription: Stripe.Subscription, stripe: Stripe) {
   console.log('Subscription deleted:', stripeSubscription.id);
 
   // Find subscription in Firestore
@@ -359,7 +401,7 @@ async function handleSubscriptionDeleted(stripeSubscription: Stripe.Subscription
   });
 }
 
-async function handleInvoicePaymentSucceeded(stripeInvoice: Stripe.Invoice) {
+async function handleInvoicePaymentSucceeded(stripeInvoice: Stripe.Invoice, stripe: Stripe) {
   console.log('Invoice payment succeeded:', stripeInvoice.id);
 
   // Store invoice in Firestore
@@ -395,7 +437,7 @@ async function handleInvoicePaymentSucceeded(stripeInvoice: Stripe.Invoice) {
   });
 }
 
-async function handleInvoicePaymentFailed(stripeInvoice: Stripe.Invoice) {
+async function handleInvoicePaymentFailed(stripeInvoice: Stripe.Invoice, stripe: Stripe) {
   console.log('Invoice payment failed:', stripeInvoice.id);
 
   // Update subscription status to past_due

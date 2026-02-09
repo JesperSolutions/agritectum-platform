@@ -10,6 +10,9 @@ import AgritectumLogo from '../AgritectumLogo';
 import { NotificationBell } from '../notifications/NotificationBell';
 import { StripeProvider } from '../../contexts/StripeContext';
 import GDPRConsentFlow from '../legal/GDPRConsentFlow';
+import FloatingActionButton from './FloatingActionButton';
+import MobileBottomNav from './MobileBottomNav';
+import BuildingSwitcher from './BuildingSwitcher';
 
 const PortalLayout: React.FC = () => {
   const { currentUser, logout } = useAuth();
@@ -233,12 +236,18 @@ const PortalLayout: React.FC = () => {
 
           {/* Desktop header */}
           <header className='hidden lg:block bg-white shadow-sm border-b border-slate-200'>
-            <div className='flex items-center justify-end px-6 h-16'>
+            <div className='flex items-center justify-between px-6 h-16'>
+              {/* Building switcher on left when viewing building details */}
+              <div className='flex-1'>
+                <BuildingSwitcher />
+              </div>
+              
+              {/* Notification bell on right */}
               <NotificationBell />
             </div>
           </header>
 
-          <main id='main-content' className='flex-1' role='main'>
+          <main id='main-content' className='flex-1 pb-20 lg:pb-0' role='main'>
             <div className='py-6'>
               <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
                 {/* Breadcrumb Navigation */}
@@ -253,6 +262,12 @@ const PortalLayout: React.FC = () => {
           </main>
         </div>
       </div>
+
+      {/* Floating Action Button for quick access */}
+      <FloatingActionButton />
+
+      {/* Mobile Bottom Navigation */}
+      <MobileBottomNav onMenuClick={() => setIsMobileMenuOpen(true)} />
 
       {/* GDPR Consent Flow */}
       <GDPRConsentFlow />
