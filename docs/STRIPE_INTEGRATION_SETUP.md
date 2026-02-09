@@ -49,11 +49,13 @@ This guide walks through implementing Stripe payments for the Agritectum Portal 
 
 Check `.env` file:
 ```bash
-VITE_STRIPE_PUBLISHABLE_KEY=pk_test_51SdUOAEO88msuT49FW4vSA2b7dv7psP9EfdrdmC3JCg2mQHUf32IAanBfh2AnSysA0BiC0f2QYKqK1xhKAh2GnZz0072iDkpS8
-STRIPE_SECRET_KEY=sk_test_51SdUOAEO88msuT49dCYNistHclBWQ8SrPf5SHmI8wLJtNbQqoK4uAAm23LOcfld5IbtmpzZFkojAyGuzBfP3XNMH00WbeEmvmQ
+VITE_STRIPE_PUBLISHABLE_KEY=pk_test_[your_publishable_key]
+STRIPE_SECRET_KEY=sk_test_[your_secret_key]
 ```
 
 ✅ Already configured in `.env`
+
+⚠️ **NOTE:** Use your actual Stripe API keys from your Stripe Dashboard. Never commit real secret keys to version control.
 
 ### 3. **Create Stripe Products & Prices**
 
