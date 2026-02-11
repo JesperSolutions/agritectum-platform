@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { X, Camera, Loader2 } from 'lucide-react';
 import { useIntl } from '../hooks/useIntl';
+import { useToast } from '../contexts/ToastContext';
+import { logger } from '../utils/logger';
 import { MapMarker } from '../types';
 import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -25,6 +27,7 @@ const InteractiveRoofMap: React.FC<InteractiveRoofMapProps> = ({
   onMarkersChange,
 }) => {
   const { t } = useIntl();
+  const { showError } = useToast();
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
   const tileLayerRef = useRef<any>(null);
@@ -422,8 +425,8 @@ const InteractiveRoofMap: React.FC<InteractiveRoofMapProps> = ({
       const dataUrl = canvas.toDataURL('image/png');
       onImageCapture(dataUrl);
     } catch (error) {
-      console.error('Error capturing map:', error);
-      alert('Failed to capture map image');
+      logger.error('Error capturing map:', error);
+      showError('Failed to capture map image');
     } finally {
       setIsCapturing(false);
     }

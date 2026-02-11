@@ -5,6 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useToast } from '../../contexts/ToastContext';
 import { Building, BuildingComparison } from '../../types';
 import { getBuildingsByCustomer } from '../../services/buildingService';
 import { compareBuildings } from '../../services/portfolioService';
@@ -15,6 +16,7 @@ import { Bar } from 'react-chartjs-2';
 
 const BuildingComparisonTool: React.FC = () => {
   const { currentUser } = useAuth();
+  const { showWarning, showError } = useToast();
   const [buildings, setBuildings] = useState<Building[]>([]);
   const [selectedBuildings, setSelectedBuildings] = useState<string[]>([]);
   const [comparisons, setComparisons] = useState<BuildingComparison[]>([]);
@@ -56,7 +58,7 @@ const BuildingComparisonTool: React.FC = () => {
 
   const handleCompare = async () => {
     if (selectedBuildings.length < 2) {
-      alert('Please select at least 2 buildings to compare');
+      showWarning('Please select at least 2 buildings to compare');
       return;
     }
 
@@ -66,7 +68,7 @@ const BuildingComparisonTool: React.FC = () => {
       setComparisons(results);
     } catch (error) {
       logger.error('Error comparing buildings:', error);
-      alert('Failed to compare buildings');
+      showError('Failed to compare buildings');
     } finally {
       setComparing(false);
     }

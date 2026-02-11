@@ -111,7 +111,7 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
         t('serviceAgreement.detail.sentPortal') || 'Service agreement sent to customer portal successfully'
       );
     } catch (error) {
-      console.error('Error sending service agreement:', error);
+      logger.error('Error sending service agreement:', error);
       showError(t('serviceAgreement.detail.sendError') || 'Failed to send service agreement');
     } finally {
       setSending(false);

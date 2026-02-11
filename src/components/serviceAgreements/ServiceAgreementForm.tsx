@@ -116,7 +116,7 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
         setCustomerError('noCustomers');
       }
     } catch (error) {
-      console.error('Error fetching customers:', error);
+      logger.error('Error fetching customers:', error);
       setCustomerError('fetchError');
     } finally {
       setLoadingCustomers(false);
@@ -149,7 +149,7 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
             }
           })
           .catch(error => {
-            console.error('Error fetching customer for agreement:', error);
+            logger.error('Error fetching customer for agreement:', error);
           });
       }
 
@@ -296,7 +296,7 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
         },
       });
     } catch (error) {
-      console.error(`Error uploading ${type} signature:`, error);
+      logger.error(`Error uploading ${type} signature:`, error);
       showError(t('common.errorOccurred') || 'Failed to upload signature image');
     } finally {
       setUploadingSignature(prev => ({ ...prev, [type]: false }));
@@ -426,7 +426,7 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
 
       onSuccess();
     } catch (error) {
-      console.error('Error saving service agreement:', error);
+      logger.error('Error saving service agreement:', error);
       showError(t('common.errorOccurred'));
     } finally {
       setLoading(false);

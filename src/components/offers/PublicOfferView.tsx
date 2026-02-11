@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getOffer, respondToOfferPublic } from '../../services/offerService';
+import { useToast } from '../../contexts/ToastContext';
 import { Offer } from '../../types';
 import { CheckCircle, XCircle, Clock, AlertCircle } from 'lucide-react';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
-import { logOfferEvent } from '../../utils/logger';
+import { logOfferEvent, logger } from '../../utils/logger';
 import { useIntl } from '../../hooks/useIntl';
 
 const PublicOfferView: React.FC = () => {
   const { offerId } = useParams<{ offerId: string }>();
   const navigate = useNavigate();
   const { t } = useIntl();
+  const { showError } = useToast();
   const [offer, setOffer] = useState<Offer | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -72,7 +74,7 @@ const PublicOfferView: React.FC = () => {
         if (fetchedOffer?.id) logOfferEvent({ type: 'offer_view', offerId: fetchedOffer.id });
       } catch {}
     } catch (err) {
-      console.error('Error loading offer:', err);
+      logger.error('Error loading offer:', err);
       setError('Failed to load offer');
     } finally {
       setLoading(false);
@@ -126,10 +128,10 @@ const PublicOfferView: React.FC = () => {
         });
       }, 1000);
     } catch (err) {
-      console.error('Error accepting offer:', err);
+      logger.error('Error accepting offer:', err);
       // Revert optimistic update on error
       setOffer(prev => (prev ? { ...prev, status: 'pending' as const } : null));
-      alert('Failed to accept offer. Please try again or contact us.');
+      showError('Failed to accept offer. Please try again or contact us.');
     } finally {
       setProcessing(false);
     }
@@ -163,10 +165,10 @@ const PublicOfferView: React.FC = () => {
         });
       }, 1000);
     } catch (err) {
-      console.error('Error rejecting offer:', err);
+      logger.error('Error rejecting offer:', err);
       // Revert optimistic update on error
       setOffer(prev => (prev ? { ...prev, status: 'pending' as const } : null));
-      alert('Failed to submit rejection. Please try again or contact us.');
+      showError('Failed to submit rejection. Please try again or contact us.');
     } finally {
       setProcessing(false);
       setShowRejectDialog(false);

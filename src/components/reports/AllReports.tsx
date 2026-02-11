@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useReports } from '../../contexts/ReportContextSimple';
 import { useIntl } from '../../hooks/useIntl';
+import { useToast } from '../../contexts/ToastContext';
 import { useFilterPersistence } from '../../hooks/usePageState';
 import { cleanupTempReports } from '../../utils/cleanupDraftReports';
 import { debugUserAccount, findLinusHollberg } from '../../utils/debugUserAccount';
@@ -38,6 +39,7 @@ const AllReports: React.FC<AllReportsProps> = () => {
   const { currentUser } = useAuth();
   const { reports, loading, error, fetchReports, deleteReport } = useReports();
   const { t, formatCurrency } = useIntl();
+  const { showSuccess, showError } = useToast();
 
   // Fallback for currency formatting
   const formatCurrencySafe = (value: number) => {
@@ -282,9 +284,9 @@ const AllReports: React.FC<AllReportsProps> = () => {
         // Refresh the reports list
         await fetchReports();
       } catch (error) {
-        console.error('Error deleting report:', error);
+        logger.error('Error deleting report:', error);
         const message = (error as any)?.message || 'Failed to delete report. Please try again.';
-        alert(`Failed to delete report: ${message}`);
+        showError(`Failed to delete report: ${message}`);
       } finally {
         setIsDeleting(false);
       }
@@ -322,7 +324,7 @@ const AllReports: React.FC<AllReportsProps> = () => {
         try {
           await deleteReport(report.id, report.branchId);
         } catch (error) {
-          console.error(`Error deleting report ${report.id}:`, error);
+          logger.error(`Error deleting report ${report.id}:`, error);
           // Continue with other deletions even if one fails
         }
       }
@@ -334,10 +336,10 @@ const AllReports: React.FC<AllReportsProps> = () => {
       await fetchReports();
 
       // Show success message
-      alert(`Successfully deleted ${selectedReportsData.length} report(s)`);
+      showSuccess(`Successfully deleted ${selectedReportsData.length} report(s)`);
     } catch (error) {
-      console.error('Bulk delete error:', error);
-      alert('Some reports could not be deleted. Please try again.');
+      logger.error('Bulk delete error:', error);
+      showError('Some reports could not be deleted. Please try again.');
     } finally {
       setIsBulkDeleting(false);
       setShowBulkDeleteDialog(false);

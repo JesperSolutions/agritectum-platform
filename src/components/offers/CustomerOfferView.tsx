@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useToast } from '../../contexts/ToastContext';
+import { useIntl } from '../../hooks/useIntl';
+import { logger } from '../../utils/logger';
 import { Offer } from '../../types';
 import { getOffer, acceptOffer, rejectOffer } from '../../services/offerService';
 import OfferStatusBadge from './OfferStatusBadge';
@@ -13,6 +16,8 @@ import { Button } from '../ui/button';
 const CustomerOfferView: React.FC = () => {
   const { offerId } = useParams<{ offerId: string }>();
   const navigate = useNavigate();
+  const { showSuccess, showError, showWarning } = useToast();
+  const { t } = useIntl();
   const [offer, setOffer] = useState<Offer | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -35,7 +40,7 @@ const CustomerOfferView: React.FC = () => {
       const fetchedOffer = await getOffer(offerId);
       setOffer(fetchedOffer);
     } catch (err) {
-      console.error('Error loading offer:', err);
+      logger.error('Error loading offer:', err);
       setError('Failed to load offer');
     } finally {
       setLoading(false);
@@ -53,10 +58,10 @@ const CustomerOfferView: React.FC = () => {
       setActionLoading(true);
       await acceptOffer(offerId);
       await loadOffer();
-      alert('Offer accepted! We will contact you shortly.');
+      showSuccess('Offer accepted! We will contact you shortly.');
     } catch (err) {
-      console.error('Error accepting offer:', err);
-      alert('Failed to accept offer. Please try again.');
+      logger.error('Error accepting offer:', err);
+      showError('Failed to accept offer. Please try again.');
     } finally {
       setActionLoading(false);
     }
@@ -66,7 +71,7 @@ const CustomerOfferView: React.FC = () => {
     if (!offerId) return;
 
     if (!rejectReason.trim()) {
-      alert(t('offers.rejectionReasonRequired'));
+      showWarning(t('offers.rejectionReasonRequired'));
       return;
     }
 
@@ -80,10 +85,10 @@ const CustomerOfferView: React.FC = () => {
       await loadOffer();
       setShowRejectForm(false);
       setRejectReason('');
-      alert('Offer rejected. Thank you for your feedback.');
+      showSuccess('Offer rejected. Thank you for your feedback.');
     } catch (err) {
-      console.error('Error rejecting offer:', err);
-      alert('Failed to reject offer. Please try again.');
+      logger.error('Error rejecting offer:', err);
+      showError('Failed to reject offer. Please try again.');
     } finally {
       setActionLoading(false);
     }

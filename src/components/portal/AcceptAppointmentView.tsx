@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useIntl } from '../../hooks/useIntl';
+import { useToast } from '../../contexts/ToastContext';
 import { logger } from '../../utils/logger';
 import {
   getScheduledVisit,
@@ -23,6 +24,7 @@ const AcceptAppointmentView: React.FC = () => {
   const token = searchParams.get('token');
   const navigate = useNavigate();
   const { t } = useIntl();
+  const { showSuccess, showError } = useToast();
 
   const [visit, setVisit] = useState<ScheduledVisit | null>(null);
   const [loading, setLoading] = useState(true);
@@ -88,14 +90,14 @@ const AcceptAppointmentView: React.FC = () => {
       setProcessing(true);
       await acceptScheduledVisit(visitId);
       await loadVisit();
-      alert(
+      showSuccess(
         t('schedule.visits.acceptedSuccess') ||
           'Appointment accepted! You will receive a reminder the day before.'
       );
       navigate('/portal/scheduled-visits');
     } catch (err: any) {
       logger.error('Error accepting appointment:', err);
-      alert(
+      showError(
         err.message ||
           t('schedule.visits.acceptError') ||
           'Failed to accept appointment. Please try again.'
@@ -121,14 +123,14 @@ const AcceptAppointmentView: React.FC = () => {
         setProcessing(true);
         await rejectScheduledVisit(visitId, rejectReason.trim() || undefined);
         await loadVisit();
-        alert(
+        showSuccess(
           t('schedule.visits.rejectedSuccess') ||
             'Appointment rejected. Thank you for your feedback.'
         );
         navigate('/portal/scheduled-visits');
       } catch (err: any) {
         logger.error('Error rejecting appointment:', err);
-        alert(
+        showError(
           err.message ||
             t('schedule.visits.rejectError') ||
             'Failed to reject appointment. Please try again.'

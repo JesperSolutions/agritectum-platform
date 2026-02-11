@@ -75,7 +75,7 @@ const SchedulePage: React.FC = () => {
       logger.log('📅 Appointments loaded:', data.length, 'appointments');
       setAppointments(data);
     } catch (err: any) {
-      console.error('📅 Error loading appointments:', err);
+      logger.error('Error loading appointments:', err);
       setError(err.message || t('schedule.errorMessage'));
     } finally {
       setLoading(false);
@@ -146,7 +146,7 @@ const SchedulePage: React.FC = () => {
           await appointmentService.startAppointment(appointment.id);
           logger.log('✅ Appointment marked as in_progress');
         } catch (err: any) {
-          console.error('⚠️ Failed to update appointment status:', err);
+          logger.error('Error updating appointment status:', err);
           // Continue anyway - the navigation should still work
         }
       }
@@ -162,13 +162,13 @@ const SchedulePage: React.FC = () => {
         },
       });
     } catch (err: any) {
-      console.error('❌ Start Inspection Error:', {
+      logger.error('Start Inspection Error:', {
         error: err,
         message: err.message,
         stack: err.stack,
         appointmentId: appointment.id,
       });
-      alert(err.message || t('schedule.errorMessage') || 'Failed to start appointment');
+      showError(err.message || t('schedule.errorMessage') || 'Failed to start appointment');
     }
   };
 
@@ -182,7 +182,7 @@ const SchedulePage: React.FC = () => {
           const inspectorsList = branchUsers.filter(u => u.role === 'inspector' && u.isActive);
           setInspectors(inspectorsList);
         } catch (error) {
-          console.error('Error loading inspectors:', error);
+          logger.error('Error loading inspectors:', error);
         }
       };
       loadInspectors();
@@ -202,7 +202,7 @@ const SchedulePage: React.FC = () => {
           if (filters.hideCompleted !== undefined) setHideCompleted(filters.hideCompleted);
           if (filters.hideOld !== undefined) setHideOld(filters.hideOld);
         } catch (e) {
-          console.error('Error loading saved filters:', e);
+          logger.error('Error loading saved filters:', e);
         }
       }
     }

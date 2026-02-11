@@ -187,7 +187,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
 
       return state;
     } catch (error) {
-      console.error('❌ ReportForm - Error reading navigation state:', error);
+      logger.error('ReportForm - Error reading navigation state:', error);
       return null;
     }
   }, [location.state]);
@@ -236,7 +236,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
             }));
           }
         } catch (error) {
-          console.error('Error loading customer data:', error);
+          logger.error('Error loading customer data:', error);
           // Fall back to URL params if customer load fails
         } finally {
           setLoadingCustomerData(false);
@@ -286,7 +286,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
         overheadCost: undefined,
       };
     } catch (error) {
-      console.error('❌ ReportForm - Error initializing form data:', error);
+      logger.error('ReportForm - Error initializing form data:', error);
       // Return safe defaults
       return {
         customerName: '',
@@ -421,7 +421,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
 
   // Log addressCoordinates changes for debugging
   useEffect(() => {
-    console.log('[ReportForm] addressCoordinates updated:', addressCoordinates);
+    logger.debug('[ReportForm] addressCoordinates updated:', addressCoordinates);
   }, [addressCoordinates]);
 
   // Consolidated Auto-save functionality
@@ -537,7 +537,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
           }
         }
       } catch (error) {
-        console.error('Error checking for existing customer:', error);
+        logger.error('Error checking for existing customer:', error);
       }
     },
     [currentUser, mode]
@@ -570,7 +570,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
           // If there's only one building and no building is selected, auto-select it
           if (buildings.length === 1 && !selectedBuildingId) {
             const building = buildings[0];
-            console.log('[ReportForm] Auto-selecting single building:', building.id);
+            logger.debug('[ReportForm] Auto-selecting single building:', building.id);
             setSelectedBuildingId(building.id);
             setFormData(prev => ({
               ...prev,
@@ -582,7 +582,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
 
             // Geocode building address for map measurer with fallback logic
             if (building.address) {
-              console.log('[ReportForm] Auto-geocoding building address:', building.address);
+              logger.debug('[ReportForm] Auto-geocoding building address:', building.address);
               try {
                 // Try multiple versions of the address for better geocoding success
                 const addressVariants = [
@@ -595,7 +595,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                 for (const variant of addressVariants) {
                   if (geocoded) break;
                   
-                  console.log('[ReportForm] Trying geocoding with variant:', variant);
+                  logger.debug('[ReportForm] Trying geocoding with variant:', variant);
                   const query = encodeURIComponent(variant);
                   const url = `https://nominatim.openstreetmap.org/search?format=json&q=${query}&addressdetails=1&limit=1`;
                   
@@ -608,28 +608,28 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                           lat: parseFloat(data[0].lat),
                           lon: parseFloat(data[0].lon),
                         };
-                        console.log('[ReportForm] Auto-geocoding successful with variant:', variant);
-                        console.log('[ReportForm] Setting coordinates:', coords);
+                        logger.debug('[ReportForm] Auto-geocoding successful with variant:', variant);
+                        logger.debug('[ReportForm] Setting coordinates:', coords);
                         setAddressCoordinates(coords);
                         geocoded = true;
                         break;
                       }
                     }
                   } catch (variantError) {
-                    console.warn('[ReportForm] Variant geocoding failed:', variantError);
+                    logger.warn('[ReportForm] Variant geocoding failed:', variantError);
                   }
                 }
 
                 if (!geocoded) {
-                  console.warn('[ReportForm] Auto-geocoding failed for all address variants');
+                  logger.warn('[ReportForm] Auto-geocoding failed for all address variants');
                 }
               } catch (error) {
-                console.error('[ReportForm] Auto-geocoding error:', error);
+                logger.error('[ReportForm] Auto-geocoding error:', error);
               }
             }
           }
         } catch (error) {
-          console.error('Error loading buildings:', error);
+          logger.error('Error loading buildings:', error);
         } finally {
           setLoadingBuildings(false);
         }
@@ -642,9 +642,9 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
   // Handle building selection - use building data as source of truth
   const handleBuildingSelect = useCallback(
     async (buildingId: string) => {
-      console.log('[ReportForm] Building selected:', buildingId);
+      logger.debug('[ReportForm] Building selected:', buildingId);
       const building = customerBuildings.find(b => b.id === buildingId);
-      console.log('[ReportForm] Building found:', building);
+      logger.debug('[ReportForm] Building found:', building);
       
       if (building) {
         setSelectedBuildingId(buildingId);
@@ -655,11 +655,11 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
           roofType: building.roofType || prev.roofType,
           roofSize: building.roofSize || prev.roofSize,
         }));
-        console.log('[ReportForm] Form data updated with building address:', building.address);
+        logger.debug('[ReportForm] Form data updated with building address:', building.address);
 
         // Geocode building address to get coordinates for map measurer
         if (building.address) {
-          console.log('[ReportForm] Starting geocoding for address:', building.address);
+          logger.debug('[ReportForm] Starting geocoding for address:', building.address);
           try {
             // Try multiple versions of the address for better geocoding success
             const addressVariants = [
@@ -672,45 +672,45 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
             for (const variant of addressVariants) {
               if (geocoded) break;
               
-              console.log('[ReportForm] Trying geocoding with variant:', variant);
+              logger.debug('[ReportForm] Trying geocoding with variant:', variant);
               const query = encodeURIComponent(variant);
               const url = `https://nominatim.openstreetmap.org/search?format=json&q=${query}&addressdetails=1&limit=1`;
               
               try {
                 const response = await fetch(url);
-                console.log('[ReportForm] Geocoding response status:', response.status);
+                logger.debug('[ReportForm] Geocoding response status:', response.status);
                 
                 if (response.ok) {
                   const data = await response.json();
-                  console.log('[ReportForm] Geocoding response data:', data);
+                  logger.debug('[ReportForm] Geocoding response data:', data);
                   
                   if (data && data.length > 0) {
                     const coords = {
                       lat: parseFloat(data[0].lat),
                       lon: parseFloat(data[0].lon),
                     };
-                    console.log('[ReportForm] Setting address coordinates:', coords);
+                    logger.debug('[ReportForm] Setting address coordinates:', coords);
                     setAddressCoordinates(coords);
                     geocoded = true;
                     break;
                   }
                 }
               } catch (variantError) {
-                console.warn('[ReportForm] Variant geocoding failed:', variantError);
+                logger.warn('[ReportForm] Variant geocoding failed:', variantError);
               }
             }
 
             if (!geocoded) {
-              console.warn('[ReportForm] Geocoding failed for all address variants');
+              logger.warn('[ReportForm] Geocoding failed for all address variants');
             }
           } catch (error) {
-            console.error('[ReportForm] Geocoding error:', error);
+            logger.error('[ReportForm] Geocoding error:', error);
           }
         } else {
-          console.warn('[ReportForm] Building address is empty');
+          logger.warn('[ReportForm] Building address is empty');
         }
       } else {
-        console.warn('[ReportForm] Building not found in customerBuildings:', buildingId);
+        logger.warn('[ReportForm] Building not found in customerBuildings:', buildingId);
       }
     },
     [customerBuildings]
@@ -767,7 +767,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
         type: 'success',
       });
     } catch (err) {
-      console.error('Error creating building:', err);
+      logger.error('Error creating building:', err);
       setError(
         t('form.errors.buildingCreationFailed') || 'Failed to create building. Please try again.'
       );
@@ -968,7 +968,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
             setError(t('form.messages.reportNotFound'));
           }
         } catch (error) {
-          console.error('Error loading report:', error);
+          logger.error('Error loading report:', error);
           setError(t('form.messages.failedToLoadReport'));
         } finally {
           setLoading(false);
@@ -1354,7 +1354,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
             'created'
           );
         } catch (notificationError) {
-          console.error('❌ Error sending notifications (non-blocking):', notificationError);
+          logger.error('Error sending notifications (non-blocking):', notificationError);
           // Don't fail report creation if notifications fail
         }
 
@@ -1370,7 +1370,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
               reportId: newReportId,
             });
           } catch (error) {
-            console.error('❌ Failed to link report to appointment:', error);
+            logger.error('Failed to link report to appointment:', error);
             // Don't fail the report creation if appointment linking fails
           }
         }
@@ -1497,7 +1497,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                     }
                   }
                 } catch (error) {
-                  console.error('Error updating customer status on report completion:', error);
+                  logger.error('Error updating customer status on report completion:', error);
                   // Don't fail report completion if customer notification fails
                 }
               }
@@ -1513,7 +1513,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
             }
           }
         } catch (notificationError) {
-          console.error('❌ Error sending update notifications (non-blocking):', notificationError);
+          logger.error('Error sending update notifications (non-blocking):', notificationError);
           // Don't fail report update if notifications fail
         }
 
@@ -1528,7 +1528,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
         }, 2000);
       }
     } catch (error) {
-      console.error('Error saving report:', error);
+      logger.error('Error saving report:', error);
 
       // Provide more specific error messages
       const errorMessage = error instanceof Error ? error.message : String(error);
@@ -1726,7 +1726,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
       setDraftDefect(null);
       setShowRepeatOption(true);
     } catch (error) {
-      console.error('Error saving defect:', error);
+      logger.error('Error saving defect:', error);
       setNotification({
         message: t('form.messages.errorSavingDefect') || 'Error saving defect',
         type: 'error',
@@ -1751,12 +1751,12 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
         navigate('/dashboard');
       }
     } catch (error) {
-      console.error('Error in handleCancel:', error);
+      logger.error('Error in handleCancel:', error);
       // Fallback navigation with error boundary
       try {
         navigate('/dashboard');
       } catch (navError) {
-        console.error('Navigation error:', navError);
+        logger.error('Navigation error:', navError);
         // Last resort - reload the page
         window.location.href = '/dashboard';
       }
@@ -1782,7 +1782,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
         navigate('/dashboard');
       }, 0);
     } catch (error) {
-      console.error('Error in confirmCancel:', error);
+      logger.error('Error in confirmCancel:', error);
       // Fallback navigation
       navigate('/dashboard');
     }
@@ -1843,7 +1843,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
       // Clear notification after 3 seconds
       setTimeout(() => setNotification(null), 3000);
     } catch (error) {
-      console.error('Error deleting draft:', error);
+      logger.error('Error deleting draft:', error);
       setNotification({
         message: t('form.messages.failedToDeleteDraft'),
         type: 'error',
@@ -2250,12 +2250,12 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                       ref={addressInputRef}
                       value={formData.customerAddress || ''}
                       onChange={(address, coordinates) => {
-                        console.log('[ReportForm] AddressInput onChange triggered');
-                        console.log('[ReportForm] Address:', address);
-                        console.log('[ReportForm] Coordinates from AddressInput:', coordinates);
+                        logger.debug('[ReportForm] AddressInput onChange triggered');
+                        logger.debug('[ReportForm] Address:', address);
+                        logger.debug('[ReportForm] Coordinates from AddressInput:', coordinates);
                         setFormData(prev => ({ ...prev, customerAddress: address }));
                         if (coordinates) {
-                          console.log('[ReportForm] Setting addressCoordinates:', coordinates);
+                          logger.debug('[ReportForm] Setting addressCoordinates:', coordinates);
                           setAddressCoordinates(coordinates);
                           // If user was waiting to measure, open measurer now
                           if (pendingRoofSizeMeasure) {
@@ -2263,7 +2263,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                             setTimeout(() => setShowRoofSizeMeasurer(true), 100);
                           }
                         } else {
-                          console.warn('[ReportForm] No coordinates received from AddressInput');
+                          logger.warn('[ReportForm] No coordinates received from AddressInput');
                         }
                         clearFieldError('customerAddress');
                       }}
@@ -2533,13 +2533,13 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                     <button
                       type='button'
                       onClick={() => {
-                        console.log('[ReportForm] Measure button clicked');
-                        console.log('[ReportForm] addressCoordinates current state:', addressCoordinates);
-                        console.log('[ReportForm] formData.buildingAddress:', formData.buildingAddress);
-                        console.log('[ReportForm] formData.customerAddress:', formData.customerAddress);
+                        logger.debug('[ReportForm] Measure button clicked');
+                        logger.debug('[ReportForm] addressCoordinates current state:', addressCoordinates);
+                        logger.debug('[ReportForm] formData.buildingAddress:', formData.buildingAddress);
+                        logger.debug('[ReportForm] formData.customerAddress:', formData.customerAddress);
                         
                         if (!addressCoordinates) {
-                          console.warn('[ReportForm] No addressCoordinates available');
+                          logger.warn('[ReportForm] No addressCoordinates available');
                           // Focus address input and wait for coordinates
                           setPendingRoofSizeMeasure(true);
                           if (addressInputRef.current) {
@@ -2556,7 +2556,6 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                           });
                           return;
                         }
-                        console.log('[ReportForm] Opening roof size measurer with coords:', addressCoordinates);
                         setShowRoofSizeMeasurer(true);
                       }}
                       className='px-3 py-2 h-10 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-2 text-sm text-slate-700 whitespace-nowrap shadow-sm'

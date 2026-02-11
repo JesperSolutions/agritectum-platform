@@ -16,6 +16,8 @@ import {
   LazyESGOverview,
   LazyPricingTable,
   LazyBillingDashboard,
+  LazyPortfolioDashboard,
+  LazyBuildingComparisonTool,
   LoadingFallback,
 } from '../../components/LazyComponents';
 
@@ -141,6 +143,24 @@ export const portalRoutes: RouteObject[] = [
         element: (
           <Suspense fallback={<LoadingFallback />}>
             <LazyBillingDashboard />
+          </Suspense>
+        ),
+        errorElement: <RouteErrorBoundary />,
+      },
+      {
+        path: 'portfolio',
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <LazyPortfolioDashboard />
+          </Suspense>
+        ),
+        errorElement: <RouteErrorBoundary />,
+      },
+      {
+        path: 'compare',
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <LazyBuildingComparisonTool />
           </Suspense>
         ),
         errorElement: <RouteErrorBoundary />,

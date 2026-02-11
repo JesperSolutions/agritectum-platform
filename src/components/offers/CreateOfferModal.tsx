@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Report } from '../../types';
+import { useToast } from '../../contexts/ToastContext';
+import { logger } from '../../utils/logger';
 import { X, DollarSign, Calendar } from 'lucide-react';
 import { useIntl } from 'react-intl';
 import { getCurrencyCode } from '../../utils/currency';
@@ -22,6 +24,7 @@ interface CreateOfferModalProps {
 
 const CreateOfferModal: React.FC<CreateOfferModalProps> = ({ report, onClose, onCreate }) => {
   const intl = useIntl();
+  const { showError } = useToast();
   const t = (key: string, values?: any) => intl.formatMessage({ id: key }, values);
   const currency = getCurrencyCode(intl.locale as any);
   const [formData, setFormData] = useState({
@@ -117,8 +120,8 @@ const CreateOfferModal: React.FC<CreateOfferModalProps> = ({ report, onClose, on
       await onCreate(offerData);
       onClose();
     } catch (error) {
-      console.error('Error creating offer:', error);
-      alert('Failed to create offer. Please try again.');
+      logger.error('Error creating offer:', error);
+      showError('Failed to create offer. Please try again.');
     } finally {
       setLoading(false);
     }

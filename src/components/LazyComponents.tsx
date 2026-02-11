@@ -58,6 +58,10 @@ export const LazyAcceptAppointmentView = lazyWithRetry(
 export const LazyPortalCustomerProfile = lazyWithRetry(() => import('./portal/CustomerProfile'));
 export const LazyPricingTable = lazyWithRetry(() => import('./portal/PricingTable'));
 export const LazyBillingDashboard = lazyWithRetry(() => import('./portal/BillingDashboard'));
+export const LazyPortfolioDashboard = lazyWithRetry(() => import('./portal/PortfolioDashboard'));
+export const LazyBuildingComparisonTool = lazyWithRetry(
+  () => import('./portal/BuildingComparisonTool')
+);
 
 // Lazy load utility components
 export const LazyEmailDialog = lazy(() => import('./email/EmailDialog'));

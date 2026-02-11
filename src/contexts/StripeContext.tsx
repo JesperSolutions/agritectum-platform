@@ -92,7 +92,7 @@ export const StripeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       setPaymentMethods(billing.paymentMethods);
       setInvoices(billing.invoiceHistory);
     } catch (err) {
-      console.error('Error fetching billing data:', err);
+      logger.error('Error fetching billing data:', err);
       setError('Failed to load billing information');
     } finally {
       setLoading(false);
@@ -106,7 +106,7 @@ export const StripeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         const plansData = await getSubscriptionPlans();
         setPlans(plansData);
       } catch (err) {
-        console.error('Error fetching plans:', err);
+        logger.error('Error fetching plans:', err);
         setError('Failed to load subscription plans');
       }
     };
@@ -222,7 +222,7 @@ export const StripeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         logger.info('Checkout session created:', checkoutUrl);
         window.open(checkoutUrl, '_blank');
       } catch (err) {
-        console.error('Error selecting plan:', err);
+        logger.error('Error selecting plan:', err);
         setError(err instanceof Error ? err.message : 'Failed to start checkout');
         logger.error('Checkout error:', err);
       } finally {
@@ -259,7 +259,7 @@ export const StripeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         logger.info('Subscription upgraded successfully');
         await refreshBillingData();
       } catch (err) {
-        console.error('Error upgrading plan:', err);
+        logger.error('Error upgrading plan:', err);
         setError(err instanceof Error ? err.message : 'Failed to upgrade subscription');
         logger.error('Upgrade error:', err);
       } finally {
@@ -296,7 +296,7 @@ export const StripeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         logger.info('Subscription downgraded successfully');
         await refreshBillingData();
       } catch (err) {
-        console.error('Error downgrading plan:', err);
+        logger.error('Error downgrading plan:', err);
         setError(err instanceof Error ? err.message : 'Failed to downgrade subscription');
         logger.error('Downgrade error:', err);
       } finally {
@@ -337,7 +337,7 @@ export const StripeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         logger.info('Subscription cancelled successfully');
         await refreshBillingData();
       } catch (err) {
-        console.error('Error canceling subscription:', err);
+        logger.error('Error canceling subscription:', err);
         setError(err instanceof Error ? err.message : 'Failed to cancel subscription');
         logger.error('Cancel error:', err);
       } finally {

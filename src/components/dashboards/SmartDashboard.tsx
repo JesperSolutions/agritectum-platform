@@ -145,7 +145,7 @@ const SmartDashboard: React.FC = () => {
           break;
       }
     } catch (error) {
-      console.error('Error loading dashboard data:', error);
+      logger.error('Error loading dashboard data:', error);
     } finally {
       setLoading(false);
     }
@@ -215,7 +215,7 @@ const SmartDashboard: React.FC = () => {
         const visits = await getScheduledVisits(currentUser);
         setScheduledVisits(visits);
       } catch (error: any) {
-        console.warn('⚠️ Could not load scheduled visits:', error.message);
+        logger.warn('⚠️ Could not load scheduled visits:', error.message);
         // Continue with empty list if there's a permission issue
         setScheduledVisits([]);
       }
@@ -225,7 +225,7 @@ const SmartDashboard: React.FC = () => {
         const apts = await getAppointments(currentUser);
         setAppointments(apts);
       } catch (error: any) {
-        console.warn('⚠️ Could not load appointments:', error.message);
+        logger.warn('⚠️ Could not load appointments:', error.message);
         setAppointments([]);
       }
 
@@ -236,7 +236,7 @@ const SmartDashboard: React.FC = () => {
           setRejectedOrders(rejected);
         } catch (error) {
           // Handle errors gracefully - service should return empty array, but catch just in case
-          console.warn('Could not load rejected orders:', error);
+          logger.warn('Could not load rejected orders:', error);
           setRejectedOrders([]);
         }
       }

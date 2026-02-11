@@ -49,7 +49,7 @@ interface BuildingWithStatus extends Building {
 const PortalDashboard: React.FC = () => {
   const { currentUser } = useAuth();
   const { t } = useIntl();
-  const { showSuccess, showError } = useToast();
+  const { showSuccess, showError, showInfo } = useToast();
   const [buildings, setBuildings] = useState<BuildingWithStatus[]>([]);
   const [agreements, setAgreements] = useState<ServiceAgreement[]>([]);
   const [visits, setVisits] = useState<ScheduledVisit[]>([]);
@@ -672,7 +672,7 @@ const PortalDashboard: React.FC = () => {
               buildings={buildings} 
               reports={reports}
               onExportPDF={() => {
-                alert('PDF export feature coming soon!');
+                showInfo('PDF export feature coming soon!');
               }}
             />
           </ComponentErrorBoundary>

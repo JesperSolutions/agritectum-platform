@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useReports } from '../../contexts/ReportContextSimple';
+import { useToast } from '../../contexts/ToastContext';
+import { logger } from '../../utils/logger';
 import ImageUploadTest from '../ImageUploadTest';
 import { EmailTestPanel } from '../email/EmailTestPanel';
 import {
@@ -58,6 +60,7 @@ interface TestResult {
 
 const QATestingPage: React.FC = () => {
   const { currentUser, logout, refreshToken } = useAuth();
+  const { showSuccess } = useToast();
   const {
     state,
     fetchReports,
@@ -698,9 +701,9 @@ const QATestingPage: React.FC = () => {
 
     try {
       await navigator.clipboard.writeText(JSON.stringify(errorReport, null, 2));
-      alert('Error details copied to clipboard!');
+      showSuccess('Error details copied to clipboard!');
     } catch (err) {
-      console.error('Failed to copy to clipboard:', err);
+      logger.error('Failed to copy to clipboard:', err);
     }
   };
 
