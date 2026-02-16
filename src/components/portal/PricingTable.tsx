@@ -6,13 +6,15 @@
 import React from 'react';
 import { useStripe } from '../../contexts/StripeContext';
 import { Check, X } from 'lucide-react';
+import { useIntl } from '../../hooks/useIntl';
 
 export const PricingTable: React.FC = () => {
-  const { plans, currentSubscription, loading, selectPlan, upgradePlan, downgradePlan, formatPrice } =
+  const { plans, currentSubscription, loading, selectPlan, upgradePlan, downgradePlan, formatPrice, actionLoading, canUpgrade: checkCanUpgrade } =
     useStripe();
+  const { t } = useIntl();
 
   if (loading) {
-    return <div className="text-center py-8">Loading plans...</div>;
+    return <div className="text-center py-8">{t('billing.subscription.processing')}</div>;
   }
 
   // Sort plans by tier
@@ -28,9 +30,9 @@ export const PricingTable: React.FC = () => {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">Simple, Transparent Pricing</h2>
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">{t('billing.pricing.title')}</h2>
           <p className="text-xl text-gray-600">
-            Choose the perfect plan for managing your building portfolio
+            {t('billing.pricing.subtitle')}
           </p>
         </div>
 
@@ -74,11 +76,11 @@ export const PricingTable: React.FC = () => {
                       {formatPrice(plan.price, plan.currency).split(',')[0]}
                     </span>
                     <span className="text-gray-600">
-                      {plan.billingCycle === 'monthly' ? '/month' : '/year'}
+                      {plan.billingCycle === 'monthly' ? t('billing.subscription.perMonth') : t('billing.subscription.perYear')}
                     </span>
                   </div>
                   <p className="text-sm text-gray-600 mb-6">
-                    Up to {plan.buildingLimit} properties
+                    {t('billing.pricing.upToProperties', { count: plan.buildingLimit })}
                   </p>
 
                   {/* CTA Button */}
@@ -100,13 +102,13 @@ export const PricingTable: React.FC = () => {
                         : 'bg-blue-600 text-white hover:bg-blue-700'
                     }`}
                   >
-                    {isCurrent ? '✓ Current Plan' : isHigherTier ? 'Upgrade' : 'Choose Plan'}
+                    {isCurrent ? t('billing.pricing.currentPlan') : isHigherTier ? t('billing.subscription.upgrade') : t('billing.pricing.choosePlan')}
                   </button>
                 </div>
 
                 {/* Features List */}
                 <div className="px-6 py-8">
-                  <p className="text-sm font-semibold text-gray-900 mb-4">Features included:</p>
+                  <p className="text-sm font-semibold text-gray-900 mb-4">{t('billing.pricing.featuresIncluded')}</p>
                   <ul className="space-y-3">
                     {plan.features.map((feature, idx) => (
                       <li key={idx} className="flex items-start gap-3">
@@ -121,7 +123,7 @@ export const PricingTable: React.FC = () => {
                 {plan.tier === 'professional' && (
                   <div className="bg-blue-50 px-6 py-3 text-center">
                     <span className="inline-block bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full">
-                      MOST POPULAR
+                      {t('billing.pricing.mostPopular')}
                     </span>
                   </div>
                 )}
@@ -132,52 +134,46 @@ export const PricingTable: React.FC = () => {
 
         {/* FAQ Section */}
         <div className="mt-16 max-w-3xl mx-auto">
-          <h3 className="text-2xl font-bold text-gray-900 mb-8 text-center">Frequently Asked Questions</h3>
+          <h3 className="text-2xl font-bold text-gray-900 mb-8 text-center">{t('billing.pricing.faq.title')}</h3>
 
           <div className="space-y-6">
             <details className="group border rounded-lg p-6 cursor-pointer">
               <summary className="flex items-center justify-between font-semibold text-gray-900 group-open:text-blue-600">
-                Can I change plans anytime?
+                {t('billing.pricing.faq.changePlans.question')}
                 <span className="text-2xl group-open:rotate-45 transition-transform">+</span>
               </summary>
               <p className="mt-4 text-gray-600 text-sm">
-                Yes! You can upgrade or downgrade your plan at any time. Changes take effect immediately.
-                If you upgrade mid-month, we'll prorate the charges. If you downgrade, the change applies
-                to your next billing cycle.
+                {t('billing.pricing.faq.changePlans.answer')}
               </p>
             </details>
 
             <details className="group border rounded-lg p-6 cursor-pointer">
               <summary className="flex items-center justify-between font-semibold text-gray-900 group-open:text-blue-600">
-                What happens if I exceed my building limit?
+                {t('billing.pricing.faq.buildingLimit.question')}
                 <span className="text-2xl group-open:rotate-45 transition-transform">+</span>
               </summary>
               <p className="mt-4 text-gray-600 text-sm">
-                If you're approaching your building limit, we'll send you a notification. You can easily
-                upgrade to a higher plan to accommodate more properties. We don't penalize you for going
-                over—we encourage you to upgrade!
+                {t('billing.pricing.faq.buildingLimit.answer')}
               </p>
             </details>
 
             <details className="group border rounded-lg p-6 cursor-pointer">
               <summary className="flex items-center justify-between font-semibold text-gray-900 group-open:text-blue-600">
-                Is there a free trial?
+                {t('billing.pricing.faq.freeTrial.question')}
                 <span className="text-2xl group-open:rotate-45 transition-transform">+</span>
               </summary>
               <p className="mt-4 text-gray-600 text-sm">
-                Yes! All new accounts get a 14-day free trial of our Professional plan so you can explore
-                all features before committing. No credit card required to start.
+                {t('billing.pricing.faq.freeTrial.answer')}
               </p>
             </details>
 
             <details className="group border rounded-lg p-6 cursor-pointer">
               <summary className="flex items-center justify-between font-semibold text-gray-900 group-open:text-blue-600">
-                What payment methods do you accept?
+                {t('billing.pricing.faq.paymentMethods.question')}
                 <span className="text-2xl group-open:rotate-45 transition-transform">+</span>
               </summary>
               <p className="mt-4 text-gray-600 text-sm">
-                We accept all major credit cards (Visa, Mastercard, American Express), bank transfers
-                (SEPA), and digital wallets. All payments are secure and encrypted.
+                {t('billing.pricing.faq.paymentMethods.answer')}
               </p>
             </details>
           </div>

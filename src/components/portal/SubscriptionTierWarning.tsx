@@ -7,9 +7,11 @@ import {
   getUserSubscription 
 } from '../../services/subscriptionTierService';
 import { logger } from '../../utils/logger';
+import { useIntl } from '../../hooks/useIntl';
 
 const SubscriptionTierWarning: React.FC = () => {
   const { currentUser } = useAuth();
+  const { t } = useIntl();
   const [tierInfo, setTierInfo] = useState<{
     tierName: string;
     currentCount: number;
@@ -86,20 +88,24 @@ const SubscriptionTierWarning: React.FC = () => {
         <AlertTriangle className='h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5' />
         <div className='flex-1'>
           <h3 className='font-semibold text-amber-900'>
-            Approaching Building Limit
+            {t('billing.tierWarning.title')}
           </h3>
           <p className='text-sm text-amber-800 mt-1'>
-            You're using {tierInfo.currentCount} of {tierInfo.limit} buildings on your {tierInfo.tierName} plan 
-            ({Math.round(percentageUsed)}%).
+            {t('billing.tierWarning.usage', {
+              current: tierInfo.currentCount,
+              limit: tierInfo.limit,
+              plan: tierInfo.tierName,
+              percent: Math.round(percentageUsed),
+            })}
           </p>
           <p className='text-sm text-amber-700 mt-2'>
-            To add more buildings, upgrade your subscription plan.
+            {t('billing.tierWarning.upgradeHint')}
           </p>
           <a
             href='/portal/pricing'
             className='inline-flex items-center gap-2 mt-3 px-3 py-2 bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium rounded transition-colors'
           >
-            Upgrade Plan
+            {t('billing.tierWarning.upgradeButton')}
             <ArrowRight className='h-4 w-4' />
           </a>
         </div>
@@ -108,7 +114,7 @@ const SubscriptionTierWarning: React.FC = () => {
       {/* Progress bar */}
       <div className='mt-4'>
         <div className='flex justify-between text-xs text-amber-700 mb-1'>
-          <span>Buildings used</span>
+          <span>{t('billing.tierWarning.buildingsUsed')}</span>
           <span>{tierInfo.currentCount}/{tierInfo.limit}</span>
         </div>
         <div className='w-full bg-amber-200 rounded-full h-2'>

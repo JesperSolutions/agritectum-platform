@@ -25,8 +25,8 @@ interface StripeContextType {
   invoices: Invoice[];
   plans: SubscriptionPlan[];
   loading: boolean;
+  actionLoading: 'checkout' | 'upgrade' | 'downgrade' | 'cancel' | null;
   error: string | null;
-
 
   // Actions
   refreshBillingData: () => Promise<void>;
@@ -52,6 +52,7 @@ export const StripeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
   const [loading, setLoading] = useState(false);
+  const [actionLoading, setActionLoading] = useState<'checkout' | 'upgrade' | 'downgrade' | 'cancel' | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const userId = currentUser?.uid ?? firebaseUser?.uid;
@@ -127,7 +128,7 @@ export const StripeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       }
 
       try {
-        setLoading(true);
+        setActionLoading('checkout');
         setError(null);
 
         logger.info('Starting checkout for plan:', planId);
@@ -226,10 +227,10 @@ export const StripeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setError(err instanceof Error ? err.message : 'Failed to start checkout');
         logger.error('Checkout error:', err);
       } finally {
-        setLoading(false);
+        setActionLoading(null);
       }
     },
-    [stripeCustomerId, userEmail, currentUser?.companyId, plans]
+    [stripeCustomerId, userId, userEmail, currentUser?.companyId, plans]
   );
 
   const upgradePlan = useCallback(
@@ -245,7 +246,7 @@ export const StripeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       }
 
       try {
-        setLoading(true);
+        setActionLoading('upgrade');
         setError(null);
 
         logger.info('Upgrading to plan:', planId);
@@ -263,7 +264,7 @@ export const StripeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setError(err instanceof Error ? err.message : 'Failed to upgrade subscription');
         logger.error('Upgrade error:', err);
       } finally {
-        setLoading(false);
+        setActionLoading(null);
       }
     },
     [currentSubscription, selectPlan, refreshBillingData, userId]
@@ -282,7 +283,7 @@ export const StripeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       }
 
       try {
-        setLoading(true);
+        setActionLoading('downgrade');
         setError(null);
 
         logger.info('Downgrading to plan:', planId);
@@ -300,7 +301,7 @@ export const StripeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setError(err instanceof Error ? err.message : 'Failed to downgrade subscription');
         logger.error('Downgrade error:', err);
       } finally {
-        setLoading(false);
+        setActionLoading(null);
       }
     },
     [currentSubscription, refreshBillingData, userId]
@@ -318,12 +319,8 @@ export const StripeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         return;
       }
 
-      if (!window.confirm('Are you sure you want to cancel your subscription? You will lose access after the current billing period ends.')) {
-        return;
-      }
-
       try {
-        setLoading(true);
+        setActionLoading('cancel');
         setError(null);
 
         logger.info('Cancelling subscription:', currentSubscription.id);
@@ -341,7 +338,7 @@ export const StripeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setError(err instanceof Error ? err.message : 'Failed to cancel subscription');
         logger.error('Cancel error:', err);
       } finally {
-        setLoading(false);
+        setActionLoading(null);
       }
     },
     [currentSubscription, refreshBillingData, userId]
@@ -409,6 +406,7 @@ export const StripeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     invoices,
     plans,
     loading,
+    actionLoading,
     error,
     refreshBillingData,
     selectPlan,

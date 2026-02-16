@@ -4,7 +4,7 @@ import * as admin from 'firebase-admin';
 // One-time backfill: convert ISO string dates to Firestore Timestamps for reports
 // Usage: call via HTTPS with optional ?dryRun=true
 
-export const backfillReportTimestamps = functions.https.onRequest(async (req, res) => {
+export const backfillReportTimestamps = functions.region('europe-west1').https.onRequest(async (req, res) => {
   try {
     const dryRun = (req.query.dryRun as string) === 'true';
     const db = admin.firestore();

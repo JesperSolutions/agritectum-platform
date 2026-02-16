@@ -23,7 +23,7 @@ interface Employee {
   lastLogin?: string;
 }
 
-export const createUserWithAuth = onRequest(async (req, res) => {
+export const createUserWithAuth = onRequest({ region: 'europe-west1' }, async (req, res) => {
   // Set CORS headers
   res.set('Access-Control-Allow-Origin', '*');
   res.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');

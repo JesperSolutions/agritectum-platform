@@ -6,7 +6,7 @@ import { getEmailCenterConfig, isEmailServiceEnabled } from './emailCenter';
  * Cloud Function: Check for offers needing follow-up
  * Runs daily at 9 AM
  */
-export const checkOfferFollowUps = functions.pubsub
+export const checkOfferFollowUps = functions.region('europe-west1').pubsub
   .schedule('0 9 * * *') // Every day at 9 AM
   .timeZone('Europe/Copenhagen')
   .onRun(async _context => {
@@ -264,7 +264,7 @@ async function sendEscalationNotification(
  * Cloud Function: Send test follow-up notification
  * Manual trigger for testing
  */
-export const testOfferFollowUp = functions.https.onCall(async (data, context) => {
+export const testOfferFollowUp = functions.region('europe-west1').https.onCall(async (data, context) => {
   // Verify admin
   if (!context.auth || !context.auth.token.admin) {
     throw new functions.https.HttpsError('permission-denied', 'Only admins can trigger test');
@@ -308,7 +308,7 @@ export const testOfferFollowUp = functions.https.onCall(async (data, context) =>
 /**
  * Callable function for public offer response (accept/reject)
  */
-export const publicRespondToOffer = functions.https.onCall(async (data, _context) => {
+export const publicRespondToOffer = functions.region('europe-west1').https.onCall(async (data, _context) => {
   const { offerId, action, reason, customerData } = data || {};
   if (!offerId || !['accept', 'reject'].includes(action)) {
     throw new functions.https.HttpsError('invalid-argument', 'Missing offerId or invalid action');
@@ -431,7 +431,7 @@ export const publicRespondToOffer = functions.https.onCall(async (data, _context
 /**
  * Callable function for email health check
  */
-export const checkEmailHealth = functions.https.onCall(async (_data, context) => {
+export const checkEmailHealth = functions.region('europe-west1').https.onCall(async (_data, context) => {
   try {
     const { mode, provider } = getEmailCenterConfig();
     const emailEnabled = isEmailServiceEnabled();

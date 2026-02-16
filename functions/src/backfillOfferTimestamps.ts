@@ -2,7 +2,7 @@ import * as functions from 'firebase-functions/v1';
 import * as admin from 'firebase-admin';
 
 // Callable function to normalize legacy string timestamps on offers to Firestore Timestamps
-export const backfillOfferTimestamps = functions.https.onCall(async (_data, context) => {
+export const backfillOfferTimestamps = functions.region('europe-west1').https.onCall(async (_data, context) => {
   // Restrict to admins only
   if (!context.auth || !context.auth.token || !(context.auth.token as any).admin) {
     throw new functions.https.HttpsError('permission-denied', 'Admin privileges required');

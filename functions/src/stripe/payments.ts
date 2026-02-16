@@ -21,7 +21,7 @@ const db = admin.firestore();
 // ============================================
 
 export const createSubscriptionCheckout = onCall(
-  { secrets: [stripeSecretKey] },
+  { secrets: [stripeSecretKey], region: 'europe-west1' },
   async (request) => {
     // Initialize Stripe with the secret
     const stripe = new Stripe(stripeSecretKey.value(), {
@@ -116,7 +116,7 @@ export const createSubscriptionCheckout = onCall(
 // ============================================
 
 export const updateSubscription = onCall(
-  { secrets: [stripeSecretKey] },
+  { secrets: [stripeSecretKey], region: 'europe-west1' },
   async (request) => {
     // Initialize Stripe with the secret
     const stripe = new Stripe(stripeSecretKey.value(), {
@@ -188,7 +188,7 @@ export const updateSubscription = onCall(
 // ============================================
 
 export const cancelSubscription = onCall(
-  { secrets: [stripeSecretKey] },
+  { secrets: [stripeSecretKey], region: 'europe-west1' },
   async (request) => {
     // Initialize Stripe with the secret
     const stripe = new Stripe(stripeSecretKey.value(), {
@@ -242,13 +242,139 @@ export const cancelSubscription = onCall(
 );
 
 // ============================================
+// CREATE CUSTOMER PORTAL SESSION
+// ============================================
+
+export const createCustomerPortalSession = onCall(
+  { secrets: [stripeSecretKey], region: 'europe-west1' },
+  async (request) => {
+    // Initialize Stripe with the secret
+    const stripe = new Stripe(stripeSecretKey.value(), {
+      apiVersion: '2023-10-16',
+    });
+
+    // Verify authentication
+    if (!request.auth) {
+      throw new HttpsError('unauthenticated', 'User must be authenticated');
+    }
+
+    const { customerId, returnUrl } = request.data;
+
+    // Verify user owns customerId
+    if (request.auth.uid !== customerId) {
+      const userDoc = await db.collection('users').doc(request.auth.uid).get();
+      const userCompanyId = userDoc.exists ? userDoc.data()?.companyId : null;
+      if (userCompanyId !== customerId) {
+        throw new HttpsError('permission-denied', 'Cannot create portal for other users');
+      }
+    }
+
+    try {
+      // Get Stripe customer ID
+      const customerDoc = await db.collection('customers').doc(customerId).get();
+      const stripeCustomerId = customerDoc.exists ? customerDoc.data()?.stripeCustomerId : null;
+
+      if (!stripeCustomerId) {
+        throw new HttpsError('not-found', 'Stripe customer not found');
+      }
+
+      // Create billing portal session
+      const session = await stripe.billingPortal.sessions.create({
+        customer: stripeCustomerId,
+        return_url: returnUrl,
+      });
+
+      return { url: session.url };
+    } catch (error) {
+      console.error('Error creating customer portal session:', error);
+      throw new HttpsError('internal', 'Failed to create customer portal session');
+    }
+  }
+);
+
+// ============================================
+// VERIFY SUBSCRIPTION STATUS
+// ============================================
+
+export const verifySubscriptionStatus = onCall(
+  { secrets: [stripeSecretKey], region: 'europe-west1' },
+  async (request) => {
+    // Initialize Stripe with the secret
+    const stripe = new Stripe(stripeSecretKey.value(), {
+      apiVersion: '2023-10-16',
+    });
+
+    // Verify authentication
+    if (!request.auth) {
+      throw new HttpsError('unauthenticated', 'User must be authenticated');
+    }
+
+    const { subscriptionId } = request.data;
+
+    try {
+      // Get subscription from Firestore
+      const subDoc = await db.collection('subscriptions').doc(subscriptionId).get();
+      if (!subDoc.exists) {
+        throw new HttpsError('not-found', 'Subscription not found in database');
+      }
+
+      const firestoreData = subDoc.data();
+      if (!firestoreData) {
+        throw new HttpsError('not-found', 'Subscription data not found');
+      }
+
+      // Verify user owns this subscription
+      const userDoc = await db.collection('users').doc(request.auth.uid).get();
+      const userCompanyId = userDoc.exists ? userDoc.data()?.companyId : null;
+      if (firestoreData.customerId !== request.auth.uid && firestoreData.customerId !== userCompanyId) {
+        throw new HttpsError('permission-denied', 'Cannot verify other users subscriptions');
+      }
+
+      // Get subscription from Stripe
+      const stripeSubscription = await stripe.subscriptions.retrieve(
+        firestoreData.stripeSubscriptionId
+      );
+
+      // Compare statuses
+      const statusMatch = firestoreData.status === stripeSubscription.status;
+      const needsUpdate = !statusMatch;
+
+      // If mismatch, update Firestore to match Stripe (source of truth)
+      if (needsUpdate) {
+        console.log('Subscription status mismatch detected:', {
+          firestoreStatus: firestoreData.status,
+          stripeStatus: stripeSubscription.status,
+        });
+
+        await subDoc.ref.update({
+          status: stripeSubscription.status,
+          currentPeriodEnd: new Date(stripeSubscription.current_period_end * 1000),
+          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+      }
+
+      return {
+        verified: true,
+        statusMatch,
+        firestoreStatus: firestoreData.status,
+        stripeStatus: stripeSubscription.status,
+        updated: needsUpdate,
+      };
+    } catch (error) {
+      console.error('Error verifying subscription:', error);
+      throw new HttpsError('internal', 'Failed to verify subscription status');
+    }
+  }
+);
+
+// ============================================
 // WEBHOOK HANDLER - Stripe Events
 // ============================================
 
 import { onRequest } from 'firebase-functions/v2/https';
 
 export const stripeWebhook = onRequest(
-  { secrets: [stripeSecretKey] },
+  { secrets: [stripeSecretKey], region: 'europe-west1' },
   async (req, res) => {
     // Initialize Stripe with the secret
     const stripe = new Stripe(stripeSecretKey.value(), {

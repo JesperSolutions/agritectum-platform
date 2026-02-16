@@ -12,7 +12,9 @@ const db = admin.firestore();
 /**
  * Validates that a report's buildingId references an existing building
  */
-export const validateReportBuilding = onDocumentCreated('reports/{reportId}', async (event) => {
+export const validateReportBuilding = onDocumentCreated(
+  { document: 'reports/{reportId}', region: 'europe-west1' },
+  async (event) => {
   const reportData = event.data?.data();
   if (!reportData) return;
 
@@ -46,7 +48,9 @@ export const validateReportBuilding = onDocumentCreated('reports/{reportId}', as
 /**
  * Validates that an offer's reportId references an existing report
  */
-export const validateOfferReport = onDocumentCreated('offers/{offerId}', async (event) => {
+export const validateOfferReport = onDocumentCreated(
+  { document: 'offers/{offerId}', region: 'europe-west1' },
+  async (event) => {
   const offerData = event.data?.data();
   if (!offerData) return;
 
@@ -76,7 +80,7 @@ export const validateOfferReport = onDocumentCreated('offers/{offerId}', async (
  * Validates that a building's customerId/companyId references exist
  */
 export const validateBuildingReferences = onDocumentCreated(
-  'buildings/{buildingId}',
+  { document: 'buildings/{buildingId}', region: 'europe-west1' },
   async (event) => {
     const buildingData = event.data?.data();
     if (!buildingData) return;
@@ -159,7 +163,7 @@ export const validateBuildingReferences = onDocumentCreated(
  * Validates that appointments reference valid inspectors and customers
  */
 export const validateAppointmentReferences = onDocumentCreated(
-  'appointments/{appointmentId}',
+  { document: 'appointments/{appointmentId}', region: 'europe-west1' },
   async (event) => {
     const appointmentData = event.data?.data();
     if (!appointmentData) return;
@@ -225,7 +229,9 @@ export const validateAppointmentReferences = onDocumentCreated(
  * HTTP callable function to manually validate a document's relationships
  * Usage: functions.httpsCallable('validateDocumentRelationships')({ collection: 'reports', docId: 'xyz' })
  */
-export const validateDocumentRelationships = onCall(async (request) => {
+export const validateDocumentRelationships = onCall(
+  { region: 'europe-west1' },
+  async (request) => {
   const { collection, docId } = request.data;
 
   if (!collection || !docId) {

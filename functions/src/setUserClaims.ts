@@ -5,7 +5,7 @@ import * as admin from 'firebase-admin';
  * Cloud Function to set custom claims for users
  * This can be called from the Firebase Console or via HTTP
  */
-export const setUserClaims = functions.https.onCall(async (data, context) => {
+export const setUserClaims = functions.region('europe-west1').https.onCall(async (data, context) => {
   // Only allow authenticated users with superadmin role
   if (!context.auth) {
     throw new functions.https.HttpsError('unauthenticated', 'User must be authenticated');
@@ -58,7 +58,7 @@ export const setUserClaims = functions.https.onCall(async (data, context) => {
  * POST /setUserClaims
  * Body: { uid: string, claims: { role: string, permissionLevel: number, branchId?: string } }
  */
-export const setUserClaimsHttp = functions.https.onRequest(async (req, res) => {
+export const setUserClaimsHttp = functions.region('europe-west1').https.onRequest(async (req, res) => {
   // Only allow POST requests
   if (req.method !== 'POST') {
     res.status(405).send('Method Not Allowed');

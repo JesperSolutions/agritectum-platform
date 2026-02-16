@@ -5,7 +5,9 @@ import * as admin from 'firebase-admin';
  * Cloud Function triggered when a customer user document is created in Firestore
  * Sets custom claims for customer users
  */
-export const onCustomerUserCreate = onDocumentCreated('users/{userId}', async event => {
+export const onCustomerUserCreate = onDocumentCreated(
+  { document: 'users/{userId}', region: 'europe-west1' },
+  async event => {
   const userData = event.data?.data();
   const userId = event.params.userId;
 

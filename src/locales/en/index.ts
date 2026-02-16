@@ -18,6 +18,7 @@ import notifications from './notifications.json';
 import serviceAgreements from './serviceAgreements.json';
 import buildings from './buildings.json';
 import esg from './esg.json';
+import billing from './billing.json';
 
 // Combine all translation files into a single flat object (same structure as Swedish)
 const enMessages = {
@@ -41,6 +42,7 @@ const enMessages = {
   ...serviceAgreements,
   ...buildings,
   ...esg,
+  ...billing,
 };
 
 export default enMessages;

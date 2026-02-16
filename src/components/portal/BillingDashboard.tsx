@@ -1,9 +1,4 @@
-/**
- * Billing Dashboard Component - Modernized
- * Main portal for customers to manage subscriptions, invoices, and payment methods
- */
-
-import React from 'react';
+import React, { useState } from 'react';
 import { useStripe } from '../../contexts/StripeContext';
 import {
   CreditCard,
@@ -15,8 +10,12 @@ import {
   TrendingUp,
   Building,
   ExternalLink,
+  AlertTriangle,
+  Clock,
 } from 'lucide-react';
 import SubscriptionTierWarning from './SubscriptionTierWarning';
+import { httpsCallable } from 'firebase/functions';
+import { functions } from '../../config/firebase';
 
 // UI Components
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../ui/card';
@@ -25,6 +24,7 @@ import { Badge } from '../ui/badge';
 import { Progress } from '../ui/progress';
 import { Skeleton } from '../ui/skeleton';
 import { Separator } from '../ui/separator';
+import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 import {
   Dialog,
   DialogTrigger,
@@ -36,6 +36,7 @@ import {
   DialogClose,
 } from '../ui/dialog';
 import { useToast } from '../../hooks/use-toast';
+import { useIntl } from '../../hooks/useIntl';
 
 export const BillingDashboard: React.FC = () => {
   const {
@@ -44,6 +45,7 @@ export const BillingDashboard: React.FC = () => {
     invoices,
     plans,
     loading,
+    actionLoading,
     error,
     formatPrice,
     getRemainingDays,
@@ -51,21 +53,25 @@ export const BillingDashboard: React.FC = () => {
     upgradePlan,
     downgradePlan,
     cancelCurrentSubscription,
+    canUpgrade,
+    canDowngrade,
   } = useStripe();
 
   const { toast } = useToast();
+  const { t, locale } = useIntl();
+  const [portalLoading, setPortalLoading] = useState(false);
 
   const handleCancelSubscription = async () => {
     try {
       await cancelCurrentSubscription('User requested cancellation');
       toast({
-        title: 'Subscription cancelled',
-        description: 'Your subscription will remain active until the end of the billing period.',
+        title: t('billing.subscription.cancelledToast'),
+        description: t('billing.subscription.cancelledDescription'),
       });
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to cancel subscription. Please try again.',
+        title: t('billing.error.title'),
+        description: t('billing.error.cancel'),
         variant: 'destructive',
       });
     }
@@ -76,11 +82,51 @@ export const BillingDashboard: React.FC = () => {
       await selectPlan(planId);
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to start checkout. Please try again.',
+        title: t('billing.error.title'),
+        description: t('billing.error.checkout'),
         variant: 'destructive',
       });
     }
+  };
+
+  const openCustomerPortal = async () => {
+    try {
+      setPortalLoading(true);
+      const createPortalSession = httpsCallable(functions, 'createCustomerPortalSession');
+      const result = await createPortalSession({
+        customerId: currentSubscription?.customerId || '',
+        returnUrl: window.location.href,
+      }) as { data: { url: string } };
+      
+      // Redirect to Stripe Customer Portal
+      window.location.href = result.data.url;
+    } catch (error) {
+      console.error('Error opening customer portal:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to open billing portal. Please try again.',
+        variant: 'destructive',
+      });
+      setPortalLoading(false);
+    }
+  };
+
+  // Calculate next retry date for past_due subscriptions (Stripe retries on days 3, 5, 7, 9, 11, 13, 15)
+  const getNextRetryDate = () => {
+    if (!currentSubscription || currentSubscription.status !== 'past_due') return null;
+    
+    const periodEnd = new Date(currentSubscription.currentPeriodEnd);
+    const now = new Date();
+    const daysSinceFailed = Math.floor((now.getTime() - periodEnd.getTime()) / (1000 * 60 * 60 * 24));
+    
+    const retryDays = [3, 5, 7, 9, 11, 13, 15];
+    const nextRetryDay = retryDays.find(day => day > daysSinceFailed);
+    
+    if (!nextRetryDay) return null;
+    
+    const nextRetry = new Date(periodEnd);
+    nextRetry.setDate(periodEnd.getDate() + nextRetryDay);
+    return nextRetry;
   };
 
   if (loading) {
@@ -100,14 +146,47 @@ export const BillingDashboard: React.FC = () => {
     <div className='max-w-6xl mx-auto p-6 space-y-6'>
       {/* Page Header */}
       <div>
-        <h1 className='text-3xl font-light tracking-tight text-slate-900'>Billing & Subscription</h1>
+        <h1 className='text-3xl font-light tracking-tight text-slate-900'>{t('billing.title')}</h1>
         <p className='text-slate-600 mt-2'>
-          Manage your subscription, payment methods, and billing history
+          {t('billing.subtitle')}
         </p>
       </div>
 
       {/* Subscription Tier Warning */}
       <SubscriptionTierWarning />
+
+      {/* Past Due Payment Warning */}
+      {currentSubscription && currentSubscription.status === 'past_due' && (
+        <Alert variant='destructive' className='border-red-300 bg-red-50'>
+          <AlertTriangle className='h-5 w-5' />
+          <AlertTitle className='text-lg font-semibold'>Payment Failed - Action Required</AlertTitle>
+          <AlertDescription className='mt-2 space-y-2'>
+            <p className='text-red-900'>
+              Your payment method was declined. Please update your payment information to avoid service interruption.
+            </p>
+            {getNextRetryDate() && (
+              <p className='text-red-800 flex items-center gap-2'>
+                <Clock className='h-4 w-4' />
+                Next automatic retry: {getNextRetryDate()?.toLocaleDateString(locale, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+              </p>
+            )}
+            <div className='mt-3'>
+              <Button 
+                variant='default' 
+                onClick={openCustomerPortal}
+                disabled={portalLoading}
+                className='bg-red-600 hover:bg-red-700'
+              >
+                {portalLoading ? 'Opening Portal...' : 'Update Payment Method'}
+              </Button>
+            </div>
+            <p className='text-sm text-red-700 mt-2'>
+              Stripe will automatically retry charging your payment method on days 3, 5, 7, 9, 11, 13, and 15 after the initial failure.
+              If all retries fail, your subscription will be cancelled.
+            </p>
+          </AlertDescription>
+        </Alert>
+      )}
 
       {/* Error Alert */}
       {error && (
@@ -116,7 +195,7 @@ export const BillingDashboard: React.FC = () => {
             <div className='flex gap-3'>
               <AlertCircle className='h-5 w-5 text-red-600 flex-shrink-0 mt-0.5' />
               <div>
-                <h3 className='font-semibold text-red-900'>Billing Error</h3>
+                <h3 className='font-semibold text-red-900'>{t('billing.error.title')}</h3>
                 <p className='text-red-700 text-sm mt-1'>{error}</p>
               </div>
             </div>
@@ -133,7 +212,7 @@ export const BillingDashboard: React.FC = () => {
                 <CardTitle className='flex items-center justify-between'>
                   <span className='flex items-center gap-2'>
                     <DollarSign className='h-5 w-5 text-slate-600' />
-                    Current Plan
+                    {t('billing.subscription.currentPlan')}
                   </span>
                   <Badge
                     variant={
@@ -157,7 +236,7 @@ export const BillingDashboard: React.FC = () => {
                   <p className='text-slate-600'>
                     {formatPrice(currentSubscription.amount, currentSubscription.currency)}
                     <span className='text-sm'>
-                      {currentSubscription.billingCycle === 'monthly' ? '/month' : '/year'}
+                      {currentSubscription.billingCycle === 'monthly' ? t('billing.subscription.perMonth') : t('billing.subscription.perYear')}
                     </span>
                   </p>
                 </div>
@@ -166,19 +245,19 @@ export const BillingDashboard: React.FC = () => {
 
                 <div className='space-y-2 text-sm'>
                   <div className='flex justify-between'>
-                    <span className='text-slate-600'>Billing Cycle</span>
+                    <span className='text-slate-600'>{t('billing.subscription.billingCycle')}</span>
                     <span className='font-medium capitalize'>
-                      {currentSubscription.billingCycle}
+                      {currentSubscription.billingCycle === 'monthly' ? t('billing.subscription.monthly') : t('billing.subscription.annual')}
                     </span>
                   </div>
                   <div className='flex justify-between'>
-                    <span className='text-slate-600'>Days Remaining</span>
-                    <span className='font-medium'>{getRemainingDays()} days</span>
+                    <span className='text-slate-600'>{t('billing.subscription.daysRemaining')}</span>
+                    <span className='font-medium'>{t('billing.subscription.days', { count: getRemainingDays() })}</span>
                   </div>
                   <div className='flex justify-between'>
-                    <span className='text-slate-600'>Next Billing Date</span>
+                    <span className='text-slate-600'>{t('billing.subscription.nextBillingDate')}</span>
                     <span className='font-medium'>
-                      {new Date(currentSubscription.currentPeriodEnd).toLocaleDateString('da-DK')}
+                      {new Date(currentSubscription.currentPeriodEnd).toLocaleDateString(locale)}
                     </span>
                   </div>
                 </div>
@@ -190,17 +269,17 @@ export const BillingDashboard: React.FC = () => {
               <CardHeader>
                 <CardTitle className='flex items-center gap-2'>
                   <Building className='h-5 w-5 text-slate-600' />
-                  Usage & Limits
+                  {t('billing.usage.title')}
                 </CardTitle>
               </CardHeader>
               <CardContent className='space-y-4'>
                 <div>
                   <div className='flex justify-between text-sm mb-2'>
-                    <span className='text-slate-600'>Buildings</span>
+                    <span className='text-slate-600'>{t('billing.usage.buildings')}</span>
                     <span className='font-medium'>
                       <span className='text-slate-900'>0</span> /{' '}
                       {plans.find(p => p.id === currentSubscription.planId)?.buildingLimit ||
-                        'Unlimited'}
+                        t('billing.usage.unlimited')}
                     </span>
                   </div>
                   <Progress value={0} className='h-2' />
@@ -211,7 +290,7 @@ export const BillingDashboard: React.FC = () => {
                 <div className='space-y-2'>
                   <p className='text-sm font-medium flex items-center gap-2'>
                     <CheckCircle className='h-4 w-4 text-green-600' />
-                    Included Features
+                    {t('billing.usage.includedFeatures')}
                   </p>
                   <ul className='text-sm text-slate-600 space-y-1 ml-6'>
                     {plans
@@ -231,18 +310,16 @@ export const BillingDashboard: React.FC = () => {
             <CardHeader>
               <CardTitle className='flex items-center gap-2'>
                 <TrendingUp className='h-5 w-5 text-slate-600' />
-                Change Plan
+                {t('billing.subscription.changePlan')}
               </CardTitle>
-              <CardDescription>Upgrade or downgrade your subscription</CardDescription>
+              <CardDescription>{t('billing.subscription.changePlanDescription')}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
                 {plans.map(plan => {
                   const isCurrentPlan = plan.id === currentSubscription.planId;
-                  const currentPlanTier = plans.find(
-                    p => p.id === currentSubscription.planId
-                  )?.tier;
-                  const isUpgrade = (plan.tier as any) > (currentPlanTier || '');
+                  const isPlanUpgrade = canUpgrade(plan.id);
+                  const isPlanDowngrade = canDowngrade(plan.id);
 
                   return (
                     <Card
@@ -258,27 +335,32 @@ export const BillingDashboard: React.FC = () => {
                         <CardDescription className='text-xl font-bold text-slate-900'>
                           {formatPrice(plan.price, plan.currency)}
                           <span className='text-sm font-normal text-slate-600'>
-                            {plan.billingCycle === 'monthly' ? '/mo' : '/yr'}
+                            {plan.billingCycle === 'monthly' ? t('billing.subscription.perMonthShort') : t('billing.subscription.perYearShort')}
                           </span>
                         </CardDescription>
                       </CardHeader>
                       <CardContent>
                         <p className='text-sm text-slate-600 mb-3'>
-                          Up to {plan.buildingLimit} buildings
+                          {t('billing.subscription.upToBuildings', { count: plan.buildingLimit })}
                         </p>
                         {isCurrentPlan ? (
                           <Badge variant='secondary' className='w-full justify-center'>
-                            Current Plan
+                            {t('billing.subscription.currentPlanBadge')}
                           </Badge>
                         ) : (
                           <Button
                             onClick={() =>
-                              isUpgrade ? upgradePlan(plan.id) : downgradePlan(plan.id)
+                              isPlanUpgrade ? upgradePlan(plan.id) : downgradePlan(plan.id)
                             }
-                            variant={isUpgrade ? 'default' : 'outline'}
+                            disabled={!!actionLoading}
+                            variant={isPlanUpgrade ? 'default' : 'outline'}
                             className='w-full'
                           >
-                            {isUpgrade ? 'Upgrade' : 'Switch'}
+                            {actionLoading === 'upgrade' || actionLoading === 'downgrade'
+                              ? t('billing.subscription.processing')
+                              : isPlanUpgrade
+                                ? t('billing.subscription.upgrade')
+                                : t('billing.subscription.downgrade')}
                           </Button>
                         )}
                       </CardContent>
@@ -289,39 +371,35 @@ export const BillingDashboard: React.FC = () => {
             </CardContent>
             <CardFooter className='flex justify-between border-t pt-6'>
               <p className='text-sm text-slate-600'>
-                Need help choosing?{' '}
+                {t('billing.subscription.needHelp')}{' '}
                 <a href='#' className='text-slate-900 underline'>
-                  Contact support
+                  {t('billing.subscription.contactSupport')}
                 </a>
               </p>
               <Dialog>
                 <DialogTrigger asChild>
                   <Button variant='destructive' size='sm'>
-                    Cancel Subscription
+                    {t('billing.subscription.cancelTitle')}
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Are you sure?</DialogTitle>
+                    <DialogTitle>{t('billing.subscription.cancelConfirmTitle')}</DialogTitle>
                     <DialogDescription>
-                      Your subscription will remain active until{' '}
-                      <strong>
-                        {new Date(currentSubscription.currentPeriodEnd).toLocaleDateString(
-                          'da-DK'
-                        )}
-                      </strong>
-                      . After that, you'll lose access to all premium features.
+                      {t('billing.subscription.cancelConfirmDescription', {
+                        date: new Date(currentSubscription.currentPeriodEnd).toLocaleDateString(locale)
+                      })}
                     </DialogDescription>
                   </DialogHeader>
                   <DialogFooter>
                     <DialogClose asChild>
-                      <Button variant='outline'>Keep Subscription</Button>
+                      <Button variant='outline'>{t('billing.subscription.keepSubscription')}</Button>
                     </DialogClose>
                     <Button
                       variant='destructive'
                       onClick={handleCancelSubscription}
                     >
-                      Yes, Cancel
+                      {t('billing.subscription.yesCancel')}
                     </Button>
                   </DialogFooter>
                 </DialogContent>
@@ -333,8 +411,8 @@ export const BillingDashboard: React.FC = () => {
         /* No Active Subscription */
         <Card className='rounded-material shadow-material-2'>
           <CardHeader className='text-center'>
-            <CardTitle>No Active Subscription</CardTitle>
-            <CardDescription>Choose a plan to get started</CardDescription>
+            <CardTitle>{t('billing.subscription.noActive')}</CardTitle>
+            <CardDescription>{t('billing.subscription.choosePlan')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
@@ -348,12 +426,12 @@ export const BillingDashboard: React.FC = () => {
                     <CardDescription className='text-2xl font-bold text-slate-900'>
                       {formatPrice(plan.price, plan.currency)}
                       <span className='text-sm font-normal text-slate-600'>
-                        {plan.billingCycle === 'monthly' ? '/month' : '/year'}
+                        {plan.billingCycle === 'monthly' ? t('billing.subscription.perMonth') : t('billing.subscription.perYear')}
                       </span>
                     </CardDescription>
                   </CardHeader>
                   <CardContent className='space-y-4 flex-grow'>
-                    <p className='text-sm text-slate-600'>Up to {plan.buildingLimit} buildings</p>
+                    <p className='text-sm text-slate-600'>{t('billing.subscription.upToBuildings', { count: plan.buildingLimit })}</p>
                     <ul className='text-sm text-slate-600 space-y-2'>
                       {plan.features.slice(0, 4).map((feature, idx) => (
                         <li key={idx} className='flex items-start gap-2'>
@@ -366,11 +444,11 @@ export const BillingDashboard: React.FC = () => {
                   <CardFooter className='mt-auto'>
                     <Button
                       onClick={() => handleSelectPlan(plan.id)}
-                      disabled={loading}
+                      disabled={!!actionLoading}
                       className='w-full'
                       variant={(plan.tier as string) === 'professional' ? 'default' : 'outline'}
                     >
-                      {loading ? 'Processing...' : 'Subscribe Now'}
+                      {actionLoading === 'checkout' ? t('billing.subscription.processing') : t('billing.subscription.subscribeNow')}
                     </Button>
                   </CardFooter>
                 </Card>
@@ -385,9 +463,9 @@ export const BillingDashboard: React.FC = () => {
         <CardHeader>
           <CardTitle className='flex items-center gap-2'>
             <CreditCard className='h-5 w-5 text-slate-600' />
-            Payment Methods
+            {t('billing.payment.title')}
           </CardTitle>
-          <CardDescription>Manage your saved payment methods</CardDescription>
+          <CardDescription>{t('billing.payment.subtitle')}</CardDescription>
         </CardHeader>
         <CardContent>
           {paymentMethods.length > 0 ? (
@@ -408,46 +486,29 @@ export const BillingDashboard: React.FC = () => {
                             {method.cardBrand} •••• {method.cardLast4}
                           </p>
                           <p className='text-sm text-slate-600'>
-                            Expires {method.cardExpMonth}/{method.cardExpYear}
+                            {t('billing.payment.expires', { month: method.cardExpMonth, year: method.cardExpYear })}
                           </p>
+                          {/* Card expiration warning */}
+                          {(() => {
+                            const now = new Date();
+                            const expDate = new Date(method.cardExpYear, method.cardExpMonth - 1);
+                            const monthsUntilExpiry = (expDate.getFullYear() - now.getFullYear()) * 12 + (expDate.getMonth() - now.getMonth());
+                            if (monthsUntilExpiry <= 2 && monthsUntilExpiry >= 0) {
+                              return (
+                                <p className='text-sm text-orange-600 flex items-center gap-1 mt-1'>
+                                  <AlertCircle className='h-3 w-3' />
+                                  Card expiring soon
+                                </p>
+                              );
+                            }
+                            return null;
+                          })()}
                         </>
                       )}
                     </div>
                   </div>
                   <div className='flex items-center gap-2'>
-                    {method.isDefault && <Badge variant='secondary'>Default</Badge>}
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button variant='ghost' size='sm' className='text-red-600 hover:text-red-700'>
-                          Remove
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle>Remove Payment Method</DialogTitle>
-                          <DialogDescription>
-                            Are you sure you want to remove this payment method?
-                          </DialogDescription>
-                        </DialogHeader>
-                        <DialogFooter>
-                          <DialogClose asChild>
-                            <Button variant='outline'>Cancel</Button>
-                          </DialogClose>
-                          <Button
-                            variant='destructive'
-                            onClick={() => {
-                              toast({
-                                title: 'Not implemented',
-                                description: 'Payment method removal will be available soon',
-                                variant: 'default',
-                              });
-                            }}
-                          >
-                            Remove
-                          </Button>
-                        </DialogFooter>
-                      </DialogContent>
-                    </Dialog>
+                    {method.isDefault && <Badge variant='secondary'>{t('billing.payment.default')}</Badge>}
                   </div>
                 </div>
               ))}
@@ -455,35 +516,27 @@ export const BillingDashboard: React.FC = () => {
               <Button
                 variant='outline'
                 className='w-full'
-                onClick={() => {
-                  toast({
-                    title: 'Not implemented',
-                    description: 'Payment method management will be available soon',
-                    variant: 'default',
-                  });
-                }}
+                onClick={openCustomerPortal}
+                disabled={portalLoading}
               >
-                Add Payment Method
+                <ExternalLink className='h-4 w-4 mr-2' />
+                {portalLoading ? 'Opening Portal...' : 'Manage Payment Methods'}
               </Button>
             </div>
           ) : (
             <div className='text-center py-12'>
               <CreditCard className='h-12 w-12 text-slate-300 mx-auto mb-4' />
-              <h3 className='font-semibold text-slate-900 mb-2'>No payment methods</h3>
+              <h3 className='font-semibold text-slate-900 mb-2'>{t('billing.payment.noMethods')}</h3>
               <p className='text-sm text-slate-600 mb-4'>
-                Add a payment method to manage your subscription
+                {t('billing.payment.noMethodsDescription')}
               </p>
               <Button
                 variant='outline'
-                onClick={() => {
-                  toast({
-                    title: 'Not implemented',
-                    description: 'Payment method management will be available soon',
-                    variant: 'default',
-                  });
-                }}
+                onClick={openCustomerPortal}
+                disabled={portalLoading}
               >
-                Add Payment Method
+                <ExternalLink className='h-4 w-4 mr-2' />
+                {portalLoading ? 'Opening Portal...' : 'Add Payment Method'}
               </Button>
             </div>
           )}
@@ -495,9 +548,9 @@ export const BillingDashboard: React.FC = () => {
         <CardHeader>
           <CardTitle className='flex items-center gap-2'>
             <FileText className='h-5 w-5 text-slate-600' />
-            Invoice History
+            {t('billing.invoices.title')}
           </CardTitle>
-          <CardDescription>View and download your past invoices</CardDescription>
+          <CardDescription>{t('billing.invoices.subtitle')}</CardDescription>
         </CardHeader>
         <CardContent>
           {invoices.length > 0 ? (
@@ -512,7 +565,7 @@ export const BillingDashboard: React.FC = () => {
                     <div>
                       <p className='font-medium'>{invoice.invoiceNumber}</p>
                       <p className='text-sm text-slate-600'>
-                        {new Date(invoice.invoiceDate).toLocaleDateString('da-DK')}
+                        {new Date(invoice.invoiceDate).toLocaleDateString(locale)}
                       </p>
                     </div>
                   </div>
@@ -536,7 +589,7 @@ export const BillingDashboard: React.FC = () => {
                     <div className='flex gap-1'>
                       {invoice.pdfUrl && (
                         <Button variant='ghost' size='sm' asChild>
-                          <a href={invoice.pdfUrl} download title='Download PDF'>
+                          <a href={invoice.pdfUrl} download title={t('billing.invoices.downloadPdf')}>
                             <Download className='h-4 w-4' />
                           </a>
                         </Button>
@@ -547,7 +600,7 @@ export const BillingDashboard: React.FC = () => {
                             href={invoice.hostedUrl}
                             target='_blank'
                             rel='noopener noreferrer'
-                            title='View Invoice'
+                            title={t('billing.invoices.viewInvoice')}
                           >
                             <FileText className='h-4 w-4' />
                           </a>
@@ -561,8 +614,8 @@ export const BillingDashboard: React.FC = () => {
           ) : (
             <div className='text-center py-12'>
               <FileText className='h-12 w-12 text-slate-300 mx-auto mb-4' />
-              <h3 className='font-semibold text-slate-900 mb-2'>No invoices yet</h3>
-              <p className='text-sm text-slate-600'>Your invoice history will appear here</p>
+              <h3 className='font-semibold text-slate-900 mb-2'>{t('billing.invoices.noInvoices')}</h3>
+              <p className='text-sm text-slate-600'>{t('billing.invoices.noInvoicesDescription')}</p>
             </div>
           )}
         </CardContent>

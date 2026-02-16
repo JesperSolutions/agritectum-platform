@@ -57,7 +57,15 @@ import {
   updateSubscription,
   cancelSubscription,
   stripeWebhook,
+  createCustomerPortalSession,
+  verifySubscriptionStatus,
 } from './stripe/payments';
+
+// Service Agreement Billing functions
+import {
+  createServiceAgreementBilling,
+  cancelServiceAgreementBilling,
+} from './stripe/serviceAgreementBilling';
 
 // Relationship validation functions - Phase 3
 import {
@@ -113,6 +121,12 @@ export { createSubscriptionCheckout };
 export { updateSubscription };
 export { cancelSubscription };
 export { stripeWebhook };
+export { createCustomerPortalSession };
+export { verifySubscriptionStatus };
+
+// Export Service Agreement Billing functions
+export { createServiceAgreementBilling };
+export { cancelServiceAgreementBilling };
 
 // Export GDPR & Data Retention functions (disabled - causing import errors)
 // export { deleteStaleDraftReports };

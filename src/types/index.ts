@@ -897,6 +897,16 @@ export interface ServiceAgreement {
     supplierImageUrl?: string; // Leverandør underskrift billede
     customerImageUrl?: string; // Kunde underskrift billede
   };
+  
+  // Stripe Billing Integration (Only for internal providers)
+  stripeProductId?: string; // Stripe product created for this agreement
+  stripePriceId?: string; // Stripe price ID
+  stripeSubscriptionId?: string; // Active Stripe subscription ID
+  billingStatus?: 'not_setup' | 'active' | 'past_due' | 'unpaid' | 'cancelled'; // Payment status
+  lastBillingDate?: string; // ISO date of last successful charge
+  nextBillingDate?: string; // ISO date of next scheduled charge
+  totalBilled?: number; // Total amount billed to date (in currency units)
+  billingEnabled?: boolean; // Whether billing is enabled (only true for internal providers)
 }
 
 // Rejected Order Types

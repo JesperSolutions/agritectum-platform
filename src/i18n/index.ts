@@ -3,6 +3,7 @@ import svMessages from '../locales/sv/index';
 import enMessages from '../locales/en/index';
 import daMessages from '../locales/da/index';
 import deMessages from '../locales/de/index';
+import noMessages from '../locales/no/index';
 import type { SupportedLocale } from '../utils/geolocation';
 import { storeLocale } from '../utils/geolocation';
 import { logger } from '../utils/logger';
@@ -17,7 +18,7 @@ const messages: Record<SupportedLocale, any> = {
   'en-US': enMessages,
   'da-DK': daMessages,
   'de-DE': deMessages,
-  'no-NO': svMessages, // Fallback to Swedish until Norwegian translations are added
+  'no-NO': noMessages, // Norwegian with billing translations, Swedish fallback for rest
 };
 
 // Debug logging in development to verify message structure

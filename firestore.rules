@@ -737,6 +737,9 @@ service cloud.firestore {
     }
     
     // Service Agreements collection
+    // Note: Billing fields (stripeProductId, stripePriceId, stripeSubscriptionId, billingStatus, etc.)
+    // are managed through Cloud Functions with provider verification.
+    // Only internal providers (registered branches) can use billing features.
     match /serviceAgreements/{agreementId} {
       // Allow public read access if agreement is public (no authentication required)
       allow get: if resource.data.isPublic == true;

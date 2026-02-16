@@ -7,7 +7,7 @@ import { getEmailCenterConfig, isEmailServiceEnabled } from './emailCenter';
  * Finds appointments scheduled for tomorrow and sends reminders to customers and roofers
  */
 export const sendAppointmentReminders = onSchedule(
-  '0 6 * * *', // Every day at 6 AM UTC
+  { schedule: '0 6 * * *', region: 'europe-west1' },
   async () => {
     console.log('🔄 Starting appointment reminder job...');
 

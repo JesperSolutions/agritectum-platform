@@ -5,7 +5,9 @@ import * as admin from 'firebase-admin';
  * Cloud Function triggered when a building document is created
  * Geocodes the address if coordinates are not already set
  */
-export const onBuildingCreate = onDocumentCreated('buildings/{buildingId}', async event => {
+export const onBuildingCreate = onDocumentCreated(
+  { document: 'buildings/{buildingId}', region: 'europe-west1' },
+  async event => {
   const buildingData = event.data?.data();
   const buildingId = event.params.buildingId;
 
