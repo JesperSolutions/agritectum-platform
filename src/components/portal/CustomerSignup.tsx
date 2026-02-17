@@ -201,7 +201,7 @@ const CustomerSignup: React.FC = () => {
       <div className='min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center'>
         <div className='text-center'>
           <LoadingSpinner size='lg' />
-          <p className='mt-4 text-slate-600'>Validating invitation...</p>
+          <p className='mt-4 text-slate-600'>{t('customerSignup.loading')}</p>
         </div>
       </div>
     );
@@ -226,7 +226,7 @@ const CustomerSignup: React.FC = () => {
             to='/portal/login'
             className='inline-flex items-center justify-center px-6 py-3 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors font-medium'
           >
-            {t('customerSignup.success.signIn') || 'Sign In to Portal'}
+            {t('customerSignup.success.goToLogin')}
           </Link>
         </div>
       </div>
@@ -267,11 +267,11 @@ const CustomerSignup: React.FC = () => {
           {invitation && (
             <div className='bg-slate-50 rounded-lg p-4 mb-6 text-left'>
               <p className='text-sm text-slate-600'>
-                <strong>Company:</strong> {invitation.customerName}
+                <strong>{t('customerSignup.companyLabel')}:</strong> {invitation.customerName}
               </p>
               {invitation.expiresAt && (
                 <p className='text-sm text-slate-600 mt-1'>
-                  <strong>Expired:</strong> {formatExpiryDate(invitation.expiresAt)}
+                  <strong>{t('customerSignup.expiredLabel')}:</strong> {formatExpiryDate(invitation.expiresAt)}
                 </p>
               )}
             </div>
@@ -328,7 +328,9 @@ const CustomerSignup: React.FC = () => {
           <div className='hidden lg:flex flex-col gap-6 rounded-2xl border border-slate-200 bg-white/80 p-8 shadow-material-3 backdrop-blur'>
             <AgritectumLogo className='h-10' />
             <div className='space-y-3'>
-              <p className='text-xs uppercase tracking-[0.3em] text-slate-500'>Customer portal</p>
+              <p className='text-xs uppercase tracking-[0.3em] text-slate-500'>
+                {t('customerSignup.portalLabel')}
+              </p>
               <h1 className='text-3xl font-semibold text-slate-900'>
                 {t('customerSignup.title') || 'Create your Agritectum account'}
               </h1>

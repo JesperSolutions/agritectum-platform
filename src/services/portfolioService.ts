@@ -95,7 +95,7 @@ export const getPortfolioMetrics = async (customerId: string): Promise<Portfolio
 /**
  * Compare multiple buildings
  */
-export const compareBu buildings = async (buildingIds: string[]): Promise<BuildingComparison[]> => {
+export const compareBuildings = async (buildingIds: string[]): Promise<BuildingComparison[]> => {
   try {
     const comparisons: BuildingComparison[] = [];
 

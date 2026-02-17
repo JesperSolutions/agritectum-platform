@@ -256,5 +256,19 @@
   "common.roles.branchAdmin": "Filialadministrator",
   "common.roles.superAdmin": "Superadministrator",
   "common.back": "Zurück",
-  "common.goBackToDashboard": "Zurück zum Dashboard"
+  "common.goBackToDashboard": "Zurück zum Dashboard",
+
+  "gdpr.title": "Datenschutz und Privatsphäre",
+  "gdpr.subtitle": "DSGVO-Konformität",
+  "gdpr.intro": "Wir nehmen Datenschutz ernst und halten die DSGVO ein. Wählen Sie Ihre Einstellungen unten.",
+  "gdpr.required.title": "Ich akzeptiere die Bedingungen und die notwendige Datenverarbeitung",
+  "gdpr.required.description": "Erforderlich, um die Plattform zu nutzen.",
+  "gdpr.analytics.title": "Ich stimme der Statistik zu",
+  "gdpr.analytics.description": "Optional. Hilft uns, die Plattform zu verbessern. Keine sensiblen Daten.",
+  "gdpr.links.privacyPolicy": "Datenschutzerklärung",
+  "gdpr.links.terms": "Nutzungsbedingungen",
+  "gdpr.links.dpa": "Auftragsverarbeitungsvertrag",
+  "gdpr.actions.rejectAll": "Alle ablehnen",
+  "gdpr.actions.acceptAll": "Alle akzeptieren",
+  "gdpr.actions.savePreferences": "Auswahl speichern"
 }

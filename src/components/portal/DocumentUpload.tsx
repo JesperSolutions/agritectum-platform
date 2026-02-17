@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Upload, X, FileText, Download, Trash2, AlertCircle, CheckCircle } from 'lucide-react';
+import { useIntl } from '../../hooks/useIntl';
 import {
   uploadBuildingDocument,
   deleteBuildingDocument,
@@ -26,6 +27,7 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({
   userId,
   isEditable = true,
 }) => {
+  const { t } = useIntl();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -54,7 +56,7 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({
     try {
       const newDocument = await uploadBuildingDocument(buildingId, file, userId);
       onDocumentsChange([...documents, newDocument]);
-      setUploadSuccess(`✓ "${file.name}" uploaded successfully`);
+      setUploadSuccess(t('documents.upload.success', { fileName: file.name }));
 
       // Clear file input
       if (fileInputRef.current) fileInputRef.current.value = '';
@@ -62,7 +64,8 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({
       // Clear success message after 3 seconds
       setTimeout(() => setUploadSuccess(null), 3000);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to upload document';
+      const errorMessage =
+        error instanceof Error ? error.message : t('documents.errors.uploadFailed');
       setUploadError(errorMessage);
       logger.error('Document upload failed:', error);
     } finally {
@@ -89,14 +92,14 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({
       });
     } catch (error) {
       logger.error('Failed to download document:', error);
-      setUploadError('Failed to download document');
+      setUploadError(t('documents.errors.downloadFailed'));
     } finally {
       setDownloadingId(null);
     }
   };
 
   const handleDelete = async (document: BuildingDocument) => {
-    if (!window.confirm(`Delete "${document.fileName}"? This cannot be undone.`)) {
+    if (!window.confirm(t('documents.confirmDelete', { fileName: document.fileName }))) {
       return;
     }
 
@@ -105,10 +108,11 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({
       await deleteBuildingDocument(buildingId, document, userId);
       onDocumentsChange(documents.filter((d) => d.id !== document.id));
       setUploadError(null);
-      setUploadSuccess(`✓ Document deleted`);
+      setUploadSuccess(t('documents.delete.success'));
       setTimeout(() => setUploadSuccess(null), 2000);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to delete document';
+      const errorMessage =
+        error instanceof Error ? error.message : t('documents.errors.deleteFailed');
       setUploadError(errorMessage);
       logger.error('Document deletion failed:', error);
     } finally {
@@ -123,7 +127,7 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({
     <div className="border-t pt-6">
       <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
         <FileText className="h-5 w-5 text-blue-600" />
-        Documentation & Files
+        {t('documents.title')}
       </h3>
 
       {/* Upload Section */}
@@ -131,14 +135,17 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({
         <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
           <div className="flex items-center justify-between mb-3">
             <label className="block font-medium text-gray-700">
-              Attach Documents
+              {t('documents.upload.label')}
               <span className="text-xs text-gray-500 font-normal ml-2">
-                ({documents.length}/{MAX_DOCUMENTS})
+                {t('documents.upload.count', {
+                  count: documents.length,
+                  max: MAX_DOCUMENTS,
+                })}
               </span>
             </label>
             {isFull && (
               <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
-                Maximum documents reached
+                {t('documents.upload.maxReached')}
               </span>
             )}
           </div>
@@ -166,17 +173,17 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({
 
             <Upload className="h-8 w-8 text-blue-600 mx-auto mb-2" />
             {isUploading ? (
-              <p className="text-gray-600 font-medium">Uploading...</p>
+              <p className="text-gray-600 font-medium">{t('documents.upload.uploading')}</p>
             ) : isFull ? (
-              <p className="text-gray-600">Maximum documents reached</p>
+              <p className="text-gray-600">{t('documents.upload.maxReached')}</p>
             ) : (
               <>
-                <p className="text-gray-700 font-medium">Click to upload a document</p>
+                <p className="text-gray-700 font-medium">{t('documents.upload.cta')}</p>
                 <p className="text-xs text-gray-500 mt-1">
-                  Max 3MB per file • PDF, DOC, DOCX, JPG, PNG, GIF, XLS, XLSX
+                  {t('documents.upload.fileTypes')}
                 </p>
                 <p className="text-xs text-gray-500 mt-1">
-                  {remainingSlots} slot{remainingSlots !== 1 ? 's' : ''} remaining
+                  {t('documents.upload.slotsRemaining', { count: remainingSlots })}
                 </p>
               </>
             )}
@@ -202,13 +209,13 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({
       {/* Documents List */}
       <div>
         <h4 className="font-medium text-gray-700 mb-3">
-          {documents.length} {documents.length === 1 ? 'Document' : 'Documents'}
+          {t('documents.list.count', { count: documents.length })}
         </h4>
 
         {documents.length === 0 ? (
           <div className="p-4 text-center bg-gray-50 rounded-lg border border-gray-200">
             <FileText className="h-12 w-12 text-gray-300 mx-auto mb-2" />
-            <p className="text-gray-500">No documents attached yet</p>
+            <p className="text-gray-500">{t('documents.list.empty')}</p>
           </div>
         ) : (
           <div className="space-y-2">
@@ -236,7 +243,7 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({
                       onClick={() => handleDownload(document)}
                       disabled={downloadingId === document.id}
                       className="p-2 text-gray-500 hover:text-blue-600 hover:bg-white rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      title="Download document"
+                      title={t('documents.actions.download')}
                     >
                       <Download className="h-4 w-4" />
                     </button>
@@ -244,7 +251,7 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({
                       onClick={() => handleDelete(document)}
                       disabled={deletingId === document.id}
                       className="p-2 text-gray-500 hover:text-red-600 hover:bg-white rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      title="Delete document"
+                      title={t('documents.actions.delete')}
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>

@@ -94,5 +94,8 @@
   "customerSignup.used.title": "Inbjudan redan använd",
   "customerSignup.used.message": "Denna inbjudningslänk har redan använts för att skapa ett konto.",
   "customerSignup.invalid.title": "Ogiltig länk",
-  "customerSignup.invalid.message": "Denna inbjudningslänk är ogiltig. Kontakta din administratör."
+  "customerSignup.invalid.message": "Denna inbjudningslänk är ogiltig. Kontakta din administratör.",
+  "customerSignup.portalLabel": "Kundportal",
+  "customerSignup.companyLabel": "Företag",
+  "customerSignup.expiredLabel": "Utgången"
 }

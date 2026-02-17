@@ -2,6 +2,7 @@ import React from 'react';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Building as BuildingIcon, TrendingUp, TrendingDown, AlertTriangle, Download } from 'lucide-react';
 import { Building, Report } from '../../types';
+import { useIntl } from '../../hooks/useIntl';
 
 interface BuildingWithHealth extends Building {
   healthScore: number;
@@ -26,6 +27,7 @@ const COLORS = {
 };
 
 const PortfolioHealthReport: React.FC<Props> = ({ buildings, reports, onExportPDF }) => {
+  const { t, locale } = useIntl();
   // Calculate grade distribution
   const gradeData = [
     { grade: 'A', count: buildings.filter(b => b.healthGrade === 'A').length, color: COLORS.A },
@@ -40,7 +42,7 @@ const PortfolioHealthReport: React.FC<Props> = ({ buildings, reports, onExportPD
   for (let i = 5; i >= 0; i--) {
     const date = new Date();
     date.setMonth(date.getMonth() - i);
-    const monthName = date.toLocaleDateString('en-US', { month: 'short' });
+    const monthName = date.toLocaleDateString(locale, { month: 'short' });
     
     // Filter reports from that month
     const monthReports = reports.filter(r => {
@@ -71,7 +73,7 @@ const PortfolioHealthReport: React.FC<Props> = ({ buildings, reports, onExportPD
     }));
 
   // Smart recommendations
-  const recommendations = generateRecommendations(buildings, reports);
+  const recommendations = generateRecommendations(buildings, reports, t);
 
   // Average health score
   const avgHealth = buildings.length > 0
@@ -80,6 +82,10 @@ const PortfolioHealthReport: React.FC<Props> = ({ buildings, reports, onExportPD
 
   // Buildings needing attention
   const needsAttention = buildings.filter(b => b.status === 'urgent' || b.status === 'check-soon').length;
+
+  const sixMonthsAgo = new Date();
+  sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+  const inspectionsLastSixMonths = reports.filter(r => new Date(r.inspectionDate) >= sixMonthsAgo).length;
 
   // Trend direction
   const recentHealth = trendData[trendData.length - 1]?.health || 0;
@@ -91,8 +97,8 @@ const PortfolioHealthReport: React.FC<Props> = ({ buildings, reports, onExportPD
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Portfolio Health Report</h2>
-          <p className="text-gray-600 mt-1">Comprehensive health analysis of your building portfolio</p>
+          <h2 className="text-2xl font-bold text-gray-900">{t('portal.portfolioReport.title')}</h2>
+          <p className="text-gray-600 mt-1">{t('portal.portfolioReport.subtitle')}</p>
         </div>
         {onExportPDF && (
           <button
@@ -100,20 +106,42 @@ const PortfolioHealthReport: React.FC<Props> = ({ buildings, reports, onExportPD
             className="flex items-center gap-2 px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors shadow-sm"
           >
             <Download className="w-4 h-4" />
-            Export PDF Report
+            {t('portal.portfolioReport.exportPdf')}
           </button>
         )}
       </div>
 
+      {/* Smart Recommendations */}
+      {recommendations.length > 0 && (
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-6">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="w-6 h-6 text-amber-600 flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold text-amber-900">{t('portal.portfolioReport.recommendations.title')}</h3>
+              <p className="text-sm text-amber-800 mb-3">{t('portal.portfolioReport.recommendations.desc')}</p>
+              <ul className="space-y-2">
+                {recommendations.map((rec, idx) => (
+                  <li key={idx} className="flex items-start gap-2 text-sm text-amber-800">
+                    <span className="font-bold">•</span>
+                    <span>{rec}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="bg-white rounded-lg shadow p-5 border border-gray-200">
-          <p className="text-sm font-medium text-gray-600 mb-1">Total Buildings</p>
+          <p className="text-sm font-medium text-gray-600 mb-1">{t('portal.portfolioReport.cards.totalBuildings.title')}</p>
           <p className="text-3xl font-bold text-gray-900">{buildings.length}</p>
+          <p className="text-xs text-gray-500 mt-2">{t('portal.portfolioReport.cards.totalBuildings.desc')}</p>
         </div>
 
         <div className="bg-white rounded-lg shadow p-5 border border-gray-200">
-          <p className="text-sm font-medium text-gray-600 mb-1">Average Health</p>
+          <p className="text-sm font-medium text-gray-600 mb-1">{t('portal.portfolioReport.cards.averageHealth.title')}</p>
           <div className="flex items-center gap-2">
             <p className="text-3xl font-bold text-gray-900">{avgHealth}</p>
             {trend !== 0 && (
@@ -123,16 +151,19 @@ const PortfolioHealthReport: React.FC<Props> = ({ buildings, reports, onExportPD
               </span>
             )}
           </div>
+          <p className="text-xs text-gray-500 mt-2">{t('portal.portfolioReport.cards.averageHealth.desc')}</p>
+        </div>
+
+        <div className="bg-amber-50 rounded-lg shadow p-5 border border-amber-200">
+          <p className="text-sm font-semibold text-amber-900 mb-1">{t('portal.portfolioReport.cards.needsAttention.title')}</p>
+          <p className="text-4xl font-bold text-amber-700">{needsAttention}</p>
+          <p className="text-xs text-amber-800 mt-2">{t('portal.portfolioReport.cards.needsAttention.desc')}</p>
         </div>
 
         <div className="bg-white rounded-lg shadow p-5 border border-gray-200">
-          <p className="text-sm font-medium text-gray-600 mb-1">Needs Attention</p>
-          <p className="text-3xl font-bold text-orange-600">{needsAttention}</p>
-        </div>
-
-        <div className="bg-white rounded-lg shadow p-5 border border-gray-200">
-          <p className="text-sm font-medium text-gray-600 mb-1">Inspections (6mo)</p>
-          <p className="text-3xl font-bold text-gray-900">{reports.length}</p>
+          <p className="text-sm font-medium text-gray-600 mb-1">{t('portal.portfolioReport.cards.inspections.title')}</p>
+          <p className="text-3xl font-bold text-gray-900">{inspectionsLastSixMonths}</p>
+          <p className="text-xs text-gray-500 mt-2">{t('portal.portfolioReport.cards.inspections.desc')}</p>
         </div>
       </div>
 
@@ -140,7 +171,8 @@ const PortfolioHealthReport: React.FC<Props> = ({ buildings, reports, onExportPD
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Health Score Trend */}
         <div className="bg-white rounded-lg shadow p-6 border border-gray-200">
-          <h3 className="text-lg font-semibold mb-4">Health Score Trend</h3>
+          <h3 className="text-lg font-semibold">{t('portal.portfolioReport.trend.title')}</h3>
+          <p className="text-sm text-gray-600 mb-4">{t('portal.portfolioReport.trend.desc')}</p>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={trendData}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -148,14 +180,21 @@ const PortfolioHealthReport: React.FC<Props> = ({ buildings, reports, onExportPD
               <YAxis domain={[0, 100]} />
               <Tooltip />
               <Legend />
-              <Line type="monotone" dataKey="health" stroke="#3b82f6" strokeWidth={2} name="Avg Health Score" />
+              <Line
+                type="monotone"
+                dataKey="health"
+                stroke="#3b82f6"
+                strokeWidth={2}
+                name={t('portal.portfolioReport.trend.legend')}
+              />
             </LineChart>
           </ResponsiveContainer>
         </div>
 
         {/* Grade Distribution */}
         <div className="bg-white rounded-lg shadow p-6 border border-gray-200">
-          <h3 className="text-lg font-semibold mb-4">Grade Distribution</h3>
+          <h3 className="text-lg font-semibold">{t('portal.portfolioReport.grade.title')}</h3>
+          <p className="text-sm text-gray-600 mb-4">{t('portal.portfolioReport.grade.desc')}</p>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
@@ -180,7 +219,8 @@ const PortfolioHealthReport: React.FC<Props> = ({ buildings, reports, onExportPD
 
       {/* Building Comparison */}
       <div className="bg-white rounded-lg shadow p-6 border border-gray-200">
-        <h3 className="text-lg font-semibold mb-4">Building Comparison (Top 10)</h3>
+        <h3 className="text-lg font-semibold">{t('portal.portfolioReport.comparison.title')}</h3>
+        <p className="text-sm text-gray-600 mb-4">{t('portal.portfolioReport.comparison.desc')}</p>
         <ResponsiveContainer width="100%" height={400}>
           <BarChart data={comparisonData} layout="vertical">
             <CartesianGrid strokeDasharray="3 3" />
@@ -188,7 +228,7 @@ const PortfolioHealthReport: React.FC<Props> = ({ buildings, reports, onExportPD
             <YAxis dataKey="name" type="category" width={150} />
             <Tooltip />
             <Legend />
-            <Bar dataKey="score" name="Health Score">
+            <Bar dataKey="score" name={t('portal.portfolioReport.comparison.legend')}>
               {comparisonData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[entry.grade as keyof typeof COLORS]} />
               ))}
@@ -196,26 +236,6 @@ const PortfolioHealthReport: React.FC<Props> = ({ buildings, reports, onExportPD
           </BarChart>
         </ResponsiveContainer>
       </div>
-
-      {/* Smart Recommendations */}
-      {recommendations.length > 0 && (
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-6">
-          <div className="flex items-start gap-3">
-            <AlertTriangle className="w-6 h-6 text-amber-600 flex-shrink-0 mt-0.5" />
-            <div className="flex-1">
-              <h3 className="text-lg font-semibold text-amber-900 mb-3">Recommended Actions</h3>
-              <ul className="space-y-2">
-                {recommendations.map((rec, idx) => (
-                  <li key={idx} className="flex items-start gap-2 text-sm text-amber-800">
-                    <span className="font-bold">•</span>
-                    <span>{rec}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
@@ -237,22 +257,26 @@ function calculateReportHealth(report: Report): number {
 }
 
 // Generate smart recommendations
-function generateRecommendations(buildings: BuildingWithHealth[], reports: Report[]): string[] {
+function generateRecommendations(
+  buildings: BuildingWithHealth[],
+  reports: Report[],
+  t: (id: string, values?: Record<string, any>) => string
+): string[] {
   const recs: string[] = [];
   
   const urgentBuildings = buildings.filter(b => b.status === 'urgent');
   if (urgentBuildings.length > 0) {
-    recs.push(`${urgentBuildings.length} building${urgentBuildings.length > 1 ? 's' : ''} need${urgentBuildings.length === 1 ? 's' : ''} immediate inspection (no inspection in over 365 days)`);
+    recs.push(t('portal.recommendations.urgent', { count: urgentBuildings.length }));
   }
   
   const checkSoonBuildings = buildings.filter(b => b.status === 'check-soon');
   if (checkSoonBuildings.length > 0) {
-    recs.push(`${checkSoonBuildings.length} building${checkSoonBuildings.length > 1 ? 's' : ''} should be inspected within the next 6 months`);
+    recs.push(t('portal.recommendations.checkSoon', { count: checkSoonBuildings.length }));
   }
   
   const lowGradeBuildings = buildings.filter(b => b.healthGrade === 'D' || b.healthGrade === 'F');
   if (lowGradeBuildings.length > 0) {
-    recs.push(`${lowGradeBuildings.length} building${lowGradeBuildings.length > 1 ? 's have' : ' has'} poor health grades (D/F) - consider maintenance agreements`);
+    recs.push(t('portal.recommendations.lowGrades', { count: lowGradeBuildings.length }));
   }
   
   const avgHealth = buildings.length > 0
@@ -260,7 +284,7 @@ function generateRecommendations(buildings: BuildingWithHealth[], reports: Repor
     : 0;
   
   if (avgHealth < 70) {
-    recs.push('Portfolio health is below optimal (70+) - prioritize preventive maintenance');
+    recs.push(t('portal.recommendations.lowAverage'));
   }
   
   const recentReports = reports.filter(r => {
@@ -269,7 +293,7 @@ function generateRecommendations(buildings: BuildingWithHealth[], reports: Repor
   });
   
   if (recentReports.length < buildings.length * 0.25) {
-    recs.push('Less than 25% of buildings inspected recently - consider scheduling annual inspections');
+    recs.push(t('portal.recommendations.lowCoverage'));
   }
   
   return recs;

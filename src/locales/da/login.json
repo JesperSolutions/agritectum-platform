@@ -95,5 +95,8 @@
   "customerSignup.used.title": "Invitation allerede brugt",
   "customerSignup.used.message": "Dette invitationslink er allerede blevet brugt til at oprette en konto.",
   "customerSignup.invalid.title": "Ugyldigt link",
-  "customerSignup.invalid.message": "Dette invitationslink er ugyldigt. Kontakt venligst din administrator."
+  "customerSignup.invalid.message": "Dette invitationslink er ugyldigt. Kontakt venligst din administrator.",
+  "customerSignup.portalLabel": "Kundeportal",
+  "customerSignup.companyLabel": "Virksomhed",
+  "customerSignup.expiredLabel": "Udløbet"
 }

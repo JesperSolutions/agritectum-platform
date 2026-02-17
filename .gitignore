@@ -33,6 +33,8 @@ serviceAccountKey.json
 service-account*.json
 *.pem
 *.p12
+config/credentials/*.json
+!config/credentials/*.example.json
 
 # Security: Environment Files with Secrets
 *.env.local

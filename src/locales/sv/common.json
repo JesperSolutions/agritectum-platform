@@ -258,5 +258,19 @@
   "inspection.insulationAssessment": "Bedömning av isoleringstyp",
   "inspection.insulationAssessmentHint": "Bedöm isoleringstyp och -tillstånd",
 
-  "roofImage.pinInstruction": "💡 Klicka på bilden för att lägga till markörer som markerar problemplatser. Markörer kan länkas till specifika problem."
+  "roofImage.pinInstruction": "💡 Klicka på bilden för att lägga till markörer som markerar problemplatser. Markörer kan länkas till specifika problem.",
+
+  "gdpr.title": "Integritet och dataskydd",
+  "gdpr.subtitle": "GDPR-efterlevnad",
+  "gdpr.intro": "Vi tar din integritet på allvar och följer GDPR. Välj dina inställningar nedan.",
+  "gdpr.required.title": "Jag accepterar villkor och nödvändig databehandling",
+  "gdpr.required.description": "Krävs för att använda plattformen.",
+  "gdpr.analytics.title": "Jag accepterar statistik",
+  "gdpr.analytics.description": "Valfritt. Hjälper oss förbättra plattformen. Ingen känslig data.",
+  "gdpr.links.privacyPolicy": "Integritetspolicy",
+  "gdpr.links.terms": "Villkor",
+  "gdpr.links.dpa": "Personuppgiftsbiträdesavtal",
+  "gdpr.actions.rejectAll": "Avvisa alla",
+  "gdpr.actions.acceptAll": "Acceptera alla",
+  "gdpr.actions.savePreferences": "Spara val"
 }

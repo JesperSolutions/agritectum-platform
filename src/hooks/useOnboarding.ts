@@ -92,6 +92,12 @@ export const useOnboarding = () => {
       return;
     }
 
+    if (currentUser.role !== 'customer') {
+      setShowTour(false);
+      setLoading(false);
+      return;
+    }
+
     const loadOnboardingState = async () => {
       try {
         const onboardingRef = doc(db, 'users', currentUser.uid, 'preferences', 'onboarding');

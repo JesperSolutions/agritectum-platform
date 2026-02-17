@@ -29,5 +29,26 @@
   "profile.passwordChangeSuccess": "Passwort wurde erfolgreich geändert",
   "profile.currentPasswordIncorrect": "Aktuelles Passwort ist falsch",
   "profile.passwordTooWeak": "Das Passwort ist zu schwach",
-  "profile.passwordChangeError": "Beim Ändern des Passworts ist ein Fehler aufgetreten"
+  "profile.passwordChangeError": "Beim Ändern des Passworts ist ein Fehler aufgetreten",
+
+  "profile.tabs.preferences": "Einstellungen",
+  "profile.tabs.profile": "Profilinformationen",
+  "profile.languageDescription": "Wählen Sie Ihre bevorzugte Sprache für die Oberfläche",
+  "profile.currencyDescription": "Wählen Sie Ihre bevorzugte Währung für die Preisanzeige",
+  "profile.currentLanguageLabel": "Aktuelle Sprache:",
+  "profile.currentCurrencyLabel": "Aktuelle Währung:",
+  "profile.profileInformationTitle": "Profilinformationen",
+  "profile.profileInformationDescription": "Aktualisieren Sie Ihre persönlichen und Unternehmensdaten",
+  "profile.emailLabel": "E-Mail",
+  "profile.emailCannotChange": "E-Mail kann nicht geändert werden",
+  "profile.fullNameLabel": "Vollständiger Name",
+  "profile.fullNamePlaceholder": "Geben Sie Ihren vollständigen Namen ein",
+  "profile.phoneLabel": "Telefon",
+  "profile.phonePlaceholder": "+49 151 234 567",
+  "profile.addressLabel": "Adresse",
+  "profile.addressPlaceholder": "Straße, Stadt, Postleitzahl",
+  "profile.companyNameLabel": "Firmenname",
+  "profile.companyNamePlaceholder": "Ihr Firmenname (optional)",
+  "profile.saveChanges": "Änderungen speichern",
+  "profile.saving": "Speichert..."
 }

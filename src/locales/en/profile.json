@@ -31,5 +31,26 @@
   "profile.passwordChangeSuccess": "Password changed successfully",
   "profile.currentPasswordIncorrect": "Current password is incorrect",
   "profile.passwordTooWeak": "Password is too weak",
-  "profile.passwordChangeError": "An error occurred while changing password"
+  "profile.passwordChangeError": "An error occurred while changing password",
+
+  "profile.tabs.preferences": "Preferences",
+  "profile.tabs.profile": "Profile Information",
+  "profile.languageDescription": "Choose your preferred language for the interface",
+  "profile.currencyDescription": "Choose your preferred currency for pricing display",
+  "profile.currentLanguageLabel": "Current Language:",
+  "profile.currentCurrencyLabel": "Current Currency:",
+  "profile.profileInformationTitle": "Profile Information",
+  "profile.profileInformationDescription": "Update your personal and company information",
+  "profile.emailLabel": "Email",
+  "profile.emailCannotChange": "Email cannot be changed",
+  "profile.fullNameLabel": "Full Name",
+  "profile.fullNamePlaceholder": "Enter your full name",
+  "profile.phoneLabel": "Phone",
+  "profile.phonePlaceholder": "+45 12 34 56 78",
+  "profile.addressLabel": "Address",
+  "profile.addressPlaceholder": "Street address, city, postal code",
+  "profile.companyNameLabel": "Company Name",
+  "profile.companyNamePlaceholder": "Your company name (optional)",
+  "profile.saveChanges": "Save Changes",
+  "profile.saving": "Saving..."
 }

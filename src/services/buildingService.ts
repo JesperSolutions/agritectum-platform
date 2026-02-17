@@ -1,4 +1,4 @@
-import { db } from '../config/firebase';
+import { db, storage } from '../config/firebase';
 import { logger } from '../utils/logger';
 import {
   collection,
@@ -12,8 +12,10 @@ import {
   where,
   orderBy,
 } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { getAuth } from 'firebase/auth';
 import { Building, Report, ServiceAgreement, ScheduledVisit } from '../types';
+import { compressImage, deleteImageFromStorage } from './imageUploadService';
 
 export interface BuildingActivity {
   id: string;
@@ -380,6 +382,39 @@ export const createBuilding = async (
       throw error;
     }
     throw new Error('Failed to create building');
+  }
+};
+
+export const uploadBuildingThumbnail = async (
+  buildingId: string,
+  file: File,
+  previousUrl?: string
+): Promise<string> => {
+  try {
+    const compressedFile = await compressImage(file, {
+      maxWidth: 1200,
+      maxHeight: 900,
+      quality: 0.8,
+      maxFileSize: 5,
+    });
+
+    const fileName = `${Date.now()}_${compressedFile.name}`;
+    const storageRef = ref(storage, `buildings/${buildingId}/thumbnails/${fileName}`);
+    const snapshot = await uploadBytes(storageRef, compressedFile);
+    const downloadURL = await getDownloadURL(snapshot.ref);
+
+    await updateDoc(doc(db, 'buildings', buildingId), {
+      thumbnailUrl: downloadURL,
+    });
+
+    if (previousUrl) {
+      await deleteImageFromStorage(previousUrl);
+    }
+
+    return downloadURL;
+  } catch (error: any) {
+    logger.error('❌ Failed to upload building thumbnail:', error);
+    throw new Error('Failed to upload building thumbnail');
   }
 };
 

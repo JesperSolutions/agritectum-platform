@@ -257,5 +257,19 @@
   "common.roles.customer": "Kunde",
   "common.roles.inspector": "Inspektør",
   "common.roles.branchAdmin": "Filialadministrator",
-  "common.roles.superAdmin": "Superadministrator"
+  "common.roles.superAdmin": "Superadministrator",
+
+  "gdpr.title": "Privatliv og databeskyttelse",
+  "gdpr.subtitle": "GDPR-overholdelse",
+  "gdpr.intro": "Vi passer godt på dine data og overholder GDPR. Vælg dine indstillinger nedenfor.",
+  "gdpr.required.title": "Jeg accepterer vilkår og nødvendig databehandling",
+  "gdpr.required.description": "Kræves for at bruge platformen.",
+  "gdpr.analytics.title": "Jeg accepterer brug af statistik",
+  "gdpr.analytics.description": "Valgfrit. Hjælper os med at forbedre platformen. Ingen følsomme data.",
+  "gdpr.links.privacyPolicy": "Privatlivspolitik",
+  "gdpr.links.terms": "Vilkår",
+  "gdpr.links.dpa": "Databehandleraftale",
+  "gdpr.actions.rejectAll": "Afvis alle",
+  "gdpr.actions.acceptAll": "Accepter alle",
+  "gdpr.actions.savePreferences": "Gem valg"
 }

@@ -263,5 +263,19 @@
   "inspection.insulationAssessment": "Insulation Assessment",
   "inspection.insulationAssessmentHint": "Evaluate insulation type and condition",
 
-  "roofImage.pinInstruction": "💡 Click on the image to add markers that mark problem locations. Markers can be linked to specific issues."
+  "roofImage.pinInstruction": "💡 Click on the image to add markers that mark problem locations. Markers can be linked to specific issues.",
+
+  "gdpr.title": "Privacy & Data Protection",
+  "gdpr.subtitle": "GDPR Compliance",
+  "gdpr.intro": "We take privacy seriously and comply with GDPR. Choose your settings below.",
+  "gdpr.required.title": "I accept the terms and necessary data processing",
+  "gdpr.required.description": "Required to use the platform.",
+  "gdpr.analytics.title": "I accept analytics",
+  "gdpr.analytics.description": "Optional. Helps us improve the platform. No sensitive data.",
+  "gdpr.links.privacyPolicy": "Privacy Policy",
+  "gdpr.links.terms": "Terms",
+  "gdpr.links.dpa": "Data Processing Agreement",
+  "gdpr.actions.rejectAll": "Reject all",
+  "gdpr.actions.acceptAll": "Accept all",
+  "gdpr.actions.savePreferences": "Save preferences"
 }

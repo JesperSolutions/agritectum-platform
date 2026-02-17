@@ -148,11 +148,11 @@ const CustomerProfile: React.FC = () => {
         <TabsList className='w-full justify-start bg-slate-100 rounded-material'>
           <TabsTrigger value='preferences' className='data-[state=active]:bg-white rounded-material'>
             <Globe className='h-4 w-4 mr-2' />
-            Preferences
+            {t('profile.tabs.preferences')}
           </TabsTrigger>
           <TabsTrigger value='profile' className='data-[state=active]:bg-white rounded-material'>
             <User className='h-4 w-4 mr-2' />
-            Profile Information
+            {t('profile.tabs.profile')}
           </TabsTrigger>
         </TabsList>
 
@@ -166,12 +166,12 @@ const CustomerProfile: React.FC = () => {
                 {t('profile.languageSettings') || 'Language Settings'}
               </CardTitle>
               <CardDescription>
-                Choose your preferred language for the interface
+                {t('profile.languageDescription')}
               </CardDescription>
             </CardHeader>
             <CardContent className='space-y-4'>
               <div className='flex items-center gap-2'>
-                <span className='text-sm text-slate-600'>Current Language:</span>
+                <span className='text-sm text-slate-600'>{t('profile.currentLanguageLabel')}</span>
                 <Badge variant='secondary'>
                   {languages.find(l => l.code === selectedLanguage)?.name}
                 </Badge>
@@ -208,12 +208,12 @@ const CustomerProfile: React.FC = () => {
                 {t('profile.currencySettings') || 'Currency Settings'}
               </CardTitle>
               <CardDescription>
-                Choose your preferred currency for pricing display
+                {t('profile.currencyDescription')}
               </CardDescription>
             </CardHeader>
             <CardContent className='space-y-4'>
               <div className='flex items-center gap-2'>
-                <span className='text-sm text-slate-600'>Current Currency:</span>
+                <span className='text-sm text-slate-600'>{t('profile.currentCurrencyLabel')}</span>
                 <Badge variant='secondary'>
                   {currencies.find(c => c.code === selectedCurrency)?.name} ({selectedCurrency})
                 </Badge>
@@ -254,16 +254,16 @@ const CustomerProfile: React.FC = () => {
             <CardHeader>
               <CardTitle className='flex items-center gap-2'>
                 <User className='h-5 w-5 text-slate-600' />
-                Profile Information
+                {t('profile.profileInformationTitle')}
               </CardTitle>
               <CardDescription>
-                Update your personal and company information
+                {t('profile.profileInformationDescription')}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className='space-y-6'>
                 <div className='space-y-2'>
-                  <Label htmlFor='email'>Email</Label>
+                  <Label htmlFor='email'>{t('profile.emailLabel')}</Label>
                   <Input
                     id='email'
                     type='email'
@@ -271,12 +271,12 @@ const CustomerProfile: React.FC = () => {
                     disabled
                     className='bg-slate-50 text-slate-500'
                   />
-                  <p className='text-sm text-slate-500'>Email cannot be changed</p>
+                  <p className='text-sm text-slate-500'>{t('profile.emailCannotChange')}</p>
                 </div>
 
                 <div className='space-y-2'>
                   <Label htmlFor='displayName'>
-                    Full Name <span className='text-red-600'>*</span>
+                    {t('profile.fullNameLabel')} <span className='text-red-600'>*</span>
                   </Label>
                   <Input
                     id='displayName'
@@ -285,43 +285,43 @@ const CustomerProfile: React.FC = () => {
                     value={formData.displayName}
                     onChange={handleChange}
                     required
-                    placeholder='Enter your full name'
+                    placeholder={t('profile.fullNamePlaceholder')}
                   />
                 </div>
 
                 <div className='space-y-2'>
-                  <Label htmlFor='phone'>Phone</Label>
+                  <Label htmlFor='phone'>{t('profile.phoneLabel')}</Label>
                   <Input
                     id='phone'
                     name='phone'
                     type='tel'
                     value={formData.phone}
                     onChange={handleChange}
-                    placeholder='+45 12 34 56 78'
+                    placeholder={t('profile.phonePlaceholder')}
                   />
                 </div>
 
                 <div className='space-y-2'>
-                  <Label htmlFor='address'>Address</Label>
+                  <Label htmlFor='address'>{t('profile.addressLabel')}</Label>
                   <Input
                     id='address'
                     name='address'
                     type='text'
                     value={formData.address}
                     onChange={handleChange}
-                    placeholder='Street address, city, postal code'
+                    placeholder={t('profile.addressPlaceholder')}
                   />
                 </div>
 
                 <div className='space-y-2'>
-                  <Label htmlFor='companyName'>Company Name</Label>
+                  <Label htmlFor='companyName'>{t('profile.companyNameLabel')}</Label>
                   <Input
                     id='companyName'
                     name='companyName'
                     type='text'
                     value={formData.companyName}
                     onChange={handleChange}
-                    placeholder='Your company name (optional)'
+                    placeholder={t('profile.companyNamePlaceholder')}
                   />
                 </div>
 
@@ -334,10 +334,10 @@ const CustomerProfile: React.FC = () => {
                     {loading ? (
                       <>
                         <LoadingSpinner size='sm' className='mr-2' />
-                        Saving...
+                        {t('profile.saving')}
                       </>
                     ) : (
-                      'Save Changes'
+                      t('profile.saveChanges')
                     )}
                   </Button>
                 </div>

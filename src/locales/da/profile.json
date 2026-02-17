@@ -31,5 +31,26 @@
   "profile.passwordChangeSuccess": "Adgangskoden er blevet ændret med succes",
   "profile.currentPasswordIncorrect": "Nuværende adgangskode er forkert",
   "profile.passwordTooWeak": "Adgangskoden er for svag",
-  "profile.passwordChangeError": "Der opstod en fejl ved ændring af adgangskode"
+  "profile.passwordChangeError": "Der opstod en fejl ved ændring af adgangskode",
+
+  "profile.tabs.preferences": "Indstillinger",
+  "profile.tabs.profile": "Profiloplysninger",
+  "profile.languageDescription": "Vælg dit foretrukne sprog til grænsefladen",
+  "profile.currencyDescription": "Vælg din foretrukne valuta til prisvisning",
+  "profile.currentLanguageLabel": "Nuværende sprog:",
+  "profile.currentCurrencyLabel": "Nuværende valuta:",
+  "profile.profileInformationTitle": "Profiloplysninger",
+  "profile.profileInformationDescription": "Opdater dine personlige og virksomhedsoplysninger",
+  "profile.emailLabel": "E-mail",
+  "profile.emailCannotChange": "E-mail kan ikke ændres",
+  "profile.fullNameLabel": "Fulde navn",
+  "profile.fullNamePlaceholder": "Indtast dit fulde navn",
+  "profile.phoneLabel": "Telefon",
+  "profile.phonePlaceholder": "+45 12 34 56 78",
+  "profile.addressLabel": "Adresse",
+  "profile.addressPlaceholder": "Gade, by, postnummer",
+  "profile.companyNameLabel": "Virksomhedsnavn",
+  "profile.companyNamePlaceholder": "Dit virksomhedsnavn (valgfrit)",
+  "profile.saveChanges": "Gem ændringer",
+  "profile.saving": "Gemmer..."
 }

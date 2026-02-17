@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useIntl } from '../../hooks/useIntl';
 import { logger } from '../../utils/logger';
-import { getBuildingsByCustomer, createBuilding } from '../../services/buildingService';
+import { getBuildingsByCustomer, createBuilding, uploadBuildingThumbnail } from '../../services/buildingService';
 import { Building } from '../../types';
 import { Building as BuildingIcon, Plus, MapPin, AlertCircle } from 'lucide-react';
 import LoadingSpinner from '../common/LoadingSpinner';
@@ -21,6 +21,9 @@ const BuildingsList: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
+  const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
+  const [thumbnailError, setThumbnailError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     address: '',
@@ -50,6 +53,54 @@ const BuildingsList: React.FC = () => {
       loadBuildings();
     }
   }, [currentUser]);
+
+  useEffect(() => {
+    return () => {
+      if (thumbnailPreview) {
+        URL.revokeObjectURL(thumbnailPreview);
+      }
+    };
+  }, [thumbnailPreview]);
+
+  const validateThumbnailFile = (file: File): string | null => {
+    const maxSizeMb = 5;
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+
+    if (!allowedTypes.includes(file.type)) {
+      return t('buildings.thumbnail.errorType');
+    }
+
+    if (file.size > maxSizeMb * 1024 * 1024) {
+      return t('buildings.thumbnail.errorSize', { size: maxSizeMb });
+    }
+
+    return null;
+  };
+
+  const handleThumbnailChange = (file: File | null) => {
+    if (thumbnailPreview) {
+      URL.revokeObjectURL(thumbnailPreview);
+    }
+
+    if (!file) {
+      setThumbnailFile(null);
+      setThumbnailPreview(null);
+      setThumbnailError(null);
+      return;
+    }
+
+    const validationError = validateThumbnailFile(file);
+    if (validationError) {
+      setThumbnailFile(null);
+      setThumbnailPreview(null);
+      setThumbnailError(validationError);
+      return;
+    }
+
+    setThumbnailError(null);
+    setThumbnailFile(file);
+    setThumbnailPreview(URL.createObjectURL(file));
+  };
 
   const loadBuildings = async () => {
     if (!currentUser) {
@@ -100,6 +151,14 @@ const BuildingsList: React.FC = () => {
       setValidationErrors(errors);
       setError('Please correct the errors below');
       return;
+    }
+
+    if (thumbnailFile) {
+      const validationError = validateThumbnailFile(thumbnailFile);
+      if (validationError) {
+        setThumbnailError(validationError);
+        return;
+      }
     }
     
     if (!currentUser) {
@@ -167,7 +226,7 @@ const BuildingsList: React.FC = () => {
       const roofSize = formData.roofSize ? parseFloat(formData.roofSize) : 0;
       const estimatedCarbonFootprint = Math.round(roofSize * 0.5);
       
-      await createBuilding({
+      const buildingId = await createBuilding({
         name: formData.name.trim(),
         customerId: customerId,
         address: formData.address.trim(),
@@ -185,6 +244,10 @@ const BuildingsList: React.FC = () => {
           sustainabilityScore: 0,
         },
       });
+
+      if (thumbnailFile) {
+        await uploadBuildingThumbnail(buildingId, thumbnailFile);
+      }
       
       setShowForm(false);
       setFormData({
@@ -209,6 +272,9 @@ const BuildingsList: React.FC = () => {
         greenRoofType: 'extensive',
         greenRoofInstallationDate: '',
       });
+      setThumbnailFile(null);
+      setThumbnailPreview(null);
+      setThumbnailError(null);
       setError(null);
       await loadBuildings();
     } catch (error: any) {
@@ -391,6 +457,40 @@ const BuildingsList: React.FC = () => {
               {validationErrors.roofSize && (
                 <p className='mt-1 text-sm text-red-600'>{validationErrors.roofSize}</p>
               )}
+            </div>
+
+            <div>
+              <label className='block text-sm font-medium text-gray-700 mb-2'>
+                {t('buildings.thumbnail.label')}
+              </label>
+              <div className='flex items-center gap-4'>
+                <div className='h-20 w-32 rounded-md border border-slate-200 bg-slate-50 overflow-hidden flex items-center justify-center'>
+                  {thumbnailPreview ? (
+                    <img
+                      src={thumbnailPreview}
+                      alt={t('buildings.thumbnail.alt', {
+                        name: formData.name.trim() || t('buildings.thumbnail.unnamed'),
+                      })}
+                      className='h-full w-full object-cover'
+                    />
+                  ) : (
+                    <span className='text-xs text-slate-500'>
+                      {t('buildings.thumbnail.empty')}
+                    </span>
+                  )}
+                </div>
+                <input
+                  type='file'
+                  accept='image/jpeg,image/png,image/webp'
+                  onChange={e => handleThumbnailChange(e.target.files?.[0] || null)}
+                  disabled={isSubmitting}
+                  className='text-sm text-slate-700'
+                />
+              </div>
+              {thumbnailError && (
+                <p className='mt-1 text-sm text-red-600'>{thumbnailError}</p>
+              )}
+              <p className='mt-1 text-xs text-gray-500'>{t('buildings.thumbnail.help')}</p>
             </div>
             
             {/* ESG Features Section */}
@@ -654,6 +754,9 @@ const BuildingsList: React.FC = () => {
                   setShowForm(false);
                   setValidationErrors({});
                   setError(null);
+                  setThumbnailFile(null);
+                  setThumbnailPreview(null);
+                  setThumbnailError(null);
                 }}
                 disabled={isSubmitting}
                 className='px-4 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition-colors text-sm font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed'
@@ -681,6 +784,17 @@ const BuildingsList: React.FC = () => {
           {buildings.map(building => (
             <Link key={building.id} to={`/portal/buildings/${building.id}`} className='block'>
               <ListCard>
+                {building.thumbnailUrl && (
+                  <div className='mb-4 overflow-hidden rounded-lg border border-slate-200'>
+                    <img
+                      src={building.thumbnailUrl}
+                      alt={t('buildings.thumbnail.alt', {
+                        name: building.name || t('buildings.thumbnail.unnamed'),
+                      })}
+                      className='h-32 w-full object-cover'
+                    />
+                  </div>
+                )}
                 <div className='flex items-start justify-between mb-4'>
                   <BuildingIcon className='w-8 h-8 text-slate-700' />
                   <span className='px-2 py-1 text-xs font-medium bg-slate-100 text-slate-700 rounded'>

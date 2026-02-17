@@ -3,6 +3,7 @@ import { Settings, GripVertical, RotateCcw, Save, X } from 'lucide-react';
 import { DashboardWidget, saveDashboardPreferences, resetToDefaults } from '../../services/dashboardCustomizationService';
 import { useToast } from '../../contexts/ToastContext';
 import { logger } from '../../utils/logger';
+import { useIntl } from '../../hooks/useIntl';
 
 interface DashboardCustomizerProps {
   widgets: DashboardWidget[];
@@ -16,9 +17,22 @@ export const DashboardCustomizer: React.FC<DashboardCustomizerProps> = ({
   onClose 
 }) => {
   const { showSuccess, showError } = useToast();
+  const { t } = useIntl();
   const [widgets, setWidgets] = useState<DashboardWidget[]>(initialWidgets);
   const [saving, setSaving] = useState(false);
   const [draggedWidget, setDraggedWidget] = useState<string | null>(null);
+
+  const getWidgetLabel = (widget: DashboardWidget) => {
+    const key = `portal.widgets.${widget.name}.title`;
+    const label = t(key);
+    return label === key ? widget.label : label;
+  };
+
+  const getWidgetDescription = (widget: DashboardWidget) => {
+    const key = `portal.widgets.${widget.name}.description`;
+    const description = t(key);
+    return description === key ? widget.description : description;
+  };
 
   const handleToggleWidget = (widgetId: string) => {
     setWidgets(prev =>
@@ -84,18 +98,18 @@ export const DashboardCustomizer: React.FC<DashboardCustomizerProps> = ({
       }));
       logger.debug('Saving widget order:', updated.map((w, i) => `${i}:${w.label}(order=${w.order})`).join(', '));
       onSave(updated);
-      showSuccess('Dashboard customization saved');
+      showSuccess(t('portal.customizer.toast.saved'));
       onClose();
     } catch (error) {
       logger.error('Error saving dashboard preferences:', error);
-      showError('Failed to save dashboard preferences');
+      showError(t('portal.customizer.toast.saveError'));
     } finally {
       setSaving(false);
     }
   };
 
   const handleReset = async () => {
-    if (!window.confirm('Reset dashboard to default settings? Your current customizations will be lost.')) {
+    if (!window.confirm(t('portal.customizer.resetConfirm'))) {
       return;
     }
 
@@ -107,11 +121,11 @@ export const DashboardCustomizer: React.FC<DashboardCustomizerProps> = ({
         order: idx + 1,
       }));
       onSave(reset);
-      showSuccess('Dashboard reset to default settings');
+      showSuccess(t('portal.customizer.toast.reset'));
       onClose();
     } catch (error) {
       logger.error('Error resetting dashboard:', error);
-      showError('Failed to reset dashboard');
+      showError(t('portal.customizer.toast.resetError'));
     } finally {
       setSaving(false);
     }
@@ -127,8 +141,10 @@ export const DashboardCustomizer: React.FC<DashboardCustomizerProps> = ({
           <div className='flex items-center gap-3'>
             <Settings className='w-6 h-6 text-slate-700' />
             <div>
-              <h2 className='text-xl font-semibold text-slate-900'>Customize Dashboard</h2>
-              <p className='text-sm text-slate-600 mt-1'>{enabledCount} of {widgets.length} sections enabled</p>
+              <h2 className='text-xl font-semibold text-slate-900'>{t('portal.customizer.title')}</h2>
+              <p className='text-sm text-slate-600 mt-1'>
+                {t('portal.customizer.enabledCount', { enabled: enabledCount, total: widgets.length })}
+              </p>
             </div>
           </div>
           <button
@@ -142,7 +158,7 @@ export const DashboardCustomizer: React.FC<DashboardCustomizerProps> = ({
         {/* Content */}
         <div className='p-6 space-y-4'>
           <p className='text-sm text-slate-600 mb-6'>
-            Enable or disable dashboard sections below. Drag to reorder. Changes save immediately.
+            {t('portal.customizer.description')}
           </p>
 
           {/* Widget List */}
@@ -189,7 +205,7 @@ export const DashboardCustomizer: React.FC<DashboardCustomizerProps> = ({
                   {/* Drag Handle */}
                   <div
                     className='p-1.5 text-slate-400 hover:text-slate-600 flex-shrink-0 cursor-grab active:cursor-grabbing mt-1 hover:bg-slate-200 rounded transition-colors'
-                    title='Drag to reorder'
+                    title={t('portal.customizer.dragToReorder')}
                   >
                     <GripVertical className='w-5 h-5' />
                   </div>
@@ -204,9 +220,11 @@ export const DashboardCustomizer: React.FC<DashboardCustomizerProps> = ({
                     />
                     <div className='flex-1'>
                       <p className={`font-medium ${widget.enabled ? 'text-slate-900' : 'text-slate-500'}`}>
-                        {widget.label}
+                        {getWidgetLabel(widget)}
                       </p>
-                      <p className='text-sm text-slate-600 mt-1'>{widget.description}</p>
+                      <p className='text-sm text-slate-600 mt-1'>
+                        {getWidgetDescription(widget)}
+                      </p>
                     </div>
                   </label>
 
@@ -216,7 +234,7 @@ export const DashboardCustomizer: React.FC<DashboardCustomizerProps> = ({
                       onClick={() => handleMoveUp(index)}
                       disabled={index === 0}
                       className='px-2 py-1 text-xs bg-slate-100 text-slate-700 rounded hover:bg-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors border border-slate-300'
-                      title='Move up'
+                      title={t('portal.customizer.moveUp')}
                     >
                       ↑
                     </button>
@@ -224,7 +242,7 @@ export const DashboardCustomizer: React.FC<DashboardCustomizerProps> = ({
                       onClick={() => handleMoveDown(index)}
                       disabled={index === widgets.length - 1}
                       className='px-2 py-1 text-xs bg-slate-100 text-slate-700 rounded hover:bg-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors border border-slate-300'
-                      title='Move down'
+                      title={t('portal.customizer.moveDown')}
                     >
                       ↓
                     </button>
@@ -237,7 +255,7 @@ export const DashboardCustomizer: React.FC<DashboardCustomizerProps> = ({
           {/* Info Box */}
           <div className='bg-slate-100 border border-slate-300 rounded-lg p-4 mt-6'>
             <p className='text-sm text-slate-700'>
-              <strong>💡 Tip:</strong> For large portfolios (200+ buildings), disable sections you don't need to focus on the data that matters most to you.
+              <strong>💡 {t('portal.customizer.tipTitle')}:</strong> {t('portal.customizer.tipBody')}
             </p>
           </div>
         </div>
@@ -249,7 +267,7 @@ export const DashboardCustomizer: React.FC<DashboardCustomizerProps> = ({
             className='flex items-center gap-2 px-4 py-2 text-slate-700 hover:bg-slate-200 rounded-lg transition-colors text-sm font-medium'
           >
             <RotateCcw className='w-4 h-4' />
-            Reset to Defaults
+            {t('portal.customizer.reset')}
           </button>
 
           <div className='flex gap-3'>
@@ -257,7 +275,7 @@ export const DashboardCustomizer: React.FC<DashboardCustomizerProps> = ({
               onClick={onClose}
               className='px-4 py-2 text-slate-700 border border-slate-300 rounded-lg hover:bg-slate-100 transition-colors font-medium'
             >
-              Cancel
+              {t('portal.customizer.cancel')}
             </button>
             <button
               onClick={handleSave}
@@ -265,7 +283,7 @@ export const DashboardCustomizer: React.FC<DashboardCustomizerProps> = ({
               className='flex items-center gap-2 px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium'
             >
               <Save className='w-4 h-4' />
-              {saving ? 'Saving...' : 'Save Changes'}
+              {saving ? t('portal.customizer.saving') : t('portal.customizer.save')}
             </button>
           </div>
         </div>

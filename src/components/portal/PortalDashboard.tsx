@@ -302,11 +302,11 @@ const PortalDashboard: React.FC = () => {
   const getStatusText = (status: BuildingStatus) => {
     switch (status) {
       case 'good':
-        return 'Good';
+        return t('portal.status.good');
       case 'check-soon':
-        return 'Review Soon';
+        return t('portal.status.checkSoon');
       case 'urgent':
-        return 'Needs Inspection';
+        return t('portal.status.needsInspection');
     }
   };
 
@@ -343,10 +343,10 @@ const PortalDashboard: React.FC = () => {
       setWidgets(updatedWidgets);
       // Persist to Firestore
       await saveDashboardPreferences(currentUser.uid, updatedWidgets);
-      showSuccess('Dashboard customization saved');
+      showSuccess(t('portal.customizer.toast.saved'));
     } catch (error) {
       logger.error('Error saving dashboard preferences:', error);
-      showError('Failed to save dashboard preferences');
+      showError(t('portal.customizer.toast.saveError'));
     }
   };
 
@@ -355,10 +355,10 @@ const PortalDashboard: React.FC = () => {
     try {
       await resetToDefaults(currentUser.uid);
       await loadDashboardPreferences();
-      showSuccess('Dashboard reset to defaults');
+      showSuccess(t('portal.customizer.toast.reset'));
     } catch (error) {
       logger.error('Error resetting dashboard:', error);
-      showError('Failed to reset dashboard');
+      showError(t('portal.customizer.toast.resetError'));
     }
   };
 
@@ -562,7 +562,7 @@ const PortalDashboard: React.FC = () => {
                     <div className='flex items-center gap-3 mt-3'>
                       <StatusIndicator 
                         status={statistics.statusCounts.urgent > 0 ? 'urgent' : 'neutral'} 
-                        label={`${statistics.statusCounts.urgent} urgent`}
+                        label={t('portal.status.urgentCount', { count: statistics.statusCounts.urgent })}
                         pulse={statistics.statusCounts.urgent > 0}
                         size='sm'
                       />
@@ -595,10 +595,8 @@ const PortalDashboard: React.FC = () => {
                   <AlertTriangle className='w-5 h-5 text-amber-600' />
                 </div>
                 <div>
-                  <h2 className='text-lg font-semibold text-gray-900'>Buildings Needing Attention</h2>
-                  <p className='text-sm text-gray-500'>
-                    Properties that need inspection or maintenance soon
-                  </p>
+                  <h2 className='text-lg font-semibold text-gray-900'>{t('portal.needsAttention.title')}</h2>
+                  <p className='text-sm text-gray-500'>{t('portal.needsAttention.subtitle')}</p>
                 </div>
               </div>
             </div>
@@ -625,8 +623,11 @@ const PortalDashboard: React.FC = () => {
                           <p className='font-medium text-gray-900 group-hover:text-slate-700 transition-colors'>{building.address}</p>
                           <p className='text-sm text-gray-600 mt-1'>
                             {building.lastInspectionDate
-                              ? `Last inspected: ${new Date(building.lastInspectionDate).toLocaleDateString()} (${building.daysSinceInspection} days ago)`
-                              : 'Never inspected'}
+                              ? t('portal.needsAttention.lastInspected', {
+                                  date: new Date(building.lastInspectionDate).toLocaleDateString(),
+                                  days: building.daysSinceInspection,
+                                })
+                              : t('portal.needsAttention.neverInspected')}
                           </p>
                         </div>
                       </div>
@@ -650,13 +651,16 @@ const PortalDashboard: React.FC = () => {
               {buildings.filter(b => b.status === 'urgent' || b.status === 'check-soon').length > 5 && (
                 <div className='mt-4 pt-4 border-t border-gray-200 flex items-center justify-between'>
                   <p className='text-xs text-gray-500'>
-                    Showing 5 of {buildings.filter(b => b.status === 'urgent' || b.status === 'check-soon').length} buildings
+                    {t('portal.needsAttention.showing', {
+                      total: buildings.filter(b => b.status === 'urgent' || b.status === 'check-soon').length,
+                    })}
                   </p>
                   <Link
                     to='/portal/buildings'
                     className='inline-flex items-center text-sm font-medium text-slate-600 hover:text-slate-800 group/link'
                   >
-                    View All <ArrowRight className='ml-1 w-4 h-4 transition-transform group-hover/link:translate-x-0.5' />
+                    {t('dashboard.viewAll')}{' '}
+                    <ArrowRight className='ml-1 w-4 h-4 transition-transform group-hover/link:translate-x-0.5' />
                   </Link>
                 </div>
               )}
@@ -672,7 +676,7 @@ const PortalDashboard: React.FC = () => {
               buildings={buildings} 
               reports={reports}
               onExportPDF={() => {
-                showInfo('PDF export feature coming soon!');
+                showInfo(t('portal.portfolioReport.exportComingSoon'));
               }}
             />
           </ComponentErrorBoundary>
@@ -751,7 +755,7 @@ const PortalDashboard: React.FC = () => {
                   <h2 className='text-lg font-semibold text-gray-900'>
                     {t('dashboard.scheduledVisits.title')}
                   </h2>
-                  <p className='text-sm text-gray-500'>Your next scheduled inspections</p>
+                  <p className='text-sm text-gray-500'>{t('dashboard.scheduledVisits.subtitle')}</p>
                 </div>
               </div>
             </div>
@@ -785,7 +789,7 @@ const PortalDashboard: React.FC = () => {
                     <div className='flex items-center gap-2'>
                       <StatusIndicator status='good' size='sm' />
                       <span className='px-3 py-1.5 text-xs font-semibold bg-green-100 text-green-700 rounded-full border border-green-200'>
-                        {visit.status}
+                        {t(`schedule.status.${visit.status}`)}
                       </span>
                     </div>
                   </div>
@@ -794,13 +798,16 @@ const PortalDashboard: React.FC = () => {
               {visits.filter(v => v.status === 'scheduled' && new Date(v.scheduledDate) >= new Date()).length > 5 && (
                 <div className='mt-4 pt-4 border-t border-gray-200 flex items-center justify-between'>
                   <p className='text-xs text-gray-500'>
-                    Showing 5 of {visits.filter(v => v.status === 'scheduled' && new Date(v.scheduledDate) >= new Date()).length} visits
+                    {t('dashboard.scheduledVisits.showing', {
+                      total: visits.filter(v => v.status === 'scheduled' && new Date(v.scheduledDate) >= new Date()).length,
+                    })}
                   </p>
                   <Link
                     to='/portal/scheduled-visits'
                     className='inline-flex items-center text-sm font-medium text-slate-600 hover:text-slate-800 group/link'
                   >
-                    View All <ArrowRight className='ml-1 w-4 h-4 transition-transform group-hover/link:translate-x-0.5' />
+                    {t('dashboard.viewAll')}{' '}
+                    <ArrowRight className='ml-1 w-4 h-4 transition-transform group-hover/link:translate-x-0.5' />
                   </Link>
                 </div>
               )}
@@ -818,10 +825,10 @@ const PortalDashboard: React.FC = () => {
                 </div>
                 <div>
                   <h2 className='text-lg font-semibold text-gray-900'>
-                    {t('dashboard.map.title') || 'Your Buildings'}
+                    {t('dashboard.map.title')}
                   </h2>
                   <p className='text-sm text-gray-500'>
-                    {t('dashboard.map.subtitle') || 'Overview of all your property locations'}
+                    {t('dashboard.map.subtitle')}
                   </p>
                 </div>
               </div>
@@ -884,10 +891,10 @@ const PortalDashboard: React.FC = () => {
         <button
           onClick={() => setShowCustomizer(true)}
           className='flex items-center gap-2 px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors shadow-sm whitespace-nowrap'
-          title='Customize dashboard sections'
+          title={t('portal.customizer.buttonTitle')}
         >
           <Sliders className='w-4 h-4' />
-          Customize
+          {t('portal.customizer.button')}
         </button>
       </div>
 

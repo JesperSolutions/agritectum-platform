@@ -31,5 +31,26 @@
   "profile.passwordChangeSuccess": "Lösenordet har ändrats framgångsrikt",
   "profile.currentPasswordIncorrect": "Nuvarande lösenord är felaktigt",
   "profile.passwordTooWeak": "Lösenordet är för svagt",
-  "profile.passwordChangeError": "Ett fel uppstod vid ändring av lösenord"
+  "profile.passwordChangeError": "Ett fel uppstod vid ändring av lösenord",
+
+  "profile.tabs.preferences": "Inställningar",
+  "profile.tabs.profile": "Profilinformation",
+  "profile.languageDescription": "Välj ditt föredragna språk för gränssnittet",
+  "profile.currencyDescription": "Välj din föredragna valuta för prisvisning",
+  "profile.currentLanguageLabel": "Nuvarande språk:",
+  "profile.currentCurrencyLabel": "Nuvarande valuta:",
+  "profile.profileInformationTitle": "Profilinformation",
+  "profile.profileInformationDescription": "Uppdatera dina personliga och företagsuppgifter",
+  "profile.emailLabel": "E-post",
+  "profile.emailCannotChange": "E-post kan inte ändras",
+  "profile.fullNameLabel": "Fullständigt namn",
+  "profile.fullNamePlaceholder": "Ange ditt fullständiga namn",
+  "profile.phoneLabel": "Telefon",
+  "profile.phonePlaceholder": "+46 70 123 45 67",
+  "profile.addressLabel": "Adress",
+  "profile.addressPlaceholder": "Gata, stad, postnummer",
+  "profile.companyNameLabel": "Företagsnamn",
+  "profile.companyNamePlaceholder": "Ditt företagsnamn (valfritt)",
+  "profile.saveChanges": "Spara ändringar",
+  "profile.saving": "Sparar..."
 }

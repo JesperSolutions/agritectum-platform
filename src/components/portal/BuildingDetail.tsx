@@ -9,6 +9,7 @@ import {
   getBuildingActivity,
   BuildingActivity,
   deleteBuilding,
+  uploadBuildingThumbnail,
 } from '../../services/buildingService';
 import { getReportsByBuildingId } from '../../services/reportService';
 import { getServiceAgreementsByBuilding } from '../../services/serviceAgreementService';
@@ -58,6 +59,9 @@ const BuildingDetail: React.FC = () => {
   const [errors, setErrors] = useState<string[]>([]);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
+  const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
+  const [thumbnailError, setThumbnailError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     address: '',
     buildingType: 'residential' as Building['buildingType'],
@@ -91,6 +95,54 @@ const BuildingDetail: React.FC = () => {
       ]);
     }
   }, [buildingId, currentUser]);
+
+  useEffect(() => {
+    return () => {
+      if (thumbnailPreview) {
+        URL.revokeObjectURL(thumbnailPreview);
+      }
+    };
+  }, [thumbnailPreview]);
+
+  const validateThumbnailFile = (file: File): string | null => {
+    const maxSizeMb = 5;
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+
+    if (!allowedTypes.includes(file.type)) {
+      return t('buildings.thumbnail.errorType');
+    }
+
+    if (file.size > maxSizeMb * 1024 * 1024) {
+      return t('buildings.thumbnail.errorSize', { size: maxSizeMb });
+    }
+
+    return null;
+  };
+
+  const handleThumbnailChange = (file: File | null) => {
+    if (thumbnailPreview) {
+      URL.revokeObjectURL(thumbnailPreview);
+    }
+
+    if (!file) {
+      setThumbnailFile(null);
+      setThumbnailPreview(null);
+      setThumbnailError(null);
+      return;
+    }
+
+    const validationError = validateThumbnailFile(file);
+    if (validationError) {
+      setThumbnailFile(null);
+      setThumbnailPreview(null);
+      setThumbnailError(validationError);
+      return;
+    }
+
+    setThumbnailError(null);
+    setThumbnailFile(file);
+    setThumbnailPreview(URL.createObjectURL(file));
+  };
 
   const handleDeleteBuilding = async () => {
     if (!buildingId || !building) return;
@@ -149,6 +201,9 @@ const BuildingDetail: React.FC = () => {
         greenRoofType: data.esgMetrics?.features?.greenRoof?.type || 'extensive',
         greenRoofInstallationDate: data.esgMetrics?.features?.greenRoof?.installationDate || '',
       });
+      setThumbnailFile(null);
+      setThumbnailPreview(null);
+      setThumbnailError(null);
       setLoading(false);
     } catch (error: any) {
       logger.error('[BuildingDetail] Building load failed:', error);
@@ -212,6 +267,14 @@ const BuildingDetail: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!buildingId) return;
+
+    if (thumbnailFile) {
+      const validationError = validateThumbnailFile(thumbnailFile);
+      if (validationError) {
+        setThumbnailError(validationError);
+        return;
+      }
+    }
 
     try {
       // Build ESG metrics object
@@ -283,6 +346,19 @@ const BuildingDetail: React.FC = () => {
           sustainabilityScore: 0,
         },
       });
+
+      if (thumbnailFile) {
+        const thumbnailUrl = await uploadBuildingThumbnail(
+          buildingId,
+          thumbnailFile,
+          building?.thumbnailUrl
+        );
+        setBuilding(prev => (prev ? { ...prev, thumbnailUrl } : prev));
+      }
+
+      setThumbnailFile(null);
+      setThumbnailPreview(null);
+      setThumbnailError(null);
       setEditing(false);
       await loadBuilding();
       await loadRelatedData(); // Reload to refresh map if address changed
@@ -400,6 +476,9 @@ const BuildingDetail: React.FC = () => {
                   greenRoofType: (building.esgMetrics?.features?.greenRoof?.type as 'intensive' | 'extensive' | 'semi-intensive') || 'extensive',
                   greenRoofInstallationDate: building.esgMetrics?.features?.greenRoof?.installationDate || '',
                 });
+                setThumbnailFile(null);
+                setThumbnailPreview(null);
+                setThumbnailError(null);
                 setEditing(true);
               }}
               className='inline-flex items-center px-4 py-2 text-green-600 hover:bg-green-50 rounded-lg border border-green-200 transition-colors'
@@ -411,7 +490,12 @@ const BuildingDetail: React.FC = () => {
           )}
           {editing && (
             <button
-              onClick={() => setEditing(false)}
+              onClick={() => {
+                setThumbnailFile(null);
+                setThumbnailPreview(null);
+                setThumbnailError(null);
+                setEditing(false);
+              }}
               className='inline-flex items-center px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg border border-gray-200 transition-colors'
               title='Cancel editing'
             >
@@ -491,6 +575,39 @@ const BuildingDetail: React.FC = () => {
             {t('buildings.editBuilding') || 'Edit Building'}
           </h2>
           <form onSubmit={handleSubmit} className='space-y-4'>
+            <div>
+              <label className='block text-sm font-medium text-gray-700 mb-2'>
+                {t('buildings.thumbnail.label')}
+              </label>
+              <div className='flex items-center gap-4'>
+                <div className='h-20 w-32 rounded-md border border-slate-200 bg-slate-50 overflow-hidden flex items-center justify-center'>
+                  {thumbnailPreview || building?.thumbnailUrl ? (
+                    <img
+                      src={thumbnailPreview || building?.thumbnailUrl}
+                      alt={t('buildings.thumbnail.alt', {
+                        name: building?.name || t('buildings.thumbnail.unnamed'),
+                      })}
+                      className='h-full w-full object-cover'
+                    />
+                  ) : (
+                    <span className='text-xs text-slate-500'>
+                      {t('buildings.thumbnail.empty')}
+                    </span>
+                  )}
+                </div>
+                <input
+                  type='file'
+                  accept='image/jpeg,image/png,image/webp'
+                  onChange={e => handleThumbnailChange(e.target.files?.[0] || null)}
+                  className='text-sm text-slate-700'
+                />
+              </div>
+              {thumbnailError && (
+                <p className='mt-1 text-sm text-red-600'>{thumbnailError}</p>
+              )}
+              <p className='mt-1 text-xs text-gray-500'>{t('buildings.thumbnail.help')}</p>
+            </div>
+
             <div>
               <label className='block text-sm font-medium text-gray-700 mb-2'>
                 {t('buildings.address')} *

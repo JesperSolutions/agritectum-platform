@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../../config/firebase';
-import { X, CheckCircle } from 'lucide-react';
 import { logger } from '../../utils/logger';
+import { useIntl } from '../../hooks/useIntl';
 
 interface GDPRConsent {
   analyticsconsent: boolean;
@@ -14,6 +14,7 @@ interface GDPRConsent {
 
 const GDPRConsentFlow: React.FC = () => {
   const { currentUser } = useAuth();
+  const { t } = useIntl();
   const [showConsent, setShowConsent] = useState(false);
   const [consents, setConsents] = useState<GDPRConsent>({
     analyticsconsent: false,
@@ -64,6 +65,17 @@ const GDPRConsentFlow: React.FC = () => {
     }));
   };
 
+  const handleRequiredConsentToggle = () => {
+    setConsents(prev => {
+      const nextValue = !prev.termsAccepted;
+      return {
+        ...prev,
+        termsAccepted: nextValue,
+        personaldataConsent: nextValue,
+      };
+    });
+  };
+
   const handleAcceptAll = () => {
     setConsents(prev => ({
       ...prev,
@@ -71,6 +83,16 @@ const GDPRConsentFlow: React.FC = () => {
       personaldataConsent: true,
       termsAccepted: true,
       consentTimestamp: new Date().toISOString(),
+    }));
+  };
+
+  const handleRejectAll = () => {
+    setConsents(prev => ({
+      ...prev,
+      analyticsconsent: false,
+      personaldataConsent: false,
+      termsAccepted: false,
+      consentTimestamp: '',
     }));
   };
 
@@ -110,57 +132,39 @@ const GDPRConsentFlow: React.FC = () => {
       <div className='fixed inset-0 bg-black bg-opacity-50 transition-opacity z-0' />
 
       {/* Modal */}
-      <div className='relative z-50 flex items-center justify-center min-h-screen px-4 py-12 sm:px-6 lg:px-8'>
-        <div className='relative bg-white rounded-lg shadow-xl max-w-2xl w-full'>
+      <div className='relative z-50 flex items-center justify-center min-h-screen px-4 py-8 sm:px-6'>
+        <div className='relative bg-white rounded-lg shadow-xl max-w-lg w-full'>
           {/* Header */}
-          <div className='px-6 py-4 border-b border-slate-200 flex items-center justify-between'>
+          <div className='px-5 py-4 border-b border-slate-200 flex items-center justify-between'>
             <div>
-              <h2 className='text-2xl font-semibold text-slate-900'>Privacy & Data Protection</h2>
-              <p className='text-sm text-slate-600 mt-1'>GDPR Compliance</p>
+              <h2 className='text-xl font-semibold text-slate-900'>{t('gdpr.title')}</h2>
+              <p className='text-sm text-slate-600 mt-1'>{t('gdpr.subtitle')}</p>
             </div>
           </div>
 
           {/* Content */}
-          <div className='px-6 py-6 space-y-6 max-h-[60vh] overflow-y-auto'>
+          <div className='px-5 py-5 space-y-4 max-h-[50vh] overflow-y-auto'>
             {/* Intro */}
             <div>
               <p className='text-slate-700 leading-relaxed'>
-                We value your privacy and comply fully with GDPR and Nordic data protection regulations. 
-                Please review and accept our data processing terms below.
+                {t('gdpr.intro')}
               </p>
             </div>
 
             {/* Consent Options */}
-            <div className='space-y-4'>
-              {/* Terms of Service */}
+            <div className='space-y-3'>
+              {/* Required Consent */}
               <label className='flex items-start cursor-pointer hover:bg-slate-50 p-3 rounded-lg transition'>
                 <input
                   type='checkbox'
                   checked={consents.termsAccepted}
-                  onChange={() => handleConsentChange('termsAccepted')}
+                  onChange={handleRequiredConsentToggle}
                   className='mt-1 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer'
                 />
                 <div className='ml-3 flex-1'>
-                  <p className='font-medium text-slate-900'>I accept the Terms of Service</p>
+                  <p className='font-medium text-slate-900'>{t('gdpr.required.title')}</p>
                   <p className='text-sm text-slate-600 mt-1'>
-                    Required to use the platform. This covers our service policies and your account usage.
-                  </p>
-                </div>
-              </label>
-
-              {/* Personal Data Processing */}
-              <label className='flex items-start cursor-pointer hover:bg-slate-50 p-3 rounded-lg transition'>
-                <input
-                  type='checkbox'
-                  checked={consents.personaldataConsent}
-                  onChange={() => handleConsentChange('personaldataConsent')}
-                  className='mt-1 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer'
-                />
-                <div className='ml-3 flex-1'>
-                  <p className='font-medium text-slate-900'>I consent to personal data processing</p>
-                  <p className='text-sm text-slate-600 mt-1'>
-                    We process your data to provide personalized features, send important communications, 
-                    and comply with legal obligations. Your data is encrypted and never shared with third parties.
+                    {t('gdpr.required.description')}
                   </p>
                 </div>
               </label>
@@ -174,36 +178,12 @@ const GDPRConsentFlow: React.FC = () => {
                   className='mt-1 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer'
                 />
                 <div className='ml-3 flex-1'>
-                  <p className='font-medium text-slate-900'>I consent to analytics</p>
+                  <p className='font-medium text-slate-900'>{t('gdpr.analytics.title')}</p>
                   <p className='text-sm text-slate-600 mt-1'>
-                    Optional. Helps us improve the platform by understanding how you use it. 
-                    No sensitive data is collected.
+                    {t('gdpr.analytics.description')}
                   </p>
                 </div>
               </label>
-            </div>
-
-            {/* Data Rights */}
-            <div className='bg-blue-50 border border-blue-200 rounded-lg p-4'>
-              <h3 className='font-semibold text-slate-900 mb-3'>Your Rights (GDPR)</h3>
-              <ul className='space-y-2 text-sm text-slate-700'>
-                <li className='flex items-start'>
-                  <CheckCircle className='h-4 w-4 text-blue-600 mr-3 mt-0.5 flex-shrink-0' />
-                  <span><strong>Right to Access:</strong> Download all your data anytime</span>
-                </li>
-                <li className='flex items-start'>
-                  <CheckCircle className='h-4 w-4 text-blue-600 mr-3 mt-0.5 flex-shrink-0' />
-                  <span><strong>Right to Rectification:</strong> Correct inaccurate information</span>
-                </li>
-                <li className='flex items-start'>
-                  <CheckCircle className='h-4 w-4 text-blue-600 mr-3 mt-0.5 flex-shrink-0' />
-                  <span><strong>Right to Erasure:</strong> Delete your account and data</span>
-                </li>
-                <li className='flex items-start'>
-                  <CheckCircle className='h-4 w-4 text-blue-600 mr-3 mt-0.5 flex-shrink-0' />
-                  <span><strong>Right to Portability:</strong> Export data in standard format</span>
-                </li>
-              </ul>
             </div>
 
             {/* Links */}
@@ -214,7 +194,7 @@ const GDPRConsentFlow: React.FC = () => {
                 rel='noopener noreferrer'
                 className='text-blue-600 hover:text-blue-700 underline'
               >
-                Full Privacy Policy
+                {t('gdpr.links.privacyPolicy')}
               </a>
               <span className='text-slate-400'>•</span>
               <a
@@ -223,7 +203,7 @@ const GDPRConsentFlow: React.FC = () => {
                 rel='noopener noreferrer'
                 className='text-blue-600 hover:text-blue-700 underline'
               >
-                Terms of Service
+                {t('gdpr.links.terms')}
               </a>
               <span className='text-slate-400'>•</span>
               <a
@@ -232,25 +212,31 @@ const GDPRConsentFlow: React.FC = () => {
                 rel='noopener noreferrer'
                 className='text-blue-600 hover:text-blue-700 underline'
               >
-                Data Processing Agreement
+                {t('gdpr.links.dpa')}
               </a>
             </div>
           </div>
 
           {/* Footer */}
-          <div className='px-6 py-4 border-t border-slate-200 flex gap-3 justify-end'>
+          <div className='px-5 py-4 border-t border-slate-200 flex gap-3 justify-end'>
+            <button
+              onClick={handleRejectAll}
+              className='px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors'
+            >
+              {t('gdpr.actions.rejectAll')}
+            </button>
             <button
               onClick={handleAcceptAll}
               className='px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors'
             >
-              Accept All
+              {t('gdpr.actions.acceptAll')}
             </button>
             <button
               onClick={handleSaveConsents}
               disabled={!consents.termsAccepted}
               className='px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
             >
-              Save Preferences
+              {t('gdpr.actions.savePreferences')}
             </button>
           </div>
         </div>

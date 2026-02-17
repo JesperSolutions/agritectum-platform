@@ -600,6 +600,7 @@ export interface Building {
   buildingType?: 'residential' | 'commercial' | 'industrial';
   roofType?: RoofType;
   roofSize?: number; // m²
+  thumbnailUrl?: string; // Optional thumbnail image URL
   latitude?: number;
   longitude?: number;
   createdAt: string;
