@@ -136,6 +136,12 @@
   "admin.branches.form.name": "Virksomhedsnavn",
   "admin.branches.form.namePlaceholder": "Indtast virksomhedsnavn",
   "admin.branches.form.address": "Adresse",
+  "admin.errors.failedToLoadUsers": "Kunne ikke indlæse brugere",
+  "admin.errors.failedToLoadBranches": "Kunne ikke indlæse virksomheder",
+  "admin.errors.failedToLoadEmployees": "Kunne ikke indlæse medarbejdere",
+  "admin.errors.failedToCreateUser": "Kunne ikke oprette bruger",
+  "admin.errors.failedToSaveUser": "Kunne ikke gemme bruger",
+  "admin.errors.failedToSaveBranch": "Kunne ikke gemme virksomhed",
   "admin.errors.failedToDeleteCustomer": "Kunne ikke slette kunde",
   "admin.errors.failedToSaveCustomer": "Kunne ikke gemme kunde",
 

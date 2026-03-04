@@ -159,6 +159,9 @@
   "dashboard.map.buildingsShown": "Gebäude angezeigt",
   "dashboard.viewDetails": "Details anzeigen",
 
+  "portal.dashboard.title": "Eigentümerportal",
+  "portal.dashboard.subtitle": "Übersicht und Verwaltung Ihrer Gebäude",
+
   "portal.healthScores.title": "Ihre Gebäudezustandswerte verstehen",
   "portal.healthScores.explanation": "Jedes Gebäude erhält eine Zustandsnote von A (Ausgezeichnet) bis F (Kritisch) auf einer 100-Punkte-Skala. Gebäude mit 90+ Punkten erhalten ein A, 80-89 erhalten ein B, 70-79 erhalten ein C, 60-69 erhalten ein D und alles unter 60 erhält ein F.",
   "portal.healthScores.howCalculated": "Wie die Werte berechnet werden",

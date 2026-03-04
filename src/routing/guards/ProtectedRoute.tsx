@@ -22,9 +22,9 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }
 
   if (!currentUser) {
-    // Redirect to portal login if accessing portal routes, otherwise internal login
+    // Redirect to portal login if accessing portal routes, otherwise landing page
     const isPortalRoute = window.location.pathname.startsWith('/portal');
-    return <Navigate to={isPortalRoute ? '/portal/login' : '/login'} replace />;
+    return <Navigate to={isPortalRoute ? '/portal/login' : '/welcome'} replace />;
   }
 
   // Check role permissions

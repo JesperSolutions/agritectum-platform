@@ -91,7 +91,6 @@ const SmartDashboard: React.FC = () => {
   if (currentUser && (currentUser.role === 'customer' || currentUser.userType === 'customer')) {
     return null;
   }
-  const navigate = useNavigate();
   const welcomeToastShown = useRef(false);
   const loadAttempted = useRef(false);
   const [loading, setLoading] = useState(true);

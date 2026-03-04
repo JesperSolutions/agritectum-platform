@@ -178,6 +178,9 @@
   "dashboard.map.buildingsShown": "buildings shown",
   "dashboard.viewDetails": "View Details",
 
+  "portal.dashboard.title": "Owner Portal",
+  "portal.dashboard.subtitle": "Overview and management of your buildings",
+
   "portal.healthScores.title": "Understanding Your Building Health Scores",
   "portal.healthScores.explanation": "Each building receives a health grade from A (Excellent) to F (Critical) based on a 100-point scale. Buildings scoring 90+ earn an A, 80-89 get a B, 70-79 receive a C, 60-69 get a D, and anything below 60 is rated F.",
   "portal.healthScores.howCalculated": "How scores are calculated",

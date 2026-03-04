@@ -163,6 +163,29 @@ const LoginForm: React.FC = () => {
           </div>
         </form>
 
+        {/* Switch to Building Owner Portal */}
+        <div className='mt-6 p-4 bg-[#A1BA53]/10 rounded-xl border border-[#A1BA53]/20'>
+          <p className='text-sm text-slate-600 text-center'>
+            {t('login.switchToPortal') || 'Are you a building owner?'}{' '}
+            <Link
+              to='/portal/login'
+              className='font-medium text-[#A1BA53] hover:text-[#8aa344] underline-offset-4 hover:underline transition-colors'
+            >
+              {t('login.goToPortal') || 'Go to Owner Portal'} →
+            </Link>
+          </p>
+        </div>
+
+        {/* Back to landing */}
+        <div className='mt-4 text-center'>
+          <Link
+            to='/welcome'
+            className='text-sm text-slate-400 hover:text-slate-600 transition-colors'
+          >
+            ← {t('login.backToLanding') || 'Back to home'}
+          </Link>
+        </div>
+
         {/* Powered by Agritectum */}
         <div className='mt-8 text-center'>
           <div className='flex items-center justify-center gap-2 text-sm text-gray-500'>

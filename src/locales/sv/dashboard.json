@@ -179,6 +179,9 @@
   "dashboard.map.buildingsShown": "fastigheter visas",
   "dashboard.viewDetails": "Visa detaljer",
 
+  "portal.dashboard.title": "Ägarportal",
+  "portal.dashboard.subtitle": "Översikt och hantering av dina byggnader",
+
   "portal.healthScores.title": "Förstå dina byggnaders hälsoscorer",
   "portal.healthScores.explanation": "Varje byggnad får ett hälsovärde från A (Utmärkt) till F (Kritisk) baserat på en 100-poängsskala. Byggnader med 90+ poäng får A, 80-89 får B, 70-79 får C, 60-69 får D, och allt under 60 får F.",
   "portal.healthScores.howCalculated": "Hur poängen beräknas",

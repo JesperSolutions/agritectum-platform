@@ -139,6 +139,29 @@ const PortalLogin: React.FC = () => {
               </Link>
             </p>
           </div>
+
+          {/* Switch to Roofer Login */}
+          <div className='mt-6 p-4 bg-slate-100 rounded-xl border border-slate-200'>
+            <p className='text-sm text-slate-600 text-center'>
+              {t('login.switchToAdmin') || 'Are you a roofer?'}{' '}
+              <Link
+                to='/login'
+                className='font-medium text-slate-700 hover:text-slate-900 underline-offset-4 hover:underline transition-colors'
+              >
+                {t('login.goToAdmin') || 'Go to Roofer login'} →
+              </Link>
+            </p>
+          </div>
+
+          {/* Back to landing */}
+          <div className='mt-4 text-center'>
+            <Link
+              to='/welcome'
+              className='text-sm text-slate-400 hover:text-slate-600 transition-colors'
+            >
+              ← {t('login.backToLanding') || 'Back to home'}
+            </Link>
+          </div>
         </CardContent>
       </Card>
     </div>

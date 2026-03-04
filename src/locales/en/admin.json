@@ -127,6 +127,12 @@
   "admin.branches.form.name": "Company Name",
   "admin.branches.form.namePlaceholder": "Enter company name",
   "admin.branches.form.address": "Address",
+  "admin.errors.failedToLoadUsers": "Failed to load users",
+  "admin.errors.failedToLoadBranches": "Failed to load branches",
+  "admin.errors.failedToLoadEmployees": "Failed to load employees",
+  "admin.errors.failedToCreateUser": "Failed to create user",
+  "admin.errors.failedToSaveUser": "Failed to save user",
+  "admin.errors.failedToSaveBranch": "Failed to save branch",
   "admin.errors.failedToDeleteCustomer": "Failed to delete customer",
   "admin.errors.failedToSaveCustomer": "Failed to save customer",
 

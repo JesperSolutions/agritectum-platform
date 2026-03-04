@@ -136,6 +136,12 @@
   "admin.branches.form.name": "Företagsnamn",
   "admin.branches.form.namePlaceholder": "Ange företagsnamn",
   "admin.branches.form.address": "Adress",
+  "admin.errors.failedToLoadUsers": "Kunde inte ladda användare",
+  "admin.errors.failedToLoadBranches": "Kunde inte ladda företag",
+  "admin.errors.failedToLoadEmployees": "Kunde inte ladda medarbetare",
+  "admin.errors.failedToCreateUser": "Kunde inte skapa användare",
+  "admin.errors.failedToSaveUser": "Kunde inte spara användare",
+  "admin.errors.failedToSaveBranch": "Kunde inte spara företag",
   "admin.errors.failedToDeleteCustomer": "Misslyckades att ta bort kund",
   "admin.errors.failedToSaveCustomer": "Misslyckades att spara kund",
 

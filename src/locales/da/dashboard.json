@@ -178,6 +178,9 @@
   "dashboard.map.buildingsShown": "bygninger vist",
   "dashboard.viewDetails": "Vis detaljer",
 
+  "portal.dashboard.title": "Ejerportal",
+  "portal.dashboard.subtitle": "Overblik og administration af dine bygninger",
+
   "portal.healthScores.title": "Forståelse af dine bygningshelbredsscore",
   "portal.healthScores.explanation": "Hver bygning modtager en helbredskarakter fra A (Udmærket) til F (Kritisk) baseret på en 100-point skala. Bygninger der scorer 90+ får A, 80-89 får B, 70-79 får C, 60-69 får D, og alt under 60 får F.",
   "portal.healthScores.howCalculated": "Sådan beregnes scorene",

@@ -14,11 +14,17 @@ import UnsubscribePage from '../../components/UnsubscribePage';
 import PrivacyPolicy from '../../components/legal/PrivacyPolicy';
 import TermsOfService from '../../components/legal/TermsOfService';
 import CustomerSignup from '../../components/portal/CustomerSignup';
+import LandingPage from '../../components/LandingPage';
 
 /**
  * Public routes - accessible without authentication
  */
 export const publicRoutes: RouteObject[] = [
+  {
+    path: '/welcome',
+    element: <LandingPage />,
+    errorElement: <RouteErrorBoundary />,
+  },
   {
     path: '/report/public/:reportId',
     element: (
