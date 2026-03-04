@@ -90,7 +90,7 @@ const DefectCameraCapture: React.FC<DefectCameraCaptureProps> = ({ onImageCaptur
       </div>
 
       {error && (
-        <div className='mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700'>
+        <div className='mb-4 p-3 bg-[#DA5062]/10 border border-[#DA5062]/30 rounded-lg text-sm text-[#c23d4f]'>
           {error}
         </div>
       )}
@@ -105,7 +105,7 @@ const DefectCameraCapture: React.FC<DefectCameraCaptureProps> = ({ onImageCaptur
             <button
               type='button'
               onClick={handleCameraClick}
-              className='flex-1 flex items-center justify-center gap-2 px-4 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-sm min-h-[44px] transition-colors'
+              className='flex-1 flex items-center justify-center gap-2 px-4 py-4 bg-[#7DA8CC] text-white rounded-lg hover:bg-[#6890b3] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7DA8CC] shadow-sm min-h-[44px] transition-colors'
             >
               <Camera className='w-5 h-5' />
               <span className='font-medium'>{t('form.buttons.takePhoto') || 'Take Photo'}</span>
@@ -154,7 +154,7 @@ const DefectCameraCapture: React.FC<DefectCameraCaptureProps> = ({ onImageCaptur
             <button
               type='button'
               onClick={handleAccept}
-              className='flex-1 flex items-center justify-center gap-2 px-4 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-sm min-h-[44px] transition-colors font-medium'
+              className='flex-1 flex items-center justify-center gap-2 px-4 py-4 bg-[#7DA8CC] text-white rounded-lg hover:bg-[#6890b3] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7DA8CC] shadow-sm min-h-[44px] transition-colors font-medium'
             >
               <Check className='w-5 h-5' />
               {t('form.defectFlow.acceptImage') || 'Accept Image'}

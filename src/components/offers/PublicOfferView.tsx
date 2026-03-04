@@ -188,7 +188,7 @@ const PublicOfferView: React.FC = () => {
     return (
       <div className='min-h-screen bg-gray-50 flex items-center justify-center p-4'>
         <div className='max-w-md w-full bg-white rounded-lg shadow-lg p-8 text-center'>
-          <AlertCircle className='w-16 h-16 text-red-500 mx-auto mb-4' />
+          <AlertCircle className='w-16 h-16 text-[#DA5062] mx-auto mb-4' />
           <h1 className='text-2xl font-bold text-gray-900 mb-2'>Offer Not Found</h1>
           <p className='text-gray-600 mb-6'>
             {error || 'The offer you are looking for does not exist or has been removed.'}
@@ -212,31 +212,31 @@ const PublicOfferView: React.FC = () => {
       <div className='max-w-4xl mx-auto'>
         {/* Header */}
         <div className='bg-white rounded-lg shadow-lg overflow-hidden mb-6'>
-          <div className='bg-gradient-to-r from-blue-600 to-purple-600 px-8 py-6'>
+          <div className='bg-gradient-to-r from-[#7DA8CC] to-[#7f5182] px-8 py-6'>
             <h1 className='text-3xl font-bold text-white mb-2'>Agritectum Professional Roofing</h1>
-            <p className='text-blue-100'>Your Roof Repair Offer</p>
+            <p className='text-[#e0ecf4]'>Your Roof Repair Offer</p>
           </div>
 
           {/* Status Banner */}
           {isExpired && (
-            <div className='bg-red-50 border-l-4 border-red-500 p-4'>
+            <div className='bg-[#DA5062]/10 border-l-4 border-[#DA5062] p-4'>
               <div className='flex'>
-                <XCircle className='w-5 h-5 text-red-500 mr-3 mt-0.5' />
+                <XCircle className='w-5 h-5 text-[#DA5062] mr-3 mt-0.5' />
                 <div>
-                  <p className='text-red-800 font-semibold'>Offer Expired</p>
-                  <p className='text-red-600 text-sm'>This offer is no longer valid.</p>
+                  <p className='text-[#872a38] font-semibold'>Offer Expired</p>
+                  <p className='text-[#DA5062] text-sm'>This offer is no longer valid.</p>
                 </div>
               </div>
             </div>
           )}
 
           {offer.status === 'accepted' && (
-            <div className='bg-green-50 border-l-4 border-green-500 p-4'>
+            <div className='bg-[#A1BA53]/10 border-l-4 border-[#A1BA53] p-4'>
               <div className='flex'>
-                <CheckCircle className='w-5 h-5 text-green-500 mr-3 mt-0.5' />
+                <CheckCircle className='w-5 h-5 text-[#A1BA53] mr-3 mt-0.5' />
                 <div>
-                  <p className='text-green-800 font-semibold'>Offer Accepted</p>
-                  <p className='text-green-600 text-sm'>Thank you! We will contact you shortly.</p>
+                  <p className='text-[#5c6a2f] font-semibold'>Offer Accepted</p>
+                  <p className='text-[#A1BA53] text-sm'>Thank you! We will contact you shortly.</p>
                 </div>
               </div>
             </div>
@@ -255,14 +255,14 @@ const PublicOfferView: React.FC = () => {
           )}
 
           {!isExpiredOrResponded && (
-            <div className='bg-blue-50 border-l-4 border-blue-500 p-4'>
+            <div className='bg-[#7DA8CC]/10 border-l-4 border-[#7DA8CC] p-4'>
               <div className='flex'>
-                <Clock className='w-5 h-5 text-blue-500 mr-3 mt-0.5' />
+                <Clock className='w-5 h-5 text-[#7DA8CC] mr-3 mt-0.5' />
                 <div>
-                  <p className='text-blue-800 font-semibold'>
+                  <p className='text-[#476279] font-semibold'>
                     {daysRemaining > 0 ? `${daysRemaining} ${t('offers.public.daysRemaining')}` : t('offers.public.expiringSoon')}
                   </p>
-                  <p className='text-blue-600 text-sm'>
+                  <p className='text-[#7DA8CC] text-sm'>
                     {t('offers.public.validUntil')}{' '}
                     {((offer as any).validUntil &&
                     typeof (offer as any).validUntil?.toDate === 'function'
@@ -340,7 +340,7 @@ const PublicOfferView: React.FC = () => {
                 </div>
                 <div className='flex justify-between border-t border-gray-300 pt-2 mt-2'>
                   <span className='text-lg font-semibold text-gray-900'>Total Amount:</span>
-                  <span className='text-2xl font-bold text-blue-600'>
+                  <span className='text-2xl font-bold text-[#7DA8CC]'>
                     {offer.totalAmount.toLocaleString()} {offer.currency}
                   </span>
                 </div>
@@ -359,7 +359,7 @@ const PublicOfferView: React.FC = () => {
               <button
                 onClick={() => setShowConfirm(true)}
                 disabled={processing}
-                className='flex-1 bg-green-600 text-white px-8 py-4 rounded-lg hover:bg-green-700 transition-colors font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center'
+                className='flex-1 bg-[#A1BA53] text-white px-8 py-4 rounded-lg hover:bg-[#8a9f47] transition-colors font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center'
               >
                 <CheckCircle className='w-6 h-6 mr-2' />
                 {processing ? t('offers.public.processing') : t('offers.public.acceptOffer')}
@@ -367,7 +367,7 @@ const PublicOfferView: React.FC = () => {
               <button
                 onClick={() => setShowRejectDialog(true)}
                 disabled={processing}
-                className='flex-1 bg-red-600 text-white px-8 py-4 rounded-lg hover:bg-red-700 transition-colors font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center'
+                className='flex-1 bg-[#DA5062] text-white px-8 py-4 rounded-lg hover:bg-[#c23d4f] transition-colors font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center'
               >
                 <XCircle className='w-6 h-6 mr-2' />
                 {t('offers.public.declineOffer')}
@@ -394,7 +394,7 @@ const PublicOfferView: React.FC = () => {
               value={rejectionReason}
               onChange={e => setRejectionReason(e.target.value)}
               placeholder={t('offers.public.reasonPlaceholder')}
-              className='w-full border border-gray-300 rounded-material p-3 mb-4 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-material'
+              className='w-full border border-gray-300 rounded-material p-3 mb-4 focus:ring-2 focus:ring-[#DA5062] focus:border-transparent transition-all duration-material'
               rows={4}
             />
             <div className='flex gap-3'>
@@ -410,7 +410,7 @@ const PublicOfferView: React.FC = () => {
               <button
                 onClick={handleReject}
                 disabled={processing || !rejectionReason.trim()}
-                className='flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed'
+                className='flex-1 px-4 py-2 bg-[#DA5062] text-white rounded-lg hover:bg-[#c23d4f] transition-colors text-sm font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed'
               >
                 {processing ? t('offers.public.submitting') : t('offers.public.submit')}
               </button>
@@ -433,14 +433,14 @@ const PublicOfferView: React.FC = () => {
                 placeholder='Your name (optional)'
                 value={customerName}
                 onChange={e => setCustomerName(e.target.value)}
-                className='w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-green-500 focus:border-transparent'
+                className='w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-[#A1BA53] focus:border-transparent'
               />
               <input
                 type='email'
                 placeholder='Your email (optional)'
                 value={customerEmail}
                 onChange={e => setCustomerEmail(e.target.value)}
-                className='w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-green-500 focus:border-transparent'
+                className='w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-[#A1BA53] focus:border-transparent'
               />
             </div>
             <div className='flex gap-3'>
@@ -458,7 +458,7 @@ const PublicOfferView: React.FC = () => {
                   doAccept();
                 }}
                 disabled={processing}
-                className='flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed'
+                className='flex-1 px-4 py-2 bg-[#A1BA53] text-white rounded-lg hover:bg-[#8a9f47] transition-colors text-sm font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed'
               >
                 {processing ? 'Confirming...' : 'Confirm'}
               </button>

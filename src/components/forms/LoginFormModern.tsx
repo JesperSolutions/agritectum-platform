@@ -57,12 +57,12 @@ const LoginFormModern: React.FC = () => {
   };
 
   return (
-    <div className='min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4'>
+    <div className='min-h-screen flex items-center justify-center bg-gradient-to-br from-[#7DA8CC]/10 to-indigo-100 p-4'>
       <div className='w-full max-w-md'>
         <Card className='shadow-xl border-0 bg-white/80 backdrop-blur-sm'>
           <CardHeader className='space-y-2 text-center'>
             <div className='flex justify-center mb-4'>
-              <div className='p-3 bg-blue-600 rounded-full'>
+              <div className='p-3 bg-[#7DA8CC] rounded-full'>
                 <Building2 className='h-8 w-8 text-white' />
               </div>
             </div>
@@ -131,7 +131,7 @@ const LoginFormModern: React.FC = () => {
 
               <Button
                 type='submit'
-                className='w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-medium'
+                className='w-full h-11 bg-[#7DA8CC] hover:bg-[#6890b3] text-white font-medium'
                 disabled={isLoading}
               >
                 {isLoading ? (

@@ -39,8 +39,8 @@ const MaterialFormField: React.FC<MaterialFormFieldProps> = ({
               : undefined,
           className: `${(children as React.ReactElement).props.className || ''} ${
             hasError
-              ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-              : 'border-gray-300 focus:border-blue-600 focus:ring-blue-600'
+              ? 'border-[#DA5062] focus:border-[#DA5062] focus:ring-[#DA5062]'
+              : 'border-gray-300 focus:border-[#7DA8CC] focus:ring-[#7DA8CC]'
           }`,
         })}
 
@@ -48,24 +48,24 @@ const MaterialFormField: React.FC<MaterialFormFieldProps> = ({
         <label
           htmlFor={fieldId}
           className={`absolute left-3 -top-2 text-xs text-gray-600 bg-white px-1 z-10 pointer-events-none ${
-            hasError ? 'text-red-500' : 'text-gray-600'
+            hasError ? 'text-[#DA5062]' : 'text-gray-600'
           }`}
         >
           {label}
-          {required && <span className='text-red-500 ml-1'>*</span>}
+          {required && <span className='text-[#DA5062] ml-1'>*</span>}
         </label>
 
         {/* Error Icon */}
         {hasError && (
           <div className='absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none'>
-            <AlertCircle className='h-5 w-5 text-red-500' />
+            <AlertCircle className='h-5 w-5 text-[#DA5062]' />
           </div>
         )}
       </div>
 
       {/* Error Message */}
       {hasError && (
-        <p id={`${fieldId}-error`} className='mt-1 text-sm text-red-600 flex items-center'>
+        <p id={`${fieldId}-error`} className='mt-1 text-sm text-[#DA5062] flex items-center'>
           <AlertCircle className='h-4 w-4 mr-1' />
           {error}
         </p>
@@ -103,8 +103,8 @@ const MaterialInput = forwardRef<HTMLInputElement, MaterialInputProps>(
           ${variant === 'filled' ? 'bg-gray-50 border-b-2 border-gray-300 rounded-t-lg rounded-b-none' : 'border-gray-300'}
           ${
             hasError
-              ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-              : 'border-gray-300 focus:border-blue-600 focus:ring-blue-600'
+              ? 'border-[#DA5062] focus:border-[#DA5062] focus:ring-[#DA5062]'
+              : 'border-gray-300 focus:border-[#7DA8CC] focus:ring-[#7DA8CC]'
           }
           ${className}
         `}
@@ -138,8 +138,8 @@ const MaterialTextarea = forwardRef<HTMLTextAreaElement, MaterialTextareaProps>(
           ${variant === 'filled' ? 'bg-gray-50 border-b-2 border-gray-300 rounded-t-lg rounded-b-none' : 'border-gray-300'}
           ${
             hasError
-              ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-              : 'border-gray-300 focus:border-blue-600 focus:ring-blue-600'
+              ? 'border-[#DA5062] focus:border-[#DA5062] focus:ring-[#DA5062]'
+              : 'border-gray-300 focus:border-[#7DA8CC] focus:ring-[#7DA8CC]'
           }
           ${className}
         `}
@@ -178,8 +178,8 @@ const MaterialSelect = forwardRef<HTMLSelectElement, MaterialSelectProps>(
           ${variant === 'filled' ? 'bg-gray-50 border-b-2 border-gray-300 rounded-t-lg rounded-b-none' : 'border-gray-300'}
           ${
             hasError
-              ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-              : 'border-gray-300 focus:border-blue-600 focus:ring-blue-600'
+              ? 'border-[#DA5062] focus:border-[#DA5062] focus:ring-[#DA5062]'
+              : 'border-gray-300 focus:border-[#7DA8CC] focus:ring-[#7DA8CC]'
           }
           ${className}
         `}
@@ -228,8 +228,8 @@ const MaterialPasswordInput = forwardRef<HTMLInputElement, MaterialPasswordInput
             ${variant === 'filled' ? 'bg-gray-50 border-b-2 border-gray-300 rounded-t-lg rounded-b-none' : 'border-gray-300'}
             ${
               hasError
-                ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                : 'border-gray-300 focus:border-blue-600 focus:ring-blue-600'
+                ? 'border-[#DA5062] focus:border-[#DA5062] focus:ring-[#DA5062]'
+                : 'border-gray-300 focus:border-[#7DA8CC] focus:ring-[#7DA8CC]'
             }
             ${className}
           `}
@@ -276,8 +276,8 @@ const MaterialDateInput = forwardRef<HTMLInputElement, MaterialDateInputProps>(
           ${variant === 'filled' ? 'bg-gray-50 border-b-2 border-gray-300 rounded-t-lg rounded-b-none' : 'border-gray-300'}
           ${
             hasError
-              ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-              : 'border-gray-300 focus:border-blue-600 focus:ring-blue-600'
+              ? 'border-[#DA5062] focus:border-[#DA5062] focus:ring-[#DA5062]'
+              : 'border-gray-300 focus:border-[#7DA8CC] focus:ring-[#7DA8CC]'
           }
           ${className}
         `}

@@ -47,12 +47,12 @@ const EmailStatusDashboard: React.FC = () => {
 
     switch (deliveryStatus.status) {
       case 'success':
-        return <CheckCircle className='h-4 w-4 text-green-600' />;
+        return <CheckCircle className='h-4 w-4 text-[#A1BA53]' />;
       case 'error':
-        return <XCircle className='h-4 w-4 text-red-600' />;
+        return <XCircle className='h-4 w-4 text-[#DA5062]' />;
       case 'pending':
       default:
-        return <Clock className='h-4 w-4 text-yellow-600' />;
+        return <Clock className='h-4 w-4 text-[#DA5062]' />;
     }
   };
 
@@ -83,18 +83,18 @@ const EmailStatusDashboard: React.FC = () => {
 
   if (error) {
     return (
-      <div className='bg-red-50 border border-red-200 rounded-lg p-6'>
+      <div className='bg-[#DA5062]/10 border border-[#DA5062]/30 rounded-lg p-6'>
         <div className='flex items-center justify-between'>
           <div className='flex items-center space-x-3'>
-            <XCircle className='h-5 w-5 text-red-600' />
+            <XCircle className='h-5 w-5 text-[#DA5062]' />
             <div>
-              <h3 className='text-red-800 font-medium'>Error Loading Email Status</h3>
-              <p className='text-red-600 text-sm'>{error}</p>
+              <h3 className='text-[#872a38] font-medium'>Error Loading Email Status</h3>
+              <p className='text-[#DA5062] text-sm'>{error}</p>
             </div>
           </div>
           <button
             onClick={loadEmailData}
-            className='flex items-center space-x-2 px-3 py-2 text-sm text-red-700 bg-red-100 rounded-md hover:bg-red-200 transition-colors'
+            className='flex items-center space-x-2 px-3 py-2 text-sm text-[#c23d4f] bg-[#DA5062]/15 rounded-md hover:bg-[#DA5062]/25 transition-colors'
           >
             <RefreshCw className='h-4 w-4' />
             <span>Retry</span>
@@ -116,7 +116,7 @@ const EmailStatusDashboard: React.FC = () => {
                 <p className='text-sm font-medium text-gray-600'>Total Sent</p>
                 <p className='text-2xl font-bold text-gray-900'>{stats.totalSent}</p>
               </div>
-              <Mail className='h-8 w-8 text-blue-600' />
+              <Mail className='h-8 w-8 text-[#7DA8CC]' />
             </div>
           </div>
 
@@ -125,9 +125,9 @@ const EmailStatusDashboard: React.FC = () => {
             <div className='flex items-center justify-between'>
               <div>
                 <p className='text-sm font-medium text-gray-600'>Success Rate</p>
-                <p className='text-2xl font-bold text-green-600'>{stats.successRate}%</p>
+                <p className='text-2xl font-bold text-[#A1BA53]'>{stats.successRate}%</p>
               </div>
-              <TrendingUp className='h-8 w-8 text-green-600' />
+              <TrendingUp className='h-8 w-8 text-[#A1BA53]' />
             </div>
           </div>
 
@@ -136,9 +136,9 @@ const EmailStatusDashboard: React.FC = () => {
             <div className='flex items-center justify-between'>
               <div>
                 <p className='text-sm font-medium text-gray-600'>Delivered</p>
-                <p className='text-2xl font-bold text-green-600'>{stats.successfulDeliveries}</p>
+                <p className='text-2xl font-bold text-[#A1BA53]'>{stats.successfulDeliveries}</p>
               </div>
-              <CheckCircle className='h-8 w-8 text-green-600' />
+              <CheckCircle className='h-8 w-8 text-[#A1BA53]' />
             </div>
           </div>
 
@@ -147,9 +147,9 @@ const EmailStatusDashboard: React.FC = () => {
             <div className='flex items-center justify-between'>
               <div>
                 <p className='text-sm font-medium text-gray-600'>Failed</p>
-                <p className='text-2xl font-bold text-red-600'>{stats.failedDeliveries}</p>
+                <p className='text-2xl font-bold text-[#DA5062]'>{stats.failedDeliveries}</p>
               </div>
-              <XCircle className='h-8 w-8 text-red-600' />
+              <XCircle className='h-8 w-8 text-[#DA5062]' />
             </div>
           </div>
         </div>

@@ -162,20 +162,20 @@ const ReportLibrary: React.FC = () => {
       </div>
 
       {/* Create New Report CTA */}
-      <div className='mb-8 bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg p-8 text-white shadow-lg'>
+      <div className='mb-8 bg-gradient-to-r from-[#7DA8CC] to-[#476279] rounded-lg p-8 text-white shadow-lg'>
         <div className='flex items-center justify-between gap-6'>
           <div>
             <h2 className='text-2xl font-bold mb-2'>
               {t('reports.library.createNewReportTitle') || 'Create New Report'}
             </h2>
-            <p className='text-blue-100'>
+            <p className='text-[#e0ecf4]'>
               {t('reports.library.createNewReportDesc') ||
                 'Start a new roof inspection report. Your progress will be automatically saved as a draft.'}
             </p>
           </div>
           <button
             onClick={() => navigate('/report/new')}
-            className='px-6 py-3 bg-white text-blue-600 rounded-lg hover:bg-blue-50 transition-colors font-semibold whitespace-nowrap shadow-md hover:shadow-lg'
+            className='px-6 py-3 bg-white text-[#7DA8CC] rounded-lg hover:bg-[#7DA8CC]/10 transition-colors font-semibold whitespace-nowrap shadow-md hover:shadow-lg'
           >
             {t('reports.library.startNewReport') || 'Start New Report'}
           </button>
@@ -183,13 +183,13 @@ const ReportLibrary: React.FC = () => {
       </div>
 
       {/* Info Banner */}
-      <div className='mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4 flex gap-3'>
-        <AlertCircle className='w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5' />
+      <div className='mb-6 bg-[#7DA8CC]/10 border border-[#7DA8CC]/30 rounded-lg p-4 flex gap-3'>
+        <AlertCircle className='w-5 h-5 text-[#7DA8CC] flex-shrink-0 mt-0.5' />
         <div>
-          <h3 className='font-semibold text-blue-900 mb-1'>
+          <h3 className='font-semibold text-[#3b5060] mb-1'>
             {t('reports.library.workflowInfo') || 'Multi-Stage Report Workflow'}
           </h3>
-          <p className='text-sm text-blue-800'>
+          <p className='text-sm text-[#476279]'>
             {t('reports.library.workflowDesc') ||
               'Stage 1: Collect on-site data and photos → Stage 2: Annotate and map issues → Stage 3: Review and complete. You can save up to 5 drafts, and they expire after 30 days.'}
           </p>
@@ -213,7 +213,7 @@ const ReportLibrary: React.FC = () => {
             </p>
             <button
               onClick={() => navigate('/report/new')}
-              className='px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium'
+              className='px-4 py-2 bg-[#7DA8CC] text-white rounded-lg hover:bg-[#6890b3] transition-colors font-medium'
             >
               {t('reports.library.newReport') || 'Create New Report'}
             </button>
@@ -238,7 +238,7 @@ const ReportLibrary: React.FC = () => {
                       </div>
                       <span className='text-xs font-medium text-slate-500'>
                         {stageInfo.stage === 3 ? (
-                          <span className='text-green-600'>Complete</span>
+                          <span className='text-[#A1BA53]'>Complete</span>
                         ) : (
                           `${stageInfo.progress}%`
                         )}
@@ -248,7 +248,7 @@ const ReportLibrary: React.FC = () => {
                     <div className='w-full bg-slate-300 rounded-full h-1.5'>
                       <div
                         className={`h-1.5 rounded-full transition-all ${
-                          stageInfo.progress === 100 ? 'bg-green-500' : 'bg-blue-500'
+                          stageInfo.progress === 100 ? 'bg-[#A1BA53]' : 'bg-[#7DA8CC]/100'
                         }`}
                         style={{ width: `${stageInfo.progress}%` }}
                       />
@@ -284,8 +284,8 @@ const ReportLibrary: React.FC = () => {
 
                     {/* Issues Count */}
                     {report.issuesFound && report.issuesFound.length > 0 && (
-                      <div className='mb-4 p-3 bg-orange-50 rounded-lg border border-orange-200'>
-                        <p className='text-sm font-medium text-orange-900'>
+                      <div className='mb-4 p-3 bg-[#DA5062]/10 rounded-lg border border-[#DA5062]/30'>
+                        <p className='text-sm font-medium text-[#6e2530]'>
                           {report.issuesFound.length}{' '}
                           {report.issuesFound.length === 1 ? 'issue' : 'issues'} found
                         </p>
@@ -302,14 +302,14 @@ const ReportLibrary: React.FC = () => {
                     <div className='flex gap-2'>
                       <button
                         onClick={() => handleResume(report)}
-                        className='flex-1 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm'
+                        className='flex-1 px-3 py-2 bg-[#7DA8CC] text-white rounded-lg hover:bg-[#6890b3] transition-colors font-medium text-sm'
                       >
                         <Edit className='w-4 h-4 inline mr-1' />
                         {t('reports.library.continue') || 'Continue'}
                       </button>
                       <button
                         onClick={() => handleSoftDelete(report)}
-                        className='px-3 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-red-50 hover:text-red-700 transition-colors font-medium text-sm'
+                        className='px-3 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-[#DA5062]/10 hover:text-[#c23d4f] transition-colors font-medium text-sm'
                         title={t('reports.library.deleteTooltip') || 'Delete report permanently'}
                       >
                         <Trash2 className='w-4 h-4' />

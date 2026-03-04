@@ -329,8 +329,8 @@ const ScheduledVisitsList: React.FC = () => {
                 <select
                   value={selectedBuilding}
                   onChange={e => setSelectedBuilding(e.target.value)}
-                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                    errors.building ? 'border-red-300' : 'border-gray-300'
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#7DA8CC] focus:border-transparent ${
+                    errors.building ? 'border-[#DA5062]/40' : 'border-gray-300'
                   }`}
                 >
                   <option value=''>{t('schedule.portal.selectBuilding')}</option>
@@ -340,7 +340,7 @@ const ScheduledVisitsList: React.FC = () => {
                     </option>
                   ))}
                 </select>
-                {errors.building && <p className='text-xs text-red-600 mt-1'>{errors.building}</p>}
+                {errors.building && <p className='text-xs text-[#DA5062] mt-1'>{errors.building}</p>}
               </div>
 
               <div>
@@ -348,8 +348,8 @@ const ScheduledVisitsList: React.FC = () => {
                 <select
                   value={selectedProvider}
                   onChange={e => setSelectedProvider(e.target.value)}
-                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                    errors.provider ? 'border-red-300' : 'border-gray-300'
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#7DA8CC] focus:border-transparent ${
+                    errors.provider ? 'border-[#DA5062]/40' : 'border-gray-300'
                   }`}
                 >
                   <option value=''>{t('schedule.portal.selectProvider')}</option>
@@ -359,7 +359,7 @@ const ScheduledVisitsList: React.FC = () => {
                     </option>
                   ))}
                 </select>
-                {errors.provider && <p className='text-xs text-red-600 mt-1'>{errors.provider}</p>}
+                {errors.provider && <p className='text-xs text-[#DA5062] mt-1'>{errors.provider}</p>}
               </div>
             </div>
 
@@ -368,7 +368,7 @@ const ScheduledVisitsList: React.FC = () => {
               <select
                 value={serviceType}
                 onChange={e => setServiceType(e.target.value as 'inspection' | 'cleaning' | 'repair' | 'emergency')}
-                className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7DA8CC] focus:border-transparent'
               >
                 <option value='inspection'>{t('schedule.portal.serviceType.inspection')}</option>
                 <option value='cleaning'>{t('schedule.portal.serviceType.cleaning')}</option>
@@ -377,12 +377,12 @@ const ScheduledVisitsList: React.FC = () => {
               </select>
               
               {estimatedCost && (
-                <div className='mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg'>
-                  <p className='text-sm font-medium text-blue-900'>{t('schedule.portal.estimatedCost')}</p>
-                  <p className='text-lg font-bold text-blue-700'>
+                <div className='mt-2 p-3 bg-[#7DA8CC]/10 border border-[#7DA8CC]/30 rounded-lg'>
+                  <p className='text-sm font-medium text-[#3b5060]'>{t('schedule.portal.estimatedCost')}</p>
+                  <p className='text-lg font-bold text-[#6890b3]'>
                     {getCurrencyCode()} {estimatedCost.min.toLocaleString()} - {estimatedCost.max.toLocaleString()}
                   </p>
-                  <p className='text-xs text-blue-600 mt-1'>
+                  <p className='text-xs text-[#7DA8CC] mt-1'>
                     {t('schedule.portal.estimatedCostNote', { serviceType })}
                   </p>
                 </div>
@@ -404,11 +404,11 @@ const ScheduledVisitsList: React.FC = () => {
                   type='date'
                   value={visitDate}
                   onChange={e => setVisitDate(e.target.value)}
-                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                    errors.visitDate ? 'border-red-300' : 'border-gray-300'
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#7DA8CC] focus:border-transparent ${
+                    errors.visitDate ? 'border-[#DA5062]/40' : 'border-gray-300'
                   }`}
                 />
-                {errors.visitDate && <p className='text-xs text-red-600 mt-1'>{errors.visitDate}</p>}
+                {errors.visitDate && <p className='text-xs text-[#DA5062] mt-1'>{errors.visitDate}</p>}
               </div>
 
               <div>
@@ -417,11 +417,11 @@ const ScheduledVisitsList: React.FC = () => {
                   type='time'
                   value={visitTime}
                   onChange={e => setVisitTime(e.target.value)}
-                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                    errors.visitTime ? 'border-red-300' : 'border-gray-300'
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#7DA8CC] focus:border-transparent ${
+                    errors.visitTime ? 'border-[#DA5062]/40' : 'border-gray-300'
                   }`}
                 />
-                {errors.visitTime && <p className='text-xs text-red-600 mt-1'>{errors.visitTime}</p>}
+                {errors.visitTime && <p className='text-xs text-[#DA5062] mt-1'>{errors.visitTime}</p>}
               </div>
 
               <div>
@@ -432,11 +432,11 @@ const ScheduledVisitsList: React.FC = () => {
                   onChange={e => setDuration(parseInt(e.target.value) || 0)}
                   min='30'
                   step='30'
-                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                    errors.duration ? 'border-red-300' : 'border-gray-300'
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-[#7DA8CC] focus:border-transparent ${
+                    errors.duration ? 'border-[#DA5062]/40' : 'border-gray-300'
                   }`}
                 />
-                {errors.duration && <p className='text-xs text-red-600 mt-1'>{errors.duration}</p>}
+                {errors.duration && <p className='text-xs text-[#DA5062] mt-1'>{errors.duration}</p>}
               </div>
             </div>
 
@@ -447,7 +447,7 @@ const ScheduledVisitsList: React.FC = () => {
                 onChange={e => setNotes(e.target.value)}
                 placeholder={t('schedule.portal.notesPlaceholder')}
                 rows={2}
-                className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7DA8CC] focus:border-transparent'
               />
             </div>
 
@@ -462,7 +462,7 @@ const ScheduledVisitsList: React.FC = () => {
               <button
                 type='submit'
                 disabled={submitting}
-                className='flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium disabled:opacity-50'
+                className='flex-1 px-4 py-2 bg-[#7DA8CC] text-white rounded-lg hover:bg-[#6890b3] font-medium disabled:opacity-50'
               >
                 {submitting ? t('schedule.portal.scheduling') : t('schedule.portal.requestVisit')}
               </button>
@@ -526,11 +526,11 @@ const ScheduledVisitsList: React.FC = () => {
                   key={idx}
                   className={`min-h-16 sm:min-h-24 p-1 sm:p-2 border rounded-lg ${
                     date ? 'bg-white' : 'bg-gray-50'
-                  } ${isToday ? 'border-blue-500 bg-blue-50' : 'border-gray-200'}`}
+                  } ${isToday ? 'border-[#7DA8CC] bg-[#7DA8CC]/10' : 'border-gray-200'}`}
                 >
                   {date && (
                     <>
-                      <div className={`text-xs sm:text-sm font-semibold mb-1 ${isToday ? 'text-blue-600' : 'text-gray-900'}`}>
+                      <div className={`text-xs sm:text-sm font-semibold mb-1 ${isToday ? 'text-[#7DA8CC]' : 'text-gray-900'}`}>
                         {date.getDate()}
                       </div>
                       <div className='space-y-1'>
@@ -596,7 +596,7 @@ const ScheduledVisitsList: React.FC = () => {
                       aria-label='Add to calendar'
                       aria-expanded={openCalendarMenu === visit.id}
                     >
-                      <Calendar className='w-5 h-5 text-blue-600' />
+                      <Calendar className='w-5 h-5 text-[#7DA8CC]' />
                     </button>
                     {openCalendarMenu === visit.id && (
                       <div className='absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-10'>
@@ -665,7 +665,7 @@ const ScheduledVisitsList: React.FC = () => {
                         `/portal/appointment/${visit.id}/respond?token=${visit.publicToken || ''}`
                       )
                     }
-                    className='flex-1 bg-green-600 hover:bg-green-700'
+                    className='flex-1 bg-[#A1BA53] hover:bg-[#8a9f47]'
                   >
                     <CheckCircle className='w-4 h-4 mr-2' />
                     {t('schedule.portal.accept')}
@@ -677,7 +677,7 @@ const ScheduledVisitsList: React.FC = () => {
                       )
                     }
                     variant='outline'
-                    className='flex-1 border-red-300 text-red-700 hover:bg-red-50'
+                    className='flex-1 border-[#DA5062]/40 text-[#c23d4f] hover:bg-[#DA5062]/10'
                   >
                     <XCircle className='w-4 h-4 mr-2' />
                     {t('schedule.portal.reject')}

@@ -3,5 +3,12 @@
     "default": "agritectum-app",
     "agri": "agritectum-platform"
   },
-  "targets": {}
+  "targets": {},
+  "etags": {
+    "agritectum-platform": {
+      "extensionInstances": {
+        "firestore-stripe-payments": "6873f212c3bd8fd1f83c1758b7e30f19161f1cdecf1e25bd6b7d21f789df5531"
+      }
+    }
+  }
 }

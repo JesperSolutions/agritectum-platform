@@ -4,6 +4,7 @@ import ProtectedRoute from '../guards/ProtectedRoute';
 import Layout from '../../components/layout/Layout';
 import { RouteErrorBoundary } from '../error-boundaries/RouteErrorBoundary';
 import EnhancedErrorBoundary from '../../components/common/EnhancedErrorBoundary';
+import SmartRedirect from '../../components/routing/SmartRedirect';
 import {
   LazyDashboard,
   LazyReportForm,
@@ -41,14 +42,16 @@ export const mainRoutes: RouteObject[] = [
     children: [
       {
         index: true,
-        element: <Navigate to='/dashboard' replace />,
+        element: <SmartRedirect />,
       },
       {
         path: 'dashboard',
         element: (
-          <Suspense fallback={<LoadingFallback />}>
-            <LazyDashboard />
-          </Suspense>
+          <ProtectedRoute allowedRoles={['superadmin', 'branchAdmin', 'inspector']}>
+            <Suspense fallback={<LoadingFallback />}>
+              <LazyDashboard />
+            </Suspense>
+          </ProtectedRoute>
         ),
         errorElement: <RouteErrorBoundary />,
       },

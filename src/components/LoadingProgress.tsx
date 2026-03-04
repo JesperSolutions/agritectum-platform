@@ -48,19 +48,19 @@ const LoadingProgress: React.FC<LoadingProgressProps> = ({
 
     switch (color) {
       case 'blue':
-        return `${baseClasses} ${isActive ? 'bg-blue-500' : 'bg-gray-200'}`;
+        return `${baseClasses} ${isActive ? 'bg-[#7DA8CC]/100' : 'bg-gray-200'}`;
       case 'green':
-        return `${baseClasses} ${isActive ? 'bg-green-500' : 'bg-gray-200'}`;
+        return `${baseClasses} ${isActive ? 'bg-[#A1BA53]' : 'bg-gray-200'}`;
       case 'purple':
-        return `${baseClasses} ${isActive ? 'bg-purple-500' : 'bg-gray-200'}`;
+        return `${baseClasses} ${isActive ? 'bg-[#956098]' : 'bg-gray-200'}`;
       case 'red':
-        return `${baseClasses} ${isActive ? 'bg-red-500' : 'bg-gray-200'}`;
+        return `${baseClasses} ${isActive ? 'bg-[#DA5062]/100' : 'bg-gray-200'}`;
       case 'indigo':
         return `${baseClasses} ${isActive ? 'bg-indigo-500' : 'bg-gray-200'}`;
       case 'orange':
-        return `${baseClasses} ${isActive ? 'bg-orange-500' : 'bg-gray-200'}`;
+        return `${baseClasses} ${isActive ? 'bg-[#DA5062]' : 'bg-gray-200'}`;
       default:
-        return `${baseClasses} ${isActive ? 'bg-blue-500' : 'bg-gray-200'}`;
+        return `${baseClasses} ${isActive ? 'bg-[#7DA8CC]/100' : 'bg-gray-200'}`;
     }
   };
 
@@ -68,9 +68,9 @@ const LoadingProgress: React.FC<LoadingProgressProps> = ({
     <div className={`flex flex-col items-center justify-center p-8 ${className}`}>
       {/* Main Loading Spinner */}
       <div className='relative mb-6'>
-        <div className='w-16 h-16 border-4 border-blue-200 rounded-full animate-spin border-t-blue-600'></div>
+        <div className='w-16 h-16 border-4 border-[#7DA8CC]/30 rounded-full animate-spin border-t-blue-600'></div>
         <div className='absolute inset-0 flex items-center justify-center'>
-          <BarChart3 className='w-6 h-6 text-blue-600' />
+          <BarChart3 className='w-6 h-6 text-[#7DA8CC]' />
         </div>
       </div>
 
@@ -82,7 +82,7 @@ const LoadingProgress: React.FC<LoadingProgressProps> = ({
         </div>
         <div className='w-full bg-gray-200 rounded-full h-2'>
           <div
-            className='bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all duration-300 ease-out'
+            className='bg-gradient-to-r from-[#7DA8CC] to-[#6890b3] h-2 rounded-full transition-all duration-300 ease-out'
             style={{ width: `${progress}%` }}
           ></div>
         </div>
@@ -101,7 +101,7 @@ const LoadingProgress: React.FC<LoadingProgressProps> = ({
                 <div
                   key={index}
                   className={`flex items-center space-x-2 p-3 rounded-lg transition-all duration-300 ${
-                    isActive ? 'bg-blue-50 border border-blue-200' : 'bg-gray-50'
+                    isActive ? 'bg-[#7DA8CC]/10 border border-[#7DA8CC]/30' : 'bg-gray-50'
                   }`}
                 >
                   <div className={`p-2 rounded-full ${getColorClasses(step.color, isActive)}`}>
@@ -114,7 +114,7 @@ const LoadingProgress: React.FC<LoadingProgressProps> = ({
                   >
                     {t(step.labelKey)}
                   </span>
-                  {isCurrent && <Loader2 className='w-3 h-3 animate-spin text-blue-600' />}
+                  {isCurrent && <Loader2 className='w-3 h-3 animate-spin text-[#7DA8CC]' />}
                 </div>
               );
             })}

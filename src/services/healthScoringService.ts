@@ -139,15 +139,15 @@ export const getBuildingStatus = (daysSinceInspection?: number): 'good' | 'check
 export const getGradeColorClasses = (grade: HealthGrade): string => {
   switch (grade) {
     case 'A':
-      return 'text-green-700 bg-green-50 border-green-300';
+      return 'text-[#73853b] bg-[#A1BA53]/10 border-[#A1BA53]/40';
     case 'B':
-      return 'text-blue-700 bg-blue-50 border-blue-300';
+      return 'text-[#6890b3] bg-[#7DA8CC]/10 border-[#7DA8CC]/40';
     case 'C':
-      return 'text-yellow-700 bg-yellow-50 border-yellow-300';
+      return 'text-[#c23d4f] bg-[#DA5062]/10 border-[#DA5062]/35';
     case 'D':
-      return 'text-orange-700 bg-orange-50 border-orange-300';
+      return 'text-[#c23d4f] bg-[#DA5062]/10 border-[#DA5062]/40';
     case 'F':
-      return 'text-red-700 bg-red-50 border-red-300';
+      return 'text-[#c23d4f] bg-[#DA5062]/10 border-[#DA5062]/40';
   }
 };
 

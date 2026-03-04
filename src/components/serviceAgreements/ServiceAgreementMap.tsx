@@ -275,7 +275,7 @@ const ServiceAgreementMap: React.FC<ServiceAgreementMapProps> = ({
   return (
     <div className='bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden relative'>
       {mapError && (
-        <div className='absolute top-2 left-2 right-2 z-[1000] bg-yellow-50 border border-yellow-200 rounded p-2 text-sm text-yellow-800'>
+        <div className='absolute top-2 left-2 right-2 z-[1000] bg-[#DA5062]/10 border border-[#DA5062]/30 rounded p-2 text-sm text-[#872a38]'>
           {mapError}
         </div>
       )}

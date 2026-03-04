@@ -342,13 +342,13 @@ const OffersPage: React.FC = () => {
         <div className='px-4 sm:px-6 lg:px-8 py-8'>
           {/* EMAIL WARNING (if email system is down) */}
           {!emailEnabled && (
-            <div className='mb-6 bg-red-50 border-l-4 border-red-600 p-4 rounded-lg flex items-center gap-4'>
-              <AlertCircle className='w-6 h-6 text-red-500' />
+            <div className='mb-6 bg-[#DA5062]/10 border-l-4 border-[#DA5062] p-4 rounded-lg flex items-center gap-4'>
+              <AlertCircle className='w-6 h-6 text-[#DA5062]' />
               <div>
-                <strong className='text-red-700 font-semibold'>
+                <strong className='text-[#c23d4f] font-semibold'>
                   Email sending is currently unavailable.
                 </strong>
-                <div className='text-red-700 text-sm font-normal'>
+                <div className='text-[#c23d4f] text-sm font-normal'>
                   You can still copy the public link for manual delivery below. Please alert an admin
                   if this persists.
                 </div>
@@ -359,11 +359,11 @@ const OffersPage: React.FC = () => {
           {/* KPI Cards - Matches Dashboard Design */}
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8'>
             {[
-              { label: t('offers.total'), value: stats.total, icon: DollarSign, color: 'text-blue-600' },
-              { label: t('offers.pending'), value: stats.pending, icon: Clock, color: 'text-yellow-600' },
-              { label: t('offers.stats.awaiting'), value: stats.awaiting_response, icon: AlertCircle, color: 'text-orange-600' },
-              { label: t('offers.status.accepted'), value: stats.accepted, icon: CheckCircle, color: 'text-green-600' },
-              { label: t('offers.status.rejected'), value: stats.rejected, icon: XCircle, color: 'text-red-600' },
+              { label: t('offers.total'), value: stats.total, icon: DollarSign, color: 'text-[#7DA8CC]' },
+              { label: t('offers.pending'), value: stats.pending, icon: Clock, color: 'text-[#DA5062]' },
+              { label: t('offers.stats.awaiting'), value: stats.awaiting_response, icon: AlertCircle, color: 'text-[#DA5062]' },
+              { label: t('offers.status.accepted'), value: stats.accepted, icon: CheckCircle, color: 'text-[#A1BA53]' },
+              { label: t('offers.status.rejected'), value: stats.rejected, icon: XCircle, color: 'text-[#DA5062]' },
               { label: t('offers.status.expired'), value: stats.expired, icon: XCircle, color: 'text-slate-600' },
             ].map((stat, index) => (
               <div
@@ -434,7 +434,7 @@ const OffersPage: React.FC = () => {
                           setShowReportSelector(false);
                           setShowCreateModal(true);
                         }}
-                        className='w-full text-left p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all'
+                        className='w-full text-left p-4 border border-gray-200 rounded-lg hover:border-[#7DA8CC] hover:bg-[#7DA8CC]/10 transition-all'
                       >
                         <div className='flex items-center justify-between'>
                           <div>
@@ -446,7 +446,7 @@ const OffersPage: React.FC = () => {
                                 : 'N/A'}
                             </p>
                           </div>
-                          <FileText className='w-5 h-5 text-blue-600' />
+                          <FileText className='w-5 h-5 text-[#7DA8CC]' />
                         </div>
                       </button>
                     ))}

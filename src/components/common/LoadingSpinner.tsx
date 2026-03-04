@@ -24,7 +24,7 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   const spinner = (
     <div className={`flex items-center justify-center ${className}`}>
       <div className='flex flex-col items-center space-y-2'>
-        <Loader2 className={`${sizeClasses[size]} animate-spin text-blue-600`} />
+        <Loader2 className={`${sizeClasses[size]} animate-spin text-[#7DA8CC]`} />
         {text && <p className='text-sm text-gray-600 animate-pulse'>{text}</p>}
       </div>
     </div>
@@ -84,7 +84,7 @@ export const LoadingButton: React.FC<{
   disabled?: boolean;
 }> = ({ loading = false, children, className = '', disabled = false }) => (
   <button
-    className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
+    className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#7DA8CC] hover:bg-[#6890b3] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7DA8CC] disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
     disabled={disabled || loading}
   >
     {loading && <Loader2 className='w-4 h-4 mr-2 animate-spin' />}

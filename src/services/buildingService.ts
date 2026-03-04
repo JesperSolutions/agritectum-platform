@@ -338,16 +338,24 @@ export const createBuilding = async (
       throw new Error('User must be authenticated');
     }
 
-    // Check subscription tier limit for customers
+    // Check subscription tier limit for customers only (not internal users)
+    // Internal users (inspector, branchAdmin, superadmin) have permissionLevel >= 0
+    // Customers have permissionLevel = -1
     if (buildingData.customerId) {
-      const { canAddBuilding } = await import('./subscriptionTierService');
-      const tierCheck = await canAddBuilding(buildingData.customerId);
+      const tokenResult = await user.getIdTokenResult();
+      const permissionLevel = (tokenResult.claims.permissionLevel as number) ?? -1;
       
-      if (!tierCheck.allowed) {
-        const error: any = new Error(tierCheck.reason || 'Cannot add more buildings');
-        error.code = 'TIER_LIMIT_EXCEEDED';
-        error.details = tierCheck;
-        throw error;
+      // Only enforce subscription limits for customer accounts (permissionLevel = -1)
+      if (permissionLevel < 0) {
+        const { canAddBuilding } = await import('./subscriptionTierService');
+        const tierCheck = await canAddBuilding(buildingData.customerId);
+        
+        if (!tierCheck.allowed) {
+          const error: any = new Error(tierCheck.reason || 'Cannot add more buildings');
+          error.code = 'TIER_LIMIT_EXCEEDED';
+          error.details = tierCheck;
+          throw error;
+        }
       }
     }
 

@@ -76,11 +76,11 @@ export const FormField = React.forwardRef<HTMLInputElement, FormFieldProps>(
           className={cn(
             'block text-sm font-medium transition-colors',
             disabled ? 'text-slate-400' : 'text-slate-700',
-            showError && 'text-red-600'
+            showError && 'text-[#DA5062]'
           )}
         >
           {label}
-          {required && <span className='text-red-500 ml-0.5'>*</span>}
+          {required && <span className='text-[#DA5062] ml-0.5'>*</span>}
         </label>
 
         {/* Input wrapper */}
@@ -105,10 +105,10 @@ export const FormField = React.forwardRef<HTMLInputElement, FormFieldProps>(
               !showError && !showSuccessState && 'border-slate-300 focus-visible:ring-slate-500',
               // Error state
               showError &&
-                'border-red-400 bg-red-50/50 text-red-900 placeholder:text-red-300 focus-visible:ring-red-500 pr-10',
+                'border-[#DA5062]/50 bg-[#DA5062]/10/50 text-[#6e2530] placeholder:text-[#DA5062]/40 focus-visible:ring-[#DA5062] pr-10',
               // Success state
               showSuccessState &&
-                'border-green-400 bg-green-50/30 focus-visible:ring-green-500 pr-10'
+                'border-[#b1c66a] bg-[#A1BA53]/10/30 focus-visible:ring-[#A1BA53] pr-10'
             )}
             {...props}
           />
@@ -117,9 +117,9 @@ export const FormField = React.forwardRef<HTMLInputElement, FormFieldProps>(
           {(showError || showSuccessState) && (
             <div className='absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none'>
               {showError ? (
-                <AlertCircle className='h-4 w-4 text-red-500' aria-hidden='true' />
+                <AlertCircle className='h-4 w-4 text-[#DA5062]' aria-hidden='true' />
               ) : (
-                <CheckCircle className='h-4 w-4 text-green-500' aria-hidden='true' />
+                <CheckCircle className='h-4 w-4 text-[#A1BA53]' aria-hidden='true' />
               )}
             </div>
           )}
@@ -129,7 +129,7 @@ export const FormField = React.forwardRef<HTMLInputElement, FormFieldProps>(
         {showError && (
           <p
             id={`${fieldId}-error`}
-            className='text-sm text-red-600 flex items-center gap-1.5 animate-in slide-in-from-top-1 duration-200'
+            className='text-sm text-[#DA5062] flex items-center gap-1.5 animate-in slide-in-from-top-1 duration-200'
             role='alert'
           >
             <AlertCircle className='h-3.5 w-3.5 flex-shrink-0' />
@@ -175,11 +175,11 @@ export const FormTextArea = React.forwardRef<HTMLTextAreaElement, FormTextAreaPr
           className={cn(
             'block text-sm font-medium transition-colors',
             disabled ? 'text-slate-400' : 'text-slate-700',
-            showError && 'text-red-600'
+            showError && 'text-[#DA5062]'
           )}
         >
           {label}
-          {required && <span className='text-red-500 ml-0.5'>*</span>}
+          {required && <span className='text-[#DA5062] ml-0.5'>*</span>}
         </label>
 
         <div className='relative'>
@@ -197,7 +197,7 @@ export const FormTextArea = React.forwardRef<HTMLTextAreaElement, FormTextAreaPr
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1',
               'disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-slate-100',
               !showError && 'border-slate-300 focus-visible:ring-slate-500',
-              showError && 'border-red-400 bg-red-50/50 text-red-900 focus-visible:ring-red-500'
+              showError && 'border-[#DA5062]/50 bg-[#DA5062]/10/50 text-[#6e2530] focus-visible:ring-[#DA5062]'
             )}
             {...props}
           />
@@ -206,7 +206,7 @@ export const FormTextArea = React.forwardRef<HTMLTextAreaElement, FormTextAreaPr
         {showError && (
           <p
             id={`${fieldId}-error`}
-            className='text-sm text-red-600 flex items-center gap-1.5 animate-in slide-in-from-top-1 duration-200'
+            className='text-sm text-[#DA5062] flex items-center gap-1.5 animate-in slide-in-from-top-1 duration-200'
             role='alert'
           >
             <AlertCircle className='h-3.5 w-3.5 flex-shrink-0' />
@@ -253,11 +253,11 @@ export const FormSelect = React.forwardRef<HTMLSelectElement, FormSelectProps>(
           className={cn(
             'block text-sm font-medium transition-colors',
             disabled ? 'text-slate-400' : 'text-slate-700',
-            showError && 'text-red-600'
+            showError && 'text-[#DA5062]'
           )}
         >
           {label}
-          {required && <span className='text-red-500 ml-0.5'>*</span>}
+          {required && <span className='text-[#DA5062] ml-0.5'>*</span>}
         </label>
 
         <select
@@ -272,7 +272,7 @@ export const FormSelect = React.forwardRef<HTMLSelectElement, FormSelectProps>(
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1',
             'disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-slate-100',
             !showError && 'border-slate-300 focus-visible:ring-slate-500',
-            showError && 'border-red-400 bg-red-50/50 text-red-900 focus-visible:ring-red-500'
+            showError && 'border-[#DA5062]/50 bg-[#DA5062]/10/50 text-[#6e2530] focus-visible:ring-[#DA5062]'
           )}
           {...props}
         >
@@ -291,7 +291,7 @@ export const FormSelect = React.forwardRef<HTMLSelectElement, FormSelectProps>(
         {showError && (
           <p
             id={`${fieldId}-error`}
-            className='text-sm text-red-600 flex items-center gap-1.5 animate-in slide-in-from-top-1 duration-200'
+            className='text-sm text-[#DA5062] flex items-center gap-1.5 animate-in slide-in-from-top-1 duration-200'
             role='alert'
           >
             <AlertCircle className='h-3.5 w-3.5 flex-shrink-0' />

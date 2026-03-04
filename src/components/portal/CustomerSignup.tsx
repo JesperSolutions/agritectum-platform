@@ -212,8 +212,8 @@ const CustomerSignup: React.FC = () => {
     return (
       <div className='min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4'>
         <div className='max-w-md w-full bg-white rounded-xl shadow-lg p-8 text-center'>
-          <div className='mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-6'>
-            <CheckCircle className='w-10 h-10 text-green-600' />
+          <div className='mx-auto w-16 h-16 bg-[#A1BA53]/15 rounded-full flex items-center justify-center mb-6'>
+            <CheckCircle className='w-10 h-10 text-[#A1BA53]' />
           </div>
           <h1 className='text-2xl font-bold text-slate-900 mb-4'>
             {t('customerSignup.success.title') || 'Account Created Successfully!'}
@@ -238,13 +238,13 @@ const CustomerSignup: React.FC = () => {
     return (
       <div className='min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4'>
         <div className='max-w-md w-full bg-white rounded-xl shadow-lg p-8 text-center'>
-          <div className='mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-6'>
+          <div className='mx-auto w-16 h-16 bg-[#DA5062]/15 rounded-full flex items-center justify-center mb-6'>
             {validationError.includes('expired') ? (
-              <Clock className='w-10 h-10 text-red-600' />
+              <Clock className='w-10 h-10 text-[#DA5062]' />
             ) : validationError.includes('used') ? (
-              <CheckCircle className='w-10 h-10 text-orange-600' />
+              <CheckCircle className='w-10 h-10 text-[#DA5062]' />
             ) : (
-              <XCircle className='w-10 h-10 text-red-600' />
+              <XCircle className='w-10 h-10 text-[#DA5062]' />
             )}
           </div>
           <h1 className='text-2xl font-bold text-slate-900 mb-4'>
@@ -302,8 +302,8 @@ const CustomerSignup: React.FC = () => {
     return (
       <div className='min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4'>
         <div className='max-w-md w-full bg-white rounded-xl shadow-lg p-8 text-center'>
-          <div className='mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-6'>
-            <AlertTriangle className='w-10 h-10 text-red-600' />
+          <div className='mx-auto w-16 h-16 bg-[#DA5062]/15 rounded-full flex items-center justify-center mb-6'>
+            <AlertTriangle className='w-10 h-10 text-[#DA5062]' />
           </div>
           <h1 className='text-2xl font-bold text-slate-900 mb-4'>
             {t('customerSignup.error.title') || 'Something Went Wrong'}
@@ -351,7 +351,7 @@ const CustomerSignup: React.FC = () => {
               </div>
               <div className='rounded-xl border border-slate-100 bg-slate-50/60 p-4 shadow-material-1'>
                 <div className='flex items-center gap-2 text-slate-900 font-semibold'>
-                  <Clock className='h-4 w-4 text-blue-600' />
+                  <Clock className='h-4 w-4 text-[#7DA8CC]' />
                   {t('customerSignup.benefit2') || 'Track visits & offers'}
                 </div>
                 <p className='mt-2 text-slate-600'>
@@ -377,12 +377,12 @@ const CustomerSignup: React.FC = () => {
             </div>
 
             {invitation && (
-              <div className='mb-6 rounded-xl border border-blue-100 bg-blue-50 p-4'>
+              <div className='mb-6 rounded-xl border border-[#7DA8CC]/20 bg-[#7DA8CC]/10 p-4'>
                 <div className='flex items-start gap-3'>
-                  <Building className='w-5 h-5 text-blue-600 mt-0.5' />
+                  <Building className='w-5 h-5 text-[#7DA8CC] mt-0.5' />
                   <div className='space-y-1'>
-                    <p className='font-semibold text-blue-900'>{invitation.customerName}</p>
-                    <p className='text-sm text-blue-700'>
+                    <p className='font-semibold text-[#3b5060]'>{invitation.customerName}</p>
+                    <p className='text-sm text-[#6890b3]'>
                       {t('customerSignup.invitationValid') || 'Invitation valid until'}:{' '}
                       {formatExpiryDate(invitation.expiresAt)}
                     </p>
@@ -482,9 +482,9 @@ const CustomerSignup: React.FC = () => {
               </div>
 
               {error && (
-                <div className='flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3'>
-                  <AlertTriangle className='w-5 h-5 text-red-600 flex-shrink-0 mt-0.5' />
-                  <p className='text-sm text-red-700'>{error}</p>
+                <div className='flex items-start gap-2 rounded-lg border border-[#DA5062]/30 bg-[#DA5062]/10 p-3'>
+                  <AlertTriangle className='w-5 h-5 text-[#DA5062] flex-shrink-0 mt-0.5' />
+                  <p className='text-sm text-[#c23d4f]'>{error}</p>
                 </div>
               )}
 

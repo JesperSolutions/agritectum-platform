@@ -464,18 +464,18 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
                 </span>
               </div>
             ) : customerError === 'fetchError' ? (
-              <div className='w-full px-4 py-2 border border-red-300 rounded-lg bg-red-50'>
+              <div className='w-full px-4 py-2 border border-[#DA5062]/40 rounded-lg bg-[#DA5062]/10'>
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center'>
-                    <AlertCircle className='h-4 w-4 text-red-600 mr-2' />
-                    <span className='text-sm text-red-600'>
+                    <AlertCircle className='h-4 w-4 text-[#DA5062] mr-2' />
+                    <span className='text-sm text-[#DA5062]'>
                       {t('serviceAgreement.form.customerError') || 'Failed to load customers'}
                     </span>
                   </div>
                   <button
                     type='button'
                     onClick={fetchCustomers}
-                    className='text-red-600 hover:text-red-800 transition-colors'
+                    className='text-[#DA5062] hover:text-[#872a38] transition-colors'
                     title={t('serviceAgreement.form.retry') || 'Retry'}
                   >
                     <RefreshCw className='h-4 w-4' />
@@ -483,11 +483,11 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
                 </div>
               </div>
             ) : customerError === 'noCustomers' && mode === 'create' ? (
-              <div className='w-full px-4 py-2 border border-yellow-300 rounded-lg bg-yellow-50'>
+              <div className='w-full px-4 py-2 border border-[#DA5062]/35 rounded-lg bg-[#DA5062]/10'>
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center'>
-                    <AlertCircle className='h-4 w-4 text-yellow-600 mr-2' />
-                    <span className='text-sm text-yellow-600'>
+                    <AlertCircle className='h-4 w-4 text-[#DA5062] mr-2' />
+                    <span className='text-sm text-[#DA5062]'>
                       {t('serviceAgreement.form.noCustomers') ||
                         'No customers found. Please create a customer first.'}
                     </span>
@@ -495,7 +495,7 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
                   <button
                     type='button'
                     onClick={fetchCustomers}
-                    className='text-yellow-600 hover:text-yellow-800 transition-colors'
+                    className='text-[#DA5062] hover:text-[#872a38] transition-colors'
                     title={t('serviceAgreement.form.refresh') || 'Refresh'}
                   >
                     <RefreshCw className='h-4 w-4' />
@@ -518,7 +518,7 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
                 ))}
               </select>
             )}
-            {errors.customerId && <p className='text-red-600 text-sm mt-1'>{errors.customerId}</p>}
+            {errors.customerId && <p className='text-[#DA5062] text-sm mt-1'>{errors.customerId}</p>}
           </div>
 
           <div>
@@ -547,7 +547,7 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
                 className='w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-700 focus:border-transparent'
                 required
               />
-              {errors.startDate && <p className='text-red-600 text-sm mt-1'>{errors.startDate}</p>}
+              {errors.startDate && <p className='text-[#DA5062] text-sm mt-1'>{errors.startDate}</p>}
             </div>
 
             <div>
@@ -561,7 +561,7 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
                 className='w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-700 focus:border-transparent'
                 required
               />
-              {errors.endDate && <p className='text-red-600 text-sm mt-1'>{errors.endDate}</p>}
+              {errors.endDate && <p className='text-[#DA5062] text-sm mt-1'>{errors.endDate}</p>}
             </div>
           </div>
 
@@ -577,7 +577,7 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
               required
             />
             {errors.nextServiceDate && (
-              <p className='text-red-600 text-sm mt-1'>{errors.nextServiceDate}</p>
+              <p className='text-[#DA5062] text-sm mt-1'>{errors.nextServiceDate}</p>
             )}
           </div>
 
@@ -1235,7 +1235,7 @@ const ServiceAgreementForm: React.FC<ServiceAgreementFormProps> = ({
                             signatures: { ...formData.signatures, supplierImageUrl: '' },
                           })
                         }
-                        className='absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600'
+                        className='absolute -top-2 -right-2 bg-[#DA5062]/100 text-white rounded-full p-1 hover:bg-[#DA5062]'
                       >
                         <XIcon className='w-3 h-3' />
                       </button>

@@ -97,11 +97,11 @@ const ValidatedInput = forwardRef<HTMLInputElement, ValidatedInputProps>(
       if (!showValidationIcon || !touched) return null;
 
       if (isDirty && isValid) {
-        return <CheckCircle className='w-5 h-5 text-green-500' aria-hidden='true' />;
+        return <CheckCircle className='w-5 h-5 text-[#A1BA53]' aria-hidden='true' />;
       }
 
       if (hasError) {
-        return <AlertCircle className='w-5 h-5 text-red-500' aria-hidden='true' />;
+        return <AlertCircle className='w-5 h-5 text-[#DA5062]' aria-hidden='true' />;
       }
 
       return null;
@@ -112,14 +112,14 @@ const ValidatedInput = forwardRef<HTMLInputElement, ValidatedInputProps>(
         'block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-1 sm:text-sm';
 
       if (hasError) {
-        return `${baseClasses} border-red-300 focus:border-red-500 focus:ring-red-500 pr-10`;
+        return `${baseClasses} border-[#DA5062]/40 focus:border-[#DA5062] focus:ring-[#DA5062] pr-10`;
       }
 
       if (isValid && isDirty) {
-        return `${baseClasses} border-green-300 focus:border-green-500 focus:ring-green-500 pr-10`;
+        return `${baseClasses} border-[#A1BA53]/40 focus:border-[#A1BA53] focus:ring-[#A1BA53] pr-10`;
       }
 
-      return `${baseClasses} border-gray-300 focus:border-blue-500 focus:ring-blue-500 ${showValidationIcon ? 'pr-10' : ''}`;
+      return `${baseClasses} border-gray-300 focus:border-[#7DA8CC] focus:ring-[#7DA8CC] ${showValidationIcon ? 'pr-10' : ''}`;
     };
 
     return (
@@ -127,7 +127,7 @@ const ValidatedInput = forwardRef<HTMLInputElement, ValidatedInputProps>(
         <label htmlFor={fieldId} className='block text-sm font-medium text-gray-700 truncate-smart'>
           {label}
           {required && (
-            <span className='text-red-500 ml-1 flex-shrink-0' aria-hidden='true'>
+            <span className='text-[#DA5062] ml-1 flex-shrink-0' aria-hidden='true'>
               *
             </span>
           )}
@@ -156,7 +156,7 @@ const ValidatedInput = forwardRef<HTMLInputElement, ValidatedInputProps>(
         </div>
 
         {hasError && (
-          <p id={errorId} className='text-xs sm:text-sm text-red-600 break-words' role='alert'>
+          <p id={errorId} className='text-xs sm:text-sm text-[#DA5062] break-words' role='alert'>
             {error}
           </p>
         )}
@@ -268,11 +268,11 @@ export const ValidatedTextarea = forwardRef<HTMLTextAreaElement, ValidatedTextar
       if (!showValidationIcon || !touched) return null;
 
       if (isDirty && isValid) {
-        return <CheckCircle className='w-5 h-5 text-green-500' aria-hidden='true' />;
+        return <CheckCircle className='w-5 h-5 text-[#A1BA53]' aria-hidden='true' />;
       }
 
       if (hasError) {
-        return <AlertCircle className='w-5 h-5 text-red-500' aria-hidden='true' />;
+        return <AlertCircle className='w-5 h-5 text-[#DA5062]' aria-hidden='true' />;
       }
 
       return null;
@@ -283,21 +283,21 @@ export const ValidatedTextarea = forwardRef<HTMLTextAreaElement, ValidatedTextar
         'block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-1 sm:text-sm';
 
       if (hasError) {
-        return `${baseClasses} border-red-300 focus:border-red-500 focus:ring-red-500`;
+        return `${baseClasses} border-[#DA5062]/40 focus:border-[#DA5062] focus:ring-[#DA5062]`;
       }
 
       if (isValid && isDirty) {
-        return `${baseClasses} border-green-300 focus:border-green-500 focus:ring-green-500`;
+        return `${baseClasses} border-[#A1BA53]/40 focus:border-[#A1BA53] focus:ring-[#A1BA53]`;
       }
 
-      return `${baseClasses} border-gray-300 focus:border-blue-500 focus:ring-blue-500`;
+      return `${baseClasses} border-gray-300 focus:border-[#7DA8CC] focus:ring-[#7DA8CC]`;
     };
 
     return (
       <div className={`space-y-1 ${className}`}>
         <label htmlFor={fieldId} className='block text-sm font-medium text-gray-700'>
           {label}
-          {required && <span className='text-red-500 ml-1'>*</span>}
+          {required && <span className='text-[#DA5062] ml-1'>*</span>}
         </label>
 
         <div className='relative'>
@@ -321,7 +321,7 @@ export const ValidatedTextarea = forwardRef<HTMLTextAreaElement, ValidatedTextar
         </div>
 
         {hasError && (
-          <p id={errorId} className='text-sm text-red-600' role='alert'>
+          <p id={errorId} className='text-sm text-[#DA5062]' role='alert'>
             {error}
           </p>
         )}

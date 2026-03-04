@@ -42,7 +42,7 @@ const ESGSection: React.FC<ESGSectionProps> = ({ metrics, loading = false, error
     return (
       <div className='bg-white rounded-lg shadow p-6 border border-slate-200'>
         <div className='flex items-center justify-center py-12'>
-          <Loader2 className='w-8 h-8 text-green-600 animate-spin' />
+          <Loader2 className='w-8 h-8 text-[#A1BA53] animate-spin' />
           <span className='ml-3 text-gray-600'>
             {t('buildings.esg.calculating') || 'Calculating ESG metrics...'}
           </span>
@@ -54,7 +54,7 @@ const ESGSection: React.FC<ESGSectionProps> = ({ metrics, loading = false, error
   if (error) {
     return (
       <div className='bg-white rounded-lg shadow p-6 border border-slate-200'>
-        <div className='flex items-center space-x-3 text-red-600'>
+        <div className='flex items-center space-x-3 text-[#DA5062]'>
           <AlertCircle className='w-5 h-5' />
           <p>{error || t('buildings.esg.error') || 'Failed to load ESG metrics'}</p>
         </div>
@@ -76,17 +76,17 @@ const ESGSection: React.FC<ESGSectionProps> = ({ metrics, loading = false, error
   }
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return 'text-green-600';
-    if (score >= 60) return 'text-blue-600';
-    if (score >= 40) return 'text-yellow-600';
-    return 'text-red-600';
+    if (score >= 80) return 'text-[#A1BA53]';
+    if (score >= 60) return 'text-[#7DA8CC]';
+    if (score >= 40) return 'text-[#DA5062]';
+    return 'text-[#DA5062]';
   };
 
   const getScoreBgColor = (score: number) => {
-    if (score >= 80) return 'bg-green-50 border-green-200';
-    if (score >= 60) return 'bg-blue-50 border-blue-200';
-    if (score >= 40) return 'bg-yellow-50 border-yellow-200';
-    return 'bg-red-50 border-red-200';
+    if (score >= 80) return 'bg-[#A1BA53]/10 border-[#A1BA53]/30';
+    if (score >= 60) return 'bg-[#7DA8CC]/10 border-[#7DA8CC]/30';
+    if (score >= 40) return 'bg-[#DA5062]/10 border-[#DA5062]/30';
+    return 'bg-[#DA5062]/10 border-[#DA5062]/30';
   };
 
   return (
@@ -94,7 +94,7 @@ const ESGSection: React.FC<ESGSectionProps> = ({ metrics, loading = false, error
       {/* Header */}
       <div className='bg-white rounded-lg shadow p-6 border border-slate-200'>
         <h2 className='text-xl font-semibold mb-4 flex items-center'>
-          <Leaf className='w-5 h-5 mr-2 text-green-600' />
+          <Leaf className='w-5 h-5 mr-2 text-[#A1BA53]' />
           {t('buildings.esg.title') || 'ESG Metrics'}
         </h2>
         <p className='text-sm text-gray-600 mb-4'>
@@ -125,10 +125,10 @@ const ESGSection: React.FC<ESGSectionProps> = ({ metrics, loading = false, error
         {/* Carbon Footprint */}
         <ListCard>
           <div className='text-center'>
-            <div className='inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-50 border-4 border-blue-200 mb-3'>
-              <TrendingUp className='w-8 h-8 text-blue-600' />
+            <div className='inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#7DA8CC]/10 border-4 border-[#7DA8CC]/30 mb-3'>
+              <TrendingUp className='w-8 h-8 text-[#7DA8CC]' />
             </div>
-            <p className='text-2xl font-bold text-blue-600'>
+            <p className='text-2xl font-bold text-[#7DA8CC]'>
               {metrics.carbonFootprint.toLocaleString()}
             </p>
             <p className='text-sm font-medium text-gray-900'>
@@ -141,10 +141,10 @@ const ESGSection: React.FC<ESGSectionProps> = ({ metrics, loading = false, error
         {/* Solar Potential */}
         <ListCard>
           <div className='text-center'>
-            <div className='inline-flex items-center justify-center w-16 h-16 rounded-full bg-yellow-50 border-4 border-yellow-200 mb-3'>
-              <Sun className='w-8 h-8 text-yellow-600' />
+            <div className='inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#DA5062]/10 border-4 border-[#DA5062]/30 mb-3'>
+              <Sun className='w-8 h-8 text-[#DA5062]' />
             </div>
-            <p className='text-2xl font-bold text-yellow-600'>
+            <p className='text-2xl font-bold text-[#DA5062]'>
               {metrics.solarPotential.toLocaleString()}
             </p>
             <p className='text-sm font-medium text-gray-900'>
@@ -157,10 +157,10 @@ const ESGSection: React.FC<ESGSectionProps> = ({ metrics, loading = false, error
         {/* Recycling Potential */}
         <ListCard>
           <div className='text-center'>
-            <div className='inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-50 border-4 border-green-200 mb-3'>
-              <Recycle className='w-8 h-8 text-green-600' />
+            <div className='inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#A1BA53]/10 border-4 border-[#A1BA53]/30 mb-3'>
+              <Recycle className='w-8 h-8 text-[#A1BA53]' />
             </div>
-            <p className='text-2xl font-bold text-green-600'>{metrics.recyclingPotential}%</p>
+            <p className='text-2xl font-bold text-[#A1BA53]'>{metrics.recyclingPotential}%</p>
             <p className='text-sm font-medium text-gray-900'>
               {t('buildings.esg.recyclingPotential') || 'Recycling Potential'}
             </p>
@@ -174,7 +174,7 @@ const ESGSection: React.FC<ESGSectionProps> = ({ metrics, loading = false, error
       {/* Detailed Metrics */}
       <div className='bg-white rounded-lg shadow p-6 border border-slate-200'>
         <h3 className='text-lg font-semibold mb-4 flex items-center'>
-          <Target className='w-5 h-5 mr-2 text-green-600' />
+          <Target className='w-5 h-5 mr-2 text-[#A1BA53]' />
           {t('buildings.esg.detailedMetrics') || 'Detailed Metrics'}
         </h3>
         <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
@@ -209,7 +209,7 @@ const ESGSection: React.FC<ESGSectionProps> = ({ metrics, loading = false, error
                       key={sdg}
                       status='active'
                       label={sdg}
-                      className='bg-blue-100 text-blue-800'
+                      className='bg-[#7DA8CC]/15 text-[#476279]'
                       useTranslation={false}
                     />
                   ))
@@ -230,12 +230,12 @@ const ESGSection: React.FC<ESGSectionProps> = ({ metrics, loading = false, error
       {/* Recommendations */}
       <div className='bg-white rounded-lg shadow p-6 border border-slate-200'>
         <h3 className='text-lg font-semibold mb-4 flex items-center'>
-          <Target className='w-5 h-5 mr-2 text-blue-600' />
+          <Target className='w-5 h-5 mr-2 text-[#7DA8CC]' />
           {t('buildings.esg.recommendations') || 'Recommendations'}
         </h3>
         <div className='space-y-3'>
           {metrics.sustainabilityScore < 60 && (
-            <div className='p-4 bg-yellow-50 border border-yellow-200 rounded-lg'>
+            <div className='p-4 bg-[#DA5062]/10 border border-[#DA5062]/30 rounded-lg'>
               <p className='text-sm text-gray-700'>
                 {t('buildings.esg.recommendation.lowScore') ||
                   'Consider upgrading to more sustainable roofing materials to improve your ESG score.'}
@@ -243,7 +243,7 @@ const ESGSection: React.FC<ESGSectionProps> = ({ metrics, loading = false, error
             </div>
           )}
           {metrics.solarPotential > 0 && (
-            <div className='p-4 bg-blue-50 border border-blue-200 rounded-lg'>
+            <div className='p-4 bg-[#7DA8CC]/10 border border-[#7DA8CC]/30 rounded-lg'>
               <p className='text-sm text-gray-700'>
                 {t('buildings.esg.recommendation.solar') ||
                   `This building has significant solar potential (${metrics.solarPotential.toLocaleString()} kWh/year). Consider installing solar panels to reduce carbon footprint.`}
@@ -251,7 +251,7 @@ const ESGSection: React.FC<ESGSectionProps> = ({ metrics, loading = false, error
             </div>
           )}
           {metrics.recyclingPotential >= 70 && (
-            <div className='p-4 bg-green-50 border border-green-200 rounded-lg'>
+            <div className='p-4 bg-[#A1BA53]/10 border border-[#A1BA53]/30 rounded-lg'>
               <p className='text-sm text-gray-700'>
                 {t('buildings.esg.recommendation.recycling') ||
                   'Your roofing material has high recycling potential. Ensure proper recycling at end of life.'}
@@ -259,7 +259,7 @@ const ESGSection: React.FC<ESGSectionProps> = ({ metrics, loading = false, error
             </div>
           )}
           {metrics.neutralityTimeline && metrics.neutralityTimeline > 20 && (
-            <div className='p-4 bg-orange-50 border border-orange-200 rounded-lg'>
+            <div className='p-4 bg-[#DA5062]/10 border border-[#DA5062]/30 rounded-lg'>
               <p className='text-sm text-gray-700'>
                 {(
                   t('buildings.esg.recommendation.neutrality') ||

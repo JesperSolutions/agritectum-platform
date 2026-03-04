@@ -14,15 +14,15 @@ interface RecommendedActionsSectionProps {
 }
 
 const priorityOptions: { value: ActionPriority; label: string; color: string }[] = [
-  { value: 'low', label: 'Low', color: 'text-green-600' },
-  { value: 'medium', label: 'Medium', color: 'text-yellow-600' },
-  { value: 'high', label: 'High', color: 'text-red-600' },
+  { value: 'low', label: 'Low', color: 'text-[#A1BA53]' },
+  { value: 'medium', label: 'Medium', color: 'text-[#DA5062]' },
+  { value: 'high', label: 'High', color: 'text-[#DA5062]' },
 ];
 
 const urgencyOptions: { value: ActionUrgency; label: string; color: string }[] = [
-  { value: 'immediate', label: 'Immediate', color: 'text-red-600' },
-  { value: 'short_term', label: 'Short Term', color: 'text-orange-600' },
-  { value: 'long_term', label: 'Long Term', color: 'text-blue-600' },
+  { value: 'immediate', label: 'Immediate', color: 'text-[#DA5062]' },
+  { value: 'short_term', label: 'Short Term', color: 'text-[#DA5062]' },
+  { value: 'long_term', label: 'Long Term', color: 'text-[#7DA8CC]' },
 ];
 
 const RecommendedActionsSection: React.FC<RecommendedActionsSectionProps> = ({
@@ -38,7 +38,7 @@ const RecommendedActionsSection: React.FC<RecommendedActionsSectionProps> = ({
     <div className='bg-white p-6 rounded-lg shadow-sm border border-gray-200'>
       <div className='flex items-center justify-between mb-4'>
         <div className='flex items-center'>
-          <CheckCircle className='w-5 h-5 text-blue-600 mr-2' />
+          <CheckCircle className='w-5 h-5 text-[#7DA8CC] mr-2' />
           <h3 className='text-lg font-semibold text-gray-900'>Recommended Actions</h3>
         </div>
         <AccessibleButton
@@ -72,7 +72,7 @@ const RecommendedActionsSection: React.FC<RecommendedActionsSectionProps> = ({
                   onClick={() => onRemoveAction(index)}
                   leftIcon={<Trash2 className='w-4 h-4' />}
                   aria-label={`Remove action ${index + 1}`}
-                  className='text-red-600 hover:text-red-700'
+                  className='text-[#DA5062] hover:text-[#c23d4f]'
                 >
                   Remove
                 </AccessibleButton>
@@ -81,14 +81,14 @@ const RecommendedActionsSection: React.FC<RecommendedActionsSectionProps> = ({
               <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                 <div>
                   <label className='block text-sm font-medium text-gray-700 mb-1'>
-                    Priority <span className='text-red-500'>*</span>
+                    Priority <span className='text-[#DA5062]'>*</span>
                   </label>
                   <select
                     value={action.priority}
                     onChange={e =>
                       onUpdateAction(index, { priority: e.target.value as ActionPriority })
                     }
-                    className='block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
+                    className='block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#7DA8CC] focus:border-[#7DA8CC] sm:text-sm'
                   >
                     <option value=''>Select priority</option>
                     {priorityOptions.map(option => (
@@ -101,14 +101,14 @@ const RecommendedActionsSection: React.FC<RecommendedActionsSectionProps> = ({
 
                 <div>
                   <label className='block text-sm font-medium text-gray-700 mb-1'>
-                    Urgency <span className='text-red-500'>*</span>
+                    Urgency <span className='text-[#DA5062]'>*</span>
                   </label>
                   <select
                     value={action.urgency}
                     onChange={e =>
                       onUpdateAction(index, { urgency: e.target.value as ActionUrgency })
                     }
-                    className='block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
+                    className='block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#7DA8CC] focus:border-[#7DA8CC] sm:text-sm'
                   >
                     <option value=''>Select urgency</option>
                     {urgencyOptions.map(option => (
@@ -121,13 +121,13 @@ const RecommendedActionsSection: React.FC<RecommendedActionsSectionProps> = ({
 
                 <div className='md:col-span-2'>
                   <label className='block text-sm font-medium text-gray-700 mb-1'>
-                    Description <span className='text-red-500'>*</span>
+                    Description <span className='text-[#DA5062]'>*</span>
                   </label>
                   <textarea
                     value={action.description}
                     onChange={e => onUpdateAction(index, { description: e.target.value })}
                     rows={3}
-                    className='block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
+                    className='block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#7DA8CC] focus:border-[#7DA8CC] sm:text-sm'
                     placeholder='Describe the recommended action in detail...'
                   />
                 </div>
@@ -143,7 +143,7 @@ const RecommendedActionsSection: React.FC<RecommendedActionsSectionProps> = ({
                         estimatedCost: e.target.value ? parseInt(e.target.value) : undefined,
                       })
                     }
-                    className='block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
+                    className='block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#7DA8CC] focus:border-[#7DA8CC] sm:text-sm'
                   >
                     <option value=''>{t('form.placeholders.selectCostRange')}</option>
                     <option value='250'>0-500 SEK</option>
@@ -166,7 +166,7 @@ const RecommendedActionsSection: React.FC<RecommendedActionsSectionProps> = ({
       )}
 
       {errors.recommendedActions && touched.recommendedActions && (
-        <p className='text-sm text-red-600 mt-2'>{errors.recommendedActions}</p>
+        <p className='text-sm text-[#DA5062] mt-2'>{errors.recommendedActions}</p>
       )}
     </div>
   );

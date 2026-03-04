@@ -149,7 +149,7 @@ const ServiceAgreementsList: React.FC = () => {
                         {t('serviceAgreement.portal.external')}
                       </span>
                     ) : (
-                      <span className='inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded'>
+                      <span className='inline-flex items-center gap-1 px-2 py-1 bg-[#7DA8CC]/15 text-[#476279] text-xs font-semibold rounded'>
                         <Building2 className='w-3 h-3' />
                         {t('serviceAgreement.portal.platformPartner')}
                       </span>
@@ -195,7 +195,7 @@ const ServiceAgreementsList: React.FC = () => {
                 <div className='mt-4 pt-4 border-t border-gray-200'>
                   <div className='flex items-center justify-between'>
                     <div className='flex items-center gap-2'>
-                      <RefreshCw className={`w-5 h-5 ${agreement.autoRenew ? 'text-green-600' : 'text-gray-400'}`} />
+                      <RefreshCw className={`w-5 h-5 ${agreement.autoRenew ? 'text-[#A1BA53]' : 'text-gray-400'}`} />
                       <div>
                         <p className='text-sm font-medium text-gray-900'>{t('serviceAgreement.portal.autoRenewal')}</p>
                         <p className='text-xs text-gray-500'>
@@ -209,7 +209,7 @@ const ServiceAgreementsList: React.FC = () => {
                       onClick={() => handleAutoRenewToggle(agreement.id, agreement.autoRenew || false)}
                       disabled={updatingAgreement === agreement.id}
                       className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-                        agreement.autoRenew ? 'bg-green-600 focus:ring-green-500' : 'bg-gray-200 focus:ring-gray-300'
+                        agreement.autoRenew ? 'bg-[#A1BA53] focus:ring-[#A1BA53]' : 'bg-gray-200 focus:ring-gray-300'
                       } ${updatingAgreement === agreement.id ? 'opacity-50 cursor-not-allowed' : ''}`}
                       role='switch'
                       aria-checked={agreement.autoRenew}
@@ -224,8 +224,8 @@ const ServiceAgreementsList: React.FC = () => {
                     </button>
                   </div>
                   {agreement.autoRenew && (
-                    <div className='mt-2 bg-green-50 border border-green-200 rounded-lg p-3'>
-                      <p className='text-xs text-green-800'>
+                    <div className='mt-2 bg-[#A1BA53]/10 border border-[#A1BA53]/30 rounded-lg p-3'>
+                      <p className='text-xs text-[#5c6a2f]'>
                         ✓ {t('serviceAgreement.portal.autoRenewConfirmation', { date: formatDate(agreement.endDate), months: agreement.renewalTermMonths || 12 })}
                       </p>
                     </div>

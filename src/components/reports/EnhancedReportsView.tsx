@@ -125,8 +125,8 @@ const EnhancedReportsView: React.FC<EnhancedReportsViewProps> = ({
       </div>
       {trend !== undefined && (
         <div className='flex items-center gap-1 mt-4'>
-          <TrendingUp className='w-4 h-4 text-green-600' />
-          <span className='text-xs font-medium text-green-600'>{trend}% vs last week</span>
+          <TrendingUp className='w-4 h-4 text-[#A1BA53]' />
+          <span className='text-xs font-medium text-[#A1BA53]'>{trend}% vs last week</span>
         </div>
       )}
     </div>
@@ -177,7 +177,7 @@ const EnhancedReportsView: React.FC<EnhancedReportsViewProps> = ({
               label='Total Reports'
               value={stats.total}
               trend={12}
-              color='text-blue-600'
+              color='text-[#7DA8CC]'
             />
             <StatCard
               icon={CheckCircle}
@@ -185,7 +185,7 @@ const EnhancedReportsView: React.FC<EnhancedReportsViewProps> = ({
               value={`${stats.completionRate}%`}
               subValue={`${stats.completed} of ${stats.total} completed`}
               trend={8}
-              color='text-green-600'
+              color='text-[#A1BA53]'
             />
             <StatCard
               icon={DollarSign}
@@ -200,7 +200,7 @@ const EnhancedReportsView: React.FC<EnhancedReportsViewProps> = ({
               label='In Progress'
               value={stats.draft}
               subValue={`${stats.sent} sent`}
-              color='text-orange-600'
+              color='text-[#DA5062]'
             />
           </div>
 
@@ -344,7 +344,7 @@ const EnhancedReportsView: React.FC<EnhancedReportsViewProps> = ({
             >
               <div className='flex items-start justify-between mb-3'>
                 <div className='flex-1 min-w-0'>
-                  <h4 className='font-semibold text-slate-900 truncate group-hover:text-blue-600 transition-colors'>
+                  <h4 className='font-semibold text-slate-900 truncate group-hover:text-[#7DA8CC] transition-colors'>
                     {report.customerName}
                   </h4>
                   <p className='text-xs text-slate-500 truncate'>{report.customerAddress}</p>
@@ -352,9 +352,9 @@ const EnhancedReportsView: React.FC<EnhancedReportsViewProps> = ({
                 <span
                   className={`px-2 py-1 rounded text-xs font-medium whitespace-nowrap ml-2 ${
                     report.status === 'completed'
-                      ? 'bg-green-100 text-green-700'
+                      ? 'bg-[#A1BA53]/15 text-[#73853b]'
                       : report.status === 'sent'
-                        ? 'bg-blue-100 text-blue-700'
+                        ? 'bg-[#7DA8CC]/15 text-[#6890b3]'
                         : 'bg-amber-100 text-amber-700'
                   }`}
                 >

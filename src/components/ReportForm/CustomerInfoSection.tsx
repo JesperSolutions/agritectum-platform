@@ -28,7 +28,7 @@ const CustomerInfoSection: React.FC<CustomerInfoSectionProps> = ({
   return (
     <div className='bg-white p-6 rounded-lg shadow-sm border border-gray-200 form-section'>
       <div className='flex items-center mb-6'>
-        <User className='w-5 h-5 text-blue-600 mr-3 flex-shrink-0' />
+        <User className='w-5 h-5 text-[#7DA8CC] mr-3 flex-shrink-0' />
         <h3 className='text-lg font-semibold text-gray-900 truncate-smart'>{t('reportForm.customerInfo.title')}</h3>
       </div>
 

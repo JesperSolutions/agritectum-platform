@@ -99,15 +99,15 @@ const NotificationCenter: React.FC = () => {
   const getIcon = (type: string) => {
     switch (type) {
       case 'warning':
-        return <AlertTriangle className='w-5 h-5 text-yellow-600' />;
+        return <AlertTriangle className='w-5 h-5 text-[#DA5062]' />;
       case 'error':
-        return <AlertTriangle className='w-5 h-5 text-red-600' />;
+        return <AlertTriangle className='w-5 h-5 text-[#DA5062]' />;
       case 'urgent':
-        return <AlertTriangle className='w-5 h-5 text-red-600' />;
+        return <AlertTriangle className='w-5 h-5 text-[#DA5062]' />;
       case 'success':
-        return <CheckCircle className='w-5 h-5 text-green-600' />;
+        return <CheckCircle className='w-5 h-5 text-[#A1BA53]' />;
       case 'info':
-        return <Info className='w-5 h-5 text-blue-600' />;
+        return <Info className='w-5 h-5 text-[#7DA8CC]' />;
       default:
         return <Info className='w-5 h-5 text-gray-600' />;
     }
@@ -115,19 +115,19 @@ const NotificationCenter: React.FC = () => {
 
   const getBgColor = (type: string, read: boolean) => {
     if (!read) {
-      return 'bg-blue-50 border-blue-200';
+      return 'bg-[#7DA8CC]/10 border-[#7DA8CC]/30';
     }
 
     switch (type) {
       case 'warning':
-        return 'bg-yellow-50 border-yellow-200';
+        return 'bg-[#DA5062]/10 border-[#DA5062]/30';
       case 'error':
       case 'urgent':
-        return 'bg-red-50 border-red-200';
+        return 'bg-[#DA5062]/10 border-[#DA5062]/30';
       case 'success':
-        return 'bg-green-50 border-green-200';
+        return 'bg-[#A1BA53]/10 border-[#A1BA53]/30';
       case 'info':
-        return 'bg-blue-50 border-blue-200';
+        return 'bg-[#7DA8CC]/10 border-[#7DA8CC]/30';
       default:
         return 'bg-gray-50 border-gray-200';
     }
@@ -153,7 +153,7 @@ const NotificationCenter: React.FC = () => {
       >
         <Bell className='w-5 h-5' />
         {unreadCount > 0 && (
-          <span className='absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center'>
+          <span className='absolute -top-1 -right-1 bg-[#DA5062]/100 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center'>
             {unreadCount}
           </span>
         )}
@@ -191,7 +191,7 @@ const NotificationCenter: React.FC = () => {
                     {unreadCount > 0 && (
                       <button
                         onClick={handleMarkAllAsRead}
-                        className='text-sm text-blue-600 hover:text-blue-800 px-2 py-1 hover:bg-blue-50 rounded transition-colors'
+                        className='text-sm text-[#7DA8CC] hover:text-[#476279] px-2 py-1 hover:bg-[#7DA8CC]/10 rounded transition-colors'
                       >
                         {t('notifications.markAllAsRead')}
                       </button>
@@ -210,11 +210,11 @@ const NotificationCenter: React.FC = () => {
               <div className='flex-1 overflow-y-auto'>
                 {loading ? (
                   <div className='p-4 text-center text-gray-500'>
-                    <div className='animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto mb-2'></div>
+                    <div className='animate-spin rounded-full h-6 w-6 border-b-2 border-[#7DA8CC] mx-auto mb-2'></div>
                     <p>{t('common.loading')}</p>
                   </div>
                 ) : error ? (
-                  <div className='p-4 text-center text-red-500'>
+                  <div className='p-4 text-center text-[#DA5062]'>
                     <AlertTriangle className='w-6 h-6 mx-auto mb-2' />
                     <p>{error}</p>
                   </div>
@@ -250,7 +250,7 @@ const NotificationCenter: React.FC = () => {
                                 </span>
                                 <button
                                   onClick={() => handleDeleteNotification(notification.id)}
-                                  className='text-gray-400 hover:text-red-600'
+                                  className='text-gray-400 hover:text-[#DA5062]'
                                   title={t('notifications.delete')}
                                 >
                                   <Trash2 className='w-3 h-3' />
@@ -263,7 +263,7 @@ const NotificationCenter: React.FC = () => {
                             {notification.action && (
                               <button
                                 onClick={() => handleActionClick(notification)}
-                                className='mt-2 text-sm text-blue-600 hover:text-blue-800 font-medium'
+                                className='mt-2 text-sm text-[#7DA8CC] hover:text-[#476279] font-medium'
                               >
                                 {notification.action.label}
                               </button>
@@ -272,11 +272,11 @@ const NotificationCenter: React.FC = () => {
                               <span
                                 className={`inline-block px-2 py-1 text-xs rounded-full mt-2 ${
                                   notification.metadata.priority === 'urgent'
-                                    ? 'bg-red-100 text-red-800'
+                                    ? 'bg-[#DA5062]/15 text-[#872a38]'
                                     : notification.metadata.priority === 'high'
-                                      ? 'bg-orange-100 text-orange-800'
+                                      ? 'bg-[#DA5062]/15 text-[#872a38]'
                                       : notification.metadata.priority === 'medium'
-                                        ? 'bg-yellow-100 text-yellow-800'
+                                        ? 'bg-[#DA5062]/15 text-[#872a38]'
                                         : 'bg-gray-100 text-gray-800'
                                 }`}
                               >

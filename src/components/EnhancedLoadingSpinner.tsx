@@ -17,15 +17,15 @@ const EnhancedLoadingSpinner: React.FC<EnhancedLoadingSpinnerProps> = ({
   const getIcon = () => {
     switch (type) {
       case 'email':
-        return <Mail className={`text-blue-500 ${getSizeClasses().icon}`} />;
+        return <Mail className={`text-[#7DA8CC] ${getSizeClasses().icon}`} />;
       case 'report':
-        return <FileText className={`text-green-500 ${getSizeClasses().icon}`} />;
+        return <FileText className={`text-[#A1BA53] ${getSizeClasses().icon}`} />;
       case 'data':
-        return <Users className={`text-purple-500 ${getSizeClasses().icon}`} />;
+        return <Users className={`text-[#956098] ${getSizeClasses().icon}`} />;
       case 'analytics':
-        return <BarChart3 className={`text-orange-500 ${getSizeClasses().icon}`} />;
+        return <BarChart3 className={`text-[#DA5062] ${getSizeClasses().icon}`} />;
       default:
-        return <Loader2 className={`text-blue-500 ${getSizeClasses().spinner} animate-spin`} />;
+        return <Loader2 className={`text-[#7DA8CC] ${getSizeClasses().spinner} animate-spin`} />;
     }
   };
 
@@ -78,11 +78,11 @@ const EnhancedLoadingSpinner: React.FC<EnhancedLoadingSpinnerProps> = ({
     >
       <div className='relative'>
         {type === 'default' && (
-          <div className='absolute inset-0 rounded-full border-2 border-blue-100'></div>
+          <div className='absolute inset-0 rounded-full border-2 border-[#7DA8CC]/20'></div>
         )}
         <div className='flex items-center justify-center'>{getIcon()}</div>
         {type === 'default' && (
-          <div className='absolute inset-0 rounded-full border-2 border-blue-500 border-t-transparent animate-spin'></div>
+          <div className='absolute inset-0 rounded-full border-2 border-[#7DA8CC] border-t-transparent animate-spin'></div>
         )}
       </div>
 
@@ -90,13 +90,13 @@ const EnhancedLoadingSpinner: React.FC<EnhancedLoadingSpinnerProps> = ({
         <p className='text-gray-600 font-medium'>{displayMessage}</p>
         {type === 'default' && (
           <div className='mt-2 flex items-center justify-center space-x-1'>
-            <div className='w-1 h-1 bg-blue-500 rounded-full animate-bounce'></div>
+            <div className='w-1 h-1 bg-[#7DA8CC]/100 rounded-full animate-bounce'></div>
             <div
-              className='w-1 h-1 bg-blue-500 rounded-full animate-bounce'
+              className='w-1 h-1 bg-[#7DA8CC]/100 rounded-full animate-bounce'
               style={{ animationDelay: '0.1s' }}
             ></div>
             <div
-              className='w-1 h-1 bg-blue-500 rounded-full animate-bounce'
+              className='w-1 h-1 bg-[#7DA8CC]/100 rounded-full animate-bounce'
               style={{ animationDelay: '0.2s' }}
             ></div>
           </div>

@@ -53,7 +53,7 @@ const ForgotPasswordForm: React.FC = () => {
   };
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 font-material'>
+    <div className='min-h-screen bg-gradient-to-br from-[#7DA8CC]/10 to-indigo-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 font-material'>
       <div className='max-w-md w-full space-y-8'>
         <div className='text-center'>
           <div className='flex justify-center mb-8'>
@@ -70,25 +70,25 @@ const ForgotPasswordForm: React.FC = () => {
           onSubmit={handleSubmit}
         >
           {error && (
-            <div className='rounded-material bg-red-50 p-4 border-l-4 border-red-500'>
+            <div className='rounded-material bg-[#DA5062]/10 p-4 border-l-4 border-[#DA5062]'>
               <div className='flex items-center'>
-                <AlertCircle className='w-5 h-5 text-red-500 flex-shrink-0' />
+                <AlertCircle className='w-5 h-5 text-[#DA5062] flex-shrink-0' />
                 <div className='ml-3'>
-                  <h3 className='text-sm font-medium text-red-800'>{error}</h3>
+                  <h3 className='text-sm font-medium text-[#872a38]'>{error}</h3>
                 </div>
               </div>
             </div>
           )}
 
           {success && (
-            <div className='rounded-material bg-green-50 p-4 border-l-4 border-green-500'>
+            <div className='rounded-material bg-[#A1BA53]/10 p-4 border-l-4 border-[#A1BA53]'>
               <div className='flex items-center'>
-                <CheckCircle className='w-5 h-5 text-green-500 flex-shrink-0' />
+                <CheckCircle className='w-5 h-5 text-[#A1BA53] flex-shrink-0' />
                 <div className='ml-3'>
-                  <h3 className='text-sm font-medium text-green-800'>
+                  <h3 className='text-sm font-medium text-[#5c6a2f]'>
                     {t('forgotPassword.success.title')}
                   </h3>
-                  <p className='mt-1 text-sm text-green-700'>
+                  <p className='mt-1 text-sm text-[#73853b]'>
                     {t('forgotPassword.success.message', { email })}
                   </p>
                 </div>
@@ -118,7 +118,7 @@ const ForgotPasswordForm: React.FC = () => {
                       required
                       value={email}
                       onChange={e => setEmail(e.target.value)}
-                      className='block w-full pl-12 pr-4 py-3 border-b-2 border-gray-300 bg-gray-50 focus:bg-white focus:border-blue-600 focus:outline-none transition-all duration-material font-light'
+                      className='block w-full pl-12 pr-4 py-3 border-b-2 border-gray-300 bg-gray-50 focus:bg-white focus:border-[#7DA8CC] focus:outline-none transition-all duration-material font-light'
                       placeholder={t('login.placeholder.email') || 'kund@example.com'}
                       disabled={loading}
                     />

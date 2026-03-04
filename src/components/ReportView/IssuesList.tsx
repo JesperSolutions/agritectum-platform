@@ -10,13 +10,13 @@ const IssuesList: React.FC<IssuesListProps> = ({ issues }) => {
   const getSeverityColor = (severity: string) => {
     switch (severity) {
       case 'critical':
-        return 'text-red-600 bg-red-50 border-red-200';
+        return 'text-[#DA5062] bg-[#DA5062]/10 border-[#DA5062]/30';
       case 'high':
-        return 'text-orange-600 bg-orange-50 border-orange-200';
+        return 'text-[#DA5062] bg-[#DA5062]/10 border-[#DA5062]/30';
       case 'medium':
-        return 'text-yellow-600 bg-yellow-50 border-yellow-200';
+        return 'text-[#DA5062] bg-[#DA5062]/10 border-[#DA5062]/30';
       case 'low':
-        return 'text-green-600 bg-green-50 border-green-200';
+        return 'text-[#A1BA53] bg-[#A1BA53]/10 border-[#A1BA53]/30';
       default:
         return 'text-gray-600 bg-gray-50 border-gray-200';
     }
@@ -52,7 +52,7 @@ const IssuesList: React.FC<IssuesListProps> = ({ issues }) => {
   return (
     <div className='bg-white p-6 rounded-lg shadow-sm border border-gray-200'>
       <div className='flex items-center mb-4'>
-        <AlertTriangle className='w-5 h-5 text-blue-600 mr-2' />
+        <AlertTriangle className='w-5 h-5 text-[#7DA8CC] mr-2' />
         <h3 className='text-lg font-semibold text-gray-900'>Issues Found ({issues.length})</h3>
       </div>
 

@@ -3,7 +3,7 @@
   "navigation.reports": "Rapporter",
   "navigation.myReports": "Mine rapporter",
   "navigation.customers": "Kunder",
-  "navigation.schedule": "Tidsplan",
+  "navigation.schedule": "Opgaver",
   "navigation.offers": "Tilbud",
   "navigation.branches": "Filialer",
   "navigation.analytics": "Analyse",
@@ -47,7 +47,7 @@
   "navigation.buildings": "Bygninger",
   "navigation.scheduledVisits": "Planlagte besøg",
   "navigation.allReports": "Alle rapporter",
-  "navigation.operations": "Operationer",
+  "navigation.operations": "Overblik",
   "navigation.esgService": "ESG-service",
   "navigation.emailTemplates": "E-mailskabeloner"
 }

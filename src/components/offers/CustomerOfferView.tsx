@@ -133,20 +133,20 @@ const CustomerOfferView: React.FC = () => {
           </div>
 
           {isExpired && offer.status === 'pending' && (
-            <div className='bg-red-50 border border-red-200 rounded-lg p-4 mb-6'>
-              <p className='text-red-800 font-medium'>
+            <div className='bg-[#DA5062]/10 border border-[#DA5062]/30 rounded-lg p-4 mb-6'>
+              <p className='text-[#872a38] font-medium'>
                 ⚠️ This offer has expired on {new Date(offer.validUntil).toLocaleDateString()}
               </p>
-              <p className='text-red-600 text-sm mt-1'>
+              <p className='text-[#DA5062] text-sm mt-1'>
                 Please contact us if you would like to discuss this offer.
               </p>
             </div>
           )}
 
           {offer.status === 'accepted' && (
-            <div className='bg-green-50 border border-green-200 rounded-lg p-4 mb-6'>
-              <p className='text-green-800 font-medium'>✓ You have accepted this offer</p>
-              <p className='text-green-600 text-sm mt-1'>
+            <div className='bg-[#A1BA53]/10 border border-[#A1BA53]/30 rounded-lg p-4 mb-6'>
+              <p className='text-[#5c6a2f] font-medium'>✓ You have accepted this offer</p>
+              <p className='text-[#A1BA53] text-sm mt-1'>
                 We will contact you shortly to proceed with the work.
               </p>
             </div>
@@ -210,7 +210,7 @@ const CustomerOfferView: React.FC = () => {
               </div>
               <div className='border-t pt-3 flex justify-between text-lg font-bold'>
                 <span>Total Amount</span>
-                <span className='text-blue-600'>
+                <span className='text-[#7DA8CC]'>
                   {offer.totalAmount.toLocaleString()} {offer.currency}
                 </span>
               </div>
@@ -236,7 +236,7 @@ const CustomerOfferView: React.FC = () => {
                 <Button
                   onClick={handleAccept}
                   disabled={actionLoading}
-                  className='flex-1 bg-green-600 hover:bg-green-700 text-lg py-6'
+                  className='flex-1 bg-[#A1BA53] hover:bg-[#8a9f47] text-lg py-6'
                 >
                   ✓ Accept Offer
                 </Button>
@@ -244,7 +244,7 @@ const CustomerOfferView: React.FC = () => {
                   onClick={() => setShowRejectForm(true)}
                   disabled={actionLoading}
                   variant='outline'
-                  className='flex-1 border-red-300 text-red-700 hover:bg-red-50 text-lg py-6'
+                  className='flex-1 border-[#DA5062]/40 text-[#c23d4f] hover:bg-[#DA5062]/10 text-lg py-6'
                 >
                   ✗ Reject Offer
                 </Button>
@@ -263,7 +263,7 @@ const CustomerOfferView: React.FC = () => {
                     value={rejectReason}
                     onChange={e => setRejectReason(e.target.value)}
                     rows={4}
-                    className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500'
+                    className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#DA5062]'
                     placeholder="Please let us know why you're rejecting this offer..."
                   />
                 </div>
@@ -271,7 +271,7 @@ const CustomerOfferView: React.FC = () => {
                   <Button
                     onClick={handleReject}
                     disabled={actionLoading}
-                    className='flex-1 bg-red-600 hover:bg-red-700'
+                    className='flex-1 bg-[#DA5062] hover:bg-[#c23d4f]'
                   >
                     Confirm Rejection
                   </Button>
@@ -292,11 +292,11 @@ const CustomerOfferView: React.FC = () => {
         )}
 
         {/* Contact Information */}
-        <div className='mt-6 bg-blue-50 border border-blue-200 rounded-lg p-6'>
-          <h3 className='text-lg font-semibold text-blue-900 mb-2'>Questions?</h3>
-          <p className='text-blue-800'>
+        <div className='mt-6 bg-[#7DA8CC]/10 border border-[#7DA8CC]/30 rounded-lg p-6'>
+          <h3 className='text-lg font-semibold text-[#3b5060] mb-2'>Questions?</h3>
+          <p className='text-[#476279]'>
             If you have any questions about this offer, please contact us at{' '}
-            <a href={`mailto:${offer.customerEmail}`} className='underline hover:text-blue-900'>
+            <a href={`mailto:${offer.customerEmail}`} className='underline hover:text-[#3b5060]'>
               {offer.customerEmail}
             </a>
           </p>

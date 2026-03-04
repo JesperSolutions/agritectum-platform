@@ -195,7 +195,7 @@ const PublicESGReportView: React.FC = () => {
       name: 'Green Roof',
       percentage: safeDivisions.greenRoof,
       icon: Leaf,
-      color: 'from-emerald-500 to-green-600',
+      color: 'from-emerald-500 to-[#8a9f47]',
       lightColor: 'bg-emerald-50',
       textColor: 'text-emerald-700',
       borderColor: 'border-emerald-200',
@@ -204,16 +204,16 @@ const PublicESGReportView: React.FC = () => {
       name: 'NOₓ Reduction',
       percentage: safeDivisions.noxReduction,
       icon: Wind,
-      color: 'from-blue-500 to-cyan-600',
-      lightColor: 'bg-blue-50',
-      textColor: 'text-blue-700',
-      borderColor: 'border-blue-200',
+      color: 'from-[#7DA8CC] to-cyan-600',
+      lightColor: 'bg-[#7DA8CC]/10',
+      textColor: 'text-[#6890b3]',
+      borderColor: 'border-[#7DA8CC]/30',
     },
     {
       name: 'Cool Roof',
       percentage: safeDivisions.coolRoof,
       icon: Sun,
-      color: 'from-amber-400 to-orange-500',
+      color: 'from-amber-400 to-[#DA5062]',
       lightColor: 'bg-amber-50',
       textColor: 'text-amber-700',
       borderColor: 'border-amber-200',
@@ -222,7 +222,7 @@ const PublicESGReportView: React.FC = () => {
       name: 'Social Activities',
       percentage: safeDivisions.socialActivities,
       icon: Users,
-      color: 'from-violet-500 to-purple-600',
+      color: 'from-violet-500 to-[#7f5182]',
       lightColor: 'bg-violet-50',
       textColor: 'text-violet-700',
       borderColor: 'border-violet-200',
@@ -236,7 +236,7 @@ const PublicESGReportView: React.FC = () => {
         {/* Subtle animated background */}
         <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900">
           <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#7DA8CC]/100/10 rounded-full blur-3xl" />
         </div>
 
         {/* Header Content */}
@@ -286,21 +286,21 @@ const PublicESGReportView: React.FC = () => {
                   value: `${(metrics.annualCO2Offset / 1000).toFixed(1)}`,
                   unit: 'Tons',
                   icon: TrendingUp,
-                  gradient: 'from-emerald-600 to-green-700',
+                  gradient: 'from-emerald-600 to-[#73853b]',
                 },
                 {
                   label: 'Energy Savings',
                   value: `${(metrics.energySavingsKwhPerYear ? metrics.energySavingsKwhPerYear / 1000 : 0).toFixed(0)}`,
                   unit: 'MWh/year',
                   icon: Zap,
-                  gradient: 'from-amber-600 to-orange-700',
+                  gradient: 'from-amber-600 to-[#c23d4f]',
                 },
                 {
                   label: 'Environmental Score',
                   value: `${metrics.sustainabilityScore}`,
                   unit: '/100',
                   icon: Target,
-                  gradient: 'from-blue-600 to-cyan-700',
+                  gradient: 'from-[#7DA8CC] to-cyan-700',
                 },
               ].map((stat, idx) => (
                 <div
@@ -380,7 +380,7 @@ const PublicESGReportView: React.FC = () => {
           <ScaledElement id="impact-metrics" visibleElements={visibleElements}>
             <div className="bg-white rounded-2xl border border-slate-200 p-8 mb-12 shadow-sm hover:shadow-md transition-all">
               <h2 className="text-2xl font-bold text-slate-900 mb-8 flex items-center">
-                <TrendingUp className="w-6 h-6 mr-3 text-blue-600" />
+                <TrendingUp className="w-6 h-6 mr-3 text-[#7DA8CC]" />
                 Environmental Impact
               </h2>
 
@@ -415,8 +415,8 @@ const PublicESGReportView: React.FC = () => {
 
                 {/* Water Impact */}
                 <div className="text-center">
-                  <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-blue-100 mb-4 mx-auto">
-                    <Droplets className="w-10 h-10 text-blue-600" />
+                  <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-[#7DA8CC]/15 mb-4 mx-auto">
+                    <Droplets className="w-10 h-10 text-[#7DA8CC]" />
                   </div>
                   <p className="text-4xl font-bold text-slate-900 mb-2">∞</p>
                   <p className="text-sm text-slate-600 mb-2">Water management</p>
@@ -564,9 +564,9 @@ const PublicESGReportView: React.FC = () => {
                             <p className="text-emerald-700 font-bold">{segment.co2}</p>
                             <p className="text-emerald-600">kg CO₂/m²/yr</p>
                           </div>
-                          <div className="bg-blue-50 p-2 rounded">
-                            <p className="text-blue-700 font-bold">{segment.nox}</p>
-                            <p className="text-blue-600">kg NOₓ/m²/yr</p>
+                          <div className="bg-[#7DA8CC]/10 p-2 rounded">
+                            <p className="text-[#6890b3] font-bold">{segment.nox}</p>
+                            <p className="text-[#7DA8CC]">kg NOₓ/m²/yr</p>
                           </div>
                           <div className="bg-amber-50 p-2 rounded">
                             <p className="text-amber-700 font-bold">{segment.energy}</p>
@@ -598,11 +598,11 @@ const PublicESGReportView: React.FC = () => {
                       </span>
                       <span className="font-bold text-amber-700">{(metrics.energySavingsKwhPerYear || 0).toLocaleString()} kWh/yr</span>
                     </div>
-                    <div className="flex justify-between p-3 bg-white rounded border border-blue-200">
+                    <div className="flex justify-between p-3 bg-white rounded border border-[#7DA8CC]/30">
                       <span className="text-slate-700">
                         <strong>Manufacturing Footprint:</strong> 19 kg CO₂/m² baseline
                       </span>
-                      <span className="font-bold text-blue-700">{(metrics.carbonFootprint || 0).toLocaleString()} kg CO₂</span>
+                      <span className="font-bold text-[#6890b3]">{(metrics.carbonFootprint || 0).toLocaleString()} kg CO₂</span>
                     </div>
                     <div className="flex justify-between p-3 bg-white rounded border border-cyan-200">
                       <span className="text-slate-700">
@@ -618,39 +618,39 @@ const PublicESGReportView: React.FC = () => {
                 </div>
 
                 {/* Sustainability Factors */}
-                <div className="bg-blue-50 rounded-xl p-6 border border-blue-200">
-                  <h3 className="text-lg font-bold text-blue-900 mb-4">Sustainability Scoring Factors</h3>
+                <div className="bg-[#7DA8CC]/10 rounded-xl p-6 border border-[#7DA8CC]/30">
+                  <h3 className="text-lg font-bold text-[#3b5060] mb-4">Sustainability Scoring Factors</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                    <div className="bg-white p-3 rounded border border-blue-200">
+                    <div className="bg-white p-3 rounded border border-[#7DA8CC]/30">
                       <p className="font-semibold text-slate-900">Recycling Potential</p>
                       <p className="text-slate-600 text-xs mt-1">
                         Weighted average based on material recyclability:
                         Green Roofs (70%), Cool Roof (60%), Photocatalytic (50%), Social (60%)
                       </p>
-                      <p className="font-bold text-blue-700 mt-2">{metrics.recyclingPotential || 0}% recyclable</p>
+                      <p className="font-bold text-[#6890b3] mt-2">{metrics.recyclingPotential || 0}% recyclable</p>
                     </div>
-                    <div className="bg-white p-3 rounded border border-blue-200">
+                    <div className="bg-white p-3 rounded border border-[#7DA8CC]/30">
                       <p className="font-semibold text-slate-900">Sustainability Score</p>
                       <p className="text-slate-600 text-xs mt-1">
                         Based on: (Annual CO₂ reduction ÷ roof size × 10) + size bonus
                         Higher = More environmental benefit per square meter
                       </p>
-                      <p className="font-bold text-blue-700 mt-2">{metrics.sustainabilityScore}/100 ({metrics.rating})</p>
+                      <p className="font-bold text-[#6890b3] mt-2">{metrics.sustainabilityScore}/100 ({metrics.rating})</p>
                     </div>
-                    <div className="bg-white p-3 rounded border border-blue-200">
+                    <div className="bg-white p-3 rounded border border-[#7DA8CC]/30">
                       <p className="font-semibold text-slate-900">Solar Potential</p>
                       <p className="text-slate-600 text-xs mt-1">
                         Estimated based on available roof area suitable for solar panels
                         using Nordic irradiance (~1000 kWh/m²/year) and 20% panel efficiency
                       </p>
-                      <p className="font-bold text-blue-700 mt-2">{(metrics.solarPotential || 0).toLocaleString()} kWh/year</p>
+                      <p className="font-bold text-[#6890b3] mt-2">{(metrics.solarPotential || 0).toLocaleString()} kWh/year</p>
                     </div>
-                    <div className="bg-white p-3 rounded border border-blue-200">
+                    <div className="bg-white p-3 rounded border border-[#7DA8CC]/30">
                       <p className="font-semibold text-slate-900">SDG Alignment</p>
                       <p className="text-slate-600 text-xs mt-1">
                         This project directly supports {(metrics.sdgAlignment || []).length} of the 17 UN Sustainable Development Goals
                       </p>
-                      <p className="font-bold text-blue-700 mt-2">{metrics.sdgScore}/100 alignment</p>
+                      <p className="font-bold text-[#6890b3] mt-2">{metrics.sdgScore}/100 alignment</p>
                     </div>
                   </div>
                 </div>
@@ -700,7 +700,7 @@ const PublicESGReportView: React.FC = () => {
 
           {/* Key Achievements */}
           <ScaledElement id="achievements" visibleElements={visibleElements}>
-            <div className="bg-gradient-to-br from-emerald-50 to-blue-50 rounded-2xl border border-emerald-200 p-8 mb-12 shadow-sm hover:shadow-md transition-all">
+            <div className="bg-gradient-to-br from-emerald-50 to-[#7DA8CC]/10 rounded-2xl border border-emerald-200 p-8 mb-12 shadow-sm hover:shadow-md transition-all">
               <h2 className="text-2xl font-bold text-slate-900 mb-8 flex items-center">
                 <Award className="w-6 h-6 mr-3 text-emerald-600" />
                 Key Achievements

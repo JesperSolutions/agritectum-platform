@@ -14,6 +14,7 @@ import { useReports } from '../../contexts/ReportContextSimple';
 import { useIntl } from '../../hooks/useIntl';
 import { useToast } from '../../contexts/ToastContext';
 import { getCurrencyCode, formatCurrency } from '../../utils/currency';
+import { logger } from '../../utils/logger';
 import {
   Building,
   Users,
@@ -77,6 +78,19 @@ const SmartDashboard: React.FC = () => {
   const { state, fetchReports } = useReports();
   const { t } = useIntl();
   const { showInfo } = useToast();
+  const navigate = useNavigate();
+
+  // Redirect customers to portal dashboard
+  React.useEffect(() => {
+    if (currentUser && (currentUser.role === 'customer' || currentUser.userType === 'customer')) {
+      navigate('/portal/dashboard', { replace: true });
+    }
+  }, [currentUser, navigate]);
+
+  // Don't render anything for customers while redirecting
+  if (currentUser && (currentUser.role === 'customer' || currentUser.userType === 'customer')) {
+    return null;
+  }
   const navigate = useNavigate();
   const welcomeToastShown = useRef(false);
   const loadAttempted = useRef(false);
@@ -354,28 +368,28 @@ const SmartDashboard: React.FC = () => {
           value: totalReports,
           subtitle: t('dashboard.totalReportsDesc'),
           icon: FileText,
-          iconColor: 'text-blue-600',
+          iconColor: 'text-[#7DA8CC]',
         },
         {
           label: t('dashboard.totalRevenue'),
           value: `${totalRevenue.toLocaleString('sv-SE')} ${currencyCode}`,
           subtitle: t('dashboard.offerValueDesc'),
           icon: DollarSign,
-          iconColor: 'text-green-600',
+          iconColor: 'text-[#A1BA53]',
         },
         {
           label: t('dashboard.completionRate'),
           value: `${completionRate}%`,
           subtitle: t('dashboard.completedReportsDesc'),
           icon: BarChart3,
-          iconColor: 'text-purple-600',
+          iconColor: 'text-[#956098]',
         },
         {
           label: t('dashboard.activeUsers'),
           value: activeUsers,
           subtitle: t('dashboard.acrossAllBranches'),
           icon: Users,
-          iconColor: 'text-orange-600',
+          iconColor: 'text-[#DA5062]',
         },
       ];
     }
@@ -430,28 +444,28 @@ const SmartDashboard: React.FC = () => {
           value: totalReports,
           subtitle: '+15% ' + t('dashboard.vsLastWeek'),
           icon: FileText,
-          iconColor: 'text-blue-600',
+          iconColor: 'text-[#7DA8CC]',
         },
         {
           label: t('analytics.activeServiceAgreements'),
           value: activeServiceAgreements.length,
           subtitle: `${serviceAgreementRevenue.toLocaleString('sv-SE')} ${t('dashboard.serviceAgreements.sekPerMonthRecurring')}`,
           icon: FileCheck,
-          iconColor: 'text-green-600',
+          iconColor: 'text-[#A1BA53]',
         },
         {
           label: t('dashboard.scheduledVisits.title'),
           value: upcomingVisits,
           subtitle: `${completedVisitsThisWeek} ${t('dashboard.completedThisWeek')}`,
           icon: Calendar,
-          iconColor: 'text-purple-600',
+          iconColor: 'text-[#956098]',
         },
         {
           label: t('dashboard.completionRate'),
           value: `${completionRate}%`,
           subtitle: t('dashboard.aboveTarget'),
           icon: CheckCircle,
-          iconColor: 'text-orange-600',
+          iconColor: 'text-[#DA5062]',
         },
       ];
     }
@@ -472,28 +486,28 @@ const SmartDashboard: React.FC = () => {
           value: completedThisWeek,
           subtitle: t('dashboard.vsLastWeek'),
           icon: CheckCircle,
-          iconColor: 'text-green-600',
+          iconColor: 'text-[#A1BA53]',
         },
         {
           label: t('dashboard.scheduledThisWeek'),
           value: inspectorStats.scheduledThisWeek, // Use real data
           subtitle: t('dashboard.upcoming'),
           icon: Calendar,
-          iconColor: 'text-blue-600',
+          iconColor: 'text-[#7DA8CC]',
         },
         {
           label: t('dashboard.averageTime'),
           value: inspectorStats.averageTime, // Use real data
           subtitle: t('dashboard.hours'),
           icon: Clock,
-          iconColor: 'text-purple-600',
+          iconColor: 'text-[#956098]',
         },
         {
           label: t('dashboard.totalReports'),
           value: inspectorStats.totalReports, // Use real data
           subtitle: t('dashboard.allTime'),
           icon: FileText,
-          iconColor: 'text-yellow-600',
+          iconColor: 'text-[#DA5062]',
         },
       ];
     }
@@ -501,33 +515,43 @@ const SmartDashboard: React.FC = () => {
     return [];
   };
 
+  const getTimeGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return t('dashboard.greeting.morning');
+    if (hour < 18) return t('dashboard.greeting.afternoon');
+    return t('dashboard.greeting.evening');
+  };
+
   const getHeaderConfig = () => {
+    const greeting = getTimeGreeting();
+    const name = currentUser?.displayName || currentUser?.email?.split('@')[0] || '';
+
     switch (currentUser?.role) {
       case 'superadmin':
         return {
-          color: 'from-blue-600 to-blue-800',
-          title: t('dashboard.superadmin'),
+          color: 'from-[#7DA8CC] to-[#476279]',
+          title: `${greeting}, ${name}`,
           subtitle: `${t('dashboard.comprehensiveOverview')} - ${branchStats.length} ${t('dashboard.branches')}`,
           icon: Globe,
         };
       case 'branchAdmin':
         return {
-          color: 'from-green-600 to-green-800',
-          title: t('dashboard.branchAdmin'),
+          color: 'from-[#A1BA53] to-[#5c6a2f]',
+          title: `${greeting}, ${name}`,
           subtitle: `${t('dashboard.branchOverview')} - ${currentUser?.branchId || 'Din filial'}`,
           icon: Building,
         };
       case 'inspector':
         return {
-          color: 'from-purple-600 to-purple-800',
-          title: t('dashboard.inspector'),
+          color: 'from-[#956098] to-[#553657]',
+          title: `${greeting}, ${name}`,
           subtitle: `${t('dashboard.personalWorkspace')} - ${currentUser?.displayName || t('dashboard.roles.inspector')}`,
           icon: Target,
         };
       default:
         return {
-          color: 'from-gray-600 to-gray-800',
-          title: 'Dashboard',
+          color: 'from-[#7DA8CC] to-[#476279]',
+          title: `${greeting}`,
           subtitle: '',
           icon: Activity,
         };
@@ -880,6 +904,97 @@ const SmartDashboard: React.FC = () => {
         </div>
       )}
 
+      {/* Quick Actions Widget for Branch Admin */}
+      {currentUser?.role === 'branchAdmin' && (
+        <div className='bg-white rounded-xl shadow-sm border border-slate-200'>
+          <div className='p-6 border-b border-slate-200'>
+            <h2 className='text-2xl font-semibold text-slate-900 flex items-center gap-2'>
+              <Zap className='w-6 h-6 text-[#DA5062]' />
+              {t('dashboard.quickActions.title') || 'Quick Actions'}
+            </h2>
+          </div>
+          <div className='p-6'>
+            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
+              <button
+                onClick={() => navigate('/schedule?action=create')}
+                className='bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg p-4 text-left transition-colors'
+              >
+                <div className='flex items-center gap-3'>
+                  <div className='w-10 h-10 bg-[#7DA8CC]/15 rounded-lg flex items-center justify-center'>
+                    <Calendar className='w-5 h-5 text-[#7DA8CC]' />
+                  </div>
+                  <div>
+                    <p className='font-semibold text-slate-900 text-sm'>
+                      {t('dashboard.quickActions.createAppointment') || 'Create Appointment'}
+                    </p>
+                    <p className='text-xs text-slate-500 mt-1'>
+                      {t('dashboard.quickActions.scheduleInspection') || 'Schedule inspection'}
+                    </p>
+                  </div>
+                </div>
+              </button>
+
+              <button
+                onClick={() => navigate('/admin/customers?action=create')}
+                className='bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg p-4 text-left transition-colors'
+              >
+                <div className='flex items-center gap-3'>
+                  <div className='w-10 h-10 bg-[#A1BA53]/15 rounded-lg flex items-center justify-center'>
+                    <User className='w-5 h-5 text-[#A1BA53]' />
+                  </div>
+                  <div>
+                    <p className='font-semibold text-slate-900 text-sm'>
+                      {t('dashboard.quickActions.addCustomer') || 'Add Customer'}
+                    </p>
+                    <p className='text-xs text-slate-500 mt-1'>
+                      {t('dashboard.quickActions.newCustomer') || 'New customer'}
+                    </p>
+                  </div>
+                </div>
+              </button>
+
+              <button
+                onClick={() => navigate('/report/new')}
+                className='bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg p-4 text-left transition-colors'
+              >
+                <div className='flex items-center gap-3'>
+                  <div className='w-10 h-10 bg-[#956098]/15 rounded-lg flex items-center justify-center'>
+                    <FileText className='w-5 h-5 text-[#956098]' />
+                  </div>
+                  <div>
+                    <p className='font-semibold text-slate-900 text-sm'>
+                      {t('dashboard.quickActions.newReport') || 'New Report'}
+                    </p>
+                    <p className='text-xs text-slate-500 mt-1'>
+                      {t('dashboard.quickActions.createReport') || 'Create report'}
+                    </p>
+                  </div>
+                </div>
+              </button>
+
+              <button
+                onClick={() => navigate('/admin/service-agreements?action=create')}
+                className='bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg p-4 text-left transition-colors'
+              >
+                <div className='flex items-center gap-3'>
+                  <div className='w-10 h-10 bg-[#DA5062]/15 rounded-lg flex items-center justify-center'>
+                    <FileCheck className='w-5 h-5 text-[#DA5062]' />
+                  </div>
+                  <div>
+                    <p className='font-semibold text-slate-900 text-sm'>
+                      {t('dashboard.quickActions.serviceAgreement') || 'Service Agreement'}
+                    </p>
+                    <p className='text-xs text-slate-500 mt-1'>
+                      {t('dashboard.quickActions.createAgreement') || 'Create agreement'}
+                    </p>
+                  </div>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Scheduled Visits Widget for Branch Admin */}
       {currentUser?.role === 'branchAdmin' && scheduledVisits.length > 0 && (
         <div className='bg-white rounded-xl shadow-sm border border-slate-200'>
@@ -950,14 +1065,14 @@ const SmartDashboard: React.FC = () => {
                     <p className='text-xs text-slate-500 uppercase tracking-wide font-medium mb-2'>
                       {t('common.status.completed')}
                     </p>
-                    <p className='text-3xl font-bold text-green-600'>{completedThisWeek.length}</p>
+                    <p className='text-3xl font-bold text-[#A1BA53]'>{completedThisWeek.length}</p>
                     <p className='text-sm text-slate-600 mt-2'>{t('dashboard.thisWeek')}</p>
                   </div>
                   <div className='bg-slate-50 border border-slate-200 rounded-xl p-6'>
                     <p className='text-xs text-slate-500 uppercase tracking-wide font-medium mb-2'>
                       {t('dashboard.scheduledVisits.overdue')}
                     </p>
-                    <p className='text-3xl font-bold text-red-600'>{overdue.length}</p>
+                    <p className='text-3xl font-bold text-[#DA5062]'>{overdue.length}</p>
                     <p className='text-sm text-slate-600 mt-2'>
                       {t('dashboard.requiresAttention')}
                     </p>
@@ -1054,7 +1169,7 @@ const SmartDashboard: React.FC = () => {
                     <p className='text-xs text-slate-500 uppercase tracking-wide font-medium mb-2'>
                       {t('dashboard.financialOverview.recurringRevenue')}
                     </p>
-                    <p className='text-2xl font-bold text-green-600'>
+                    <p className='text-2xl font-bold text-[#A1BA53]'>
                       {serviceAgreementAnnualRevenue.toLocaleString('sv-SE')}
                     </p>
                     <p className='text-sm text-slate-600 mt-2'>
@@ -1077,7 +1192,7 @@ const SmartDashboard: React.FC = () => {
                     <p className='text-xs text-slate-500 uppercase tracking-wide font-medium mb-2'>
                       {t('dashboard.financialOverview.recurringPercent')}
                     </p>
-                    <p className='text-2xl font-bold text-purple-600'>{recurringPercentage}%</p>
+                    <p className='text-2xl font-bold text-[#956098]'>{recurringPercentage}%</p>
                     <p className='text-sm text-slate-600 mt-2'>
                       {t('dashboard.financialOverview.ofTotalRevenue')}
                     </p>
@@ -1100,9 +1215,9 @@ const SmartDashboard: React.FC = () => {
             <div className='bg-white rounded-xl shadow-sm border border-slate-200'>
               <div className='p-6 border-b border-slate-200 flex items-center justify-between'>
                 <h2 className='text-2xl font-semibold text-slate-900 flex items-center gap-2'>
-                  <Bell className='w-6 h-6 text-orange-600' />
+                  <Bell className='w-6 h-6 text-[#DA5062]' />
                   {t('dashboard.pendingCustomerResponses.title') || 'Pending Customer Responses'}
-                  <span className='ml-2 px-2.5 py-0.5 bg-orange-100 text-orange-800 rounded-full text-sm font-medium'>
+                  <span className='ml-2 px-2.5 py-0.5 bg-[#DA5062]/15 text-[#DA5062] rounded-full text-sm font-medium'>
                     {pendingResponses.length}
                   </span>
                 </h2>
@@ -1118,7 +1233,7 @@ const SmartDashboard: React.FC = () => {
                   {pendingResponses.slice(0, 5).map(apt => (
                     <div
                       key={apt.id}
-                      className='bg-orange-50 border border-orange-200 rounded-lg p-4 hover:bg-orange-100 transition-colors cursor-pointer'
+                      className='bg-[#DA5062]/10 border border-[#DA5062]/20 rounded-lg p-4 hover:bg-[#DA5062]/15 transition-colors cursor-pointer'
                       onClick={() => navigate(`/schedule?appointment=${apt.id}`)}
                     >
                       <div className='flex items-start justify-between'>
@@ -1138,7 +1253,7 @@ const SmartDashboard: React.FC = () => {
                             )}
                           </div>
                         </div>
-                        <span className='px-2.5 py-1 bg-orange-200 text-orange-800 rounded-full text-xs font-medium'>
+                        <span className='px-2.5 py-1 bg-[#DA5062]/20 text-[#DA5062] rounded-full text-xs font-medium'>
                           {t('schedule.status.awaitingResponse') || 'Awaiting Response'}
                         </span>
                       </div>
@@ -1161,9 +1276,9 @@ const SmartDashboard: React.FC = () => {
         <div className='bg-white rounded-xl shadow-sm border border-slate-200'>
           <div className='p-6 border-b border-slate-200 flex items-center justify-between'>
             <h2 className='text-2xl font-semibold text-slate-900 flex items-center gap-2'>
-              <XCircle className='w-6 h-6 text-red-600' />
+              <XCircle className='w-6 h-6 text-[#DA5062]' />
               {t('dashboard.rejectedOrders.title') || 'Rejected Orders'}
-              <span className='ml-2 px-2.5 py-0.5 bg-red-100 text-red-800 rounded-full text-sm font-medium'>
+              <span className='ml-2 px-2.5 py-0.5 bg-[#DA5062]/15 text-[#DA5062] rounded-full text-sm font-medium'>
                 {rejectedOrders.length}
               </span>
             </h2>
@@ -1177,7 +1292,7 @@ const SmartDashboard: React.FC = () => {
           <div className='p-6'>
             <div className='space-y-3'>
               {rejectedOrders.slice(0, 5).map(order => (
-                <div key={order.id} className='bg-red-50 border border-red-200 rounded-lg p-4'>
+                <div key={order.id} className='bg-[#DA5062]/10 border border-[#DA5062]/20 rounded-lg p-4'>
                   <div className='flex items-start justify-between'>
                     <div className='flex-1'>
                       <h3 className='font-semibold text-slate-900 mb-1'>{order.customerName}</h3>
@@ -1227,9 +1342,9 @@ const SmartDashboard: React.FC = () => {
             <div className='bg-white rounded-xl shadow-sm border border-slate-200'>
               <div className='p-6 border-b border-slate-200 flex items-center justify-between'>
                 <h2 className='text-2xl font-semibold text-slate-900 flex items-center gap-2'>
-                  <Calendar className='w-6 h-6 text-blue-600' />
+                  <Calendar className='w-6 h-6 text-[#7DA8CC]' />
                   {t('dashboard.upcomingInspections.title') || 'Upcoming Inspections'}
-                  <span className='ml-2 px-2.5 py-0.5 bg-blue-100 text-blue-800 rounded-full text-sm font-medium'>
+                  <span className='ml-2 px-2.5 py-0.5 bg-[#7DA8CC]/15 text-[#7DA8CC] rounded-full text-sm font-medium'>
                     {upcoming.length}
                   </span>
                 </h2>
@@ -1245,7 +1360,7 @@ const SmartDashboard: React.FC = () => {
                   {upcoming.map(visit => (
                     <div
                       key={visit.id}
-                      className='bg-blue-50 border border-blue-200 rounded-lg p-4 hover:bg-blue-100 transition-colors cursor-pointer'
+                      className='bg-[#7DA8CC]/10 border border-[#7DA8CC]/20 rounded-lg p-4 hover:bg-[#7DA8CC]/15 transition-colors cursor-pointer'
                       onClick={() => navigate(`/schedule?visit=${visit.id}`)}
                     >
                       <div className='flex items-start justify-between'>
@@ -1269,7 +1384,7 @@ const SmartDashboard: React.FC = () => {
                             )}
                           </div>
                         </div>
-                        <span className='px-2.5 py-1 bg-blue-200 text-blue-800 rounded-full text-xs font-medium'>
+                        <span className='px-2.5 py-1 bg-[#7DA8CC]/20 text-[#7DA8CC] rounded-full text-xs font-medium'>
                           {t(`schedule.status.${visit.status}`) || visit.status}
                         </span>
                       </div>
@@ -1280,97 +1395,6 @@ const SmartDashboard: React.FC = () => {
             </div>
           );
         })()}
-
-      {/* Quick Actions Widget for Branch Admin */}
-      {currentUser?.role === 'branchAdmin' && (
-        <div className='bg-white rounded-xl shadow-sm border border-slate-200'>
-          <div className='p-6 border-b border-slate-200'>
-            <h2 className='text-2xl font-semibold text-slate-900 flex items-center gap-2'>
-              <Zap className='w-6 h-6 text-yellow-600' />
-              {t('dashboard.quickActions.title') || 'Quick Actions'}
-            </h2>
-          </div>
-          <div className='p-6'>
-            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
-              <button
-                onClick={() => navigate('/schedule?action=create')}
-                className='bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg p-4 text-left transition-colors'
-              >
-                <div className='flex items-center gap-3'>
-                  <div className='w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center'>
-                    <Calendar className='w-5 h-5 text-blue-600' />
-                  </div>
-                  <div>
-                    <p className='font-semibold text-slate-900 text-sm'>
-                      {t('dashboard.quickActions.createAppointment') || 'Create Appointment'}
-                    </p>
-                    <p className='text-xs text-slate-500 mt-1'>
-                      {t('dashboard.quickActions.scheduleInspection') || 'Schedule inspection'}
-                    </p>
-                  </div>
-                </div>
-              </button>
-
-              <button
-                onClick={() => navigate('/admin/customers?action=create')}
-                className='bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg p-4 text-left transition-colors'
-              >
-                <div className='flex items-center gap-3'>
-                  <div className='w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center'>
-                    <User className='w-5 h-5 text-green-600' />
-                  </div>
-                  <div>
-                    <p className='font-semibold text-slate-900 text-sm'>
-                      {t('dashboard.quickActions.addCustomer') || 'Add Customer'}
-                    </p>
-                    <p className='text-xs text-slate-500 mt-1'>
-                      {t('dashboard.quickActions.newCustomer') || 'New customer'}
-                    </p>
-                  </div>
-                </div>
-              </button>
-
-              <button
-                onClick={() => navigate('/report/new')}
-                className='bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg p-4 text-left transition-colors'
-              >
-                <div className='flex items-center gap-3'>
-                  <div className='w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center'>
-                    <FileText className='w-5 h-5 text-purple-600' />
-                  </div>
-                  <div>
-                    <p className='font-semibold text-slate-900 text-sm'>
-                      {t('dashboard.quickActions.newReport') || 'New Report'}
-                    </p>
-                    <p className='text-xs text-slate-500 mt-1'>
-                      {t('dashboard.quickActions.createReport') || 'Create report'}
-                    </p>
-                  </div>
-                </div>
-              </button>
-
-              <button
-                onClick={() => navigate('/admin/service-agreements?action=create')}
-                className='bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg p-4 text-left transition-colors'
-              >
-                <div className='flex items-center gap-3'>
-                  <div className='w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center'>
-                    <FileCheck className='w-5 h-5 text-orange-600' />
-                  </div>
-                  <div>
-                    <p className='font-semibold text-slate-900 text-sm'>
-                      {t('dashboard.quickActions.serviceAgreement') || 'Service Agreement'}
-                    </p>
-                    <p className='text-xs text-slate-500 mt-1'>
-                      {t('dashboard.quickActions.createAgreement') || 'Create agreement'}
-                    </p>
-                  </div>
-                </div>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {currentUser?.role === 'inspector' && (
         <div className='bg-white rounded-xl shadow-sm border border-slate-200'>

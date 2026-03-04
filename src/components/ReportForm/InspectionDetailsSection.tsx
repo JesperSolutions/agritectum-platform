@@ -47,7 +47,7 @@ const InspectionDetailsSection: React.FC<InspectionDetailsSectionProps> = ({
   return (
     <div className='bg-white p-6 rounded-lg shadow-sm border border-gray-200'>
       <div className='flex items-center mb-4'>
-        <Home className='w-5 h-5 text-blue-600 mr-2' />
+        <Home className='w-5 h-5 text-[#7DA8CC] mr-2' />
         <h3 className='text-lg font-semibold text-gray-900'>{t('form.sections.inspectionDetails')}</h3>
       </div>
 
@@ -74,12 +74,12 @@ const InspectionDetailsSection: React.FC<InspectionDetailsSectionProps> = ({
 
         <div className='space-y-1'>
           <label className='block text-sm font-medium text-gray-700'>
-            {t('form.fields.roofType')} <span className='text-red-500'>*</span>
+            {t('form.fields.roofType')} <span className='text-[#DA5062]'>*</span>
           </label>
           <select
             value={roofType}
             onChange={e => onFieldChange('roofType', e.target.value)}
-            className='block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
+            className='block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#7DA8CC] focus:border-[#7DA8CC] sm:text-sm'
           >
             <option value=''>{t('form.fields.roofTypePlaceholder')}</option>
             {roofTypeOptions.map(option => (
@@ -89,7 +89,7 @@ const InspectionDetailsSection: React.FC<InspectionDetailsSectionProps> = ({
             ))}
           </select>
           {errors.roofType && touched.roofType && (
-            <p className='text-sm text-red-600'>{errors.roofType}</p>
+            <p className='text-sm text-[#DA5062]'>{errors.roofType}</p>
           )}
         </div>
 

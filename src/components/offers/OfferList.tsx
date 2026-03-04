@@ -103,8 +103,8 @@ const OfferList: React.FC<OfferListProps> = ({ onOfferClick }) => {
 
   if (error) {
     return (
-      <div className='bg-red-50 border border-red-200 rounded-lg p-4'>
-        <p className='text-red-800'>{error}</p>
+      <div className='bg-[#DA5062]/10 border border-[#DA5062]/30 rounded-lg p-4'>
+        <p className='text-[#872a38]'>{error}</p>
       </div>
     );
   }
@@ -119,7 +119,7 @@ const OfferList: React.FC<OfferListProps> = ({ onOfferClick }) => {
             onClick={() => setFilterStatus('all')}
             className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
               filterStatus === 'all'
-                ? 'bg-blue-600 text-white'
+                ? 'bg-[#7DA8CC] text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
@@ -129,7 +129,7 @@ const OfferList: React.FC<OfferListProps> = ({ onOfferClick }) => {
             onClick={() => setFilterStatus('pending')}
             className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
               filterStatus === 'pending'
-                ? 'bg-blue-600 text-white'
+                ? 'bg-[#7DA8CC] text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
@@ -139,7 +139,7 @@ const OfferList: React.FC<OfferListProps> = ({ onOfferClick }) => {
             onClick={() => setFilterStatus('accepted')}
             className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
               filterStatus === 'accepted'
-                ? 'bg-blue-600 text-white'
+                ? 'bg-[#7DA8CC] text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
@@ -149,7 +149,7 @@ const OfferList: React.FC<OfferListProps> = ({ onOfferClick }) => {
             onClick={() => setFilterStatus('rejected')}
             className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
               filterStatus === 'rejected'
-                ? 'bg-blue-600 text-white'
+                ? 'bg-[#7DA8CC] text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
@@ -163,7 +163,7 @@ const OfferList: React.FC<OfferListProps> = ({ onOfferClick }) => {
           <select
             value={sortBy}
             onChange={e => handleSort(e.target.value as 'date' | 'amount' | 'daysPending')}
-            className='px-3 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500'
+            className='px-3 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#7DA8CC]'
           >
             <option value='date'>Date</option>
             <option value='amount'>Amount</option>
@@ -220,7 +220,7 @@ const OfferList: React.FC<OfferListProps> = ({ onOfferClick }) => {
                   <tr
                     key={offer.id}
                     className={`hover:bg-gray-50 cursor-pointer ${
-                      needsFollowUpFlag ? 'bg-yellow-50' : ''
+                      needsFollowUpFlag ? 'bg-[#DA5062]/10' : ''
                     }`}
                     onClick={() => handleOfferClick(offer.id)}
                   >
@@ -238,13 +238,13 @@ const OfferList: React.FC<OfferListProps> = ({ onOfferClick }) => {
                       <OfferStatusBadge status={offer.status} size='sm' />
                     </td>
                     <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-900'>
-                      <span className={daysPending > 7 ? 'text-orange-600 font-medium' : ''}>
+                      <span className={daysPending > 7 ? 'text-[#DA5062] font-medium' : ''}>
                         {daysPending} days
                       </span>
                     </td>
                     <td className='px-6 py-4 whitespace-nowrap text-sm font-medium'>
                       {needsFollowUpFlag && (
-                        <span className='text-orange-600 text-xs'>⚠️ Needs Follow-up</span>
+                        <span className='text-[#DA5062] text-xs'>⚠️ Needs Follow-up</span>
                       )}
                     </td>
                   </tr>
@@ -257,8 +257,8 @@ const OfferList: React.FC<OfferListProps> = ({ onOfferClick }) => {
 
       {/* Summary */}
       {offers.length > 0 && (
-        <div className='bg-blue-50 border border-blue-200 rounded-lg p-4'>
-          <p className='text-sm text-blue-800'>
+        <div className='bg-[#7DA8CC]/10 border border-[#7DA8CC]/30 rounded-lg p-4'>
+          <p className='text-sm text-[#476279]'>
             Showing {offers.length} offer{offers.length !== 1 ? 's' : ''}
             {filterStatus !== 'all' && ` with status: ${filterStatus}`}
           </p>

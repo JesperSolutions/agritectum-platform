@@ -3,7 +3,7 @@
   "navigation.reports": "Reports",
   "navigation.myReports": "My Reports",
   "navigation.customers": "Customers",
-  "navigation.schedule": "Schedule",
+  "navigation.schedule": "Tasks",
   "navigation.offers": "Offers",
   "navigation.branches": "Branches",
   "navigation.analytics": "Analytics",
@@ -30,7 +30,7 @@
   "navigation.scheduledVisits": "Scheduled Visits",
   "navigation.esgReports": "ESG Reports",
   "navigation.allReports": "All Reports",
-  "navigation.operations": "Operations",
+  "navigation.operations": "Overview",
   "navigation.esgService": "ESG Service",
   "navigation.emailTemplates": "Email Templates",
 

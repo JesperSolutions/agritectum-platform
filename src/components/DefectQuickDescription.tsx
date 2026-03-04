@@ -91,7 +91,7 @@ const DefectQuickDescription: React.FC<DefectQuickDescriptionProps> = ({
             <select
               value={issueType}
               onChange={e => setIssueType(e.target.value as IssueType)}
-              className='block w-full px-3 py-2 border border-slate-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm min-h-[44px]'
+              className='block w-full px-3 py-2 border border-slate-300 rounded-lg shadow-sm focus:ring-[#7DA8CC] focus:border-[#7DA8CC] text-sm min-h-[44px]'
             >
               <option value='leak'>{t('issueTypes.leak')}</option>
               <option value='damage'>{t('issueTypes.damage')}</option>
@@ -114,7 +114,7 @@ const DefectQuickDescription: React.FC<DefectQuickDescriptionProps> = ({
               value={title}
               onChange={e => setTitle(e.target.value)}
               placeholder={t('form.fields.issueTitlePlaceholder') || 'Enter issue title'}
-              className='block w-full px-3 py-2 border border-slate-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm min-h-[44px]'
+              className='block w-full px-3 py-2 border border-slate-300 rounded-lg shadow-sm focus:ring-[#7DA8CC] focus:border-[#7DA8CC] text-sm min-h-[44px]'
             />
           </div>
 
@@ -130,7 +130,7 @@ const DefectQuickDescription: React.FC<DefectQuickDescriptionProps> = ({
               placeholder={
                 t('form.fields.issueDescriptionPlaceholder') || 'Describe the issue in detail...'
               }
-              className='block w-full px-3 py-2 border border-slate-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm resize-none'
+              className='block w-full px-3 py-2 border border-slate-300 rounded-lg shadow-sm focus:ring-[#7DA8CC] focus:border-[#7DA8CC] text-sm resize-none'
             />
           </div>
         </div>
@@ -155,7 +155,7 @@ const DefectQuickDescription: React.FC<DefectQuickDescriptionProps> = ({
             type='button'
             onClick={handleSave}
             disabled={!canSave}
-            className='flex-1 px-4 py-3 border border-transparent text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed font-medium min-h-[44px] transition-colors flex items-center justify-center gap-2'
+            className='flex-1 px-4 py-3 border border-transparent text-white bg-[#7DA8CC] rounded-lg hover:bg-[#6890b3] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7DA8CC] disabled:opacity-50 disabled:cursor-not-allowed font-medium min-h-[44px] transition-colors flex items-center justify-center gap-2'
           >
             <Save className='w-4 h-4' />
             {t('form.buttons.saveDefect') || 'Save Defect'}

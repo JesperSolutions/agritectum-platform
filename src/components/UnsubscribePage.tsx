@@ -52,26 +52,26 @@ const UnsubscribePage: React.FC = () => {
   const getStatusIcon = () => {
     switch (status) {
       case 'success':
-        return <CheckCircle className='w-16 h-16 text-green-500 mx-auto mb-4' />;
+        return <CheckCircle className='w-16 h-16 text-[#A1BA53] mx-auto mb-4' />;
       case 'error':
-        return <XCircle className='w-16 h-16 text-red-500 mx-auto mb-4' />;
+        return <XCircle className='w-16 h-16 text-[#DA5062] mx-auto mb-4' />;
       case 'invalid':
-        return <AlertTriangle className='w-16 h-16 text-yellow-500 mx-auto mb-4' />;
+        return <AlertTriangle className='w-16 h-16 text-[#DA5062] mx-auto mb-4' />;
       default:
-        return <Mail className='w-16 h-16 text-blue-500 mx-auto mb-4 animate-pulse' />;
+        return <Mail className='w-16 h-16 text-[#7DA8CC] mx-auto mb-4 animate-pulse' />;
     }
   };
 
   const getStatusColor = () => {
     switch (status) {
       case 'success':
-        return 'text-green-700 bg-green-50 border-green-200';
+        return 'text-[#73853b] bg-[#A1BA53]/10 border-[#A1BA53]/30';
       case 'error':
-        return 'text-red-700 bg-red-50 border-red-200';
+        return 'text-[#c23d4f] bg-[#DA5062]/10 border-[#DA5062]/30';
       case 'invalid':
-        return 'text-yellow-700 bg-yellow-50 border-yellow-200';
+        return 'text-[#c23d4f] bg-[#DA5062]/10 border-[#DA5062]/30';
       default:
-        return 'text-blue-700 bg-blue-50 border-blue-200';
+        return 'text-[#6890b3] bg-[#7DA8CC]/10 border-[#7DA8CC]/30';
     }
   };
 
@@ -99,7 +99,7 @@ const UnsubscribePage: React.FC = () => {
 
           {status === 'loading' && (
             <div className='mt-4'>
-              <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto'></div>
+              <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-[#7DA8CC] mx-auto'></div>
             </div>
           )}
 
@@ -113,7 +113,7 @@ const UnsubscribePage: React.FC = () => {
               <div className='flex flex-col space-y-2'>
                 <button
                   onClick={() => navigate('/')}
-                  className='w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors'
+                  className='w-full bg-[#7DA8CC] text-white py-2 px-4 rounded-md hover:bg-[#6890b3] transition-colors'
                 >
                   Go to Homepage
                 </button>
@@ -133,7 +133,7 @@ const UnsubscribePage: React.FC = () => {
               <div className='flex flex-col space-y-2'>
                 <button
                   onClick={() => window.location.reload()}
-                  className='w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors'
+                  className='w-full bg-[#7DA8CC] text-white py-2 px-4 rounded-md hover:bg-[#6890b3] transition-colors'
                 >
                   Try Again
                 </button>
@@ -158,7 +158,7 @@ const UnsubscribePage: React.FC = () => {
               <div className='flex flex-col space-y-2'>
                 <a
                   href='mailto:support@taklaget.app'
-                  className='w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors text-center'
+                  className='w-full bg-[#7DA8CC] text-white py-2 px-4 rounded-md hover:bg-[#6890b3] transition-colors text-center'
                 >
                   Contact Support
                 </a>

@@ -109,7 +109,7 @@ export const SwipeableInspectionCards: React.FC<SwipeableInspectionCardsProps> =
                   onClick={() => onStepChange(idx)}
                   className={`w-full text-left p-3 rounded-xl transition-all ${
                     idx === currentStepIndex
-                      ? 'bg-blue-50 border-2 border-blue-500 shadow-md'
+                      ? 'bg-[#7DA8CC]/10 border-2 border-[#7DA8CC] shadow-md'
                       : 'bg-slate-50 border border-slate-200 hover:border-slate-300 hover:bg-slate-100'
                   }`}
                 >
@@ -117,7 +117,7 @@ export const SwipeableInspectionCards: React.FC<SwipeableInspectionCardsProps> =
                     <div
                       className={`flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold ${
                         idx === currentStepIndex
-                          ? 'bg-blue-600 text-white'
+                          ? 'bg-[#7DA8CC] text-white'
                           : 'bg-slate-200 text-slate-600'
                       }`}
                     >
@@ -155,7 +155,7 @@ export const SwipeableInspectionCards: React.FC<SwipeableInspectionCardsProps> =
               )}
               <div className='w-full bg-slate-200 rounded-full h-2'>
                 <div
-                  className='bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all duration-300'
+                  className='bg-gradient-to-r from-[#7DA8CC] to-[#6890b3] h-2 rounded-full transition-all duration-300'
                   style={{ width: `${((currentStepIndex + 1) / steps.length) * 100}%` }}
                 ></div>
               </div>
@@ -192,7 +192,7 @@ export const SwipeableInspectionCards: React.FC<SwipeableInspectionCardsProps> =
 
               <button
                 onClick={isLastStep ? onComplete : goToNextStep}
-                className='flex-1 py-3 px-6 rounded-xl font-medium transition-all bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:shadow-lg hover:from-blue-600 hover:to-blue-700 flex items-center justify-center gap-2'
+                className='flex-1 py-3 px-6 rounded-xl font-medium transition-all bg-gradient-to-r from-[#7DA8CC] to-[#6890b3] text-white hover:shadow-lg hover:from-[#7DA8CC] hover:to-[#476279] flex items-center justify-center gap-2'
               >
                 {isLastStep ? (
                   <>
@@ -224,7 +224,7 @@ export const SwipeableInspectionCards: React.FC<SwipeableInspectionCardsProps> =
             </div>
             <div className='w-full bg-slate-200 rounded-full h-2'>
               <div
-                className='bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all duration-300'
+                className='bg-gradient-to-r from-[#7DA8CC] to-[#6890b3] h-2 rounded-full transition-all duration-300'
                 style={{ width: `${((currentStepIndex + 1) / steps.length) * 100}%` }}
               ></div>
             </div>
@@ -246,7 +246,7 @@ export const SwipeableInspectionCards: React.FC<SwipeableInspectionCardsProps> =
               <div className='mb-6'>
                 <div className='flex items-center gap-3 mb-3'>
                   <div className='flex-shrink-0'>
-                    <div className='flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 text-blue-600 font-bold'>
+                    <div className='flex items-center justify-center w-10 h-10 rounded-full bg-[#7DA8CC]/15 text-[#7DA8CC] font-bold'>
                       {currentStepIndex + 1}
                     </div>
                   </div>
@@ -280,7 +280,7 @@ export const SwipeableInspectionCards: React.FC<SwipeableInspectionCardsProps> =
 
                   <button
                     onClick={isLastStep ? onComplete : goToNextStep}
-                    className='flex-1 py-3 px-4 rounded-xl font-medium transition-all bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:shadow-lg hover:from-blue-600 hover:to-blue-700 flex items-center justify-center gap-2'
+                    className='flex-1 py-3 px-4 rounded-xl font-medium transition-all bg-gradient-to-r from-[#7DA8CC] to-[#6890b3] text-white hover:shadow-lg hover:from-[#7DA8CC] hover:to-[#476279] flex items-center justify-center gap-2'
                   >
                     {isLastStep ? (
                       <>
@@ -322,7 +322,7 @@ export const SwipeableInspectionCards: React.FC<SwipeableInspectionCardsProps> =
                 onClick={() => onStepChange(idx)}
                 className={`w-3 h-3 rounded-full transition-all ${
                   idx === currentStepIndex
-                    ? 'bg-blue-600 w-8'
+                    ? 'bg-[#7DA8CC] w-8'
                     : 'bg-slate-300 hover:bg-slate-400'
                 }`}
               />

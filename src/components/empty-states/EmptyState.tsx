@@ -102,8 +102,8 @@ const EmptyState: React.FC<EmptyStateProps> = ({
     <div className='flex flex-col items-center justify-center py-12 px-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200'>
       {/* Illustration */}
       <div className='mb-6'>
-        <div className='w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center'>
-          <Icon className='w-10 h-10 text-blue-500' />
+        <div className='w-20 h-20 bg-[#7DA8CC]/10 rounded-full flex items-center justify-center'>
+          <Icon className='w-10 h-10 text-[#7DA8CC]' />
         </div>
       </div>
 
@@ -114,13 +114,13 @@ const EmptyState: React.FC<EmptyStateProps> = ({
       {/* Tips */}
       <div className='w-full max-w-sm mb-8 bg-white rounded-lg border border-gray-200 p-4'>
         <div className='flex items-start gap-2 mb-3'>
-          <Lightbulb className='w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5' />
+          <Lightbulb className='w-5 h-5 text-[#DA5062] flex-shrink-0 mt-0.5' />
           <h4 className='font-semibold text-gray-900'>Helpful Tips</h4>
         </div>
         <ul className='space-y-2'>
           {config.tips.map((tip, index) => (
             <li key={index} className='flex gap-2 text-sm text-gray-600'>
-              <span className='text-blue-500 font-medium flex-shrink-0'>•</span>
+              <span className='text-[#7DA8CC] font-medium flex-shrink-0'>•</span>
               <span>{tip}</span>
             </li>
           ))}
@@ -131,7 +131,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({
       {finalActionUrl ? (
         <Link
           to={finalActionUrl}
-          className='inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors'
+          className='inline-flex items-center gap-2 px-6 py-3 bg-[#7DA8CC] text-white rounded-lg font-medium hover:bg-[#6890b3] transition-colors'
         >
           {finalActionLabel}
           <ArrowRight className='w-4 h-4' />
@@ -139,7 +139,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({
       ) : (
         <button
           onClick={handleActionClick}
-          className='inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors'
+          className='inline-flex items-center gap-2 px-6 py-3 bg-[#7DA8CC] text-white rounded-lg font-medium hover:bg-[#6890b3] transition-colors'
         >
           {finalActionLabel}
           <ArrowRight className='w-4 h-4' />

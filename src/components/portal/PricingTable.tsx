@@ -50,13 +50,13 @@ export const PricingTable: React.FC = () => {
               <div
                 key={plan.id}
                 className={`rounded-lg shadow-lg overflow-hidden transition-transform hover:scale-105 ${
-                  isCurrent ? 'ring-2 ring-blue-600 ring-offset-2 scale-105' : ''
+                  isCurrent ? 'ring-2 ring-[#7DA8CC] ring-offset-2 scale-105' : ''
                 }`}
               >
                 {/* Header */}
                 <div
                   className={`px-6 py-8 ${
-                    isCurrent ? 'bg-blue-600' : 'bg-gradient-to-br from-gray-50 to-gray-100'
+                    isCurrent ? 'bg-[#7DA8CC]' : 'bg-gradient-to-br from-gray-50 to-gray-100'
                   }`}
                 >
                   <h3
@@ -64,7 +64,7 @@ export const PricingTable: React.FC = () => {
                   >
                     {plan.name}
                   </h3>
-                  <p className={`text-sm ${isCurrent ? 'text-blue-100' : 'text-gray-600'}`}>
+                  <p className={`text-sm ${isCurrent ? 'text-[#e0ecf4]' : 'text-gray-600'}`}>
                     {plan.description}
                   </p>
                 </div>
@@ -99,7 +99,7 @@ export const PricingTable: React.FC = () => {
                     className={`w-full py-3 px-4 rounded font-semibold transition ${
                       isCurrent
                         ? 'bg-gray-200 text-gray-600 cursor-not-allowed'
-                        : 'bg-blue-600 text-white hover:bg-blue-700'
+                        : 'bg-[#7DA8CC] text-white hover:bg-[#6890b3]'
                     }`}
                   >
                     {isCurrent ? t('billing.pricing.currentPlan') : isHigherTier ? t('billing.subscription.upgrade') : t('billing.pricing.choosePlan')}
@@ -112,7 +112,7 @@ export const PricingTable: React.FC = () => {
                   <ul className="space-y-3">
                     {plan.features.map((feature, idx) => (
                       <li key={idx} className="flex items-start gap-3">
-                        <Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                        <Check className="h-5 w-5 text-[#A1BA53] flex-shrink-0 mt-0.5" />
                         <span className="text-sm text-gray-700">{feature}</span>
                       </li>
                     ))}
@@ -121,8 +121,8 @@ export const PricingTable: React.FC = () => {
 
                 {/* Badge */}
                 {plan.tier === 'professional' && (
-                  <div className="bg-blue-50 px-6 py-3 text-center">
-                    <span className="inline-block bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full">
+                  <div className="bg-[#7DA8CC]/10 px-6 py-3 text-center">
+                    <span className="inline-block bg-[#7DA8CC] text-white text-xs font-bold px-3 py-1 rounded-full">
                       {t('billing.pricing.mostPopular')}
                     </span>
                   </div>
@@ -138,7 +138,7 @@ export const PricingTable: React.FC = () => {
 
           <div className="space-y-6">
             <details className="group border rounded-lg p-6 cursor-pointer">
-              <summary className="flex items-center justify-between font-semibold text-gray-900 group-open:text-blue-600">
+              <summary className="flex items-center justify-between font-semibold text-gray-900 group-open:text-[#7DA8CC]">
                 {t('billing.pricing.faq.changePlans.question')}
                 <span className="text-2xl group-open:rotate-45 transition-transform">+</span>
               </summary>
@@ -148,7 +148,7 @@ export const PricingTable: React.FC = () => {
             </details>
 
             <details className="group border rounded-lg p-6 cursor-pointer">
-              <summary className="flex items-center justify-between font-semibold text-gray-900 group-open:text-blue-600">
+              <summary className="flex items-center justify-between font-semibold text-gray-900 group-open:text-[#7DA8CC]">
                 {t('billing.pricing.faq.buildingLimit.question')}
                 <span className="text-2xl group-open:rotate-45 transition-transform">+</span>
               </summary>
@@ -158,7 +158,7 @@ export const PricingTable: React.FC = () => {
             </details>
 
             <details className="group border rounded-lg p-6 cursor-pointer">
-              <summary className="flex items-center justify-between font-semibold text-gray-900 group-open:text-blue-600">
+              <summary className="flex items-center justify-between font-semibold text-gray-900 group-open:text-[#7DA8CC]">
                 {t('billing.pricing.faq.freeTrial.question')}
                 <span className="text-2xl group-open:rotate-45 transition-transform">+</span>
               </summary>
@@ -168,7 +168,7 @@ export const PricingTable: React.FC = () => {
             </details>
 
             <details className="group border rounded-lg p-6 cursor-pointer">
-              <summary className="flex items-center justify-between font-semibold text-gray-900 group-open:text-blue-600">
+              <summary className="flex items-center justify-between font-semibold text-gray-900 group-open:text-[#7DA8CC]">
                 {t('billing.pricing.faq.paymentMethods.question')}
                 <span className="text-2xl group-open:rotate-45 transition-transform">+</span>
               </summary>

@@ -234,7 +234,7 @@ const ESGReportsList: React.FC = () => {
                 }
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
-                className='w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors'
+                className='w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#A1BA53] focus:border-[#A1BA53] transition-colors'
               />
             </div>
 
@@ -244,7 +244,7 @@ const ESGReportsList: React.FC = () => {
               <select
                 value={statusFilter}
                 onChange={e => setStatusFilter(e.target.value as 'all' | 'public' | 'private')}
-                className='px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors text-sm'
+                className='px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-[#A1BA53] focus:border-[#A1BA53] transition-colors text-sm'
               >
                 <option value='all'>{t('admin.esgReports.filter.all') || 'All Reports'}</option>
                 <option value='public'>
@@ -268,7 +268,7 @@ const ESGReportsList: React.FC = () => {
               {/* Create New */}
               <button
                 onClick={() => navigate('/admin/esg-service')}
-                className='flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium shadow-sm'
+                className='flex items-center gap-2 px-4 py-2 bg-[#A1BA53] text-white rounded-lg hover:bg-[#8a9f47] transition-colors text-sm font-medium shadow-sm'
               >
                 <Plus className='w-4 h-4' />
                 {t('admin.esgReports.createNew') || 'Create Report'}
@@ -279,13 +279,13 @@ const ESGReportsList: React.FC = () => {
 
         {/* Error State */}
         {error && (
-          <div className='bg-red-50 border border-red-200 rounded-xl p-4 mb-6'>
+          <div className='bg-[#DA5062]/10 border border-[#DA5062]/30 rounded-xl p-4 mb-6'>
             <div className='flex items-center gap-3'>
-              <AlertCircle className='w-5 h-5 text-red-500' />
-              <p className='text-red-700'>{error}</p>
+              <AlertCircle className='w-5 h-5 text-[#DA5062]' />
+              <p className='text-[#c23d4f]'>{error}</p>
               <button
                 onClick={fetchReports}
-                className='ml-auto text-sm text-red-600 hover:text-red-700 underline'
+                className='ml-auto text-sm text-[#DA5062] hover:text-[#c23d4f] underline'
               >
                 {t('common.retry') || 'Retry'}
               </button>
@@ -297,8 +297,8 @@ const ESGReportsList: React.FC = () => {
         <div className='grid grid-cols-1 md:grid-cols-3 gap-4 mb-6'>
           <div className='bg-white rounded-xl shadow-sm border border-slate-200 p-4'>
             <div className='flex items-center gap-3'>
-              <div className='p-2 bg-green-100 rounded-lg'>
-                <FileText className='w-5 h-5 text-green-600' />
+              <div className='p-2 bg-[#A1BA53]/15 rounded-lg'>
+                <FileText className='w-5 h-5 text-[#A1BA53]' />
               </div>
               <div>
                 <p className='text-sm text-slate-500'>
@@ -311,8 +311,8 @@ const ESGReportsList: React.FC = () => {
 
           <div className='bg-white rounded-xl shadow-sm border border-slate-200 p-4'>
             <div className='flex items-center gap-3'>
-              <div className='p-2 bg-blue-100 rounded-lg'>
-                <ExternalLink className='w-5 h-5 text-blue-600' />
+              <div className='p-2 bg-[#7DA8CC]/15 rounded-lg'>
+                <ExternalLink className='w-5 h-5 text-[#7DA8CC]' />
               </div>
               <div>
                 <p className='text-sm text-slate-500'>
@@ -373,8 +373,8 @@ const ESGReportsList: React.FC = () => {
                   {/* Report Info */}
                   <div className='flex-1 min-w-0'>
                     <div className='flex items-center gap-3 mb-2'>
-                      <div className='p-2 bg-green-100 rounded-lg'>
-                        <Leaf className='w-5 h-5 text-green-600' />
+                      <div className='p-2 bg-[#A1BA53]/15 rounded-lg'>
+                        <Leaf className='w-5 h-5 text-[#A1BA53]' />
                       </div>
                       <div className='min-w-0 flex-1'>
                         <h3 className='font-semibold text-slate-900 truncate'>
@@ -405,8 +405,8 @@ const ESGReportsList: React.FC = () => {
                       {/* Status Badge */}
                       {report.isPublic ? (
                         <div className='flex items-center gap-1.5'>
-                          <CheckCircle className='w-4 h-4 text-green-500' />
-                          <span className='text-green-600'>
+                          <CheckCircle className='w-4 h-4 text-[#A1BA53]' />
+                          <span className='text-[#A1BA53]'>
                             {t('admin.esgReports.public') || 'Public'}
                           </span>
                         </div>
@@ -423,10 +423,10 @@ const ESGReportsList: React.FC = () => {
                     {/* Division Summary */}
                     {report.divisions && (
                       <div className='mt-3 flex flex-wrap gap-2'>
-                        <span className='text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full'>
+                        <span className='text-xs px-2 py-1 bg-[#A1BA53]/15 text-[#73853b] rounded-full'>
                           🌿 {report.divisions.greenRoof}%
                         </span>
-                        <span className='text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full'>
+                        <span className='text-xs px-2 py-1 bg-[#7DA8CC]/15 text-[#6890b3] rounded-full'>
                           💨 {report.divisions.noxReduction}%
                         </span>
                         <span className='text-xs px-2 py-1 bg-cyan-100 text-cyan-700 rounded-full'>
@@ -445,7 +445,7 @@ const ESGReportsList: React.FC = () => {
                           <p className='text-xs text-slate-500'>
                             {t('admin.esgReports.co2Saved') || 'CO₂ Saved/Year'}
                           </p>
-                          <p className='font-semibold text-green-600'>
+                          <p className='font-semibold text-[#A1BA53]'>
                             {(
                               (report.calculatedMetrics.co2ReductionKgPerYear ||
                                 report.calculatedMetrics.annualCO2Offset ||
@@ -458,7 +458,7 @@ const ESGReportsList: React.FC = () => {
                           <p className='text-xs text-slate-500'>
                             {t('admin.esgReports.energySaved') || 'Energy Saved/Year'}
                           </p>
-                          <p className='font-semibold text-blue-600'>
+                          <p className='font-semibold text-[#7DA8CC]'>
                             {(
                               report.calculatedMetrics.energySavingsKwhPerYear ||
                               report.calculatedMetrics.solarPotential ||
@@ -471,7 +471,7 @@ const ESGReportsList: React.FC = () => {
                           <p className='text-xs text-slate-500'>
                             {t('admin.esgReports.sustainability') || 'Sustainability'}
                           </p>
-                          <p className='font-semibold text-purple-600'>
+                          <p className='font-semibold text-[#956098]'>
                             {report.calculatedMetrics.sustainabilityScore?.toFixed(0) || 0}/100
                           </p>
                         </div>
@@ -494,14 +494,14 @@ const ESGReportsList: React.FC = () => {
                       <>
                         <button
                           onClick={() => handleViewPublic(report)}
-                          className='p-2 text-slate-500 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors'
+                          className='p-2 text-slate-500 hover:text-[#A1BA53] hover:bg-[#A1BA53]/10 rounded-lg transition-colors'
                           title={t('admin.esgReports.viewPublic') || 'View Public Report'}
                         >
                           <ExternalLink className='w-5 h-5' />
                         </button>
                         <button
                           onClick={() => handleCopyLink(report)}
-                          className='p-2 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors'
+                          className='p-2 text-slate-500 hover:text-[#7DA8CC] hover:bg-[#7DA8CC]/10 rounded-lg transition-colors'
                           title={t('admin.esgReports.copyLink') || 'Copy Public Link'}
                         >
                           <Copy className='w-5 h-5' />
@@ -521,7 +521,7 @@ const ESGReportsList: React.FC = () => {
                     {/* Delete */}
                     <button
                       onClick={() => handleDeleteClick(report)}
-                      className='p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors'
+                      className='p-2 text-slate-500 hover:text-[#DA5062] hover:bg-[#DA5062]/10 rounded-lg transition-colors'
                       title={t('common.delete') || 'Delete'}
                     >
                       <Trash2 className='w-5 h-5' />

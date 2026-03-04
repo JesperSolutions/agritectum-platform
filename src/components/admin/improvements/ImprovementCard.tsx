@@ -99,7 +99,7 @@ const ImprovementCard: React.FC<ImprovementCardProps> = ({
   return (
     <div
       className={`bg-white rounded-lg border-2 p-4 transition-all ${
-        enabled ? 'border-green-500 shadow-md' : 'border-gray-200 opacity-60'
+        enabled ? 'border-[#A1BA53] shadow-md' : 'border-gray-200 opacity-60'
       }`}
     >
       <div className='flex items-center justify-between mb-4'>
@@ -116,7 +116,7 @@ const ImprovementCard: React.FC<ImprovementCardProps> = ({
           />
           <div
             className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-              enabled ? 'bg-green-600' : 'bg-gray-300'
+              enabled ? 'bg-[#A1BA53]' : 'bg-gray-300'
             }`}
           >
             <span
@@ -136,7 +136,7 @@ const ImprovementCard: React.FC<ImprovementCardProps> = ({
               <label className='text-sm font-medium text-gray-700'>
                 {t('admin.improvements.percentage') || 'Percentage of Roof Area'}
               </label>
-              <span className='text-sm font-bold text-green-600'>
+              <span className='text-sm font-bold text-[#A1BA53]'>
                 {currentImprovement.percentage}%
               </span>
             </div>
@@ -165,7 +165,7 @@ const ImprovementCard: React.FC<ImprovementCardProps> = ({
               step='1'
               value={currentImprovement.costPerSqm}
               onChange={e => handleCostChange(parseFloat(e.target.value) || 0)}
-              className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500'
+              className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53] focus:border-[#A1BA53]'
             />
           </div>
 
@@ -180,17 +180,17 @@ const ImprovementCard: React.FC<ImprovementCardProps> = ({
               step='1'
               value={currentImprovement.startYear}
               onChange={e => handleStartYearChange(parseFloat(e.target.value) || 0)}
-              className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500'
+              className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53] focus:border-[#A1BA53]'
             />
           </div>
 
           {/* Estimated Cost */}
-          <div className='bg-green-50 border border-green-200 rounded-lg p-3'>
+          <div className='bg-[#A1BA53]/10 border border-[#A1BA53]/30 rounded-lg p-3'>
             <div className='flex justify-between items-center'>
               <span className='text-sm font-medium text-gray-700'>
                 {t('admin.improvements.estimatedCost') || 'Estimated Cost'}
               </span>
-              <span className='text-lg font-bold text-green-600'>
+              <span className='text-lg font-bold text-[#A1BA53]'>
                 €{estimatedCost.toLocaleString()}
               </span>
             </div>

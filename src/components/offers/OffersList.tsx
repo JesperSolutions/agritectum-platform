@@ -138,7 +138,7 @@ const OffersList: React.FC<OffersListProps> = ({
               placeholder='Search by customer name, email, or title...'
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className='w-full px-4 py-3 bg-white/90 backdrop-blur border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all'
+              className='w-full px-4 py-3 bg-white/90 backdrop-blur border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#7DA8CC] focus:border-transparent transition-all'
             />
           </div>
 
@@ -174,7 +174,7 @@ const OffersList: React.FC<OffersListProps> = ({
             <select
               value={statusFilter}
               onChange={e => setStatusFilter(e.target.value as OfferStatus | 'all')}
-              className='w-full px-4 py-3 bg-white/90 backdrop-blur border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all'
+              className='w-full px-4 py-3 bg-white/90 backdrop-blur border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#7DA8CC] focus:border-transparent transition-all'
             >
               <option value='all'>All Status</option>
               <option value='pending'>Pending</option>
@@ -228,7 +228,7 @@ const OffersList: React.FC<OffersListProps> = ({
                         {offer.currency || 'SEK'}
                       </div>
                       {isOverdue && (
-                        <div className='text-xs text-red-600 font-semibold mt-1'>
+                        <div className='text-xs text-[#DA5062] font-semibold mt-1'>
                           Overdue ({daysPending}d)
                         </div>
                       )}
@@ -279,7 +279,7 @@ const OffersList: React.FC<OffersListProps> = ({
                         {onDelete && (
                           <DropdownMenuItem
                             onClick={() => onDelete(offer.id)}
-                            className='text-red-600 focus:text-red-600'
+                            className='text-[#DA5062] focus:text-[#DA5062]'
                           >
                             {t('common.delete')}
                           </DropdownMenuItem>
@@ -294,7 +294,7 @@ const OffersList: React.FC<OffersListProps> = ({
                     emailEnabled !== false ? (
                       <button
                         onClick={() => onSendOffer(offer.id)}
-                        className='px-3 py-2 rounded-lg text-sm font-medium bg-green-600 text-white hover:bg-green-700'
+                        className='px-3 py-2 rounded-lg text-sm font-medium bg-[#A1BA53] text-white hover:bg-[#8a9f47]'
                         title='Send Offer via email'
                       >
                         Send Email
@@ -308,7 +308,7 @@ const OffersList: React.FC<OffersListProps> = ({
                           setCopying(offer.id);
                           setTimeout(() => setCopying(null), 1200);
                         }}
-                        className='px-3 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white hover:bg-blue-700'
+                        className='px-3 py-2 rounded-lg text-sm font-medium bg-[#7DA8CC] text-white hover:bg-[#6890b3]'
                         title='Copy public link to clipboard'
                       >
                         {copying === offer.id ? t('offers.linkCopied') : t('offers.copyLink')}

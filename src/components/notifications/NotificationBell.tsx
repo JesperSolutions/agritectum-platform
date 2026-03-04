@@ -120,7 +120,7 @@ export const NotificationBell: React.FC = () => {
       >
         <Bell className='w-5 h-5' />
         {unreadCount > 0 && (
-          <span className='absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-500 rounded-full min-w-[20px]'>
+          <span className='absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-[#DA5062]/100 rounded-full min-w-[20px]'>
             {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}
@@ -138,7 +138,7 @@ export const NotificationBell: React.FC = () => {
               {unreadCount > 0 && (
                 <button
                   onClick={handleMarkAllAsRead}
-                  className='text-sm text-blue-600 hover:text-blue-700 font-medium'
+                  className='text-sm text-[#7DA8CC] hover:text-[#6890b3] font-medium'
                 >
                   {t('notifications.markAllRead') || 'Mark all read'}
                 </button>
@@ -170,7 +170,7 @@ export const NotificationBell: React.FC = () => {
                     key={notification.id}
                     onClick={() => handleNotificationClick(notification)}
                     className={`p-4 hover:bg-gray-50 cursor-pointer transition-colors ${
-                      !notification.read ? 'bg-blue-50' : ''
+                      !notification.read ? 'bg-[#7DA8CC]/10' : ''
                     }`}
                   >
                     <div className='flex items-start space-x-3'>
@@ -187,7 +187,7 @@ export const NotificationBell: React.FC = () => {
                           {!notification.read && (
                             <button
                               onClick={e => handleMarkAsRead(notification.id, e)}
-                              className='ml-2 p-1 text-blue-600 hover:text-blue-700 rounded'
+                              className='ml-2 p-1 text-[#7DA8CC] hover:text-[#6890b3] rounded'
                               title={t('notifications.markRead') || 'Mark as read'}
                             >
                               <Check className='w-4 h-4' />
@@ -216,7 +216,7 @@ export const NotificationBell: React.FC = () => {
                   window.location.href = '/portal/notifications';
                   setIsOpen(false);
                 }}
-                className='text-sm text-blue-600 hover:text-blue-700 font-medium'
+                className='text-sm text-[#7DA8CC] hover:text-[#6890b3] font-medium'
               >
                 {t('notifications.viewAll') || 'View all notifications'}
               </button>

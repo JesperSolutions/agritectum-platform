@@ -63,7 +63,7 @@ const IssueTemplateSelector: React.FC<IssueTemplateSelectorProps> = ({
                 placeholder={t('issueTemplates.searchPlaceholder') || 'Sök mallar...'}
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
-                className='w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500'
+                className='w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-[#7DA8CC] focus:border-[#7DA8CC]'
               />
             </div>
 
@@ -71,7 +71,7 @@ const IssueTemplateSelector: React.FC<IssueTemplateSelectorProps> = ({
             <select
               value={selectedType}
               onChange={e => setSelectedType(e.target.value as IssueType | 'all')}
-              className='px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500'
+              className='px-3 py-2 border border-gray-300 rounded-md focus:ring-[#7DA8CC] focus:border-[#7DA8CC]'
             >
               <option value='all'>{t('issueTemplates.allTypes') || 'Alla typer'}</option>
               <option value='leak'>{t('issueTypes.leak') || 'Läckage'}</option>
@@ -88,7 +88,7 @@ const IssueTemplateSelector: React.FC<IssueTemplateSelectorProps> = ({
             <select
               value={selectedSeverity}
               onChange={e => setSelectedSeverity(e.target.value as IssueSeverity | 'all')}
-              className='px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500'
+              className='px-3 py-2 border border-gray-300 rounded-md focus:ring-[#7DA8CC] focus:border-[#7DA8CC]'
             >
               <option value='all'>{t('common.filters') || 'Alla'}</option>
               <option value='critical'>{t('severity.critical')}</option>
@@ -134,7 +134,7 @@ const IssueTemplateSelector: React.FC<IssueTemplateSelectorProps> = ({
                   <div
                     key={template.id}
                     onClick={() => handleSelectTemplate(template)}
-                    className='border border-gray-200 rounded-lg p-4 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer'
+                    className='border border-gray-200 rounded-lg p-4 hover:border-[#7DA8CC]/40 hover:shadow-md transition-all cursor-pointer'
                   >
                     <div className='flex items-start justify-between mb-2'>
                       <div className='flex items-center space-x-2'>

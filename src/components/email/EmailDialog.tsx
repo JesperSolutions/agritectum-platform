@@ -135,7 +135,7 @@ const EmailDialog: React.FC<EmailDialogProps> = ({ isOpen, onClose, report, bran
         {/* Header */}
         <div className='flex items-center justify-between p-6 border-b border-gray-200'>
           <div className='flex items-center space-x-3'>
-            <Mail className='w-6 h-6 text-blue-600' />
+            <Mail className='w-6 h-6 text-[#7DA8CC]' />
             <h2 className='text-xl font-semibold text-gray-900'>Send Report to Customer</h2>
           </div>
           <button onClick={onClose} className='text-gray-400 hover:text-gray-600 transition-colors'>
@@ -171,7 +171,7 @@ const EmailDialog: React.FC<EmailDialogProps> = ({ isOpen, onClose, report, bran
             <select
               value={selectedTemplate}
               onChange={e => handleTemplateChange(e.target.value)}
-              className='w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
+              className='w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7DA8CC]'
             >
               {defaultTemplates.map(template => (
                 <option key={template.name} value={template.name}>
@@ -190,7 +190,7 @@ const EmailDialog: React.FC<EmailDialogProps> = ({ isOpen, onClose, report, bran
               type='email'
               value={customerEmail}
               onChange={e => setCustomerEmail(e.target.value)}
-              className='w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
+              className='w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7DA8CC]'
               placeholder='customer@example.com'
               required
             />
@@ -200,7 +200,7 @@ const EmailDialog: React.FC<EmailDialogProps> = ({ isOpen, onClose, report, bran
           <div className='flex justify-end'>
             <button
               onClick={() => setIsCustomizing(!isCustomizing)}
-              className='text-blue-600 hover:text-blue-800 text-sm font-medium'
+              className='text-[#7DA8CC] hover:text-[#476279] text-sm font-medium'
             >
               {isCustomizing ? 'Use Template' : 'Customize Message'}
             </button>
@@ -214,7 +214,7 @@ const EmailDialog: React.FC<EmailDialogProps> = ({ isOpen, onClose, report, bran
                 type='text'
                 value={customSubject}
                 onChange={e => setCustomSubject(e.target.value)}
-                className='w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
+                className='w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7DA8CC]'
               />
             </div>
           )}
@@ -227,7 +227,7 @@ const EmailDialog: React.FC<EmailDialogProps> = ({ isOpen, onClose, report, bran
                 value={customBody}
                 onChange={e => setCustomBody(e.target.value)}
                 rows={12}
-                className='w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
+                className='w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7DA8CC]'
               />
             </div>
           )}
@@ -237,8 +237,8 @@ const EmailDialog: React.FC<EmailDialogProps> = ({ isOpen, onClose, report, bran
             <div
               className={`p-4 rounded-lg flex items-center space-x-3 ${
                 sendResult.success
-                  ? 'bg-green-50 text-green-800 border border-green-200'
-                  : 'bg-red-50 text-red-800 border border-red-200'
+                  ? 'bg-[#A1BA53]/10 text-[#5c6a2f] border border-[#A1BA53]/30'
+                  : 'bg-[#DA5062]/10 text-[#872a38] border border-[#DA5062]/30'
               }`}
             >
               {sendResult.success ? (

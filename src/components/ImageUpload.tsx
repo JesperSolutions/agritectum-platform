@@ -209,7 +209,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             type='button'
             onClick={handleRemove}
             disabled={disabled || uploading}
-            className='absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 disabled:opacity-50'
+            className='absolute top-2 right-2 p-1 bg-[#DA5062]/100 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-[#DA5062] disabled:opacity-50'
             aria-label='Remove image'
           >
             <X className='w-4 h-4' />
@@ -223,7 +223,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             ${
               disabled || uploading || isAtLimit
                 ? 'border-gray-300 bg-gray-50 cursor-not-allowed'
-                : 'border-gray-400 hover:border-blue-500 hover:bg-blue-50'
+                : 'border-gray-400 hover:border-[#7DA8CC] hover:bg-[#7DA8CC]/10'
             }
           `}
           role='button'
@@ -238,12 +238,12 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         >
           {uploading ? (
             <div className='flex flex-col items-center'>
-              <Loader2 className='w-8 h-8 text-blue-500 animate-spin mb-2' />
+              <Loader2 className='w-8 h-8 text-[#7DA8CC] animate-spin mb-2' />
               {uploadProgress && (
                 <div className='w-full max-w-32'>
                   <div className='bg-gray-200 rounded-full h-2'>
                     <div
-                      className='bg-blue-500 h-2 rounded-full transition-all duration-300'
+                      className='bg-[#7DA8CC]/100 h-2 rounded-full transition-all duration-300'
                       style={{ width: `${uploadProgress.percentage}%` }}
                     />
                   </div>
@@ -275,10 +275,10 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       )}
 
       {error && (
-        <div className='mt-2 p-2 bg-red-50 border border-red-200 rounded-md'>
+        <div className='mt-2 p-2 bg-[#DA5062]/10 border border-[#DA5062]/30 rounded-md'>
           <div className='flex items-center'>
-            <AlertCircle className='w-4 h-4 text-red-500 mr-2' />
-            <p className='text-sm text-red-600'>{error}</p>
+            <AlertCircle className='w-4 h-4 text-[#DA5062] mr-2' />
+            <p className='text-sm text-[#DA5062]'>{error}</p>
           </div>
         </div>
       )}

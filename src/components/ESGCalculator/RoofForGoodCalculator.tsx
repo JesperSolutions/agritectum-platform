@@ -312,8 +312,8 @@ const RoofForGoodCalculator: React.FC<{ building?: Building }> = ({ building }) 
             onClick={() => setState(prev => ({ ...prev, selectedRole: role.value as any }))}
             className={`p-6 rounded-lg border-2 transition-all cursor-pointer text-center ${
               state.selectedRole === role.value
-                ? 'border-blue-600 bg-blue-50'
-                : 'border-slate-200 hover:border-blue-300'
+                ? 'border-[#7DA8CC] bg-[#7DA8CC]/10'
+                : 'border-slate-200 hover:border-[#7DA8CC]/40'
             }`}
           >
             <div className='text-4xl mb-3'>{role.icon}</div>
@@ -323,7 +323,7 @@ const RoofForGoodCalculator: React.FC<{ building?: Building }> = ({ building }) 
       </div>
 
       {state.errors.role && (
-        <div className='text-red-600 text-sm text-center'>{state.errors.role}</div>
+        <div className='text-[#DA5062] text-sm text-center'>{state.errors.role}</div>
       )}
     </div>
   );
@@ -331,7 +331,7 @@ const RoofForGoodCalculator: React.FC<{ building?: Building }> = ({ building }) 
   const renderStep2 = () => (
     <div className='space-y-6'>
       <div className='text-center mb-8'>
-        <MapPin className='w-12 h-12 text-blue-600 mx-auto mb-3' />
+        <MapPin className='w-12 h-12 text-[#7DA8CC] mx-auto mb-3' />
         <h2 className='text-3xl font-bold text-slate-900 mb-2'>
           {t('esg.calculator.step2.title') || 'Project Location'}
         </h2>
@@ -357,14 +357,14 @@ const RoofForGoodCalculator: React.FC<{ building?: Building }> = ({ building }) 
                 }))
               }
               placeholder={t('esg.calculator.step2.addressPlaceholder') || 'Enter full address'}
-              className='flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none'
+              className='flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#7DA8CC] outline-none'
             />
             <button className='px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium shadow-sm'>
               {t('esg.calculator.step2.useLocation') || 'Use Current'}
             </button>
           </div>
           {state.location.address && (
-            <p className='mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-slate-700'>
+            <p className='mt-3 p-3 bg-[#7DA8CC]/10 border border-[#7DA8CC]/30 rounded-lg text-sm text-slate-700'>
               <MapPin className='w-4 h-4 inline mr-2' />
               {state.location.address}
             </p>
@@ -372,7 +372,7 @@ const RoofForGoodCalculator: React.FC<{ building?: Building }> = ({ building }) 
         </div>
       </div>
 
-      {state.errors.location && <div className='text-red-600 text-sm'>{state.errors.location}</div>}
+      {state.errors.location && <div className='text-[#DA5062] text-sm'>{state.errors.location}</div>}
     </div>
   );
 
@@ -381,7 +381,7 @@ const RoofForGoodCalculator: React.FC<{ building?: Building }> = ({ building }) 
 
     return (
       <div className='space-y-8'>
-        <div className='bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-6'>
+        <div className='bg-gradient-to-r from-[#A1BA53]/10 to-emerald-50 border border-[#A1BA53]/30 rounded-lg p-6'>
           <h2 className='text-2xl font-bold text-slate-900 mb-2'>
             {t('esg.calculator.step3.title') || 'Roof Configuration'}
           </h2>
@@ -401,7 +401,7 @@ const RoofForGoodCalculator: React.FC<{ building?: Building }> = ({ building }) 
                   value={state.totalRoofSize || ''}
                   onChange={e => handleRoofSizeChange(e.target.value)}
                   placeholder='1000'
-                  className='flex-1 px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none'
+                  className='flex-1 px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#7DA8CC] outline-none'
                 />
                 <span className='flex items-center px-3 bg-slate-100 rounded-lg text-sm font-medium text-slate-600'>
                   m²
@@ -428,8 +428,8 @@ const RoofForGoodCalculator: React.FC<{ building?: Building }> = ({ building }) 
               <div
                 className={`px-3 py-2 rounded-lg text-xl font-bold ${
                   totalAllocation === 100
-                    ? 'bg-green-100 text-green-700'
-                    : 'bg-yellow-100 text-yellow-700'
+                    ? 'bg-[#A1BA53]/15 text-[#73853b]'
+                    : 'bg-[#DA5062]/15 text-[#c23d4f]'
                 }`}
               >
                 {totalAllocation}%
@@ -440,14 +440,14 @@ const RoofForGoodCalculator: React.FC<{ building?: Building }> = ({ building }) 
               <label className='block text-sm font-medium text-slate-900 mb-2'>
                 {t('esg.calculator.step3.roofAllocation') || 'Allocation'}
               </label>
-              <div className='px-3 py-2 bg-blue-100 rounded-lg text-xl font-bold text-blue-700'>
+              <div className='px-3 py-2 bg-[#7DA8CC]/15 rounded-lg text-xl font-bold text-[#6890b3]'>
                 {totalAllocation}% of 100%
               </div>
             </div>
           </div>
         </div>
 
-        {state.errors.roof && <div className='text-red-600 text-sm'>{state.errors.roof}</div>}
+        {state.errors.roof && <div className='text-[#DA5062] text-sm'>{state.errors.roof}</div>}
 
         {/* Segments */}
         <div className='space-y-6'>
@@ -465,7 +465,7 @@ const RoofForGoodCalculator: React.FC<{ building?: Building }> = ({ building }) 
             <div key={segment.id} className='bg-white border border-slate-200 rounded-lg p-6'>
               <div className='flex items-start justify-between mb-4'>
                 <div className='flex items-center gap-3'>
-                  <div className='w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold'>
+                  <div className='w-8 h-8 rounded-full bg-[#7DA8CC]/15 flex items-center justify-center text-[#7DA8CC] font-bold'>
                     {idx + 1}
                   </div>
                   <div>
@@ -499,7 +499,7 @@ const RoofForGoodCalculator: React.FC<{ building?: Building }> = ({ building }) 
                       }
                       min='0'
                       max='100'
-                      className='flex-1 px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none'
+                      className='flex-1 px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#7DA8CC] outline-none'
                     />
                     <span className='flex items-center px-3 bg-slate-100 rounded-lg text-sm font-medium'>
                       %
@@ -515,7 +515,7 @@ const RoofForGoodCalculator: React.FC<{ building?: Building }> = ({ building }) 
                     {t('esg.calculator.step3.solution') || 'Roof Solution'}
                   </label>
                   <div className='px-3 py-2 bg-slate-50 rounded-lg text-sm text-slate-900 font-medium'>
-                    <CheckCircle2 className='w-4 h-4 inline mr-2 text-green-600' />
+                    <CheckCircle2 className='w-4 h-4 inline mr-2 text-[#A1BA53]' />
                     {segment.solution}
                   </div>
                 </div>
@@ -559,9 +559,9 @@ const RoofForGoodCalculator: React.FC<{ building?: Building }> = ({ building }) 
         </div>
 
         {totalAllocation !== 100 && (
-          <div className='bg-yellow-50 border border-yellow-200 rounded-lg p-4 flex gap-3'>
-            <AlertCircle className='w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5' />
-            <p className='text-sm text-yellow-800'>
+          <div className='bg-[#DA5062]/10 border border-[#DA5062]/30 rounded-lg p-4 flex gap-3'>
+            <AlertCircle className='w-5 h-5 text-[#DA5062] flex-shrink-0 mt-0.5' />
+            <p className='text-sm text-[#872a38]'>
               {t('esg.calculator.step3.allocationWarning') ||
                 `Roof allocation must equal 100%. Currently at ${totalAllocation}%`}
             </p>
@@ -602,10 +602,10 @@ const RoofForGoodCalculator: React.FC<{ building?: Building }> = ({ building }) 
     return (
       <div className='space-y-8'>
         {/* Header */}
-        <div className='bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-6 text-center'>
+        <div className='bg-gradient-to-r from-[#A1BA53]/10 to-emerald-50 border border-[#A1BA53]/30 rounded-lg p-6 text-center'>
           <div className='flex items-center justify-center gap-2 mb-2'>
-            <CheckCircle2 className='w-6 h-6 text-green-600' />
-            <p className='text-green-700 font-medium'>
+            <CheckCircle2 className='w-6 h-6 text-[#A1BA53]' />
+            <p className='text-[#73853b] font-medium'>
               {t('esg.calculator.step4.complete') || 'Analysis complete'}
             </p>
           </div>
@@ -621,13 +621,13 @@ const RoofForGoodCalculator: React.FC<{ building?: Building }> = ({ building }) 
         {/* Summary Cards */}
         <div className='grid md:grid-cols-4 gap-4'>
           <div className='bg-white border border-slate-200 rounded-lg p-4 text-center'>
-            <p className='text-2xl font-bold text-blue-600'>{totalCO2}</p>
+            <p className='text-2xl font-bold text-[#7DA8CC]'>{totalCO2}</p>
             <p className='text-xs text-slate-600 font-medium mt-1'>
               {t('esg.calculator.step4.co2Offset') || 'kg CO₂ Offset/Year'}
             </p>
           </div>
           <div className='bg-white border border-slate-200 rounded-lg p-4 text-center'>
-            <p className='text-2xl font-bold text-green-600'>
+            <p className='text-2xl font-bold text-[#A1BA53]'>
               {formatCurrency(annualSavings, locale as SupportedLocale)}
             </p>
             <p className='text-xs text-slate-600 font-medium mt-1'>
@@ -635,7 +635,7 @@ const RoofForGoodCalculator: React.FC<{ building?: Building }> = ({ building }) 
             </p>
           </div>
           <div className='bg-white border border-slate-200 rounded-lg p-4 text-center'>
-            <p className='text-2xl font-bold text-purple-600'>{paybackYears}</p>
+            <p className='text-2xl font-bold text-[#956098]'>{paybackYears}</p>
             <p className='text-xs text-slate-600 font-medium mt-1'>
               {t('esg.calculator.step4.paybackPeriod') || 'Payback Period (Years)'}
             </p>
@@ -697,7 +697,7 @@ const RoofForGoodCalculator: React.FC<{ building?: Building }> = ({ building }) 
             <div key={segment.id} className='bg-white border border-slate-200 rounded-lg p-4'>
               <div className='flex items-start justify-between mb-3'>
                 <div className='flex items-center gap-3'>
-                  <div className='w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold'>
+                  <div className='w-8 h-8 rounded-full bg-[#7DA8CC]/15 flex items-center justify-center text-[#7DA8CC] font-bold'>
                     {idx + 1}
                   </div>
                   <div>
@@ -741,9 +741,9 @@ const RoofForGoodCalculator: React.FC<{ building?: Building }> = ({ building }) 
         </div>
 
         {/* Environmental Impact */}
-        <div className='bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-lg p-6'>
+        <div className='bg-gradient-to-br from-[#A1BA53]/10 to-emerald-50 border border-[#A1BA53]/30 rounded-lg p-6'>
           <div className='flex items-center gap-2 mb-4'>
-            <Leaf className='w-6 h-6 text-green-600' />
+            <Leaf className='w-6 h-6 text-[#A1BA53]' />
             <h3 className='text-xl font-semibold text-slate-900'>
               {t('esg.calculator.step4.environmentalImpactDetail') || 'Environmental Impact'}
             </h3>
@@ -756,7 +756,7 @@ const RoofForGoodCalculator: React.FC<{ building?: Building }> = ({ building }) 
 
           <div className='grid md:grid-cols-3 gap-6'>
             <div className='text-center'>
-              <p className='text-4xl font-bold text-green-600'>≈ {Math.round(totalCO2 / 22)}</p>
+              <p className='text-4xl font-bold text-[#A1BA53]'>≈ {Math.round(totalCO2 / 22)}</p>
               <p className='text-sm font-medium text-slate-900 mt-2'>
                 {t('esg.calculator.step4.treesEquivalent') || 'Trees Equivalent'}
               </p>
@@ -766,7 +766,7 @@ const RoofForGoodCalculator: React.FC<{ building?: Building }> = ({ building }) 
               </p>
             </div>
             <div className='text-center'>
-              <p className='text-4xl font-bold text-blue-600'>
+              <p className='text-4xl font-bold text-[#7DA8CC]'>
                 {getTotalEnergy().toLocaleString()}
               </p>
               <p className='text-sm font-medium text-slate-900 mt-2'>
@@ -800,7 +800,7 @@ const RoofForGoodCalculator: React.FC<{ building?: Building }> = ({ building }) 
         <div className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6'>
           <div className='flex items-center justify-between'>
             <div className='flex items-center gap-3'>
-              <div className='w-10 h-10 rounded-lg bg-gradient-to-br from-green-600 to-emerald-600 flex items-center justify-center'>
+              <div className='w-10 h-10 rounded-lg bg-gradient-to-br from-[#A1BA53] to-emerald-600 flex items-center justify-center'>
                 <Leaf className='w-6 h-6 text-white' />
               </div>
               <div>
@@ -822,7 +822,7 @@ const RoofForGoodCalculator: React.FC<{ building?: Building }> = ({ building }) 
                   <div
                     key={step}
                     className={`h-2 w-8 rounded-full ${
-                      step <= state.step ? 'bg-blue-600' : 'bg-slate-300'
+                      step <= state.step ? 'bg-[#7DA8CC]' : 'bg-slate-300'
                     }`}
                   />
                 ))}
@@ -862,7 +862,7 @@ const RoofForGoodCalculator: React.FC<{ building?: Building }> = ({ building }) 
                 onClick={() =>
                   showSuccess(t('esg.calculator.reportSaved') || 'Report saved successfully!')
                 }
-                className='px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium transition-all'
+                className='px-8 py-3 bg-[#A1BA53] text-white rounded-lg hover:bg-[#8a9f47] font-medium transition-all'
               >
                 {t('esg.calculator.step4.viewResults') || 'View Results'}
               </button>
@@ -871,7 +871,7 @@ const RoofForGoodCalculator: React.FC<{ building?: Building }> = ({ building }) 
               <button
                 onClick={handleNext}
                 disabled={state.loading}
-                className='flex items-center gap-2 px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-all disabled:bg-slate-400'
+                className='flex items-center gap-2 px-8 py-3 bg-[#7DA8CC] text-white rounded-lg hover:bg-[#6890b3] font-medium transition-all disabled:bg-slate-400'
               >
                 {state.loading ? (
                   <>

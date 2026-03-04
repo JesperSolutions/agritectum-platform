@@ -159,9 +159,9 @@ const CreateServiceAgreementForm: React.FC<CreateServiceAgreementFormProps> = ({
         </div>
 
         <form onSubmit={handleSubmit} className='p-6 space-y-6'>
-          <div className='bg-blue-50 border border-blue-200 rounded-lg p-4 flex gap-3'>
-            <AlertCircle className='w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5' />
-            <div className='text-sm text-blue-900'>
+          <div className='bg-[#7DA8CC]/10 border border-[#7DA8CC]/30 rounded-lg p-4 flex gap-3'>
+            <AlertCircle className='w-5 h-5 text-[#7DA8CC] flex-shrink-0 mt-0.5' />
+            <div className='text-sm text-[#3b5060]'>
               <p className='font-semibold mb-1'>Service Agreement</p>
               <p>Set up a service agreement for your building with one of your added service providers.</p>
             </div>
@@ -172,8 +172,8 @@ const CreateServiceAgreementForm: React.FC<CreateServiceAgreementFormProps> = ({
             <select
               value={selectedBuilding}
               onChange={e => setSelectedBuilding(e.target.value)}
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                errors.building ? 'border-red-300' : 'border-gray-300'
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#7DA8CC] focus:border-transparent ${
+                errors.building ? 'border-[#DA5062]/40' : 'border-gray-300'
               }`}
             >
               <option value=''>Select a building...</option>
@@ -183,14 +183,14 @@ const CreateServiceAgreementForm: React.FC<CreateServiceAgreementFormProps> = ({
                 </option>
               ))}
             </select>
-            {errors.building && <p className='text-sm text-red-600 mt-1'>{errors.building}</p>}
+            {errors.building && <p className='text-sm text-[#DA5062] mt-1'>{errors.building}</p>}
           </div>
 
           <div>
             <label className='block text-sm font-semibold text-gray-900 mb-2'>Service Provider *</label>
 
             {externalProviders.length === 0 ? (
-              <div className='bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-sm text-yellow-800'>
+              <div className='bg-[#DA5062]/10 border border-[#DA5062]/30 rounded-lg p-4 text-sm text-[#872a38]'>
                 <p className='font-semibold mb-2'>No service providers added yet</p>
                 <p>Please add a service provider first by clicking "Add External Provider".</p>
               </div>
@@ -198,8 +198,8 @@ const CreateServiceAgreementForm: React.FC<CreateServiceAgreementFormProps> = ({
               <select
                 value={selectedProvider}
                 onChange={e => setSelectedProvider(e.target.value)}
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                  errors.provider ? 'border-red-300' : 'border-gray-300'
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#7DA8CC] focus:border-transparent ${
+                  errors.provider ? 'border-[#DA5062]/40' : 'border-gray-300'
                 }`}
               >
                 <option value=''>Select service provider...</option>
@@ -210,7 +210,7 @@ const CreateServiceAgreementForm: React.FC<CreateServiceAgreementFormProps> = ({
                 ))}
               </select>
             )}
-            {errors.provider && <p className='text-sm text-red-600 mt-1'>{errors.provider}</p>}
+            {errors.provider && <p className='text-sm text-[#DA5062] mt-1'>{errors.provider}</p>}
           </div>
 
           <div>
@@ -220,11 +220,11 @@ const CreateServiceAgreementForm: React.FC<CreateServiceAgreementFormProps> = ({
               value={agreementTitle}
               onChange={e => setAgreementTitle(e.target.value)}
               placeholder='e.g., Annual Roof Maintenance 2026'
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                errors.title ? 'border-red-300' : 'border-gray-300'
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#7DA8CC] focus:border-transparent ${
+                errors.title ? 'border-[#DA5062]/40' : 'border-gray-300'
               }`}
             />
-            {errors.title && <p className='text-sm text-red-600 mt-1'>{errors.title}</p>}
+            {errors.title && <p className='text-sm text-[#DA5062] mt-1'>{errors.title}</p>}
           </div>
 
           <div>
@@ -232,7 +232,7 @@ const CreateServiceAgreementForm: React.FC<CreateServiceAgreementFormProps> = ({
             <select
               value={agreementType}
               onChange={e => setAgreementType(e.target.value as 'maintenance' | 'other')}
-              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7DA8CC] focus:border-transparent'
             >
               <option value='maintenance'>Maintenance</option>
               <option value='other'>Other</option>
@@ -246,11 +246,11 @@ const CreateServiceAgreementForm: React.FC<CreateServiceAgreementFormProps> = ({
                 type='date'
                 value={startDate}
                 onChange={e => setStartDate(e.target.value)}
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                  errors.startDate ? 'border-red-300' : 'border-gray-300'
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#7DA8CC] focus:border-transparent ${
+                  errors.startDate ? 'border-[#DA5062]/40' : 'border-gray-300'
                 }`}
               />
-              {errors.startDate && <p className='text-sm text-red-600 mt-1'>{errors.startDate}</p>}
+              {errors.startDate && <p className='text-sm text-[#DA5062] mt-1'>{errors.startDate}</p>}
             </div>
             <div>
               <label className='block text-sm font-semibold text-gray-900 mb-2'>End Date *</label>
@@ -258,11 +258,11 @@ const CreateServiceAgreementForm: React.FC<CreateServiceAgreementFormProps> = ({
                 type='date'
                 value={endDate}
                 onChange={e => setEndDate(e.target.value)}
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                  errors.endDate ? 'border-red-300' : 'border-gray-300'
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#7DA8CC] focus:border-transparent ${
+                  errors.endDate ? 'border-[#DA5062]/40' : 'border-gray-300'
                 }`}
               />
-              {errors.endDate && <p className='text-sm text-red-600 mt-1'>{errors.endDate}</p>}
+              {errors.endDate && <p className='text-sm text-[#DA5062] mt-1'>{errors.endDate}</p>}
             </div>
           </div>
 
@@ -274,7 +274,7 @@ const CreateServiceAgreementForm: React.FC<CreateServiceAgreementFormProps> = ({
                 value={price}
                 onChange={e => setPrice(e.target.value)}
                 placeholder='e.g., 5000'
-                className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7DA8CC] focus:border-transparent'
                 step='0.01'
                 min='0'
               />
@@ -284,7 +284,7 @@ const CreateServiceAgreementForm: React.FC<CreateServiceAgreementFormProps> = ({
               <select
                 value={currency}
                 onChange={e => setCurrency(e.target.value)}
-                className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7DA8CC] focus:border-transparent'
               >
                 <option value='DKK'>DKK</option>
                 <option value='EUR'>EUR</option>
@@ -302,7 +302,7 @@ const CreateServiceAgreementForm: React.FC<CreateServiceAgreementFormProps> = ({
               onChange={e => setDescription(e.target.value)}
               placeholder='Additional details about this service agreement...'
               rows={3}
-              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7DA8CC] focus:border-transparent'
             />
           </div>
 
@@ -318,7 +318,7 @@ const CreateServiceAgreementForm: React.FC<CreateServiceAgreementFormProps> = ({
             <button
               type='submit'
               disabled={submitting}
-              className='flex-1 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold disabled:opacity-50 flex items-center justify-center gap-2'
+              className='flex-1 px-6 py-2 bg-[#7DA8CC] text-white rounded-lg hover:bg-[#6890b3] font-semibold disabled:opacity-50 flex items-center justify-center gap-2'
             >
               {submitting ? (
                 <>

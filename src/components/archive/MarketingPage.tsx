@@ -61,13 +61,13 @@ const MarketingPage: React.FC = () => {
   };
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100'>
+    <div className='min-h-screen bg-gradient-to-br from-[#7DA8CC]/10 to-indigo-100'>
       {/* Header */}
       <header className='fixed top-0 w-full bg-white/95 backdrop-blur-sm shadow-sm z-50'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='flex justify-between items-center py-4'>
             <div className='flex items-center space-x-3'>
-              <Building2 className='h-8 w-8 text-blue-600' />
+              <Building2 className='h-8 w-8 text-[#7DA8CC]' />
               <div>
                 <h1 className='text-2xl font-bold text-gray-900'>{t('marketing.brand.name')}</h1>
                 <p className='text-sm text-gray-600'>{t('marketing.brand.tagline')}</p>
@@ -91,7 +91,7 @@ const MarketingPage: React.FC = () => {
             key={index}
             onClick={() => scrollToSection(index)}
             className={`w-3 h-3 rounded-full transition-all duration-300 ${
-              activeSection === index ? 'bg-blue-600 scale-125' : 'bg-gray-300 hover:bg-gray-400'
+              activeSection === index ? 'bg-[#7DA8CC] scale-125' : 'bg-gray-300 hover:bg-gray-400'
             }`}
           />
         ))}
@@ -103,7 +103,7 @@ const MarketingPage: React.FC = () => {
         className='min-h-screen flex items-center justify-center pt-20 relative overflow-hidden'
       >
         {/* Background Pattern */}
-        <div className='absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-indigo-50'></div>
+        <div className='absolute inset-0 bg-gradient-to-br from-[#7DA8CC]/10 via-white to-indigo-50'></div>
         <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%233b82f6%22%20fill-opacity%3D%220.05%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%222%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-40"></div>
 
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10'>
@@ -111,14 +111,14 @@ const MarketingPage: React.FC = () => {
             className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
           >
             {/* Badge */}
-            <div className='inline-flex items-center px-4 py-2 rounded-full bg-green-100 text-green-800 text-sm font-medium mb-8'>
+            <div className='inline-flex items-center px-4 py-2 rounded-full bg-[#A1BA53]/15 text-[#5c6a2f] text-sm font-medium mb-8'>
               <CheckCircle className='h-4 w-4 mr-2' />
               Production Ready Platform
             </div>
 
             <h1 className='text-6xl md:text-7xl font-bold text-gray-900 mb-8 leading-tight'>
               Revolutionise Roof
-              <span className='text-blue-600 block'>Inspection Management</span>
+              <span className='text-[#7DA8CC] block'>Inspection Management</span>
             </h1>
             <p className='text-xl md:text-2xl text-gray-600 mb-8 max-w-4xl mx-auto leading-relaxed'>
               Multi-branch operations • ESG reporting • Offline-first capabilities
@@ -131,7 +131,7 @@ const MarketingPage: React.FC = () => {
             <div className='flex flex-col sm:flex-row justify-center gap-4 mb-16'>
               <Link
                 to='/dashboard'
-                className='inline-flex items-center px-8 py-4 border border-transparent text-lg font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg'
+                className='inline-flex items-center px-8 py-4 border border-transparent text-lg font-medium rounded-lg text-white bg-[#7DA8CC] hover:bg-[#6890b3] transition-all duration-300 transform hover:scale-105 shadow-lg'
               >
                 Schedule a Demo
                 <ArrowRight className='ml-2 h-5 w-5' />
@@ -145,15 +145,15 @@ const MarketingPage: React.FC = () => {
             {/* Key Metrics */}
             <div className='grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto'>
               <div className='text-center'>
-                <div className='text-3xl font-bold text-blue-600 mb-2'>40%</div>
+                <div className='text-3xl font-bold text-[#7DA8CC] mb-2'>40%</div>
                 <div className='text-gray-600'>Faster Reports</div>
               </div>
               <div className='text-center'>
-                <div className='text-3xl font-bold text-green-600 mb-2'>25%</div>
+                <div className='text-3xl font-bold text-[#A1BA53] mb-2'>25%</div>
                 <div className='text-gray-600'>Higher Acceptance</div>
               </div>
               <div className='text-center'>
-                <div className='text-3xl font-bold text-purple-600 mb-2'>100%</div>
+                <div className='text-3xl font-bold text-[#956098] mb-2'>100%</div>
                 <div className='text-gray-600'>GDPR Compliant</div>
               </div>
             </div>
@@ -165,7 +165,7 @@ const MarketingPage: React.FC = () => {
       <footer className='bg-gray-900 text-white py-12'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center'>
           <div className='flex items-center justify-center space-x-3 mb-4'>
-            <Building2 className='h-8 w-8 text-blue-400' />
+            <Building2 className='h-8 w-8 text-[#90b8d4]' />
             <span className='text-2xl font-bold'>Taklaget Service</span>
           </div>
           <p className='text-gray-400 mb-6'>

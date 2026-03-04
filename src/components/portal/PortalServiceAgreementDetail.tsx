@@ -67,14 +67,14 @@ const PortalServiceAgreementDetail: React.FC = () => {
   if (error || !agreement) {
     return (
       <div className='max-w-4xl mx-auto px-4 py-8'>
-        <div className='bg-red-50 border border-red-200 rounded-lg p-6 text-center'>
-          <h2 className='text-xl font-semibold text-red-800 mb-2'>
+        <div className='bg-[#DA5062]/10 border border-[#DA5062]/30 rounded-lg p-6 text-center'>
+          <h2 className='text-xl font-semibold text-[#872a38] mb-2'>
             {t('serviceAgreement.errorLoading') || 'Error Loading Service Agreement'}
           </h2>
-          <p className='text-red-600 mb-4'>{error}</p>
+          <p className='text-[#DA5062] mb-4'>{error}</p>
           <button
             onClick={() => navigate('/portal/service-agreements')}
-            className='px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700'
+            className='px-4 py-2 bg-[#DA5062] text-white rounded-lg hover:bg-[#c23d4f]'
           >
             {t('common.buttons.back') || 'Back to Service Agreements'}
           </button>
@@ -201,7 +201,7 @@ const PortalServiceAgreementDetail: React.FC = () => {
             <div className='space-y-2'>
               {agreement.serviceVisits.oneAnnual && (
                 <div className='flex items-center gap-2'>
-                  <CheckCircle className='w-5 h-5 text-green-600' />
+                  <CheckCircle className='w-5 h-5 text-[#A1BA53]' />
                   <span className='text-slate-700'>
                     {t('serviceAgreement.form.services.oneAnnual') || '1 årligt servicebesøg'}
                   </span>
@@ -209,7 +209,7 @@ const PortalServiceAgreementDetail: React.FC = () => {
               )}
               {agreement.serviceVisits.twoAnnual && (
                 <div className='flex items-center gap-2'>
-                  <CheckCircle className='w-5 h-5 text-green-600' />
+                  <CheckCircle className='w-5 h-5 text-[#A1BA53]' />
                   <span className='text-slate-700'>
                     {t('serviceAgreement.form.services.twoAnnual') ||
                       '2 årlige servicebesøg'}
@@ -229,7 +229,7 @@ const PortalServiceAgreementDetail: React.FC = () => {
           <div className='space-y-2'>
             {agreement.standardServices.map((service, index) => (
               <div key={index} className='flex items-center gap-2'>
-                <CheckCircle className='w-5 h-5 text-green-600' />
+                <CheckCircle className='w-5 h-5 text-[#A1BA53]' />
                 <span className='text-slate-700'>
                   {t(`serviceAgreement.form.services.${service}`) || service}
                 </span>
@@ -285,14 +285,14 @@ const PortalServiceAgreementDetail: React.FC = () => {
 
       {/* Acceptance Status */}
       {agreement.acceptedAt && (
-        <div className='bg-green-50 rounded-lg border border-green-200 p-6'>
-          <div className='flex items-center gap-2 text-green-800'>
+        <div className='bg-[#A1BA53]/10 rounded-lg border border-[#A1BA53]/30 p-6'>
+          <div className='flex items-center gap-2 text-[#5c6a2f]'>
             <CheckCircle className='w-5 h-5' />
             <p className='font-semibold'>
               {t('serviceAgreement.public.accepted') || 'Serviceaftale accepteret'}
             </p>
           </div>
-          <p className='mt-2 text-sm text-green-700'>
+          <p className='mt-2 text-sm text-[#73853b]'>
             {t('serviceAgreement.detail.acceptedOn') || 'Accepteret den'}{' '}
             {formatDate(agreement.acceptedAt)}
             {agreement.acceptedBy &&

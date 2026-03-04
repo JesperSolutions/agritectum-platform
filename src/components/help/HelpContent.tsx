@@ -169,10 +169,10 @@ interface InfoBoxProps {
 
 const variantConfig = {
   info: {
-    bg: 'bg-blue-50',
-    border: 'border-blue-200',
-    text: 'text-blue-800',
-    icon: 'text-blue-600',
+    bg: 'bg-[#7DA8CC]/10',
+    border: 'border-[#7DA8CC]/30',
+    text: 'text-[#476279]',
+    icon: 'text-[#7DA8CC]',
   },
   warning: {
     bg: 'bg-amber-50',
@@ -187,10 +187,10 @@ const variantConfig = {
     icon: 'text-cyan-600',
   },
   success: {
-    bg: 'bg-green-50',
-    border: 'border-green-200',
-    text: 'text-green-800',
-    icon: 'text-green-600',
+    bg: 'bg-[#A1BA53]/10',
+    border: 'border-[#A1BA53]/30',
+    text: 'text-[#5c6a2f]',
+    icon: 'text-[#A1BA53]',
   },
 };
 
@@ -259,7 +259,7 @@ export const HelpPanel: React.FC<HelpPanelProps> = ({ title, sections }) => {
           return (
             <div key={index}>
               <div className='flex items-start gap-2 mb-1'>
-                {Icon && <Icon className='w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5' />}
+                {Icon && <Icon className='w-4 h-4 text-[#7DA8CC] flex-shrink-0 mt-0.5' />}
                 <h4 className='text-xs font-semibold text-gray-900'>{section.heading}</h4>
               </div>
               <p className='text-xs text-gray-600 leading-relaxed'>{section.content}</p>

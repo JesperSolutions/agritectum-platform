@@ -1977,8 +1977,8 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
               {currentStep === 4 && t('form.sections.recommendedActions')}
             </div>
             {/* Step-specific help text */}
-            <div className='mt-2 text-xs text-slate-500 bg-blue-50 p-2 rounded-md border border-blue-100'>
-              <span className='font-medium text-blue-700'>💡 </span>
+            <div className='mt-2 text-xs text-slate-500 bg-[#7DA8CC]/10 p-2 rounded-md border border-[#7DA8CC]/20'>
+              <span className='font-medium text-[#6890b3]'>💡 </span>
               {currentStep === 1 && t('form.help.step1')}
               {currentStep === 2 && t('form.help.step2')}
               {currentStep === 3 && t('form.help.step3')}
@@ -1989,16 +1989,16 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
 
         {/* Error Message */}
         {error && (
-          <div className='mb-6 bg-red-50 border border-red-200 rounded-lg p-4'>
+          <div className='mb-6 bg-[#DA5062]/10 border border-[#DA5062]/30 rounded-lg p-4'>
             <div className='flex'>
-              <AlertTriangle className='w-5 h-5 text-red-400 flex-shrink-0' />
+              <AlertTriangle className='w-5 h-5 text-[#e47886] flex-shrink-0' />
               <div className='ml-3'>
-                <h3 className='text-sm font-medium text-red-800'>{error}</h3>
+                <h3 className='text-sm font-medium text-[#872a38]'>{error}</h3>
                 {/* Add contextual guidance based on error type */}
                 {error.includes(
                   t('form.validation.permissionDeniedDetailed')?.substring(0, 20) || 'permission'
                 ) && (
-                  <p className='text-xs text-red-600 mt-1'>
+                  <p className='text-xs text-[#DA5062] mt-1'>
                     {t('form.errors.sessionExpired') ||
                       'Try logging out and back in, or contact your administrator.'}
                   </p>
@@ -2006,7 +2006,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                 {error.includes(
                   t('form.validation.networkErrorDetailed')?.substring(0, 20) || 'network'
                 ) && (
-                  <p className='text-xs text-red-600 mt-1'>
+                  <p className='text-xs text-[#DA5062] mt-1'>
                     {t('form.errors.connectionLost') ||
                       'Check your internet connection and try again.'}
                   </p>
@@ -2018,17 +2018,17 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
 
         {/* Validation Errors Summary */}
         {Object.keys(validationErrors).length > 0 && (
-          <div className='mb-6 bg-red-50 border border-red-200 rounded-lg p-4'>
+          <div className='mb-6 bg-[#DA5062]/10 border border-[#DA5062]/30 rounded-lg p-4'>
             <div className='flex'>
-              <AlertTriangle className='w-5 h-5 text-red-400 flex-shrink-0' />
+              <AlertTriangle className='w-5 h-5 text-[#e47886] flex-shrink-0' />
               <div className='ml-3 flex-1'>
-                <h3 className='text-sm font-medium text-red-800'>
+                <h3 className='text-sm font-medium text-[#872a38]'>
                   {t('form.validation.summaryTitle')}
                 </h3>
-                <p className='text-sm text-red-700 mt-1'>
+                <p className='text-sm text-[#c23d4f] mt-1'>
                   {t('form.validation.summaryGuidance') || t('form.validation.summaryDescription')}
                 </p>
-                <ul className='mt-3 text-sm text-red-700 space-y-2'>
+                <ul className='mt-3 text-sm text-[#c23d4f] space-y-2'>
                   {Object.entries(validationErrors).map(([field, message]) => {
                     // Get field-specific guidance
                     const guidanceKey = `form.validation.${field}Guidance`;
@@ -2037,11 +2037,11 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
 
                     return (
                       <li key={field} className='flex items-start'>
-                        <span className='text-red-500 mr-2 mt-0.5'>•</span>
+                        <span className='text-[#DA5062] mr-2 mt-0.5'>•</span>
                         <div>
                           <span className='font-medium'>{message}</span>
                           {hasGuidance && (
-                            <p className='text-xs text-red-600 mt-0.5 italic'>{guidance}</p>
+                            <p className='text-xs text-[#DA5062] mt-0.5 italic'>{guidance}</p>
                           )}
                         </div>
                       </li>
@@ -2127,11 +2127,11 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
 
               {/* Selected Customer Info Banner */}
               {customerIdForBuildings && (
-                <div className='mb-6 p-4 bg-green-50 rounded-lg border border-green-200'>
+                <div className='mb-6 p-4 bg-[#A1BA53]/10 rounded-lg border border-[#A1BA53]/30'>
                   <div className='flex items-center justify-between'>
                     <div className='flex items-center'>
-                      <CheckCircle className='w-5 h-5 text-green-600 mr-2' />
-                      <span className='text-sm font-medium text-green-800'>
+                      <CheckCircle className='w-5 h-5 text-[#A1BA53] mr-2' />
+                      <span className='text-sm font-medium text-[#5c6a2f]'>
                         {t('form.customerSearch.existingCustomer') || 'Eksisterende kunde valgt'}:{' '}
                         {formData.customerName}
                       </span>
@@ -2144,7 +2144,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                         setSelectedBuildingId(null);
                         resetFormToInitial();
                       }}
-                      className='text-sm text-green-700 hover:text-green-900 underline'
+                      className='text-sm text-[#73853b] hover:text-[#445023] underline'
                     >
                       {t('form.customerSearch.clearSelection') || 'Ryd valg'}
                     </button>
@@ -2230,7 +2230,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                         clearFieldError('customerPhone');
                       }}
                       inputClassName={`w-full h-10 leading-10 py-0 rounded-lg border focus:ring-2 focus:ring-slate-600 focus:border-slate-600 ${
-                        validationErrors.customerPhone ? 'border-red-500' : 'border-slate-300'
+                        validationErrors.customerPhone ? 'border-[#DA5062]' : 'border-slate-300'
                       }`}
                       countrySelectorStyleProps={{
                         buttonClassName:
@@ -2302,7 +2302,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                             }}
                             className={`p-4 rounded-lg border-2 transition-all text-left ${
                               selectedBuildingId === building.id && !isCreatingNewBuilding
-                                ? 'border-green-500 bg-green-50 shadow-lg'
+                                ? 'border-[#A1BA53] bg-[#A1BA53]/10 shadow-lg'
                                 : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-md'
                             }`}
                           >
@@ -2313,12 +2313,12 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                                 </p>
                                 <div className='mt-2 flex flex-wrap gap-2'>
                                   {building.roofType && (
-                                    <span className='inline-block px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded'>
+                                    <span className='inline-block px-2 py-1 text-xs bg-[#7DA8CC]/15 text-[#6890b3] rounded'>
                                       {building.roofType}
                                     </span>
                                   )}
                                   {building.roofSize && (
-                                    <span className='inline-block px-2 py-1 text-xs bg-purple-100 text-purple-700 rounded'>
+                                    <span className='inline-block px-2 py-1 text-xs bg-[#956098]/15 text-[#69436c] rounded'>
                                       {building.roofSize} m²
                                     </span>
                                   )}
@@ -2326,7 +2326,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                               </div>
                               {selectedBuildingId === building.id && !isCreatingNewBuilding && (
                                 <div className='ml-2 flex-shrink-0'>
-                                  <div className='flex items-center justify-center w-5 h-5 rounded-full bg-green-500 text-white'>
+                                  <div className='flex items-center justify-center w-5 h-5 rounded-full bg-[#A1BA53] text-white'>
                                     <svg
                                       className='w-3 h-3'
                                       fill='currentColor'
@@ -2354,15 +2354,15 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                           }}
                           className={`p-4 rounded-lg border-2 transition-all flex flex-col items-center justify-center min-h-[120px] ${
                             isCreatingNewBuilding
-                              ? 'border-blue-500 bg-blue-50 shadow-lg'
+                              ? 'border-[#7DA8CC] bg-[#7DA8CC]/10 shadow-lg'
                               : 'border-dashed border-slate-300 bg-slate-50 hover:border-slate-400 hover:bg-slate-100'
                           }`}
                         >
                           <Plus
-                            className={`w-6 h-6 mb-2 ${isCreatingNewBuilding ? 'text-blue-600' : 'text-slate-500'}`}
+                            className={`w-6 h-6 mb-2 ${isCreatingNewBuilding ? 'text-[#7DA8CC]' : 'text-slate-500'}`}
                           />
                           <span
-                            className={`text-sm font-medium ${isCreatingNewBuilding ? 'text-blue-700' : 'text-slate-700'}`}
+                            className={`text-sm font-medium ${isCreatingNewBuilding ? 'text-[#6890b3]' : 'text-slate-700'}`}
                           >
                             {t('form.fields.createNewBuildingSection') || 'Add New Building'}
                           </span>
@@ -2372,7 +2372,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
 
                     {/* Create New Building Form - Shows when user clicks Add New Building card */}
                     {isCreatingNewBuilding && (
-                      <div className='mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200 space-y-3'>
+                      <div className='mt-6 p-4 bg-[#7DA8CC]/10 rounded-lg border border-[#7DA8CC]/30 space-y-3'>
                         <div>
                           <label className='block text-sm font-medium text-slate-700 mb-2'>
                             {t('form.fields.buildingAddress')} *
@@ -2822,7 +2822,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                           setDefectFlowStep('camera');
                           setDraftDefect({});
                         }}
-                        className='inline-flex items-center justify-center px-6 sm:px-8 py-4 sm:py-3 border border-transparent text-lg sm:text-base font-semibold rounded-xl text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 min-h-[56px] sm:min-h-[52px]'
+                        className='inline-flex items-center justify-center px-6 sm:px-8 py-4 sm:py-3 border border-transparent text-lg sm:text-base font-semibold rounded-xl text-white bg-[#7DA8CC] hover:bg-[#6890b3] focus:outline-none focus:ring-4 focus:ring-[#7DA8CC]/40 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 min-h-[56px] sm:min-h-[52px]'
                       >
                         <Camera className='w-6 h-6 sm:w-5 sm:h-5 mr-3 sm:mr-2 flex-shrink-0' />
                         <span className='whitespace-nowrap'>
@@ -2856,9 +2856,9 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                         <div
                           className={`flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all ${
                             defectFlowStep === 'camera'
-                              ? 'bg-blue-600 border-blue-600 text-white'
+                              ? 'bg-[#7DA8CC] border-[#7DA8CC] text-white'
                               : defectFlowStep === 'describe'
-                                ? 'bg-green-500 border-green-500 text-white'
+                                ? 'bg-[#A1BA53] border-[#A1BA53] text-white'
                                 : 'bg-slate-100 border-slate-300 text-slate-400'
                           }`}
                         >
@@ -2872,7 +2872,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                         </div>
                         <span
                           className={`hidden sm:block text-sm font-medium ${
-                            defectFlowStep === 'camera' ? 'text-blue-600' : 'text-slate-600'
+                            defectFlowStep === 'camera' ? 'text-[#7DA8CC]' : 'text-slate-600'
                           }`}
                         >
                           {t('form.defectFlow.step.camera') || 'Take Photo'}
@@ -2882,7 +2882,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                       {/* Connector Line */}
                       <div
                         className={`h-0.5 w-8 sm:w-16 transition-all ${
-                          defectFlowStep === 'describe' ? 'bg-green-500' : 'bg-slate-300'
+                          defectFlowStep === 'describe' ? 'bg-[#A1BA53]' : 'bg-slate-300'
                         }`}
                       />
 
@@ -2891,7 +2891,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                         <div
                           className={`flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all ${
                             defectFlowStep === 'describe'
-                              ? 'bg-blue-600 border-blue-600 text-white'
+                              ? 'bg-[#7DA8CC] border-[#7DA8CC] text-white'
                               : 'bg-slate-100 border-slate-300 text-slate-400'
                           }`}
                         >
@@ -2903,7 +2903,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                         </div>
                         <span
                           className={`hidden sm:block text-sm font-medium ${
-                            defectFlowStep === 'describe' ? 'text-blue-600' : 'text-slate-600'
+                            defectFlowStep === 'describe' ? 'text-[#7DA8CC]' : 'text-slate-600'
                           }`}
                         >
                           {t('form.defectFlow.step.describe') || 'Describe'}
@@ -2929,8 +2929,8 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
 
                 {/* Defect Flow: Map Step - Pin Placement */}
                 {defectFlowStep === 'map' && draftDefect?.image && (
-                  <div className='mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4'>
-                    <p className='text-sm text-blue-800 mb-4 text-center'>
+                  <div className='mb-6 bg-[#7DA8CC]/10 border border-[#7DA8CC]/30 rounded-lg p-4'>
+                    <p className='text-sm text-[#476279] mb-4 text-center'>
                       {t('form.instructions.pinPlacement') ||
                         'Click on the roof where the problem is'}
                     </p>
@@ -3116,9 +3116,9 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
 
                 {/* Repeat loop: Show "Take Next Photo" after successful save */}
                 {defectFlowStep === 'idle' && showRepeatOption && (
-                  <div className='mb-6 bg-green-50 border border-green-200 rounded-lg p-4'>
+                  <div className='mb-6 bg-[#A1BA53]/10 border border-[#A1BA53]/30 rounded-lg p-4'>
                     <div className='flex items-center justify-between'>
-                      <p className='text-sm text-green-800'>
+                      <p className='text-sm text-[#5c6a2f]'>
                         {t('form.messages.defectSaved') || 'Defect saved'}
                       </p>
                       <button
@@ -3128,7 +3128,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                           setDraftDefect({});
                           setShowRepeatOption(false);
                         }}
-                        className='inline-flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 font-semibold min-h-[52px]'
+                        className='inline-flex items-center gap-2 px-6 py-3 bg-[#A1BA53] text-white rounded-xl hover:bg-[#8a9f47] focus:outline-none focus:ring-4 focus:ring-[#A1BA53]/40 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 font-semibold min-h-[52px]'
                       >
                         <Camera className='w-5 h-5' />
                         {t('form.buttons.takeNextPhoto') || 'Take Next Photo'}
@@ -3227,7 +3227,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                       <button
                         type='button'
                         onClick={() => removeIssue(index)}
-                        className='text-red-600 hover:text-red-800 transition-colors'
+                        className='text-[#DA5062] hover:text-[#872a38] transition-colors'
                       >
                         <Trash2 className='w-4 h-4' />
                       </button>
@@ -3243,13 +3243,13 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                         onChange={e => updateIssue(index, { title: e.target.value })}
                         onBlur={() => validateStep(currentStep)}
                         className={`block w-full text-sm border-slate-300 rounded-lg shadow-sm focus:ring-slate-500 focus:border-slate-500 ${
-                          validationErrors[`issue_${index}_title`] ? 'border-red-300' : ''
+                          validationErrors[`issue_${index}_title`] ? 'border-[#DA5062]/40' : ''
                         }`}
                         placeholder={t('form.fields.issueTitlePlaceholder')}
                         required
                       />
                       {validationErrors[`issue_${index}_title`] && (
-                        <p className='mt-1 text-sm text-red-600'>
+                        <p className='mt-1 text-sm text-[#DA5062]'>
                           {validationErrors[`issue_${index}_title`]}
                         </p>
                       )}
@@ -3316,7 +3316,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                         rows={2}
                         value={issue.description}
                         onChange={e => updateIssue(index, { description: e.target.value })}
-                        className='block w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500'
+                        className='block w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-[#7DA8CC] focus:border-[#7DA8CC]'
                         placeholder='Detailed description of the issue...'
                       />
                     </div>
@@ -3381,7 +3381,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                       <button
                         type='button'
                         onClick={() => removeRecommendedAction(index)}
-                        className='text-red-600 hover:text-red-800 transition-colors'
+                        className='text-[#DA5062] hover:text-[#872a38] transition-colors'
                       >
                         <Trash2 className='w-4 h-4' />
                       </button>
@@ -3465,7 +3465,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                         onChange={e =>
                           updateRecommendedAction(index, { description: e.target.value })
                         }
-                        className='block w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500'
+                        className='block w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-[#7DA8CC] focus:border-[#7DA8CC]'
                         placeholder={t('form.fields.actionDescriptionPlaceholder')}
                       />
                     </div>
@@ -3505,7 +3505,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                         const value = e.target.value ? parseFloat(e.target.value) : undefined;
                         setFormData(prev => ({ ...prev, laborCost: value }));
                       }}
-                      className='block w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500'
+                      className='block w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-[#7DA8CC] focus:border-[#7DA8CC]'
                       placeholder='0'
                       min='0'
                       step='100'
@@ -3523,7 +3523,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                         const value = e.target.value ? parseFloat(e.target.value) : undefined;
                         setFormData(prev => ({ ...prev, materialCost: value }));
                       }}
-                      className='block w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500'
+                      className='block w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-[#7DA8CC] focus:border-[#7DA8CC]'
                       placeholder='0'
                       min='0'
                       step='100'
@@ -3541,7 +3541,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                         const value = e.target.value ? parseFloat(e.target.value) : undefined;
                         setFormData(prev => ({ ...prev, travelCost: value }));
                       }}
-                      className='block w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500'
+                      className='block w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-[#7DA8CC] focus:border-[#7DA8CC]'
                       placeholder='0'
                       min='0'
                       step='100'
@@ -3559,7 +3559,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                         const value = e.target.value ? parseFloat(e.target.value) : undefined;
                         setFormData(prev => ({ ...prev, overheadCost: value }));
                       }}
-                      className='block w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500'
+                      className='block w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-[#7DA8CC] focus:border-[#7DA8CC]'
                       placeholder='0'
                       min='0'
                       step='100'
@@ -3666,7 +3666,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                 <button
                   type='button'
                   onClick={handleDeleteDraft}
-                  className='px-4 py-2 border border-red-300 rounded-lg shadow-sm text-sm font-medium text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500'
+                  className='px-4 py-2 border border-[#DA5062]/40 rounded-lg shadow-sm text-sm font-medium text-[#c23d4f] bg-white hover:bg-[#DA5062]/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#DA5062]'
                 >
                   {t('form.buttons.deleteDraft')}
                 </button>
@@ -3749,8 +3749,8 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
           <div className='fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50'>
             <div className='relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white'>
               <div className='mt-3 text-center'>
-                <div className='mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100'>
-                  <AlertTriangle className='h-6 w-6 text-yellow-600' />
+                <div className='mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-[#DA5062]/15'>
+                  <AlertTriangle className='h-6 w-6 text-[#DA5062]' />
                 </div>
                 <h3 className='text-lg font-medium text-gray-900 mt-4'>
                   {t('form.dialogs.discardChanges')}
@@ -3767,7 +3767,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                   </button>
                   <button
                     onClick={confirmCancel}
-                    className='px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500'
+                    className='px-4 py-2 bg-[#DA5062] text-white rounded-lg hover:bg-[#c23d4f] transition-colors text-sm font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-[#DA5062]'
                   >
                     {t('form.buttons.discardChanges')}
                   </button>
@@ -3782,8 +3782,8 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
           <div className='fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50'>
             <div className='relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white'>
               <div className='mt-3 text-center'>
-                <div className='mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100'>
-                  <Trash2 className='h-6 w-6 text-red-600' />
+                <div className='mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-[#DA5062]/15'>
+                  <Trash2 className='h-6 w-6 text-[#DA5062]' />
                 </div>
                 <h3 className='text-lg font-medium text-gray-900 mt-4'>
                   {t('form.dialogs.deleteDraft')}
@@ -3800,7 +3800,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                   </button>
                   <button
                     onClick={confirmDeleteDraft}
-                    className='px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500'
+                    className='px-4 py-2 bg-[#DA5062] text-white rounded-lg hover:bg-[#c23d4f] transition-colors text-sm font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-[#DA5062]'
                   >
                     {t('form.buttons.deleteDraft')}
                   </button>

@@ -218,26 +218,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       if (firebaseUser) {
         try {
-          // Wait for claims to propagate with retry logic
-          const claims = await waitForClaims(firebaseUser);
+          // Try to wait for claims, but don't fail if they're not set
+          // parseUserFromFirebase has a Firestore fallback
+          try {
+            await waitForClaims(firebaseUser);
+          } catch (error: any) {
+            const { logger } = await import('../utils/logger');
+            logger.warn('Claims not yet propagated, using Firestore fallback', { 
+              uid: firebaseUser.uid 
+            });
+            // Continue anyway - parseUserFromFirebase will use Firestore fallback
+          }
 
           const user = await parseUserFromFirebase(firebaseUser);
           setCurrentUser(user);
           setFirebaseUser(firebaseUser);
         } catch (error: any) {
           const { logger } = await import('../utils/logger');
-          
-          if (error.message?.includes('Claims not propagated')) {
-            logger.error('Missing permissionLevel claim after retries', { uid: firebaseUser.uid });
-            // Sign out user if claims never arrive
-            await signOut(auth);
-            setCurrentUser(null);
-            setFirebaseUser(null);
-          } else {
-            logger.error('Error parsing user:', error);
-            setCurrentUser(null);
-            setFirebaseUser(null);
-          }
+          logger.error('Error parsing user:', error);
+          // Don't sign out - let the user stay logged in but show them an error
+          setCurrentUser(null);
+          setFirebaseUser(null);
         }
       } else {
         setCurrentUser(null);

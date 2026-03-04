@@ -15,7 +15,7 @@ const DevModeIndicator: React.FC = () => {
 
   return (
     <div className='fixed bottom-4 right-4 z-50'>
-      <div className='bg-gradient-to-r from-yellow-400 to-orange-500 text-black px-4 py-2 rounded-lg shadow-lg border-2 border-yellow-600'>
+      <div className='bg-gradient-to-r from-[#DA5062] to-[#DA5062] text-black px-4 py-2 rounded-lg shadow-lg border-2 border-[#DA5062]'>
         <div className='flex items-center space-x-2'>
           <div className='animate-pulse'>
             <svg className='w-4 h-4' fill='currentColor' viewBox='0 0 20 20'>

@@ -176,10 +176,10 @@ export const PulseIndicator: React.FC<PulseIndicatorProps> = ({
   size = 'md',
 }) => {
   const colorStyles = {
-    green: 'bg-green-500',
-    yellow: 'bg-yellow-500',
-    red: 'bg-red-500',
-    blue: 'bg-blue-500',
+    green: 'bg-[#A1BA53]/100',
+    yellow: 'bg-[#DA5062]',
+    red: 'bg-[#DA5062]',
+    blue: 'bg-[#7DA8CC]',
     slate: 'bg-slate-500',
   };
 
@@ -298,10 +298,10 @@ export const AnimatedBadge: React.FC<AnimatedBadgeProps> = ({
 }) => {
   const variantStyles = {
     default: 'bg-slate-100 text-slate-700 border-slate-200',
-    success: 'bg-green-50 text-green-700 border-green-200',
-    warning: 'bg-yellow-50 text-yellow-700 border-yellow-200',
-    danger: 'bg-red-50 text-red-700 border-red-200',
-    info: 'bg-blue-50 text-blue-700 border-blue-200',
+    success: 'bg-[#A1BA53]/15 text-[#5c6a2f] border-[#A1BA53]/30',
+    warning: 'bg-[#DA5062]/10 text-[#872a38] border-[#DA5062]/20',
+    danger: 'bg-[#DA5062]/15 text-[#872a38] border-[#DA5062]/30',
+    info: 'bg-[#7DA8CC]/15 text-[#476279] border-[#7DA8CC]/30',
   };
 
   return (

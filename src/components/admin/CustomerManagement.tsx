@@ -552,7 +552,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
     return (
       <div className='min-h-screen bg-slate-50 flex items-center justify-center'>
         <div className='text-center'>
-          <div className='text-red-600 text-6xl mb-4'>🚫</div>
+          <div className='text-[#DA5062] text-6xl mb-4'>🚫</div>
           <h2 className='text-2xl font-bold text-slate-900 mb-2'>{t('errors.access.denied')}</h2>
           <p className='text-slate-600'>{t('errors.access.deniedMessage')}</p>
         </div>
@@ -668,7 +668,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
               {activeFilterCount > 0 && (
                 <button
                   onClick={clearFilters}
-                  className='px-3 py-1.5 text-sm rounded-md bg-red-100 text-red-700 hover:bg-red-200 transition-colors'
+                  className='px-3 py-1.5 text-sm rounded-md bg-[#DA5062]/15 text-[#c23d4f] hover:bg-[#DA5062]/25 transition-colors'
                 >
                   {t('customer.filters.clearFilters')} ({activeFilterCount})
                 </button>
@@ -679,11 +679,11 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
             <div className='flex items-center justify-between pt-2 border-t border-slate-200'>
               <button
                 onClick={() => setShowFilters(!showFilters)}
-                className='text-sm text-blue-600 hover:text-blue-800 font-medium'
+                className='text-sm text-[#7DA8CC] hover:text-[#476279] font-medium'
               >
                 {showFilters ? '▼' : '▶'} {t('customer.filters.advancedFilters')}
                 {activeFilterCount > 0 && (
-                  <span className='ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800'>
+                  <span className='ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-[#7DA8CC]/15 text-[#476279]'>
                     {activeFilterCount}
                   </span>
                 )}
@@ -751,7 +751,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                   {filterParentCompany && filterParentCompany !== 'none' && (
                     <button
                       onClick={() => setFilterParentCompany(null)}
-                      className='mt-1 text-xs text-blue-600 hover:text-blue-800'
+                      className='mt-1 text-xs text-[#7DA8CC] hover:text-[#476279]'
                     >
                       Rensa filter
                     </button>
@@ -770,7 +770,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                 <select
                   value={sortBy}
                   onChange={e => setSortBy(e.target.value)}
-                  className='w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
+                  className='w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7DA8CC]'
                 >
                   <option value='name'>{t('customer.name')}</option>
                   <option value='totalRevenue'>{t('dashboard.revenue')}</option>
@@ -787,7 +787,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                 <select
                   value={sortOrder}
                   onChange={e => setSortOrder(e.target.value as 'asc' | 'desc')}
-                  className='w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
+                  className='w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7DA8CC]'
                 >
                   <option value='asc'>{t('customer.sortOrderAscending')}</option>
                   <option value='desc'>{t('customer.sortOrderDescending')}</option>
@@ -800,30 +800,30 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
         {/* Loading State */}
         {loading && (
           <div className='flex items-center justify-center py-12'>
-            <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600'></div>
+            <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-[#7DA8CC]'></div>
             <span className='ml-3 text-slate-600'>Loading customers...</span>
           </div>
         )}
 
         {/* Error State */}
         {error && (
-          <div className='bg-red-50 border border-red-200 rounded-md p-4 mb-6'>
+          <div className='bg-[#DA5062]/10 border border-[#DA5062]/30 rounded-md p-4 mb-6'>
             <div className='flex items-start'>
-              <div className='text-red-400'>
+              <div className='text-[#e47886]'>
                 <XCircle className='h-5 w-5' />
               </div>
               <div className='ml-3 flex-1'>
-                <h3 className='text-sm font-medium text-red-800'>
+                <h3 className='text-sm font-medium text-[#872a38]'>
                   {t('customer.errorState.title')}
                 </h3>
-                <p className='mt-1 text-sm text-red-700'>{error}</p>
+                <p className='mt-1 text-sm text-[#c23d4f]'>{error}</p>
                 <div className='mt-3'>
                   <button
                     onClick={() => {
                       setError(null);
                       fetchCustomers();
                     }}
-                    className='inline-flex items-center px-3 py-2 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500'
+                    className='inline-flex items-center px-3 py-2 border border-[#DA5062]/40 rounded-md shadow-sm text-sm font-medium text-[#c23d4f] bg-white hover:bg-[#DA5062]/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#DA5062]'
                   >
                     <AlertTriangle className='h-4 w-4 mr-2' />
                     {t('customer.errorState.retry')}
@@ -855,11 +855,11 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                         >
                           <div className='flex items-center justify-between mb-3'>
                             <div className='flex items-center gap-2'>
-                              <Building className='h-5 w-5 text-green-600' />
+                              <Building className='h-5 w-5 text-[#A1BA53]' />
                               <h3 className='text-base font-semibold text-slate-900'>
                                 {parentCompany.name}
                               </h3>
-                              <span className='px-2 py-0.5 text-xs bg-green-100 text-green-800 rounded-full'>
+                              <span className='px-2 py-0.5 text-xs bg-[#A1BA53]/15 text-[#5c6a2f] rounded-full'>
                                 Huvudföretag
                               </span>
                               {subCompanies.length > 0 && (
@@ -868,7 +868,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                                     setFilterParentCompany(parentCompany.id);
                                     setViewMode('list');
                                   }}
-                                  className='text-sm text-slate-500 hover:text-blue-600 underline'
+                                  className='text-sm text-slate-500 hover:text-[#7DA8CC] underline'
                                 >
                                   ({subCompanies.length} dotterbolag)
                                 </button>
@@ -876,30 +876,30 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                             </div>
                             <button
                               onClick={() => handleEditCustomer(parentCompany)}
-                              className='text-blue-600 hover:text-blue-800 text-sm'
+                              className='text-[#7DA8CC] hover:text-[#476279] text-sm'
                             >
                               Redigera
                             </button>
                           </div>
                           {subCompanies.length > 0 && (
-                            <div className='ml-8 mt-3 space-y-2 border-l-2 border-purple-200 pl-4'>
+                            <div className='ml-8 mt-3 space-y-2 border-l-2 border-[#956098]/30 pl-4'>
                               {subCompanies.map(subCompany => (
                                 <div
                                   key={subCompany.id}
                                   className='flex items-center justify-between py-2'
                                 >
                                   <div className='flex items-center gap-2'>
-                                    <Building className='h-4 w-4 text-purple-600' />
+                                    <Building className='h-4 w-4 text-[#956098]' />
                                     <span className='text-sm font-medium text-slate-900'>
                                       {subCompany.name}
                                     </span>
-                                    <span className='px-2 py-0.5 text-xs bg-purple-100 text-purple-800 rounded-full'>
+                                    <span className='px-2 py-0.5 text-xs bg-[#956098]/15 text-[#553657] rounded-full'>
                                       Dotterbolag
                                     </span>
                                   </div>
                                   <button
                                     onClick={() => handleEditCustomer(subCompany)}
-                                    className='text-blue-600 hover:text-blue-800 text-sm'
+                                    className='text-[#7DA8CC] hover:text-[#476279] text-sm'
                                   >
                                     Redigera
                                   </button>
@@ -969,12 +969,12 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                               <div className='flex items-center gap-2'>
                                 <button
                                   onClick={() => navigate(`/admin/customers/${customer.id}`)}
-                                  className='text-sm font-medium text-slate-900 hover:text-blue-600 hover:underline cursor-pointer transition-colors'
+                                  className='text-sm font-medium text-slate-900 hover:text-[#7DA8CC] hover:underline cursor-pointer transition-colors'
                                 >
                                   {customer.name}
                                 </button>
                                 {customer.customerType === 'company' && (
-                                  <span className='px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded-full'>
+                                  <span className='px-2 py-0.5 text-xs bg-[#7DA8CC]/15 text-[#476279] rounded-full'>
                                     {t('customer.type.company') || 'Company'}
                                   </span>
                                 )}
@@ -989,7 +989,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                                 </div>
                               )}
                               {customer.parentCompanyId && (
-                                <div className='text-xs text-purple-600 mt-1 flex items-center gap-1'>
+                                <div className='text-xs text-[#956098] mt-1 flex items-center gap-1'>
                                   <Building className='h-3 w-3' />
                                   <span>
                                     Dotterbolag av:{' '}
@@ -998,7 +998,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                                         setFilterParentCompany(customer.parentCompanyId || null);
                                         setViewMode('list');
                                       }}
-                                      className='underline hover:text-purple-800 font-medium'
+                                      className='underline hover:text-[#553657] font-medium'
                                     >
                                       {customers.find(c => c.id === customer.parentCompanyId)
                                         ?.name || 'Okänt företag'}
@@ -1007,7 +1007,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                                 </div>
                               )}
                               {customer.customerType === 'company' && !customer.parentCompanyId && (
-                                <div className='text-xs text-green-600 mt-1 flex items-center gap-1'>
+                                <div className='text-xs text-[#A1BA53] mt-1 flex items-center gap-1'>
                                   <Building className='h-3 w-3' />
                                   <span>Huvudföretag</span>
                                   {customers.filter(c => c.parentCompanyId === customer.id).length >
@@ -1053,7 +1053,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                                 <FileText className='h-4 w-4 mr-2 text-slate-400' />
                                 {customer.totalReports || 0} {t('customer.stats.reports')}
                               </div>
-                              <div className='flex items-center text-sm font-medium text-green-600'>
+                              <div className='flex items-center text-sm font-medium text-[#A1BA53]'>
                                 <DollarSign className='h-4 w-4 mr-1 text-slate-400' />
                                 {formatCurrency(customer.totalRevenue || 0)}
                               </div>
@@ -1067,7 +1067,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                               <Tooltip content='View Customer Details'>
                                 <button
                                   onClick={() => handleViewCustomer(customer)}
-                                  className='text-blue-600 hover:text-blue-900 p-1 rounded hover:bg-blue-50'
+                                  className='text-[#7DA8CC] hover:text-[#3b5060] p-1 rounded hover:bg-[#7DA8CC]/10'
                                 >
                                   <Eye className='h-4 w-4' />
                                 </button>
@@ -1086,7 +1086,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                                     <Tooltip content='Delete Customer'>
                                       <button
                                         onClick={() => handleDeleteCustomer(customer)}
-                                        className='text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50'
+                                        className='text-[#DA5062] hover:text-[#6e2530] p-1 rounded hover:bg-[#DA5062]/10'
                                       >
                                         <Trash2 className='h-4 w-4' />
                                       </button>
@@ -1098,7 +1098,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                                 <Tooltip content='Export Data (GDPR)'>
                                   <button
                                     onClick={() => exportCustomerData(customer)}
-                                    className='text-green-600 hover:text-green-900 p-1 rounded hover:bg-green-50'
+                                    className='text-[#A1BA53] hover:text-[#445023] p-1 rounded hover:bg-[#A1BA53]/10'
                                   >
                                     <Download className='h-4 w-4' />
                                   </button>
@@ -1112,7 +1112,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                                 >
                                   <button
                                     onClick={() => handleGenerateSignupLink(customer)}
-                                    className='text-blue-600 hover:text-blue-900 p-1 rounded hover:bg-blue-50'
+                                    className='text-[#7DA8CC] hover:text-[#3b5060] p-1 rounded hover:bg-[#7DA8CC]/10'
                                   >
                                     <Link2 className='h-4 w-4' />
                                   </button>
@@ -1236,7 +1236,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                     {canDelete && (
                       <button
                         onClick={() => handleDeleteCustomer(selectedCustomer)}
-                        className='px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium shadow-sm flex items-center gap-2'
+                        className='px-4 py-2 bg-[#DA5062] text-white rounded-lg hover:bg-[#c23d4f] transition-colors text-sm font-medium shadow-sm flex items-center gap-2'
                       >
                         <Trash2 className='h-4 w-4 mr-2' />
                         {t('common.delete')}
@@ -1291,14 +1291,14 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                     }}
                     className={`w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 ${
                       formErrors.name
-                        ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
+                        ? 'border-[#DA5062]/40 focus:ring-[#DA5062] focus:border-[#DA5062]'
                         : 'border-slate-300 focus:ring-slate-500 focus:border-slate-500'
                     }`}
                     placeholder={t('customer.form.namePlaceholder')}
                     required
                   />
                   {formErrors.name && (
-                    <p className='mt-1 text-sm text-red-600'>{formErrors.name}</p>
+                    <p className='mt-1 text-sm text-[#DA5062]'>{formErrors.name}</p>
                   )}
                 </div>
 
@@ -1317,13 +1317,13 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                     }}
                     className={`w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 ${
                       formErrors.email
-                        ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
+                        ? 'border-[#DA5062]/40 focus:ring-[#DA5062] focus:border-[#DA5062]'
                         : 'border-slate-300 focus:ring-slate-500 focus:border-slate-500'
                     }`}
                     placeholder={t('customer.form.emailPlaceholder')}
                   />
                   {formErrors.email && (
-                    <p className='mt-1 text-sm text-red-600'>{formErrors.email}</p>
+                    <p className='mt-1 text-sm text-[#DA5062]'>{formErrors.email}</p>
                   )}
                 </div>
 
@@ -1342,13 +1342,13 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                     }}
                     className={`w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 ${
                       formErrors.phone
-                        ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
+                        ? 'border-[#DA5062]/40 focus:ring-[#DA5062] focus:border-[#DA5062]'
                         : 'border-slate-300 focus:ring-slate-500 focus:border-slate-500'
                     }`}
                     placeholder={t('customer.form.phonePlaceholder')}
                   />
                   {formErrors.phone && (
-                    <p className='mt-1 text-sm text-red-600'>{formErrors.phone}</p>
+                    <p className='mt-1 text-sm text-[#DA5062]'>{formErrors.phone}</p>
                   )}
                 </div>
 
@@ -1568,7 +1568,7 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                           </span>
                           <button
                             onClick={() => handleCopyLink(getSignupUrl(inv.token))}
-                            className='text-blue-600 hover:text-blue-800 flex items-center gap-1'
+                            className='text-[#7DA8CC] hover:text-[#476279] flex items-center gap-1'
                           >
                             <Copy className='h-3 w-3' />
                             {t('customer.invitation.copy') || 'Copy'}
@@ -1581,8 +1581,8 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
 
                 {/* Generated link display */}
                 {generatedLink && (
-                  <div className='border rounded-md p-3 bg-green-50 border-green-200'>
-                    <p className='text-sm font-medium text-green-800 mb-2'>
+                  <div className='border rounded-md p-3 bg-[#A1BA53]/10 border-[#A1BA53]/30'>
+                    <p className='text-sm font-medium text-[#5c6a2f] mb-2'>
                       {t('customer.invitation.newLink') || 'New signup link created!'}
                     </p>
                     <div className='flex items-center gap-2'>
@@ -1596,8 +1596,8 @@ const CustomerManagement: React.FC<CustomerManagementProps> = () => {
                         onClick={() => handleCopyLink(generatedLink)}
                         className={`p-2 rounded ${
                           linkCopied
-                            ? 'bg-green-600 text-white'
-                            : 'bg-blue-600 text-white hover:bg-blue-700'
+                            ? 'bg-[#A1BA53] text-white'
+                            : 'bg-[#7DA8CC] text-white hover:bg-[#6890b3]'
                         }`}
                       >
                         {linkCopied ? <Check className='h-4 w-4' /> : <Copy className='h-4 w-4' />}

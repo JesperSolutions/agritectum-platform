@@ -106,7 +106,7 @@ const CompanyBuildings: React.FC<CompanyBuildingsProps> = ({ customer, onBuildin
               setNewBuildingDescription('');
               setShowAddForm(true);
             }}
-            className='inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700'
+            className='inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-[#7DA8CC] rounded-md hover:bg-[#6890b3]'
           >
             <Plus className='w-4 h-4 mr-1' />
             Lägg till byggnad
@@ -125,7 +125,7 @@ const CompanyBuildings: React.FC<CompanyBuildingsProps> = ({ customer, onBuildin
                 type='text'
                 value={newBuildingAddress}
                 onChange={e => setNewBuildingAddress(e.target.value)}
-                className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500'
+                className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-[#7DA8CC] focus:border-[#7DA8CC]'
                 placeholder='Ange byggnadsadress'
               />
             </div>
@@ -137,7 +137,7 @@ const CompanyBuildings: React.FC<CompanyBuildingsProps> = ({ customer, onBuildin
                 type='text'
                 value={newBuildingDescription}
                 onChange={e => setNewBuildingDescription(e.target.value)}
-                className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500'
+                className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-[#7DA8CC] focus:border-[#7DA8CC]'
                 placeholder='T.ex. Huvudbyggnad, Lager, etc.'
               />
             </div>
@@ -187,14 +187,14 @@ const CompanyBuildings: React.FC<CompanyBuildingsProps> = ({ customer, onBuildin
               <div className='flex gap-2'>
                 <button
                   onClick={() => handleEditBuilding(building)}
-                  className='p-1.5 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded'
+                  className='p-1.5 text-gray-600 hover:text-[#7DA8CC] hover:bg-[#7DA8CC]/10 rounded'
                   title='Redigera'
                 >
                   <Edit className='w-4 h-4' />
                 </button>
                 <button
                   onClick={() => handleRemoveBuilding(building.id)}
-                  className='p-1.5 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded'
+                  className='p-1.5 text-gray-600 hover:text-[#DA5062] hover:bg-[#DA5062]/10 rounded'
                   title='Ta bort'
                 >
                   <Trash2 className='w-4 h-4' />

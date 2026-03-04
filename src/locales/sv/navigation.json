@@ -3,7 +3,7 @@
   "navigation.reports": "Rapporter",
   "navigation.myReports": "Mina rapporter",
   "navigation.customers": "Kunder",
-  "navigation.schedule": "Schema",
+  "navigation.schedule": "Uppgifter",
   "navigation.offers": "Offerter",
   "navigation.branches": "Filialer",
   "navigation.analytics": "Analys",
@@ -30,7 +30,7 @@
   "navigation.scheduledVisits": "Schemalagda besök",
   "navigation.esgReports": "ESG Rapporter",
   "navigation.allReports": "Alla rapporter",
-  "navigation.operations": "Operationer",
+  "navigation.operations": "Översikt",
   "navigation.esgService": "ESG-tjänst",
   "navigation.emailTemplates": "E-postmallar",
 

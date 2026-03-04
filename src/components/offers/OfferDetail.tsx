@@ -41,7 +41,7 @@ const OfferDetail: React.FC<OfferDetailProps> = ({
       {
         pending: { color: 'bg-amber-100 text-amber-900', icon: Clock, label: 'Pending' },
         accepted: { color: 'bg-emerald-100 text-emerald-900', icon: CheckCircle, label: 'Accepted' },
-        rejected: { color: 'bg-red-100 text-red-900', icon: XCircle, label: 'Rejected' },
+        rejected: { color: 'bg-[#DA5062]/15 text-[#6e2530]', icon: XCircle, label: 'Rejected' },
         awaiting_response: {
           color: 'bg-slate-200 text-slate-900',
           icon: AlertCircle,
@@ -92,7 +92,7 @@ const OfferDetail: React.FC<OfferDetailProps> = ({
             <div className='flex items-center gap-3'>
               {getStatusBadge(offer.status)}
               {isOverdue && (
-                <span className='text-xs font-semibold text-red-600'>Overdue {daysPending}d</span>
+                <span className='text-xs font-semibold text-[#DA5062]'>Overdue {daysPending}d</span>
               )}
             </div>
             <div className='flex items-center gap-2'>
@@ -163,12 +163,12 @@ const OfferDetail: React.FC<OfferDetailProps> = ({
 
       {/* Alert for overdue offers */}
       {isOverdue && (
-        <div className='bg-red-50 border-l-4 border-red-500 p-4'>
+        <div className='bg-[#DA5062]/10 border-l-4 border-[#DA5062] p-4'>
           <div className='flex'>
-            <AlertCircle className='w-5 h-5 text-red-500 mr-3 mt-0.5' />
+            <AlertCircle className='w-5 h-5 text-[#DA5062] mr-3 mt-0.5' />
             <div>
-              <p className='text-red-800 font-semibold'>Overdue Offer</p>
-              <p className='text-red-600 text-sm'>
+              <p className='text-[#872a38] font-semibold'>Overdue Offer</p>
+              <p className='text-[#DA5062] text-sm'>
                 This offer has been pending for {daysPending} days. Consider following up with the
                 customer.
               </p>
@@ -223,7 +223,7 @@ const OfferDetail: React.FC<OfferDetailProps> = ({
                   </div>
                   <div className='flex justify-between py-2 border-t border-gray-200 pt-2'>
                     <span className='text-lg font-semibold text-gray-900'>Total Amount:</span>
-                    <span className='text-2xl font-bold text-blue-600'>
+                    <span className='text-2xl font-bold text-[#7DA8CC]'>
                       {offer.totalAmount.toLocaleString()} {offer.currency}
                     </span>
                   </div>
@@ -240,7 +240,7 @@ const OfferDetail: React.FC<OfferDetailProps> = ({
             <div className='space-y-4'>
               {offer.statusHistory.map((history: OfferStatusHistory, index: number) => (
                 <div key={index} className='flex items-start gap-4'>
-                  <div className='flex-shrink-0 w-2 h-2 bg-blue-500 rounded-full mt-2'></div>
+                  <div className='flex-shrink-0 w-2 h-2 bg-[#7DA8CC]/100 rounded-full mt-2'></div>
                   <div className='flex-1'>
                     <div className='flex items-center justify-between'>
                       <p className='font-medium text-gray-900'>{history.status}</p>
@@ -300,8 +300,8 @@ const OfferDetail: React.FC<OfferDetailProps> = ({
             <h3 className='text-lg font-bold text-gray-900 mb-4'>Customer Information</h3>
             <div className='space-y-3'>
               <div className='flex items-start gap-3'>
-                <div className='flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center'>
-                  <span className='text-blue-600 font-semibold'>
+                <div className='flex-shrink-0 w-8 h-8 bg-[#7DA8CC]/15 rounded-full flex items-center justify-center'>
+                  <span className='text-[#7DA8CC] font-semibold'>
                     {offer.customerName.charAt(0).toUpperCase()}
                   </span>
                 </div>
@@ -390,7 +390,7 @@ const OfferDetail: React.FC<OfferDetailProps> = ({
               value={newValidUntil}
               onChange={e => setNewValidUntil(e.target.value)}
               min={new Date().toISOString().split('T')[0]}
-              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent mb-4'
+              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#956098] focus:border-transparent mb-4'
             />
             <div className='flex gap-3'>
               <button
@@ -405,7 +405,7 @@ const OfferDetail: React.FC<OfferDetailProps> = ({
               <button
                 onClick={handleExtendValidity}
                 disabled={!newValidUntil}
-                className='flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed'
+                className='flex-1 px-4 py-2 bg-[#956098] text-white rounded-lg hover:bg-[#7f5182] transition-colors text-sm font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed'
               >
                 Extend
               </button>

@@ -118,7 +118,7 @@ const OnboardingTour: React.FC = () => {
       {/* Highlight box */}
       {highlightElement && currentStep.highlightSelector && (
         <div
-          className='fixed z-50 border-2 border-blue-500 rounded-lg pointer-events-none bg-blue-50/20'
+          className='fixed z-50 border-2 border-[#7DA8CC] rounded-lg pointer-events-none bg-[#7DA8CC]/10/20'
           style={{
             top: `${position.top}px`,
             left: `${position.left}px`,
@@ -147,7 +147,7 @@ const OnboardingTour: React.FC = () => {
           </div>
           <div className='w-full bg-gray-200 rounded-full h-1.5'>
             <div
-              className='bg-blue-500 h-1.5 rounded-full transition-all'
+              className='bg-[#7DA8CC]/100 h-1.5 rounded-full transition-all'
               style={{ width: `${((currentStepIndex + 1) / steps.length) * 100}%` }}
             />
           </div>
@@ -163,7 +163,7 @@ const OnboardingTour: React.FC = () => {
         {currentStep.actionUrl && currentStep.actionLabel && (
           <a
             href={currentStep.actionUrl}
-            className='inline-block w-full text-center px-4 py-2 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors mb-4'
+            className='inline-block w-full text-center px-4 py-2 bg-[#7DA8CC]/100 text-white rounded-lg font-medium hover:bg-[#7DA8CC] transition-colors mb-4'
           >
             {currentStep.actionLabel}
           </a>
@@ -194,10 +194,10 @@ const OnboardingTour: React.FC = () => {
 
           <button
             onClick={isOnLastStep ? () => setShowTour(false) : nextStep}
-            className='p-2 hover:bg-blue-100 rounded-md transition-colors bg-blue-50'
+            className='p-2 hover:bg-[#7DA8CC]/15 rounded-md transition-colors bg-[#7DA8CC]/10'
             aria-label={isOnLastStep ? 'Close tour' : 'Next step'}
           >
-            <ChevronRight className='w-4 h-4 text-blue-600' />
+            <ChevronRight className='w-4 h-4 text-[#7DA8CC]' />
           </button>
         </div>
       </div>

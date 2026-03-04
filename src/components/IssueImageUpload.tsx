@@ -186,7 +186,7 @@ const IssueImageUpload: React.FC<IssueImageUploadProps> = ({
             type='button'
             onClick={handleGalleryClick}
             disabled={disabled || uploading}
-            className='flex items-center gap-2 px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors'
+            className='flex items-center gap-2 px-3 py-2 text-sm bg-[#7DA8CC] text-white rounded-lg hover:bg-[#6890b3] disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors'
           >
             <FileImage className='w-4 h-4' />
             {t('form.buttons.selectFromGallery')}
@@ -196,7 +196,7 @@ const IssueImageUpload: React.FC<IssueImageUploadProps> = ({
             type='button'
             onClick={handleCameraClick}
             disabled={disabled || uploading}
-            className='flex items-center gap-2 px-3 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors'
+            className='flex items-center gap-2 px-3 py-2 text-sm bg-[#A1BA53] text-white rounded-lg hover:bg-[#8a9f47] disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors'
           >
             <Camera className='w-4 h-4' />
             {t('form.buttons.takePhoto')}
@@ -227,14 +227,14 @@ const IssueImageUpload: React.FC<IssueImageUploadProps> = ({
 
       {/* Upload Progress */}
       {uploading && uploadProgress && (
-        <div className='bg-blue-50 border border-blue-200 rounded-lg p-3'>
+        <div className='bg-[#7DA8CC]/10 border border-[#7DA8CC]/30 rounded-lg p-3'>
           <div className='flex items-center justify-between mb-2'>
-            <span className='text-sm text-blue-800'>{t('form.messages.uploadingImages')}</span>
-            <span className='text-sm text-blue-600'>{Math.round(uploadProgress.percentage)}%</span>
+            <span className='text-sm text-[#476279]'>{t('form.messages.uploadingImages')}</span>
+            <span className='text-sm text-[#7DA8CC]'>{Math.round(uploadProgress.percentage)}%</span>
           </div>
-          <div className='w-full bg-blue-200 rounded-full h-2'>
+          <div className='w-full bg-[#7DA8CC]/25 rounded-full h-2'>
             <div
-              className='bg-blue-600 h-2 rounded-full transition-all duration-300'
+              className='bg-[#7DA8CC] h-2 rounded-full transition-all duration-300'
               style={{ width: `${uploadProgress.percentage}%` }}
             />
           </div>
@@ -243,9 +243,9 @@ const IssueImageUpload: React.FC<IssueImageUploadProps> = ({
 
       {/* Error Display */}
       {error && (
-        <div className='bg-red-50 border border-red-200 rounded-lg p-3 flex items-center gap-2'>
-          <AlertCircle className='w-4 h-4 text-red-600 flex-shrink-0' />
-          <span className='text-sm text-red-800'>{error}</span>
+        <div className='bg-[#DA5062]/10 border border-[#DA5062]/30 rounded-lg p-3 flex items-center gap-2'>
+          <AlertCircle className='w-4 h-4 text-[#DA5062] flex-shrink-0' />
+          <span className='text-sm text-[#872a38]'>{error}</span>
         </div>
       )}
 
@@ -264,7 +264,7 @@ const IssueImageUpload: React.FC<IssueImageUploadProps> = ({
                 type='button'
                 onClick={() => handleRemoveImage(index)}
                 disabled={disabled || uploading}
-                className='absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 disabled:opacity-50'
+                className='absolute top-1 right-1 p-1 bg-[#DA5062]/100 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-[#DA5062] disabled:opacity-50'
                 aria-label={`Remove image ${index + 1}`}
               >
                 <X className='w-3 h-3' />

@@ -177,7 +177,7 @@ const RoofSizeMeasurer: React.FC<RoofSizeMeasurerProps> = ({
         {/* Header */}
         <div className='flex items-center justify-between p-4 border-b border-gray-200'>
           <div className='flex items-center gap-2'>
-            <Ruler className='w-5 h-5 text-blue-600' />
+            <Ruler className='w-5 h-5 text-[#7DA8CC]' />
             <h2 className='text-xl font-bold text-gray-900'>Measure Roof Size</h2>
           </div>
           <button onClick={onClose} className='text-gray-400 hover:text-gray-600 transition-colors'>
@@ -186,7 +186,7 @@ const RoofSizeMeasurer: React.FC<RoofSizeMeasurerProps> = ({
         </div>
 
         {/* Instructions */}
-        <div className='p-4 bg-blue-50 border-b border-gray-200'>
+        <div className='p-4 bg-[#7DA8CC]/10 border-b border-gray-200'>
           <p className='text-sm text-gray-700'>
             {isDrawing ? (
               <>
@@ -246,7 +246,7 @@ const RoofSizeMeasurer: React.FC<RoofSizeMeasurerProps> = ({
             {area !== null && (
               <div className='text-right'>
                 <div className='text-sm text-gray-600'>Calculated Area</div>
-                <div className='text-2xl font-bold text-blue-600'>{area.toFixed(2)} m²</div>
+                <div className='text-2xl font-bold text-[#7DA8CC]'>{area.toFixed(2)} m²</div>
                 <div className='text-xs text-gray-500'>{(area * 10.764).toFixed(2)} sq ft</div>
               </div>
             )}
@@ -263,7 +263,7 @@ const RoofSizeMeasurer: React.FC<RoofSizeMeasurerProps> = ({
             <button
               onClick={handleConfirm}
               disabled={area === null || area === 0}
-              className='flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed'
+              className='flex-1 px-6 py-3 bg-[#7DA8CC] text-white rounded-lg hover:bg-[#6890b3] transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed'
             >
               Use This Area
             </button>

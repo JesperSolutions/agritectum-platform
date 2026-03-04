@@ -43,14 +43,14 @@ export const StatCard: React.FC<StatCardProps> = ({
 }) => {
   const accentStyles = {
     slate: 'from-slate-500 to-slate-600',
-    green: 'from-green-500 to-green-600',
-    blue: 'from-blue-500 to-blue-600',
+    green: 'from-[#A1BA53] to-[#8a9f47]',
+    blue: 'from-[#7DA8CC] to-[#6890b3]',
     amber: 'from-amber-500 to-amber-600',
-    red: 'from-red-500 to-red-600',
+    red: 'from-[#DA5062] to-[#c23d4f]',
   };
 
   const TrendIcon = trend ? (trend.value > 0 ? TrendingUp : trend.value < 0 ? TrendingDown : Minus) : null;
-  const trendColor = trend ? (trend.value > 0 ? 'text-green-600' : trend.value < 0 ? 'text-red-600' : 'text-slate-500') : '';
+  const trendColor = trend ? (trend.value > 0 ? 'text-[#A1BA53]' : trend.value < 0 ? 'text-[#DA5062]' : 'text-slate-500') : '';
 
   return (
     <div
@@ -178,11 +178,11 @@ export const ProgressRing: React.FC<ProgressRingProps> = ({
   
   const getGradeColor = (g: string) => {
     switch (g) {
-      case 'A': return { stroke: '#059669', bg: 'bg-green-50', text: 'text-green-700' };
-      case 'B': return { stroke: '#2563eb', bg: 'bg-blue-50', text: 'text-blue-700' };
+      case 'A': return { stroke: '#059669', bg: 'bg-[#A1BA53]/10', text: 'text-[#73853b]' };
+      case 'B': return { stroke: '#2563eb', bg: 'bg-[#7DA8CC]/10', text: 'text-[#6890b3]' };
       case 'C': return { stroke: '#d97706', bg: 'bg-amber-50', text: 'text-amber-700' };
-      case 'D': return { stroke: '#ea580c', bg: 'bg-orange-50', text: 'text-orange-700' };
-      case 'F': return { stroke: '#dc2626', bg: 'bg-red-50', text: 'text-red-700' };
+      case 'D': return { stroke: '#ea580c', bg: 'bg-[#DA5062]/10', text: 'text-[#c23d4f]' };
+      case 'F': return { stroke: '#dc2626', bg: 'bg-[#DA5062]/10', text: 'text-[#c23d4f]' };
       default: return { stroke: '#64748b', bg: 'bg-slate-50', text: 'text-slate-700' };
     }
   };
@@ -274,19 +274,19 @@ export const GradeDistribution: React.FC<GradeDistributionProps> = ({
   const heightMap = { sm: 'h-2', md: 'h-3', lg: 'h-4' };
   
   const gradeColors = {
-    A: 'bg-green-500',
-    B: 'bg-blue-500',
+    A: 'bg-[#A1BA53]',
+    B: 'bg-[#7DA8CC]/100',
     C: 'bg-amber-500',
-    D: 'bg-orange-500',
-    F: 'bg-red-500',
+    D: 'bg-[#DA5062]',
+    F: 'bg-[#DA5062]/100',
   };
   
   const gradeBgColors = {
-    A: 'bg-green-50 border-green-200 text-green-700',
-    B: 'bg-blue-50 border-blue-200 text-blue-700',
+    A: 'bg-[#A1BA53]/10 border-[#A1BA53]/30 text-[#73853b]',
+    B: 'bg-[#7DA8CC]/10 border-[#7DA8CC]/30 text-[#6890b3]',
     C: 'bg-amber-50 border-amber-200 text-amber-700',
-    D: 'bg-orange-50 border-orange-200 text-orange-700',
-    F: 'bg-red-50 border-red-200 text-red-700',
+    D: 'bg-[#DA5062]/10 border-[#DA5062]/30 text-[#c23d4f]',
+    F: 'bg-[#DA5062]/10 border-[#DA5062]/30 text-[#c23d4f]',
   };
 
   return (
@@ -354,16 +354,16 @@ export const StatusIndicator: React.FC<StatusIndicatorProps> = ({
   const pulseSizeMap = { sm: 'w-4 h-4', md: 'w-5 h-5', lg: 'w-6 h-6' };
   
   const statusColors = {
-    good: 'bg-green-500',
+    good: 'bg-[#A1BA53]',
     warning: 'bg-amber-500',
-    urgent: 'bg-red-500',
+    urgent: 'bg-[#DA5062]/100',
     neutral: 'bg-slate-400',
   };
   
   const pulseColors = {
-    good: 'bg-green-400',
+    good: 'bg-[#b1c66a]',
     warning: 'bg-amber-400',
-    urgent: 'bg-red-400',
+    urgent: 'bg-[#DA5062]/80',
     neutral: 'bg-slate-300',
   };
   
@@ -509,10 +509,10 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
 }) => {
   const iconBgColors = {
     slate: 'bg-slate-100 text-slate-600',
-    green: 'bg-green-100 text-green-600',
-    blue: 'bg-blue-100 text-blue-600',
+    green: 'bg-[#A1BA53]/15 text-[#A1BA53]',
+    blue: 'bg-[#7DA8CC]/15 text-[#7DA8CC]',
     amber: 'bg-amber-100 text-amber-600',
-    red: 'bg-red-100 text-red-600',
+    red: 'bg-[#DA5062]/15 text-[#DA5062]',
   };
   
   return (

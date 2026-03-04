@@ -311,14 +311,14 @@ const BuildingsList: React.FC = () => {
   return (
     <div className='space-y-6'>
       {error && (
-        <div className='bg-red-50 border border-red-200 rounded-lg p-4'>
+        <div className='bg-[#DA5062]/10 border border-[#DA5062]/30 rounded-lg p-4'>
           <div className='flex items-start gap-3'>
-            <AlertCircle className='w-5 h-5 text-red-600 flex-shrink-0 mt-0.5' />
+            <AlertCircle className='w-5 h-5 text-[#DA5062] flex-shrink-0 mt-0.5' />
             <div className='flex-1'>
-              <p className='text-sm text-red-700 font-medium'>{error}</p>
+              <p className='text-sm text-[#c23d4f] font-medium'>{error}</p>
               <button
                 onClick={() => setError(null)}
-                className='mt-2 text-sm text-red-600 hover:text-red-700 font-medium'
+                className='mt-2 text-sm text-[#DA5062] hover:text-[#c23d4f] font-medium'
               >
                 Dismiss
               </button>
@@ -347,8 +347,8 @@ const BuildingsList: React.FC = () => {
           <h2 className='text-xl font-semibold mb-4'>{t('buildings.addBuilding')}</h2>
           
           {error && (
-            <div className='mb-4 p-4 bg-red-50 border border-red-200 rounded-lg'>
-              <p className='text-sm text-red-700 font-medium'>{error}</p>
+            <div className='mb-4 p-4 bg-[#DA5062]/10 border border-[#DA5062]/30 rounded-lg'>
+              <p className='text-sm text-[#c23d4f] font-medium'>{error}</p>
             </div>
           )}
           
@@ -364,12 +364,12 @@ const BuildingsList: React.FC = () => {
                 onChange={e => setFormData({ ...formData, name: e.target.value })}
                 disabled={isSubmitting}
                 required
-                className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-green-500 ${
-                  validationErrors.name ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#A1BA53] ${
+                  validationErrors.name ? 'border-[#DA5062]/40 bg-[#DA5062]/10' : 'border-gray-300'
                 } disabled:opacity-50 disabled:cursor-not-allowed`}
               />
               {validationErrors.name && (
-                <p className='mt-1 text-sm text-red-600'>{validationErrors.name}</p>
+                <p className='mt-1 text-sm text-[#DA5062]'>{validationErrors.name}</p>
               )}
             </div>
             <div>
@@ -382,12 +382,12 @@ const BuildingsList: React.FC = () => {
                 onChange={e => setFormData({ ...formData, address: e.target.value })}
                 disabled={isSubmitting}
                 required
-                className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-green-500 ${
-                  validationErrors.address ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#A1BA53] ${
+                  validationErrors.address ? 'border-[#DA5062]/40 bg-[#DA5062]/10' : 'border-gray-300'
                 } disabled:opacity-50 disabled:cursor-not-allowed`}
               />
               {validationErrors.address && (
-                <p className='mt-1 text-sm text-red-600'>{validationErrors.address}</p>
+                <p className='mt-1 text-sm text-[#DA5062]'>{validationErrors.address}</p>
               )}
             </div>
             <div className='grid grid-cols-2 gap-4'>
@@ -404,7 +404,7 @@ const BuildingsList: React.FC = () => {
                     })
                   }
                   disabled={isSubmitting}
-                  className='w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed'
+                  className='w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53] disabled:opacity-50 disabled:cursor-not-allowed'
                 >
                   <option value='residential'>{t('buildings.residential')}</option>
                   <option value='commercial'>{t('buildings.commercial')}</option>
@@ -421,7 +421,7 @@ const BuildingsList: React.FC = () => {
                     setFormData({ ...formData, roofType: e.target.value as Building['roofType'] })
                   }
                   disabled={isSubmitting}
-                  className='w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed'
+                  className='w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53] disabled:opacity-50 disabled:cursor-not-allowed'
                 >
                   <option value='tile'>{t('roofTypes.tile')}</option>
                   <option value='metal'>{t('roofTypes.metal')}</option>
@@ -450,12 +450,12 @@ const BuildingsList: React.FC = () => {
                 disabled={isSubmitting}
                 step='0.01'
                 min='0'
-                className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-green-500 ${
-                  validationErrors.roofSize ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#A1BA53] ${
+                  validationErrors.roofSize ? 'border-[#DA5062]/40 bg-[#DA5062]/10' : 'border-gray-300'
                 } disabled:opacity-50 disabled:cursor-not-allowed`}
               />
               {validationErrors.roofSize && (
-                <p className='mt-1 text-sm text-red-600'>{validationErrors.roofSize}</p>
+                <p className='mt-1 text-sm text-[#DA5062]'>{validationErrors.roofSize}</p>
               )}
             </div>
 
@@ -488,7 +488,7 @@ const BuildingsList: React.FC = () => {
                 />
               </div>
               {thumbnailError && (
-                <p className='mt-1 text-sm text-red-600'>{thumbnailError}</p>
+                <p className='mt-1 text-sm text-[#DA5062]'>{thumbnailError}</p>
               )}
               <p className='mt-1 text-xs text-gray-500'>{t('buildings.thumbnail.help')}</p>
             </div>
@@ -498,7 +498,7 @@ const BuildingsList: React.FC = () => {
               <h3 className='text-lg font-semibold text-gray-900 mb-4'>{t('buildings.esgFeatures') || 'ESG Features (Optional)'}</h3>
               
               {/* Solar Panels */}
-              <div className='bg-yellow-50 rounded-lg p-4 mb-4'>
+              <div className='bg-[#DA5062]/10 rounded-lg p-4 mb-4'>
                 <div className='flex items-center mb-3'>
                   <input
                     type='checkbox'
@@ -506,7 +506,7 @@ const BuildingsList: React.FC = () => {
                     checked={formData.hasSolarPanels}
                     onChange={e => setFormData({ ...formData, hasSolarPanels: e.target.checked })}
                     disabled={isSubmitting}
-                    className='w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500'
+                    className='w-4 h-4 text-[#A1BA53] border-gray-300 rounded focus:ring-[#A1BA53]'
                   />
                   <label htmlFor='hasSolarPanels' className='ml-2 text-sm font-medium text-gray-900'>
                     {t('buildings.hasSolarPanels') || 'Has Solar Panels (Solpaneler)'}
@@ -527,7 +527,7 @@ const BuildingsList: React.FC = () => {
                         disabled={isSubmitting}
                         step='1'
                         min='0'
-                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 text-sm'
+                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53] text-sm'
                       />
                     </div>
                     <div>
@@ -542,7 +542,7 @@ const BuildingsList: React.FC = () => {
                         disabled={isSubmitting}
                         step='0.1'
                         min='0'
-                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 text-sm'
+                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53] text-sm'
                       />
                     </div>
                     <div>
@@ -554,7 +554,7 @@ const BuildingsList: React.FC = () => {
                         value={formData.solarInstallationDate}
                         onChange={e => setFormData({ ...formData, solarInstallationDate: e.target.value })}
                         disabled={isSubmitting}
-                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 text-sm'
+                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53] text-sm'
                       />
                     </div>
                   </div>
@@ -570,7 +570,7 @@ const BuildingsList: React.FC = () => {
                     checked={formData.hasWhiteRoof}
                     onChange={e => setFormData({ ...formData, hasWhiteRoof: e.target.checked })}
                     disabled={isSubmitting}
-                    className='w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500'
+                    className='w-4 h-4 text-[#A1BA53] border-gray-300 rounded focus:ring-[#A1BA53]'
                   />
                   <label htmlFor='hasWhiteRoof' className='ml-2 text-sm font-medium text-gray-900'>
                     {t('buildings.hasWhiteRoof') || 'Has White Roof (Hvidt Tag)'}
@@ -591,7 +591,7 @@ const BuildingsList: React.FC = () => {
                         disabled={isSubmitting}
                         step='0.01'
                         min='0'
-                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 text-sm'
+                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53] text-sm'
                       />
                     </div>
                     <div>
@@ -607,7 +607,7 @@ const BuildingsList: React.FC = () => {
                         step='1'
                         min='0'
                         max='100'
-                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 text-sm'
+                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53] text-sm'
                       />
                     </div>
                     <div>
@@ -619,7 +619,7 @@ const BuildingsList: React.FC = () => {
                         value={formData.whiteRoofInstallationDate}
                         onChange={e => setFormData({ ...formData, whiteRoofInstallationDate: e.target.value })}
                         disabled={isSubmitting}
-                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 text-sm'
+                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53] text-sm'
                       />
                     </div>
                   </div>
@@ -627,7 +627,7 @@ const BuildingsList: React.FC = () => {
               </div>
               
               {/* NOx Treatment */}
-              <div className='bg-blue-50 rounded-lg p-4 mb-4'>
+              <div className='bg-[#7DA8CC]/10 rounded-lg p-4 mb-4'>
                 <div className='flex items-center mb-3'>
                   <input
                     type='checkbox'
@@ -635,7 +635,7 @@ const BuildingsList: React.FC = () => {
                     checked={formData.hasNoxTreatment}
                     onChange={e => setFormData({ ...formData, hasNoxTreatment: e.target.checked })}
                     disabled={isSubmitting}
-                    className='w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500'
+                    className='w-4 h-4 text-[#A1BA53] border-gray-300 rounded focus:ring-[#A1BA53]'
                   />
                   <label htmlFor='hasNoxTreatment' className='ml-2 text-sm font-medium text-gray-900'>
                     {t('buildings.hasNoxTreatment') || 'Has NOx Treatment System'}
@@ -652,7 +652,7 @@ const BuildingsList: React.FC = () => {
                         value={formData.noxType}
                         onChange={e => setFormData({ ...formData, noxType: e.target.value as typeof formData.noxType })}
                         disabled={isSubmitting}
-                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 text-sm'
+                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53] text-sm'
                       >
                         <option value='SCR'>{t('buildings.noxTypeSCR') || 'SCR (Selective Catalytic Reduction)'}</option>
                         <option value='EGR'>{t('buildings.noxTypeEGR') || 'EGR (Exhaust Gas Recirculation)'}</option>
@@ -668,7 +668,7 @@ const BuildingsList: React.FC = () => {
                         value={formData.noxInstallationDate}
                         onChange={e => setFormData({ ...formData, noxInstallationDate: e.target.value })}
                         disabled={isSubmitting}
-                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 text-sm'
+                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53] text-sm'
                       />
                     </div>
                   </div>
@@ -676,7 +676,7 @@ const BuildingsList: React.FC = () => {
               </div>
               
               {/* Green Roof */}
-              <div className='bg-green-50 rounded-lg p-4'>
+              <div className='bg-[#A1BA53]/10 rounded-lg p-4'>
                 <div className='flex items-center mb-3'>
                   <input
                     type='checkbox'
@@ -684,7 +684,7 @@ const BuildingsList: React.FC = () => {
                     checked={formData.hasGreenRoof}
                     onChange={e => setFormData({ ...formData, hasGreenRoof: e.target.checked })}
                     disabled={isSubmitting}
-                    className='w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500'
+                    className='w-4 h-4 text-[#A1BA53] border-gray-300 rounded focus:ring-[#A1BA53]'
                   />
                   <label htmlFor='hasGreenRoof' className='ml-2 text-sm font-medium text-gray-900'>
                     {t('buildings.hasGreenRoof') || 'Has Green Roof'}
@@ -705,7 +705,7 @@ const BuildingsList: React.FC = () => {
                         disabled={isSubmitting}
                         step='0.01'
                         min='0'
-                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 text-sm'
+                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53] text-sm'
                       />
                     </div>
                     <div>
@@ -716,7 +716,7 @@ const BuildingsList: React.FC = () => {
                         value={formData.greenRoofType}
                         onChange={e => setFormData({ ...formData, greenRoofType: e.target.value as typeof formData.greenRoofType })}
                         disabled={isSubmitting}
-                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 text-sm'
+                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53] text-sm'
                       >
                         <option value='extensive'>{t('buildings.greenRoofExtensive') || 'Extensive'}</option>
                         <option value='intensive'>{t('buildings.greenRoofIntensive') || 'Intensive'}</option>
@@ -732,7 +732,7 @@ const BuildingsList: React.FC = () => {
                         value={formData.greenRoofInstallationDate}
                         onChange={e => setFormData({ ...formData, greenRoofInstallationDate: e.target.value })}
                         disabled={isSubmitting}
-                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 text-sm'
+                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53] text-sm'
                       />
                     </div>
                   </div>
@@ -744,7 +744,7 @@ const BuildingsList: React.FC = () => {
               <button
                 type='submit'
                 disabled={isSubmitting}
-                className='px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed'
+                className='px-4 py-2 bg-[#A1BA53] text-white rounded-lg hover:bg-[#8a9f47] transition-colors text-sm font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed'
               >
                 {isSubmitting ? 'Creating...' : t('buildings.createBuilding')}
               </button>

@@ -615,9 +615,9 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
 
             {/* Conflict Warning */}
             {conflicts.length > 0 && (
-              <div className='flex items-start gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-material'>
-                <AlertTriangle className='w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5' />
-                <div className='text-sm text-yellow-800'>
+              <div className='flex items-start gap-2 p-3 bg-[#DA5062]/10 border border-[#DA5062]/30 rounded-material'>
+                <AlertTriangle className='w-5 h-5 text-[#DA5062] flex-shrink-0 mt-0.5' />
+                <div className='text-sm text-[#872a38]'>
                   {t('schedule.form.conflictWarning', { inspector: selectedInspectorName })}
                 </div>
               </div>
@@ -626,7 +626,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
 
           {/* Error Message */}
           {error && (
-            <div className='p-4 bg-red-50 border border-red-200 rounded-material text-red-800 text-sm'>
+            <div className='p-4 bg-[#DA5062]/10 border border-[#DA5062]/30 rounded-material text-[#872a38] text-sm'>
               {error}
             </div>
           )}

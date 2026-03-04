@@ -321,11 +321,11 @@ const BranchManagement: React.FC = () => {
 
         {/* Error Message */}
         {error && (
-          <div className='bg-red-50 border border-red-200 rounded-xl p-4 shadow-sm'>
+          <div className='bg-[#DA5062]/10 border border-[#DA5062]/30 rounded-xl p-4 shadow-sm'>
             <div className='flex'>
-              <AlertTriangle className='w-5 h-5 text-red-400' />
+              <AlertTriangle className='w-5 h-5 text-[#e47886]' />
               <div className='ml-3'>
-                <h3 className='text-sm font-medium text-red-800'>{error}</h3>
+                <h3 className='text-sm font-medium text-[#872a38]'>{error}</h3>
               </div>
             </div>
           </div>
@@ -359,13 +359,13 @@ const BranchManagement: React.FC = () => {
                     }}
                     className={`mt-1 block w-full px-4 py-2.5 border rounded-lg shadow-sm focus:ring-2 ${
                       formErrors.name
-                        ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
+                        ? 'border-[#DA5062]/40 focus:ring-[#DA5062] focus:border-[#DA5062]'
                         : 'border-slate-300 focus:ring-slate-500 focus:border-slate-500'
                     }`}
                     placeholder={t('admin.branchManagement.branchNamePlaceholder')}
                   />
                   {formErrors.name && (
-                    <p className='mt-1 text-sm text-red-600'>{formErrors.name}</p>
+                    <p className='mt-1 text-sm text-[#DA5062]'>{formErrors.name}</p>
                   )}
                 </div>
 
@@ -400,13 +400,13 @@ const BranchManagement: React.FC = () => {
                     }}
                     className={`mt-1 block w-full px-4 py-2.5 border rounded-lg shadow-sm focus:ring-2 ${
                       formErrors.address
-                        ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
+                        ? 'border-[#DA5062]/40 focus:ring-[#DA5062] focus:border-[#DA5062]'
                         : 'border-slate-300 focus:ring-slate-500 focus:border-slate-500'
                     }`}
                     placeholder={t('admin.branchManagement.addressPlaceholder')}
                   />
                   {formErrors.address && (
-                    <p className='mt-1 text-sm text-red-600'>{formErrors.address}</p>
+                    <p className='mt-1 text-sm text-[#DA5062]'>{formErrors.address}</p>
                   )}
                 </div>
 
@@ -523,7 +523,7 @@ const BranchManagement: React.FC = () => {
                             e.stopPropagation();
                             handleDelete(branch.id);
                           }}
-                          className='text-red-600 hover:text-red-800 transition-colors'
+                          className='text-[#DA5062] hover:text-[#872a38] transition-colors'
                         >
                           <Trash2 className='w-4 h-4' />
                         </button>
@@ -595,7 +595,7 @@ const BranchManagement: React.FC = () => {
                                 setError('Failed to delete logo');
                               }
                             }}
-                            className='absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors shadow-sm'
+                            className='absolute -top-2 -right-2 w-6 h-6 bg-[#DA5062]/100 text-white rounded-full flex items-center justify-center hover:bg-[#DA5062] transition-colors shadow-sm'
                           >
                             <X className='w-3 h-3' />
                           </button>

@@ -45,13 +45,13 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active':
-        return 'bg-green-100 text-green-800';
+        return 'bg-[#A1BA53]/15 text-[#5c6a2f]';
       case 'expired':
-        return 'bg-red-100 text-red-800';
+        return 'bg-[#DA5062]/15 text-[#872a38]';
       case 'cancelled':
         return 'bg-slate-100 text-slate-800';
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-[#DA5062]/15 text-[#872a38]';
       default:
         return 'bg-slate-100 text-slate-800';
     }
@@ -261,9 +261,9 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
                   <p
                     className={`text-sm mt-1 font-medium ${
                       daysUntilDue === 0 || daysUntilDue === 1
-                        ? 'text-orange-600'
+                        ? 'text-[#DA5062]'
                         : daysUntilDue <= 3
-                          ? 'text-yellow-600'
+                          ? 'text-[#DA5062]'
                           : 'text-slate-600'
                     }`}
                   >
@@ -275,7 +275,7 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
                   </p>
                 )}
                 {daysUntilDue < 0 && (
-                  <p className='text-sm text-red-600 font-medium mt-1'>
+                  <p className='text-sm text-[#DA5062] font-medium mt-1'>
                     {t('serviceAgreement.dueDate.overdue')}
                   </p>
                 )}
@@ -330,7 +330,7 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
                 <div className='space-y-2'>
                   {agreement.serviceVisits.oneAnnual && (
                     <div className='flex items-center gap-2 text-slate-700'>
-                      <CheckCircle className='w-5 h-5 text-green-600' />
+                      <CheckCircle className='w-5 h-5 text-[#A1BA53]' />
                       <span>
                         {t('serviceAgreement.form.services.oneAnnual') || '1 årligt servicebesøg'}
                       </span>
@@ -338,7 +338,7 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
                   )}
                   {agreement.serviceVisits.twoAnnual && (
                     <div className='flex items-center gap-2 text-slate-700'>
-                      <CheckCircle className='w-5 h-5 text-green-600' />
+                      <CheckCircle className='w-5 h-5 text-[#A1BA53]' />
                       <span>
                         {t('serviceAgreement.form.services.twoAnnual') || '2 årlige servicebesøg'}
                       </span>
@@ -357,7 +357,7 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
               <div className='space-y-2'>
                 {agreement.standardServices.map(service => (
                   <div key={service} className='flex items-center gap-2 text-slate-700'>
-                    <CheckCircle className='w-5 h-5 text-green-600' />
+                    <CheckCircle className='w-5 h-5 text-[#A1BA53]' />
                     <span>{t(`serviceAgreement.form.services.${service}`) || service}</span>
                   </div>
                 ))}
@@ -385,7 +385,7 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
                       <div className='space-y-1 pl-4'>
                         {agreement.addons.skylights.map(addon => (
                           <div key={addon} className='flex items-center gap-2 text-slate-700'>
-                            <CheckCircle className='w-4 h-4 text-green-600' />
+                            <CheckCircle className='w-4 h-4 text-[#A1BA53]' />
                             <span className='text-sm'>
                               {t(`serviceAgreement.form.addons.${addon}`) || addon}
                             </span>
@@ -402,7 +402,7 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
                       <div className='space-y-1 pl-4'>
                         {agreement.addons.solar.map(addon => (
                           <div key={addon} className='flex items-center gap-2 text-slate-700'>
-                            <CheckCircle className='w-4 h-4 text-green-600' />
+                            <CheckCircle className='w-4 h-4 text-[#A1BA53]' />
                             <span className='text-sm'>
                               {t(`serviceAgreement.form.addons.${addon}`) || addon}
                             </span>
@@ -419,7 +419,7 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
                       <div className='space-y-1 pl-4'>
                         {agreement.addons.steel.map(addon => (
                           <div key={addon} className='flex items-center gap-2 text-slate-700'>
-                            <CheckCircle className='w-4 h-4 text-green-600' />
+                            <CheckCircle className='w-4 h-4 text-[#A1BA53]' />
                             <span className='text-sm'>
                               {t(`serviceAgreement.form.addons.${addon}`) || addon}
                             </span>
@@ -436,7 +436,7 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
                       <div className='space-y-1 pl-4'>
                         {agreement.addons.sedum.map(addon => (
                           <div key={addon} className='flex items-center gap-2 text-slate-700'>
-                            <CheckCircle className='w-4 h-4 text-green-600' />
+                            <CheckCircle className='w-4 h-4 text-[#A1BA53]' />
                             <span className='text-sm'>
                               {t(`serviceAgreement.form.addons.${addon}`) || addon}
                             </span>
@@ -576,14 +576,14 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
 
           {/* Acceptance Status */}
           {agreement.acceptedAt && (
-            <div className='bg-green-50 rounded-xl p-6 border border-green-200'>
-              <div className='flex items-center gap-2 text-green-800'>
+            <div className='bg-[#A1BA53]/10 rounded-xl p-6 border border-[#A1BA53]/30'>
+              <div className='flex items-center gap-2 text-[#5c6a2f]'>
                 <CheckCircle className='w-5 h-5' />
                 <p className='font-semibold'>
                   {t('serviceAgreement.detail.accepted') || 'Agreement Accepted'}
                 </p>
               </div>
-              <p className='mt-2 text-sm text-green-700'>
+              <p className='mt-2 text-sm text-[#73853b]'>
                 {t('serviceAgreement.detail.acceptedOn') || 'Accepted on'}{' '}
                 {formatDate(agreement.acceptedAt)}
                 {agreement.acceptedBy &&
@@ -629,7 +629,7 @@ const ServiceAgreementDetail: React.FC<ServiceAgreementDetailProps> = ({
             </button>
             <button
               onClick={onDelete}
-              className='px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium uppercase tracking-wide flex items-center gap-2 shadow-sm hover:shadow-md'
+              className='px-6 py-3 bg-[#DA5062] text-white rounded-lg hover:bg-[#c23d4f] transition-colors font-medium uppercase tracking-wide flex items-center gap-2 shadow-sm hover:shadow-md'
             >
               <Trash2 className='h-5 w-5' />
               {t('serviceAgreement.deleteAgreement')}

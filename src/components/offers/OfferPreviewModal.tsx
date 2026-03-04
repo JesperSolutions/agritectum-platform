@@ -43,7 +43,7 @@ const OfferPreviewModal: React.FC<OfferPreviewModalProps> = ({
       <div className='flex min-h-full items-center justify-center p-4'>
         <div className='relative bg-white rounded-material shadow-material-4 max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col'>
           {/* Header */}
-          <div className='flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50'>
+          <div className='flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-[#7DA8CC]/10 to-indigo-50'>
             <h2 className='text-xl font-medium text-gray-900'>
               {t('offers.preview.title')}
             </h2>
@@ -58,8 +58,8 @@ const OfferPreviewModal: React.FC<OfferPreviewModalProps> = ({
 
           {/* Content - Scrollable */}
           <div className='flex-1 overflow-y-auto px-6 py-4'>
-            <div className='mb-4 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-material shadow-material-1'>
-              <p className='text-sm text-blue-800 leading-relaxed'>
+            <div className='mb-4 p-4 bg-[#7DA8CC]/10 border-l-4 border-[#7DA8CC] rounded-r-material shadow-material-1'>
+              <p className='text-sm text-[#476279] leading-relaxed'>
                 {t('offers.preview.checkBeforeSending')}
               </p>
             </div>
@@ -88,7 +88,7 @@ const OfferPreviewModal: React.FC<OfferPreviewModalProps> = ({
             <button
               onClick={onConfirmSend}
               disabled={isLoading}
-              className='px-6 py-2.5 text-sm font-medium text-white bg-green-600 border border-transparent rounded-material hover:bg-green-700 hover:shadow-material-3 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-material uppercase tracking-wide'
+              className='px-6 py-2.5 text-sm font-medium text-white bg-[#A1BA53] border border-transparent rounded-material hover:bg-[#8a9f47] hover:shadow-material-3 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#A1BA53] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-material uppercase tracking-wide'
             >
               {isLoading ? t('offers.preview.sending') : t('offers.preview.send')}
             </button>

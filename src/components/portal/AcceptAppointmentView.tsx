@@ -159,8 +159,8 @@ const AcceptAppointmentView: React.FC = () => {
           title={t('schedule.visits.error') || 'Error'}
           subtitle={error || t('schedule.visits.notFound') || 'Scheduled visit not found'}
         />
-        <div className='bg-red-50 border border-red-200 rounded-lg p-6'>
-          <p className='text-red-800'>
+        <div className='bg-[#DA5062]/10 border border-[#DA5062]/30 rounded-lg p-6'>
+          <p className='text-[#872a38]'>
             {error || t('schedule.visits.notFound') || 'Scheduled visit not found'}
           </p>
         </div>
@@ -231,19 +231,19 @@ const AcceptAppointmentView: React.FC = () => {
           <div
             className={`p-4 rounded-lg ${
               visit.customerResponse === 'accepted'
-                ? 'bg-green-50 border border-green-200'
-                : 'bg-red-50 border border-red-200'
+                ? 'bg-[#A1BA53]/10 border border-[#A1BA53]/30'
+                : 'bg-[#DA5062]/10 border border-[#DA5062]/30'
             }`}
           >
             <div className='flex items-center gap-2'>
               {visit.customerResponse === 'accepted' ? (
-                <CheckCircle className='w-5 h-5 text-green-600' />
+                <CheckCircle className='w-5 h-5 text-[#A1BA53]' />
               ) : (
-                <XCircle className='w-5 h-5 text-red-600' />
+                <XCircle className='w-5 h-5 text-[#DA5062]' />
               )}
               <p
                 className={`font-medium ${
-                  visit.customerResponse === 'accepted' ? 'text-green-800' : 'text-red-800'
+                  visit.customerResponse === 'accepted' ? 'text-[#5c6a2f]' : 'text-[#872a38]'
                 }`}
               >
                 {visit.customerResponse === 'accepted'
@@ -267,7 +267,7 @@ const AcceptAppointmentView: React.FC = () => {
                 <Button
                   onClick={handleAccept}
                   disabled={processing}
-                  className='flex-1 bg-green-600 hover:bg-green-700 text-lg py-6'
+                  className='flex-1 bg-[#A1BA53] hover:bg-[#8a9f47] text-lg py-6'
                 >
                   <CheckCircle className='w-5 h-5 mr-2' />
                   {t('schedule.visits.accept') || 'Accept Appointment'}
@@ -276,7 +276,7 @@ const AcceptAppointmentView: React.FC = () => {
                   onClick={handleReject}
                   disabled={processing}
                   variant='outline'
-                  className='flex-1 border-red-300 text-red-700 hover:bg-red-50 text-lg py-6'
+                  className='flex-1 border-[#DA5062]/40 text-[#c23d4f] hover:bg-[#DA5062]/10 text-lg py-6'
                 >
                   <XCircle className='w-5 h-5 mr-2' />
                   {t('schedule.visits.reject') || 'Reject Appointment'}
@@ -296,7 +296,7 @@ const AcceptAppointmentView: React.FC = () => {
                     value={rejectReason}
                     onChange={e => setRejectReason(e.target.value)}
                     rows={4}
-                    className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500'
+                    className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#DA5062]'
                     placeholder={
                       t('schedule.visits.rejectReasonPlaceholder') ||
                       "Please let us know why you're rejecting this appointment..."
@@ -307,7 +307,7 @@ const AcceptAppointmentView: React.FC = () => {
                   <Button
                     onClick={handleReject}
                     disabled={processing}
-                    className='flex-1 bg-red-600 hover:bg-red-700 text-white'
+                    className='flex-1 bg-[#DA5062] hover:bg-[#c23d4f] text-white'
                   >
                     {processing
                       ? t('common.processing') || 'Processing...'

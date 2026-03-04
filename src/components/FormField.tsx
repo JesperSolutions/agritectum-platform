@@ -27,7 +27,7 @@ const FormField: React.FC<FormFieldProps> = ({
     <div className={`space-y-1 ${className}`}>
       <label htmlFor={fieldId} className='block text-sm font-medium text-gray-700'>
         {label}
-        {required && <span className='text-red-500 ml-1'>*</span>}
+        {required && <span className='text-[#DA5062] ml-1'>*</span>}
       </label>
 
       <div className='relative'>
@@ -41,20 +41,20 @@ const FormField: React.FC<FormFieldProps> = ({
               : undefined,
           className: `${(children as React.ReactElement).props.className || ''} ${
             hasError
-              ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
-              : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+              ? 'border-[#DA5062]/40 focus:border-[#DA5062] focus:ring-[#DA5062]'
+              : 'border-gray-300 focus:border-[#7DA8CC] focus:ring-[#7DA8CC]'
           }`,
         })}
 
         {hasError && (
           <div className='absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none'>
-            <AlertCircle className='h-5 w-5 text-red-500' />
+            <AlertCircle className='h-5 w-5 text-[#DA5062]' />
           </div>
         )}
       </div>
 
       {hasError && (
-        <p id={`${fieldId}-error`} className='text-sm text-red-600'>
+        <p id={`${fieldId}-error`} className='text-sm text-[#DA5062]'>
           {error}
         </p>
       )}
@@ -86,8 +86,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         focus:outline-none focus:ring-1 sm:text-sm
         ${
           hasError
-            ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
-            : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+            ? 'border-[#DA5062]/40 focus:border-[#DA5062] focus:ring-[#DA5062]'
+            : 'border-gray-300 focus:border-[#7DA8CC] focus:ring-[#7DA8CC]'
         }
         ${className}
       `}
@@ -117,8 +117,8 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         focus:outline-none focus:ring-1 sm:text-sm
         ${
           hasError
-            ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
-            : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+            ? 'border-[#DA5062]/40 focus:border-[#DA5062] focus:ring-[#DA5062]'
+            : 'border-gray-300 focus:border-[#7DA8CC] focus:ring-[#7DA8CC]'
         }
         ${className}
       `}
@@ -149,8 +149,8 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
         block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-1 sm:text-sm
         ${
           hasError
-            ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
-            : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+            ? 'border-[#DA5062]/40 focus:border-[#DA5062] focus:ring-[#DA5062]'
+            : 'border-gray-300 focus:border-[#7DA8CC] focus:ring-[#7DA8CC]'
         }
         ${className}
       `}
@@ -195,8 +195,8 @@ const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
         focus:outline-none focus:ring-1 sm:text-sm
         ${
           hasError
-            ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
-            : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+            ? 'border-[#DA5062]/40 focus:border-[#DA5062] focus:ring-[#DA5062]'
+            : 'border-gray-300 focus:border-[#7DA8CC] focus:ring-[#7DA8CC]'
         }
         ${className}
       `}
@@ -227,8 +227,8 @@ const DateInput = forwardRef<HTMLInputElement, DateInputProps>(
         focus:outline-none focus:ring-1 sm:text-sm
         ${
           hasError
-            ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
-            : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+            ? 'border-[#DA5062]/40 focus:border-[#DA5062] focus:ring-[#DA5062]'
+            : 'border-gray-300 focus:border-[#7DA8CC] focus:ring-[#7DA8CC]'
         }
         ${className}
       `}

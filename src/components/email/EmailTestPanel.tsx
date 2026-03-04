@@ -166,18 +166,18 @@ export const EmailTestPanel: React.FC<EmailTestPanelProps> = ({ userRole, permis
 
         {result && (
           <Alert
-            className={result.success ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}
+            className={result.success ? 'border-[#A1BA53]/30 bg-[#A1BA53]/10' : 'border-[#DA5062]/30 bg-[#DA5062]/10'}
           >
             <div className='flex items-center gap-2'>
               {result.success ? (
-                <CheckCircle className='h-4 w-4 text-green-600' />
+                <CheckCircle className='h-4 w-4 text-[#A1BA53]' />
               ) : (
-                <XCircle className='h-4 w-4 text-red-600' />
+                <XCircle className='h-4 w-4 text-[#DA5062]' />
               )}
-              <AlertDescription className={result.success ? 'text-green-800' : 'text-red-800'}>
+              <AlertDescription className={result.success ? 'text-[#5c6a2f]' : 'text-[#872a38]'}>
                 {result.message}
                 {result.error && (
-                  <div className='mt-2 text-sm font-mono bg-red-100 p-2 rounded'>
+                  <div className='mt-2 text-sm font-mono bg-[#DA5062]/15 p-2 rounded'>
                     {result.error}
                   </div>
                 )}

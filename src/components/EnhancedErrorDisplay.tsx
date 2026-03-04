@@ -94,13 +94,13 @@ const EnhancedErrorDisplay: React.FC<EnhancedErrorDisplayProps> = ({
   const getErrorColor = () => {
     switch (errorType) {
       case 'network':
-        return 'text-orange-600 bg-orange-50 border-orange-200';
+        return 'text-[#DA5062] bg-[#DA5062]/10 border-[#DA5062]/30';
       case 'permission':
-        return 'text-red-600 bg-red-50 border-red-200';
+        return 'text-[#DA5062] bg-[#DA5062]/10 border-[#DA5062]/30';
       case 'validation':
-        return 'text-blue-600 bg-blue-50 border-blue-200';
+        return 'text-[#7DA8CC] bg-[#7DA8CC]/10 border-[#7DA8CC]/30';
       case 'server':
-        return 'text-purple-600 bg-purple-50 border-purple-200';
+        return 'text-[#956098] bg-[#956098]/10 border-[#956098]/30';
       default:
         return 'text-gray-600 bg-gray-50 border-gray-200';
     }

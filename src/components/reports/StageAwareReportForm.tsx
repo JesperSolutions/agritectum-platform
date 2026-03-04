@@ -117,7 +117,7 @@ export const StageProgressIndicator: React.FC<{ stage: ReportStage }> = ({ stage
         {/* Progress Bar */}
         <div className='w-full bg-slate-300 rounded-full h-2'>
           <div
-            className='h-2 bg-blue-600 rounded-full transition-all duration-300'
+            className='h-2 bg-[#7DA8CC] rounded-full transition-all duration-300'
             style={{ width: `${config.progress}%` }}
           />
         </div>
@@ -132,7 +132,7 @@ export const StageProgressIndicator: React.FC<{ stage: ReportStage }> = ({ stage
               (stage === 'stage3' && (s === 'stage1' || s === 'stage2'));
 
             return (
-              <div key={s} className={isActive ? 'text-blue-600 font-semibold' : 'text-slate-500'}>
+              <div key={s} className={isActive ? 'text-[#7DA8CC] font-semibold' : 'text-slate-500'}>
                 {stageName.split(' ')[0]}
               </div>
             );
@@ -141,16 +141,16 @@ export const StageProgressIndicator: React.FC<{ stage: ReportStage }> = ({ stage
       </div>
 
       {/* Stage Info Card */}
-      <div className='bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6'>
+      <div className='bg-[#7DA8CC]/10 border border-[#7DA8CC]/30 rounded-lg p-4 mb-6'>
         <div className='flex gap-3'>
-          <AlertCircle className='w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5' />
-          <div className='text-sm text-blue-800'>
+          <AlertCircle className='w-5 h-5 text-[#7DA8CC] flex-shrink-0 mt-0.5' />
+          <div className='text-sm text-[#476279]'>
             <p className='font-medium mb-1'>
               {stage === 'stage1' && 'Stage 1: Collect data and identify issues on-site'}
               {stage === 'stage2' && 'Stage 2: Annotate findings and add recommended actions'}
               {stage === 'stage3' && 'Stage 3: Complete your report and prepare for submission'}
             </p>
-            <p className='text-blue-700 text-xs'>
+            <p className='text-[#6890b3] text-xs'>
               {stage === 'stage1' && 'You can save your progress and continue editing. Move to Stage 2 when ready to annotate.'}
               {stage === 'stage2' && 'Review and edit issues. Add cost estimates for recommended actions.'}
               {stage === 'stage3' && 'Final review of all information. Cost estimation complete. Ready to submit.'}

@@ -436,10 +436,10 @@ const ESGService: React.FC = () => {
     divisions.greenRoof + divisions.noxReduction + divisions.coolRoof + divisions.socialActivities;
 
   const divisionColors = {
-    greenRoof: 'bg-green-500',
-    noxReduction: 'bg-blue-500',
+    greenRoof: 'bg-[#A1BA53]',
+    noxReduction: 'bg-[#7DA8CC]/100',
     coolRoof: 'bg-cyan-500',
-    socialActivities: 'bg-orange-500',
+    socialActivities: 'bg-[#DA5062]',
   };
 
   const divisionLabels = {
@@ -475,7 +475,7 @@ const ESGService: React.FC = () => {
           <CustomerSearch onCustomerSelect={setSelectedCustomer} />
           {selectedCustomer && (
             <div className='mt-4 p-4 bg-slate-50 border border-slate-200 rounded-lg flex items-center gap-3'>
-              <CheckCircle className='w-5 h-5 text-green-600 flex-shrink-0' />
+              <CheckCircle className='w-5 h-5 text-[#A1BA53] flex-shrink-0' />
               <div>
                 <span className='font-semibold text-gray-900'>{selectedCustomer.name}</span>
                 {selectedCustomer.email && (
@@ -510,7 +510,7 @@ const ESGService: React.FC = () => {
                     placeholder={t('admin.esgService.searchBuildings') || 'Search buildings...'}
                     value={searchTerm}
                     onChange={e => setSearchTerm(e.target.value)}
-                    className='w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                    className='w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7DA8CC] focus:border-transparent'
                   />
                 </div>
 
@@ -527,7 +527,7 @@ const ESGService: React.FC = () => {
                         onClick={() => handleBuildingSelect(building.id)}
                         className={`w-full text-left p-3 rounded-lg border transition-all ${
                           selectedBuilding?.id === building.id
-                            ? 'bg-blue-50 border-blue-300 shadow-sm'
+                            ? 'bg-[#7DA8CC]/10 border-[#7DA8CC]/40 shadow-sm'
                             : 'bg-slate-50 border-gray-200 hover:bg-gray-50'
                         }`}
                       >
@@ -540,7 +540,7 @@ const ESGService: React.FC = () => {
                             </p>
                           </div>
                           {selectedBuilding?.id === building.id && (
-                            <CheckCircle className='w-5 h-5 text-green-600 flex-shrink-0 ml-2' />
+                            <CheckCircle className='w-5 h-5 text-[#A1BA53] flex-shrink-0 ml-2' />
                           )}
                         </div>
                       </button>
@@ -566,9 +566,9 @@ const ESGService: React.FC = () => {
 
             <div className='p-6 space-y-6'>
               {inlineError && (
-                <div className='bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3'>
-                  <AlertCircle className='w-5 h-5 text-red-600 flex-shrink-0 mt-0.5' />
-                  <p className='text-sm text-red-700'>{inlineError}</p>
+                <div className='bg-[#DA5062]/10 border border-[#DA5062]/30 rounded-lg p-4 flex items-start gap-3'>
+                  <AlertCircle className='w-5 h-5 text-[#DA5062] flex-shrink-0 mt-0.5' />
+                  <p className='text-sm text-[#c23d4f]'>{inlineError}</p>
                 </div>
               )}
 
@@ -582,7 +582,7 @@ const ESGService: React.FC = () => {
                   id='roofSize'
                   value={roofSize}
                   onChange={e => setRoofSize(e.target.value)}
-                  className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                  className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7DA8CC] focus:border-transparent'
                   placeholder='Enter roof size'
                 />
               </div>
@@ -594,8 +594,8 @@ const ESGService: React.FC = () => {
                   <div
                     className={`px-3 py-1 rounded-lg text-sm font-semibold ${
                       Math.abs(totalPercentage - 100) < 0.1
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-red-100 text-red-700'
+                        ? 'bg-[#A1BA53]/15 text-[#73853b]'
+                        : 'bg-[#DA5062]/15 text-[#c23d4f]'
                     }`}
                   >
                     {totalPercentage.toFixed(1)}%
@@ -607,7 +607,7 @@ const ESGService: React.FC = () => {
                   <div className='bg-slate-50 rounded-lg p-4 border border-slate-200'>
                     <div className='flex items-center justify-between mb-3'>
                       <label className='text-sm font-semibold text-gray-900 flex items-center gap-2'>
-                        <Leaf className='w-4 h-4 text-green-600' />
+                        <Leaf className='w-4 h-4 text-[#A1BA53]' />
                         Green Roof
                       </label>
                       <span className='text-lg font-bold text-gray-900'>{divisions.greenRoof}%</span>
@@ -641,7 +641,7 @@ const ESGService: React.FC = () => {
                   <div className='bg-slate-50 rounded-lg p-4 border border-slate-200'>
                     <div className='flex items-center justify-between mb-3'>
                       <label className='text-sm font-semibold text-gray-900 flex items-center gap-2'>
-                        <Wind className='w-4 h-4 text-blue-600' />
+                        <Wind className='w-4 h-4 text-[#7DA8CC]' />
                         NOₓ Reduction
                       </label>
                       <span className='text-lg font-bold text-gray-900'>{divisions.noxReduction}%</span>
@@ -705,7 +705,7 @@ const ESGService: React.FC = () => {
                   <div className='bg-slate-50 rounded-lg p-4 border border-slate-200'>
                     <div className='flex items-center justify-between mb-3'>
                       <label className='text-sm font-semibold text-gray-900 flex items-center gap-2'>
-                        <Users className='w-4 h-4 text-purple-600' />
+                        <Users className='w-4 h-4 text-[#956098]' />
                         Social Activities
                       </label>
                       <span className='text-lg font-bold text-gray-900'>{divisions.socialActivities}%</span>
@@ -742,7 +742,7 @@ const ESGService: React.FC = () => {
                 <button
                   onClick={handleCalculate}
                   disabled={loadingCalculation}
-                  className='flex-1 flex items-center justify-center gap-2 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 font-semibold'
+                  className='flex-1 flex items-center justify-center gap-2 bg-[#7DA8CC] text-white px-6 py-2 rounded-lg hover:bg-[#6890b3] disabled:opacity-50 font-semibold'
                 >
                   {loadingCalculation ? (
                     <>
@@ -762,7 +762,7 @@ const ESGService: React.FC = () => {
                     <button
                       onClick={handleSave}
                       disabled={saving}
-                      className='flex-1 flex items-center justify-center gap-2 bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 disabled:opacity-50 font-semibold'
+                      className='flex-1 flex items-center justify-center gap-2 bg-[#A1BA53] text-white px-6 py-2 rounded-lg hover:bg-[#8a9f47] disabled:opacity-50 font-semibold'
                     >
                       {saving ? (
                         <>
@@ -794,10 +794,10 @@ const ESGService: React.FC = () => {
               {calculatedMetrics && (
                 <div className='mt-8 space-y-6'>
                   {/* Header with completion badge */}
-                  <div className='bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-2xl p-6 text-center'>
+                  <div className='bg-gradient-to-r from-[#A1BA53]/10 to-emerald-50 border border-[#A1BA53]/30 rounded-2xl p-6 text-center'>
                       <div className='flex items-center justify-center gap-2 mb-2'>
-                        <CheckCircle className='w-6 h-6 text-green-600' />
-                        <p className='text-green-700 font-semibold'>Analysis Complete</p>
+                        <CheckCircle className='w-6 h-6 text-[#A1BA53]' />
+                        <p className='text-[#73853b] font-semibold'>Analysis Complete</p>
                       </div>
                       <h3 className='text-3xl font-bold text-slate-900 mb-2'>
                         Your Roof For Good Analysis
@@ -812,11 +812,11 @@ const ESGService: React.FC = () => {
                       {/* CO2 Offset Card */}
                       <div className='bg-white border border-slate-200 rounded-2xl p-5 text-center hover:shadow-lg transition-all'>
                         <div className='flex items-center justify-center mb-3'>
-                          <div className='p-2 bg-green-100 rounded-xl'>
-                            <Leaf className='w-6 h-6 text-green-600' />
+                          <div className='p-2 bg-[#A1BA53]/15 rounded-xl'>
+                            <Leaf className='w-6 h-6 text-[#A1BA53]' />
                           </div>
                         </div>
-                        <p className='text-3xl font-bold text-green-600 mb-1'>
+                        <p className='text-3xl font-bold text-[#A1BA53] mb-1'>
                           {calculatedMetrics.co2ReductionKgPerYear
                             ? Math.round(calculatedMetrics.co2ReductionKgPerYear)
                             : '0'}
@@ -828,11 +828,11 @@ const ESGService: React.FC = () => {
                       {/* Energy Impact Card */}
                       <div className='bg-white border border-slate-200 rounded-2xl p-5 text-center hover:shadow-lg transition-all'>
                         <div className='flex items-center justify-center mb-3'>
-                          <div className='p-2 bg-blue-100 rounded-xl'>
-                            <Zap className='w-6 h-6 text-blue-600' />
+                          <div className='p-2 bg-[#7DA8CC]/15 rounded-xl'>
+                            <Zap className='w-6 h-6 text-[#7DA8CC]' />
                           </div>
                         </div>
-                        <p className='text-3xl font-bold text-blue-600 mb-1'>
+                        <p className='text-3xl font-bold text-[#7DA8CC] mb-1'>
                           {calculatedMetrics.energySavingsKwhPerYear
                             ? Math.round(calculatedMetrics.energySavingsKwhPerYear)
                             : '0'}
@@ -886,8 +886,8 @@ const ESGService: React.FC = () => {
                         <div className='bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl p-4 border border-slate-200'>
                           <div className='flex items-start justify-between mb-2'>
                             <div className='flex items-center gap-3'>
-                              <div className='w-10 h-10 rounded-full bg-green-100 flex items-center justify-center'>
-                                <span className='text-green-700 font-bold'>1</span>
+                              <div className='w-10 h-10 rounded-full bg-[#A1BA53]/15 flex items-center justify-center'>
+                                <span className='text-[#73853b] font-bold'>1</span>
                               </div>
                               <div>
                                 <h5 className='font-semibold text-slate-900'>Green Roof Area</h5>
@@ -937,8 +937,8 @@ const ESGService: React.FC = () => {
                         <div className='bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl p-4 border border-slate-200'>
                           <div className='flex items-start justify-between mb-2'>
                             <div className='flex items-center gap-3'>
-                              <div className='w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center'>
-                                <span className='text-blue-700 font-bold'>2</span>
+                              <div className='w-10 h-10 rounded-full bg-[#7DA8CC]/15 flex items-center justify-center'>
+                                <span className='text-[#6890b3] font-bold'>2</span>
                               </div>
                               <div>
                                 <h5 className='font-semibold text-slate-900'>NOₓ Reduction Area</h5>
@@ -1033,8 +1033,8 @@ const ESGService: React.FC = () => {
                         <div className='bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl p-4 border border-slate-200'>
                           <div className='flex items-start justify-between mb-2'>
                             <div className='flex items-center gap-3'>
-                              <div className='w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center'>
-                                <span className='text-orange-700 font-bold'>4</span>
+                              <div className='w-10 h-10 rounded-full bg-[#DA5062]/15 flex items-center justify-center'>
+                                <span className='text-[#c23d4f] font-bold'>4</span>
                               </div>
                               <div>
                                 <h5 className='font-semibold text-slate-900'>
@@ -1079,9 +1079,9 @@ const ESGService: React.FC = () => {
                     </div>
 
                     {/* Environmental Impact Highlights */}
-                    <div className='bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-2xl p-6'>
+                    <div className='bg-gradient-to-br from-[#A1BA53]/10 to-emerald-50 border border-[#A1BA53]/30 rounded-2xl p-6'>
                       <div className='flex items-center gap-2 mb-4'>
-                        <Leaf className='w-6 h-6 text-green-600' />
+                        <Leaf className='w-6 h-6 text-[#A1BA53]' />
                         <h4 className='text-xl font-semibold text-slate-900'>
                           Environmental Impact
                         </h4>
@@ -1092,7 +1092,7 @@ const ESGService: React.FC = () => {
                       </p>
                       <div className='grid md:grid-cols-3 gap-6'>
                         <div className='text-center'>
-                          <p className='text-4xl font-bold text-green-600 mb-2'>
+                          <p className='text-4xl font-bold text-[#A1BA53] mb-2'>
                             🌳{' '}
                             {calculatedMetrics.co2ReductionKgPerYear
                               ? Math.round(calculatedMetrics.co2ReductionKgPerYear / 22)
@@ -1108,7 +1108,7 @@ const ESGService: React.FC = () => {
                           </p>
                         </div>
                         <div className='text-center'>
-                          <p className='text-4xl font-bold text-blue-600 mb-2'>
+                          <p className='text-4xl font-bold text-[#7DA8CC] mb-2'>
                             ⚡{' '}
                             {calculatedMetrics.energySavingsKwhPerYear
                               ? Math.round(calculatedMetrics.energySavingsKwhPerYear)
@@ -1215,17 +1215,17 @@ const ESGService: React.FC = () => {
 
                 {/* Public Link Section */}
                 {publicLink && (
-                  <div className='bg-blue-50 border border-blue-200 rounded-lg p-4'>
+                  <div className='bg-[#7DA8CC]/10 border border-[#7DA8CC]/30 rounded-lg p-4'>
                     <div className='flex items-center justify-between'>
                       <div>
-                        <h3 className='text-md font-semibold text-blue-900'>Public Report Link</h3>
-                        <p className='text-sm text-blue-700 mt-1'>
+                        <h3 className='text-md font-semibold text-[#3b5060]'>Public Report Link</h3>
+                        <p className='text-sm text-[#6890b3] mt-1'>
                           Share this link with your customer
                         </p>
                       </div>
                       <button
                         onClick={() => setShowPublicLinkModal(true)}
-                        className='inline-flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500'
+                        className='inline-flex items-center px-3 py-2 bg-[#7DA8CC] text-white rounded-lg hover:bg-[#6890b3] focus:outline-none focus:ring-2 focus:ring-[#7DA8CC]'
                       >
                         <Share2 className='w-4 h-4 mr-2' />
                         View Link
@@ -1274,7 +1274,7 @@ const ESGService: React.FC = () => {
                         type='text'
                         readOnly
                         value={publicLink}
-                        className='flex-1 px-4 py-3 bg-white border border-slate-300 rounded-xl text-sm font-mono text-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500'
+                        className='flex-1 px-4 py-3 bg-white border border-slate-300 rounded-xl text-sm font-mono text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#956098]'
                       />
                       <button
                         onClick={handleCopyLink}

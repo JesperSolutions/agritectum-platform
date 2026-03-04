@@ -190,8 +190,8 @@ const AddressWithMap: React.FC<AddressWithMapProps> = ({
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
             onFocus={() => setShowSuggestions(true)}
-            className={`block w-full pl-10 pr-10 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ${
-              error ? 'border-red-300' : 'border-gray-300'
+            className={`block w-full pl-10 pr-10 rounded-md shadow-sm focus:ring-[#7DA8CC] focus:border-[#7DA8CC] ${
+              error ? 'border-[#DA5062]/40' : 'border-gray-300'
             }`}
             placeholder={placeholder}
             required={required}
@@ -212,7 +212,7 @@ const AddressWithMap: React.FC<AddressWithMapProps> = ({
               <div
                 key={index}
                 className={`px-4 py-3 cursor-pointer hover:bg-gray-50 ${
-                  index === selectedSuggestionIndex ? 'bg-blue-50' : ''
+                  index === selectedSuggestionIndex ? 'bg-[#7DA8CC]/10' : ''
                 }`}
                 onClick={() => handleSuggestionSelect(suggestion)}
               >
@@ -225,7 +225,7 @@ const AddressWithMap: React.FC<AddressWithMapProps> = ({
           </div>
         )}
 
-        {error && <p className='mt-1 text-sm text-red-600'>{error}</p>}
+        {error && <p className='mt-1 text-sm text-[#DA5062]'>{error}</p>}
       </div>
 
       {/* Map Controls */}
@@ -240,7 +240,7 @@ const AddressWithMap: React.FC<AddressWithMapProps> = ({
               <button
                 type='button'
                 onClick={handleToggleMap}
-                className='flex items-center gap-1 px-3 py-2 text-sm bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition-colors'
+                className='flex items-center gap-1 px-3 py-2 text-sm bg-[#7DA8CC]/10 text-[#7DA8CC] rounded-md hover:bg-[#7DA8CC]/15 transition-colors'
               >
                 {showMap ? <EyeOff className='w-4 h-4' /> : <Eye className='w-4 h-4' />}
                 {showMap ? 'Dölj karta' : 'Visa satellitvy'}
@@ -249,7 +249,7 @@ const AddressWithMap: React.FC<AddressWithMapProps> = ({
                 <button
                   type='button'
                   onClick={openInGoogleMaps}
-                  className='flex items-center gap-1 px-3 py-2 text-sm bg-green-50 text-green-600 rounded-md hover:bg-green-100 transition-colors'
+                  className='flex items-center gap-1 px-3 py-2 text-sm bg-[#A1BA53]/10 text-[#A1BA53] rounded-md hover:bg-[#A1BA53]/15 transition-colors'
                 >
                   <ExternalLink className='w-4 h-4' />
                   Öppna i Google Maps
@@ -264,17 +264,17 @@ const AddressWithMap: React.FC<AddressWithMapProps> = ({
               {isLoading && (
                 <div className='w-full h-[400px] bg-gray-100 rounded-lg flex items-center justify-center'>
                   <div className='text-center'>
-                    <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2'></div>
+                    <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-[#7DA8CC] mx-auto mb-2'></div>
                     <p className='text-sm text-gray-600'>Laddar satellitvy...</p>
                   </div>
                 </div>
               )}
 
               {mapError && (
-                <div className='w-full h-[400px] bg-red-50 border border-red-200 rounded-lg flex items-center justify-center'>
+                <div className='w-full h-[400px] bg-[#DA5062]/10 border border-[#DA5062]/30 rounded-lg flex items-center justify-center'>
                   <div className='text-center'>
-                    <MapPin className='w-8 h-8 text-red-400 mx-auto mb-2' />
-                    <p className='text-sm text-red-600'>{mapError}</p>
+                    <MapPin className='w-8 h-8 text-[#e47886] mx-auto mb-2' />
+                    <p className='text-sm text-[#DA5062]'>{mapError}</p>
                   </div>
                 </div>
               )}
@@ -297,8 +297,8 @@ const AddressWithMap: React.FC<AddressWithMapProps> = ({
                 </div>
               )}
 
-              <div className='mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200'>
-                <p className='text-sm text-blue-800'>
+              <div className='mt-3 p-3 bg-[#7DA8CC]/10 rounded-lg border border-[#7DA8CC]/30'>
+                <p className='text-sm text-[#476279]'>
                   <strong>💡 Tips för takinspektörer:</strong> Satellitvyn visar takets struktur och
                   omgivningar. Använd den för att planera inspektionen och identifiera potentiella
                   problem innan besöket.

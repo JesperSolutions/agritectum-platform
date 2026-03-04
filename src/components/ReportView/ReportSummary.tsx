@@ -19,7 +19,7 @@ const ReportSummary: React.FC<ReportSummaryProps> = ({ report }) => {
   return (
     <div className='bg-white p-6 rounded-lg shadow-sm border border-gray-200'>
       <div className='flex items-center mb-4'>
-        <FileText className='w-5 h-5 text-blue-600 mr-2' />
+        <FileText className='w-5 h-5 text-[#7DA8CC] mr-2' />
         <h3 className='text-lg font-semibold text-gray-900'>Report Summary</h3>
       </div>
 
@@ -28,7 +28,7 @@ const ReportSummary: React.FC<ReportSummaryProps> = ({ report }) => {
           <div className='text-2xl font-bold text-gray-900'>{report.issuesFound?.length || 0}</div>
           <div className='text-sm text-gray-600'>Total Issues</div>
           {criticalIssues > 0 && (
-            <div className='text-xs text-red-600 mt-1'>{criticalIssues} critical</div>
+            <div className='text-xs text-[#DA5062] mt-1'>{criticalIssues} critical</div>
           )}
         </div>
 
@@ -38,7 +38,7 @@ const ReportSummary: React.FC<ReportSummaryProps> = ({ report }) => {
           </div>
           <div className='text-sm text-gray-600'>Recommended Actions</div>
           {highPriorityActions > 0 && (
-            <div className='text-xs text-orange-600 mt-1'>{highPriorityActions} high priority</div>
+            <div className='text-xs text-[#DA5062] mt-1'>{highPriorityActions} high priority</div>
           )}
         </div>
 

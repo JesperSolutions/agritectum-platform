@@ -36,7 +36,7 @@ const ScenarioComparison: React.FC<ScenarioComparisonProps> = ({ scenarios }) =>
   return (
     <div className='bg-white rounded-lg border border-slate-200 p-6'>
       <h3 className='text-lg font-semibold mb-4 flex items-center'>
-        <TrendingUp className='w-5 h-5 mr-2 text-blue-600' />
+        <TrendingUp className='w-5 h-5 mr-2 text-[#7DA8CC]' />
         {t('admin.improvements.scenarioAnalysis') || 'Scenario Analysis'}
       </h3>
 
@@ -66,82 +66,82 @@ const ScenarioComparison: React.FC<ScenarioComparisonProps> = ({ scenarios }) =>
           </thead>
           <tbody>
             {/* Optimistic Scenario */}
-            <tr className='border-b border-gray-100 hover:bg-green-50'>
+            <tr className='border-b border-gray-100 hover:bg-[#A1BA53]/10'>
               <td className='py-3 px-4 font-medium'>
                 <div className='flex items-center'>
-                  <TrendingUp className='w-4 h-4 text-green-600 mr-2' />
+                  <TrendingUp className='w-4 h-4 text-[#A1BA53] mr-2' />
                   <span className='capitalize'>
                     {t('admin.improvements.optimistic') || 'Optimistic'}
                   </span>
                 </div>
               </td>
-              <td className='py-3 px-4 text-right text-green-600 font-semibold'>
+              <td className='py-3 px-4 text-right text-[#A1BA53] font-semibold'>
                 {formatCurrency(scenarios.optimistic.npv)}
               </td>
-              <td className='py-3 px-4 text-right text-green-600 font-semibold'>
+              <td className='py-3 px-4 text-right text-[#A1BA53] font-semibold'>
                 {formatPercentage(scenarios.optimistic.irr)}
               </td>
               <td className='py-3 px-4 text-right'>
                 {formatYears(scenarios.optimistic.paybackPeriod)}
               </td>
-              <td className='py-3 px-4 text-right text-green-600 font-semibold'>
+              <td className='py-3 px-4 text-right text-[#A1BA53] font-semibold'>
                 {formatCurrency(scenarios.optimistic.annualSavings)}
               </td>
-              <td className='py-3 px-4 text-right text-green-600 font-semibold'>
+              <td className='py-3 px-4 text-right text-[#A1BA53] font-semibold'>
                 {formatPercentage(scenarios.optimistic.roi)}
               </td>
             </tr>
 
             {/* Realistic Scenario */}
-            <tr className='border-b border-gray-100 hover:bg-blue-50'>
+            <tr className='border-b border-gray-100 hover:bg-[#7DA8CC]/10'>
               <td className='py-3 px-4 font-medium'>
                 <div className='flex items-center'>
-                  <Minus className='w-4 h-4 text-blue-600 mr-2' />
+                  <Minus className='w-4 h-4 text-[#7DA8CC] mr-2' />
                   <span className='capitalize'>
                     {t('admin.improvements.realistic') || 'Realistic'}
                   </span>
                 </div>
               </td>
-              <td className='py-3 px-4 text-right text-blue-600 font-semibold'>
+              <td className='py-3 px-4 text-right text-[#7DA8CC] font-semibold'>
                 {formatCurrency(scenarios.realistic.npv)}
               </td>
-              <td className='py-3 px-4 text-right text-blue-600 font-semibold'>
+              <td className='py-3 px-4 text-right text-[#7DA8CC] font-semibold'>
                 {formatPercentage(scenarios.realistic.irr)}
               </td>
               <td className='py-3 px-4 text-right'>
                 {formatYears(scenarios.realistic.paybackPeriod)}
               </td>
-              <td className='py-3 px-4 text-right text-blue-600 font-semibold'>
+              <td className='py-3 px-4 text-right text-[#7DA8CC] font-semibold'>
                 {formatCurrency(scenarios.realistic.annualSavings)}
               </td>
-              <td className='py-3 px-4 text-right text-blue-600 font-semibold'>
+              <td className='py-3 px-4 text-right text-[#7DA8CC] font-semibold'>
                 {formatPercentage(scenarios.realistic.roi)}
               </td>
             </tr>
 
             {/* Pessimistic Scenario */}
-            <tr className='border-b border-gray-100 hover:bg-red-50'>
+            <tr className='border-b border-gray-100 hover:bg-[#DA5062]/10'>
               <td className='py-3 px-4 font-medium'>
                 <div className='flex items-center'>
-                  <TrendingDown className='w-4 h-4 text-red-600 mr-2' />
+                  <TrendingDown className='w-4 h-4 text-[#DA5062] mr-2' />
                   <span className='capitalize'>
                     {t('admin.improvements.pessimistic') || 'Pessimistic'}
                   </span>
                 </div>
               </td>
-              <td className='py-3 px-4 text-right text-red-600 font-semibold'>
+              <td className='py-3 px-4 text-right text-[#DA5062] font-semibold'>
                 {formatCurrency(scenarios.pessimistic.npv)}
               </td>
-              <td className='py-3 px-4 text-right text-red-600 font-semibold'>
+              <td className='py-3 px-4 text-right text-[#DA5062] font-semibold'>
                 {formatPercentage(scenarios.pessimistic.irr)}
               </td>
               <td className='py-3 px-4 text-right'>
                 {formatYears(scenarios.pessimistic.paybackPeriod)}
               </td>
-              <td className='py-3 px-4 text-right text-red-600 font-semibold'>
+              <td className='py-3 px-4 text-right text-[#DA5062] font-semibold'>
                 {formatCurrency(scenarios.pessimistic.annualSavings)}
               </td>
-              <td className='py-3 px-4 text-right text-red-600 font-semibold'>
+              <td className='py-3 px-4 text-right text-[#DA5062] font-semibold'>
                 {formatPercentage(scenarios.pessimistic.roi)}
               </td>
             </tr>
@@ -149,7 +149,7 @@ const ScenarioComparison: React.FC<ScenarioComparisonProps> = ({ scenarios }) =>
         </table>
       </div>
 
-      <div className='mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg'>
+      <div className='mt-4 p-4 bg-[#7DA8CC]/10 border border-[#7DA8CC]/30 rounded-lg'>
         <p className='text-sm text-gray-700'>
           <strong>{t('admin.improvements.scenarioNote') || 'Note:'}</strong>{' '}
           {t('admin.improvements.scenarioDescription') ||

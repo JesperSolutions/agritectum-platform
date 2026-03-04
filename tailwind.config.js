@@ -24,50 +24,61 @@ export default {
       transitionDuration: {
         material: '250ms',
       },
-      // Material Design: Typography scale with Roboto
+      // Typography scale with Outfit
       fontFamily: {
-        sans: ['Roboto', 'system-ui', '-apple-system', 'sans-serif'],
-        material: ['Roboto', 'system-ui', '-apple-system', 'sans-serif'],
+        sans: ['Outfit', 'system-ui', '-apple-system', 'sans-serif'],
+        material: ['Outfit', 'system-ui', '-apple-system', 'sans-serif'],
       },
       colors: {
-        // Taklaget Brand Colors (RESERVED FOR MARKETING PAGES ONLY)
-        // UI components should use slate colors from design system
-        brand: {
-          orange: {
-            50: '#fff7ed',
-            100: '#ffedd5',
-            200: '#fed7aa',
-            300: '#fdba74',
-            400: '#fb923c',
-            500: '#f97316', // Primary orange
-            600: '#ea580c',
-            700: '#c2410c',
-            800: '#9a3412',
-            900: '#7c2d12',
+        // AG Brand Colors - 4 official Agritectum colors
+        ag: {
+          green: {
+            50: '#f5f8ec',
+            100: '#eaf0d5',
+            200: '#d5e1ab',
+            300: '#bfd281',
+            400: '#b1c66a',
+            500: '#A1BA53', // AG Green
+            600: '#8a9f47',
+            700: '#73853b',
+            800: '#5c6a2f',
+            900: '#445023',
+          },
+          red: {
+            50: '#fdf2f3',
+            100: '#fce4e7',
+            200: '#f9c9cf',
+            300: '#f0a0aa',
+            400: '#e47886',
+            500: '#DA5062', // AG Red
+            600: '#c23d4f',
+            700: '#a33040',
+            800: '#872a38',
+            900: '#6e2530',
           },
           blue: {
-            50: '#eff6ff',
-            100: '#dbeafe',
-            200: '#bfdbfe',
-            300: '#93c5fd',
-            400: '#60a5fa',
-            500: '#3b82f6',
-            600: '#2563eb',
-            700: '#1d4ed8',
-            800: '#1e40af', // Primary dark blue
-            900: '#1e3a8a',
+            50: '#f1f6fa',
+            100: '#e0ecf4',
+            200: '#c4dcea',
+            300: '#a4c8dc',
+            400: '#90b8d4',
+            500: '#7DA8CC', // AG Blue
+            600: '#6890b3',
+            700: '#567896',
+            800: '#476279',
+            900: '#3b5060',
           },
-          warm: {
-            50: '#fefce8',
-            100: '#fef3c7',
-            200: '#fde68a',
-            300: '#fcd34d',
-            400: '#fbbf24',
-            500: '#f59e0b',
-            600: '#d97706',
-            700: '#b45309',
-            800: '#92400e',
-            900: '#78350f',
+          purple: {
+            50: '#f8f2f8',
+            100: '#f0e3f1',
+            200: '#e0c5e1',
+            300: '#cca3ce',
+            400: '#b882bb',
+            500: '#956098', // AG Purple
+            600: '#7f5182',
+            700: '#69436c',
+            800: '#553657',
+            900: '#432b45',
           },
         },
         // CSS Variable Colors (for compatibility)
@@ -81,14 +92,13 @@ export default {
           DEFAULT: 'hsl(var(--popover))',
           foreground: 'hsl(var(--popover-foreground))',
         },
-        // Primary/Secondary use brand colors (for marketing compatibility)
-        // UI components should use slate-700 for primary buttons
+        // Primary/Secondary use AG brand colors
         primary: {
-          DEFAULT: '#f97316', // Brand orange (marketing only)
+          DEFAULT: '#7DA8CC', // AG Blue
           foreground: '#ffffff',
         },
         secondary: {
-          DEFAULT: '#1e40af', // Brand dark blue (marketing only)
+          DEFAULT: '#A1BA53', // AG Green
           foreground: '#ffffff',
         },
         muted: {
@@ -96,8 +106,8 @@ export default {
           foreground: 'hsl(var(--muted-foreground))',
         },
         accent: {
-          DEFAULT: '#fbbf24', // Brand warm yellow (marketing only)
-          foreground: '#1e40af',
+          DEFAULT: '#956098', // AG Purple
+          foreground: '#ffffff',
         },
         destructive: {
           DEFAULT: 'hsl(var(--destructive))',

@@ -21,30 +21,30 @@ const OfferStatusBadge: React.FC<OfferStatusBadgeProps> = ({
       case 'pending':
         return {
           label: 'Väntar',
-          color: 'bg-yellow-100 text-yellow-800 border-yellow-300',
+          color: 'bg-[#DA5062]/15 text-[#872a38] border-[#DA5062]/35',
           icon: '🕒',
-          iconColor: 'text-yellow-600',
+          iconColor: 'text-[#DA5062]',
         };
       case 'accepted':
         return {
           label: 'Accepterad',
-          color: 'bg-green-100 text-green-800 border-green-300',
+          color: 'bg-[#A1BA53]/15 text-[#5c6a2f] border-[#A1BA53]/40',
           icon: '✅',
-          iconColor: 'text-green-600',
+          iconColor: 'text-[#A1BA53]',
         };
       case 'rejected':
         return {
           label: 'Avvisad',
-          color: 'bg-red-100 text-red-800 border-red-300',
+          color: 'bg-[#DA5062]/15 text-[#872a38] border-[#DA5062]/40',
           icon: '❌',
-          iconColor: 'text-red-600',
+          iconColor: 'text-[#DA5062]',
         };
       case 'awaiting_response':
         return {
           label: 'Väntar på svar',
-          color: 'bg-orange-100 text-orange-800 border-orange-300',
+          color: 'bg-[#DA5062]/15 text-[#872a38] border-[#DA5062]/40',
           icon: '📧',
-          iconColor: 'text-orange-600',
+          iconColor: 'text-[#DA5062]',
         };
       case 'expired':
         return {

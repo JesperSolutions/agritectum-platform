@@ -384,7 +384,7 @@ const SchedulePage: React.FC = () => {
                 setHideOld(false);
                 setInspectorFilter('all');
               }}
-              className='text-sm text-blue-600 hover:text-blue-700'
+              className='text-sm text-[#7DA8CC] hover:text-[#6890b3]'
             >
               {t('schedule.clearFilters')}
             </button>
@@ -463,7 +463,7 @@ const SchedulePage: React.FC = () => {
                     type='checkbox'
                     checked={hideCancelled}
                     onChange={e => setHideCancelled(e.target.checked)}
-                    className='rounded border-slate-300 text-blue-600 focus:ring-slate-500'
+                    className='rounded border-slate-300 text-[#7DA8CC] focus:ring-slate-500'
                   />
                   <span>{t('schedule.hideCancelled') || 'Hide Cancelled'}</span>
                 </label>
@@ -472,7 +472,7 @@ const SchedulePage: React.FC = () => {
                     type='checkbox'
                     checked={hideCompleted}
                     onChange={e => setHideCompleted(e.target.checked)}
-                    className='rounded border-slate-300 text-blue-600 focus:ring-slate-500'
+                    className='rounded border-slate-300 text-[#7DA8CC] focus:ring-slate-500'
                   />
                   <span>{t('schedule.hideCompleted') || 'Hide Completed'}</span>
                 </label>
@@ -481,7 +481,7 @@ const SchedulePage: React.FC = () => {
                     type='checkbox'
                     checked={hideOld}
                     onChange={e => setHideOld(e.target.checked)}
-                    className='rounded border-slate-300 text-blue-600 focus:ring-slate-500'
+                    className='rounded border-slate-300 text-[#7DA8CC] focus:ring-slate-500'
                   />
                   <span>{t('schedule.hideOld') || 'Hide Old (>30 days)'}</span>
                 </label>
@@ -493,28 +493,28 @@ const SchedulePage: React.FC = () => {
 
       {/* Error Message */}
       {error && (
-        <div className='bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3 shadow-lg'>
-          <AlertTriangle className='w-5 h-5 text-red-600 flex-shrink-0 mt-0.5' />
+        <div className='bg-[#DA5062]/10 border border-[#DA5062]/30 rounded-xl p-4 flex items-start gap-3 shadow-lg'>
+          <AlertTriangle className='w-5 h-5 text-[#DA5062] flex-shrink-0 mt-0.5' />
           <div>
-            <h3 className='font-medium text-red-900 mb-1'>{t('schedule.errorLoading')}</h3>
-            <p className='text-sm text-red-700'>{error}</p>
+            <h3 className='font-medium text-[#6e2530] mb-1'>{t('schedule.errorLoading')}</h3>
+            <p className='text-sm text-[#c23d4f]'>{error}</p>
           </div>
         </div>
       )}
 
       {/* Today's Appointments for Inspectors */}
       {isInspector && todaysAppointments.length > 0 && (
-        <div className='bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6 shadow-lg'>
+        <div className='bg-gradient-to-r from-[#7DA8CC]/10 to-indigo-50 border border-[#7DA8CC]/30 rounded-xl p-6 shadow-lg'>
           <div className='flex items-center gap-2 mb-3'>
-            <Calendar className='w-5 h-5 text-blue-600' />
-            <h3 className='font-semibold text-blue-900'>{t('schedule.todaysAppointments')}</h3>
-            <span className='bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded-full'>
+            <Calendar className='w-5 h-5 text-[#7DA8CC]' />
+            <h3 className='font-semibold text-[#3b5060]'>{t('schedule.todaysAppointments')}</h3>
+            <span className='bg-[#7DA8CC]/15 text-[#476279] text-xs font-medium px-2 py-1 rounded-full'>
               {todaysAppointments.length}
             </span>
           </div>
           <div className='space-y-2'>
             {todaysAppointments.map(appointment => (
-              <div key={appointment.id} className='bg-white rounded-lg p-3 border border-blue-100'>
+              <div key={appointment.id} className='bg-white rounded-lg p-3 border border-[#7DA8CC]/20'>
                 <div className='flex items-center justify-between'>
                   <div className='flex-1'>
                     <div className='font-medium text-slate-900'>{appointment.customerName}</div>
@@ -527,8 +527,8 @@ const SchedulePage: React.FC = () => {
                     <span
                       className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                         appointment.status === 'scheduled'
-                          ? 'bg-blue-100 text-blue-800'
-                          : 'bg-yellow-100 text-yellow-800'
+                          ? 'bg-[#7DA8CC]/15 text-[#476279]'
+                          : 'bg-[#DA5062]/15 text-[#872a38]'
                       }`}
                     >
                       {appointment.status === 'scheduled'
@@ -539,7 +539,7 @@ const SchedulePage: React.FC = () => {
                       <Button
                         size='sm'
                         onClick={() => handleStartAppointment(appointment)}
-                        className='bg-blue-600 hover:bg-blue-700'
+                        className='bg-[#7DA8CC] hover:bg-[#6890b3]'
                       >
                         <CheckCircle className='w-4 h-4' />
                         {t('schedule.appointment.start')}
@@ -580,7 +580,7 @@ const SchedulePage: React.FC = () => {
             onClick={() => setFilterStatus('all')}
             className={`px-6 py-4 text-sm font-medium transition-all whitespace-nowrap border-b-2 ${
               filterStatus === 'all'
-                ? 'border-blue-600 text-blue-600 bg-blue-50'
+                ? 'border-[#7DA8CC] text-[#7DA8CC] bg-[#7DA8CC]/10'
                 : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50'
             }`}
           >
@@ -590,7 +590,7 @@ const SchedulePage: React.FC = () => {
             onClick={() => setFilterStatus('scheduled')}
             className={`px-6 py-4 text-sm font-medium transition-all whitespace-nowrap border-b-2 ${
               filterStatus === 'scheduled'
-                ? 'border-blue-600 text-blue-600 bg-blue-50'
+                ? 'border-[#7DA8CC] text-[#7DA8CC] bg-[#7DA8CC]/10'
                 : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50'
             }`}
           >

@@ -153,7 +153,7 @@ export const formatDeliveryStatus = (
     return {
       status: 'pending',
       message: 'Queued for delivery',
-      color: 'text-yellow-600 bg-yellow-50 border-yellow-200',
+      color: 'text-[#DA5062] bg-[#DA5062]/10 border-[#DA5062]/25',
     };
   }
 
@@ -162,20 +162,20 @@ export const formatDeliveryStatus = (
       return {
         status: 'success',
         message: 'Delivered successfully',
-        color: 'text-green-600 bg-green-50 border-green-200',
+        color: 'text-[#A1BA53] bg-[#A1BA53]/10 border-[#A1BA53]/30',
       };
     case 'ERROR':
       return {
         status: 'error',
         message: status.delivery.error || 'Delivery failed',
-        color: 'text-red-600 bg-red-50 border-red-200',
+        color: 'text-[#DA5062] bg-[#DA5062]/10 border-[#DA5062]/30',
       };
     case 'PENDING':
     default:
       return {
         status: 'pending',
         message: `Attempting delivery (${status.delivery.attempts || 0} attempts)`,
-        color: 'text-yellow-600 bg-yellow-50 border-yellow-200',
+        color: 'text-[#DA5062] bg-[#DA5062]/10 border-[#DA5062]/25',
       };
   }
 };

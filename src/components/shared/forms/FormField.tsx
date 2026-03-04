@@ -54,13 +54,13 @@ const FormField: React.FC<FormFieldProps> = ({
 
         {hasError && (
           <div className='absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none'>
-            <AlertCircle className='h-5 w-5 text-red-500' />
+            <AlertCircle className='h-5 w-5 text-[#DA5062]' />
           </div>
         )}
       </div>
 
       {hasError && (
-        <p id={`${fieldId}-error`} className='text-sm text-red-600' role='alert'>
+        <p id={`${fieldId}-error`} className='text-sm text-[#DA5062]' role='alert'>
           {error}
         </p>
       )}

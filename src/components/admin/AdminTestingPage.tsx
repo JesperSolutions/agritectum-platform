@@ -39,7 +39,7 @@ const AdminTestingPage: React.FC = () => {
         <Card className='w-full max-w-md'>
           <CardContent className='pt-6'>
             <div className='text-center'>
-              <XCircle className='h-12 w-12 text-red-500 mx-auto mb-4' />
+              <XCircle className='h-12 w-12 text-[#DA5062] mx-auto mb-4' />
               <h2 className='text-xl font-semibold text-slate-900 mb-2'>
                 {t('errors.access.denied')}
               </h2>
@@ -226,21 +226,21 @@ const AdminTestingPage: React.FC = () => {
                 {result && (
                   <Alert
                     className={
-                      result.success ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'
+                      result.success ? 'border-[#A1BA53]/30 bg-[#A1BA53]/10' : 'border-[#DA5062]/30 bg-[#DA5062]/10'
                     }
                   >
                     <div className='flex items-center gap-2'>
                       {result.success ? (
-                        <CheckCircle className='h-4 w-4 text-green-600' />
+                        <CheckCircle className='h-4 w-4 text-[#A1BA53]' />
                       ) : (
-                        <XCircle className='h-4 w-4 text-red-600' />
+                        <XCircle className='h-4 w-4 text-[#DA5062]' />
                       )}
                       <AlertDescription
-                        className={result.success ? 'text-green-800' : 'text-red-800'}
+                        className={result.success ? 'text-[#5c6a2f]' : 'text-[#872a38]'}
                       >
                         {result.message}
                         {result.error && (
-                          <div className='mt-2 text-sm font-mono bg-red-100 p-2 rounded'>
+                          <div className='mt-2 text-sm font-mono bg-[#DA5062]/15 p-2 rounded'>
                             {result.error}
                           </div>
                         )}
@@ -250,9 +250,9 @@ const AdminTestingPage: React.FC = () => {
                 )}
 
                 {/* Email System Info */}
-                <div className='bg-blue-50 border border-blue-200 rounded-lg p-4'>
-                  <h4 className='font-medium text-blue-900 mb-2'>Email System Configuration</h4>
-                  <div className='text-sm text-blue-800 space-y-1'>
+                <div className='bg-[#7DA8CC]/10 border border-[#7DA8CC]/30 rounded-lg p-4'>
+                  <h4 className='font-medium text-[#3b5060] mb-2'>Email System Configuration</h4>
+                  <div className='text-sm text-[#476279] space-y-1'>
                     <p>
                       <strong>From Address:</strong> noreply@taklaget.app
                     </p>

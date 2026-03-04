@@ -434,7 +434,7 @@ const InteractiveRoofMap: React.FC<InteractiveRoofMapProps> = ({
 
   return (
     <div
-      className='relative w-full h-96 bg-gray-100 rounded-lg overflow-hidden border-2 border-blue-200'
+      className='relative w-full h-96 bg-gray-100 rounded-lg overflow-hidden border-2 border-[#7DA8CC]/30'
       style={{ zIndex: 0 }}
     >
       {/* Map Container */}
@@ -444,7 +444,7 @@ const InteractiveRoofMap: React.FC<InteractiveRoofMapProps> = ({
       {(!isMapReady || tilesLoading > 0) && (
         <div className='absolute inset-0 bg-gray-200 bg-opacity-75 flex items-center justify-center z-10'>
           <div className='text-center'>
-            <Loader2 className='animate-spin h-8 w-8 text-blue-600 mx-auto mb-2' />
+            <Loader2 className='animate-spin h-8 w-8 text-[#7DA8CC] mx-auto mb-2' />
             <p className='text-sm text-gray-700'>{t('address.map.loading')}</p>
           </div>
         </div>
@@ -470,7 +470,7 @@ const InteractiveRoofMap: React.FC<InteractiveRoofMapProps> = ({
           type='button'
           onClick={handleCapture}
           disabled={isCapturing || !isReady}
-          className='inline-flex items-center px-6 py-3 border border-transparent text-base font-semibold rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-400 disabled:cursor-not-allowed shadow-xl transition-all transform hover:scale-105'
+          className='inline-flex items-center px-6 py-3 border border-transparent text-base font-semibold rounded-lg text-white bg-[#7DA8CC] hover:bg-[#6890b3] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7DA8CC] disabled:bg-gray-400 disabled:cursor-not-allowed shadow-xl transition-all transform hover:scale-105'
         >
           {isCapturing ? (
             <>

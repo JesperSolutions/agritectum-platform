@@ -12,11 +12,11 @@ const RecommendedActionsList: React.FC<RecommendedActionsListProps> = ({ actions
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'high':
-        return 'text-red-600 bg-red-50 border-red-200';
+        return 'text-[#DA5062] bg-[#DA5062]/10 border-[#DA5062]/30';
       case 'medium':
-        return 'text-yellow-600 bg-yellow-50 border-yellow-200';
+        return 'text-[#DA5062] bg-[#DA5062]/10 border-[#DA5062]/30';
       case 'low':
-        return 'text-green-600 bg-green-50 border-green-200';
+        return 'text-[#A1BA53] bg-[#A1BA53]/10 border-[#A1BA53]/30';
       default:
         return 'text-gray-600 bg-gray-50 border-gray-200';
     }
@@ -68,7 +68,7 @@ const RecommendedActionsList: React.FC<RecommendedActionsListProps> = ({ actions
     <div className='bg-white p-6 rounded-lg shadow-sm border border-gray-200'>
       <div className='flex items-center justify-between mb-4'>
         <div className='flex items-center'>
-          <CheckCircle className='w-5 h-5 text-blue-600 mr-2' />
+          <CheckCircle className='w-5 h-5 text-[#7DA8CC] mr-2' />
           <h3 className='text-lg font-semibold text-gray-900'>
             Recommended Actions ({actions.length})
           </h3>

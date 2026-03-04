@@ -3,7 +3,7 @@
   "navigation.reports": "Berichte",
   "navigation.myReports": "Meine Berichte",
   "navigation.customers": "Kunden",
-  "navigation.schedule": "Zeitplan",
+  "navigation.schedule": "Aufgaben",
   "navigation.offers": "Angebote",
   "navigation.branches": "Filialen",
   "navigation.analytics": "Analyse",
@@ -47,7 +47,7 @@
   "navigation.buildings": "Gebäude",
   "navigation.scheduledVisits": "Geplante Besuche",
   "navigation.allReports": "Alle Berichte",
-  "navigation.operations": "Operationen",
+  "navigation.operations": "Überblick",
   "navigation.esgService": "ESG-Service",
   "navigation.emailTemplates": "E-Mail-Vorlagen"
 }

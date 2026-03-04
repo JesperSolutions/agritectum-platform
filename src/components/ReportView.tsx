@@ -404,13 +404,13 @@ const ReportView: React.FC = () => {
   const getSeverityColor = (severity: string) => {
     switch (severity) {
       case 'low':
-        return 'bg-green-100 text-green-800';
+        return 'bg-[#A1BA53]/15 text-[#5c6a2f]';
       case 'medium':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-[#DA5062]/15 text-[#872a38]';
       case 'high':
-        return 'bg-orange-100 text-orange-800';
+        return 'bg-[#DA5062]/15 text-[#872a38]';
       case 'critical':
-        return 'bg-red-100 text-red-800';
+        return 'bg-[#DA5062]/15 text-[#872a38]';
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -492,11 +492,11 @@ const ReportView: React.FC = () => {
 
   if (error || !report) {
     return (
-      <div className='bg-red-50 border border-red-200 rounded-lg p-6'>
+      <div className='bg-[#DA5062]/10 border border-[#DA5062]/30 rounded-lg p-6'>
         <div className='flex'>
-          <AlertTriangle className='w-5 h-5 text-red-400' />
+          <AlertTriangle className='w-5 h-5 text-[#e47886]' />
           <div className='ml-3'>
-            <h3 className='text-sm font-medium text-red-800'>{error || 'Report not found'}</h3>
+            <h3 className='text-sm font-medium text-[#872a38]'>{error || 'Report not found'}</h3>
           </div>
         </div>
       </div>
@@ -637,7 +637,7 @@ const ReportView: React.FC = () => {
                             });
                           }
                         }}
-                        className='inline-flex items-center px-3 py-2 border border-green-600 rounded-lg text-sm font-medium transition-colors shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500'
+                        className='inline-flex items-center px-3 py-2 border border-[#A1BA53] rounded-lg text-sm font-medium transition-colors shadow-sm text-white bg-[#A1BA53] hover:bg-[#8a9f47] focus:outline-none focus:ring-2 focus:ring-[#A1BA53]'
                       >
                         <Save className='w-4 h-4 mr-2' />
                         Save Changes
@@ -761,7 +761,7 @@ const ReportView: React.FC = () => {
                 <button
                   onClick={handleExportPDF}
                   disabled={isGeneratingPDF}
-                  className='inline-flex items-center px-3 py-2 border border-slate-300 text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed'
+                  className='inline-flex items-center px-3 py-2 border border-slate-300 text-sm font-medium rounded-lg text-white bg-[#7DA8CC] hover:bg-[#6890b3] focus:outline-none focus:ring-2 focus:ring-[#7DA8CC] transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed'
                   title={t('reportView.exportPDF') || 'Export PDF'}
                   aria-label={t('reportView.exportPDF') || 'Export PDF'}
                 >
@@ -840,13 +840,13 @@ const ReportView: React.FC = () => {
                       type='text'
                       value={report.customerName || ''}
                       onChange={e => setReport({ ...report, customerName: e.target.value })}
-                      className='w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500'
+                      className='w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#7DA8CC]'
                     />
                   ) : (
                     <span className='text-gray-900'>{report.customerName}</span>
                   )}
                   {report.customerType === 'company' && (
-                    <span className='px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded-full flex-shrink-0'>
+                    <span className='px-2 py-0.5 text-xs bg-[#7DA8CC]/15 text-[#476279] rounded-full flex-shrink-0'>
                       {t('report.company') || 'Company'}
                     </span>
                   )}
@@ -866,7 +866,7 @@ const ReportView: React.FC = () => {
                           type='text'
                           value={report.customerAddress || ''}
                           onChange={e => setReport({ ...report, customerAddress: e.target.value })}
-                          className='w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500'
+                          className='w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#7DA8CC]'
                         />
                       </div>
                       {report.customerType === 'company' && (
@@ -880,7 +880,7 @@ const ReportView: React.FC = () => {
                             onChange={e =>
                               setReport({ ...report, buildingAddress: e.target.value })
                             }
-                            className='w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500'
+                            className='w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#7DA8CC]'
                           />
                         </div>
                       )}
@@ -905,7 +905,7 @@ const ReportView: React.FC = () => {
                     type='text'
                     value={report.customerPhone || ''}
                     onChange={e => setReport({ ...report, customerPhone: e.target.value })}
-                    className='w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500'
+                    className='w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#7DA8CC]'
                   />
                 ) : (
                   <span className='text-gray-900'>{report.customerPhone}</span>
@@ -919,7 +919,7 @@ const ReportView: React.FC = () => {
                     type='email'
                     value={report.customerEmail || ''}
                     onChange={e => setReport({ ...report, customerEmail: e.target.value })}
-                    className='w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500'
+                    className='w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#7DA8CC]'
                   />
                 ) : (
                   <span className='text-gray-900'>{report.customerEmail}</span>
@@ -961,7 +961,7 @@ const ReportView: React.FC = () => {
                 <div className='mt-4'>
                   <Link
                     to={`/report/view/${priorReport.id}`}
-                    className='inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+                    className='inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7DA8CC]'
                   >
                     <Eye className='w-4 h-4 mr-2' />
                     View Prior Report
@@ -988,7 +988,7 @@ const ReportView: React.FC = () => {
                     onChange={e => {
                       setReport({ ...report, buildingName: e.target.value });
                     }}
-                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-sans'
+                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7DA8CC] font-sans'
                     placeholder='Enter building name...'
                   />
                 ) : (
@@ -1007,7 +1007,7 @@ const ReportView: React.FC = () => {
                         : ''
                     }
                     onChange={e => setReport({ ...report, inspectionDate: e.target.value })}
-                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-sans mt-1'
+                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7DA8CC] font-sans mt-1'
                   />
                 ) : (
                   <div className='text-gray-900'>
@@ -1025,7 +1025,7 @@ const ReportView: React.FC = () => {
                     type='text'
                     value={report.roofType || ''}
                     onChange={e => setReport({ ...report, roofType: e.target.value as any })}
-                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-sans mt-1'
+                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7DA8CC] font-sans mt-1'
                     placeholder='Enter roof type...'
                   />
                 ) : (
@@ -1043,7 +1043,7 @@ const ReportView: React.FC = () => {
                       onChange={e =>
                         setReport({ ...report, roofAge: parseInt(e.target.value) || 0 })
                       }
-                      className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-sans mt-1'
+                      className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7DA8CC] font-sans mt-1'
                       placeholder='0'
                     />
                   ) : (
@@ -1069,7 +1069,7 @@ const ReportView: React.FC = () => {
                 <textarea
                   value={report.conditionNotes}
                   onChange={e => setReport({ ...report, conditionNotes: e.target.value })}
-                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-sans'
+                  className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7DA8CC] font-sans'
                   rows={4}
                   placeholder='Enter condition notes...'
                 />
@@ -1086,7 +1086,7 @@ const ReportView: React.FC = () => {
         {report.roofImageUrl && (
           <div className='bg-white p-6 rounded-lg shadow-sm border border-gray-200'>
             <h2 className='text-lg font-medium text-gray-900 mb-4 flex items-center'>
-              <MapPin className='w-5 h-5 mr-2 text-blue-600' />
+              <MapPin className='w-5 h-5 mr-2 text-[#7DA8CC]' />
               {t('reportView.roofOverview') || 'Roof Overview with Issue Locations'}
             </h2>
             <div
@@ -1104,15 +1104,15 @@ const ReportView: React.FC = () => {
                   const getPinColor = (severity: string) => {
                     switch (severity) {
                       case 'critical':
-                        return 'bg-red-600 border-red-700';
+                        return 'bg-[#DA5062] border-[#c23d4f]';
                       case 'high':
-                        return 'bg-orange-500 border-orange-600';
+                        return 'bg-[#DA5062] border-[#DA5062]';
                       case 'medium':
-                        return 'bg-yellow-500 border-yellow-600';
+                        return 'bg-[#DA5062]/100 border-[#DA5062]';
                       case 'low':
-                        return 'bg-green-600 border-green-700';
+                        return 'bg-[#A1BA53] border-[#8a9f47]';
                       default:
-                        return 'bg-blue-500 border-blue-600';
+                        return 'bg-[#7DA8CC]/100 border-[#7DA8CC]';
                     }
                   };
                   return (
@@ -1209,7 +1209,7 @@ const ReportView: React.FC = () => {
                             );
                             setReport({ ...report, issuesFound: updatedIssues });
                           }}
-                          className='ml-2 px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 w-full mt-1'
+                          className='ml-2 px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#7DA8CC] w-full mt-1'
                           placeholder='Location'
                         />
                       ) : (
@@ -1229,7 +1229,7 @@ const ReportView: React.FC = () => {
                             );
                             setReport({ ...report, issuesFound: updatedIssues });
                           }}
-                          className='w-full mt-1 px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 font-sans'
+                          className='w-full mt-1 px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#7DA8CC] font-sans'
                           rows={3}
                           placeholder='Description'
                         />
@@ -1301,10 +1301,10 @@ const ReportView: React.FC = () => {
                       <span
                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${
                           action.priority === 'high'
-                            ? 'bg-red-100 text-red-800'
+                            ? 'bg-[#DA5062]/15 text-[#872a38]'
                             : action.priority === 'medium'
-                              ? 'bg-yellow-100 text-yellow-800'
-                              : 'bg-green-100 text-green-800'
+                              ? 'bg-[#DA5062]/15 text-[#872a38]'
+                              : 'bg-[#A1BA53]/15 text-[#5c6a2f]'
                         }`}
                       >
                         {action.priority} priority
@@ -1312,10 +1312,10 @@ const ReportView: React.FC = () => {
                       <span
                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${
                           action.urgency === 'immediate'
-                            ? 'bg-red-100 text-red-800'
+                            ? 'bg-[#DA5062]/15 text-[#872a38]'
                             : action.urgency === 'short_term'
-                              ? 'bg-yellow-100 text-yellow-800'
-                              : 'bg-blue-100 text-blue-800'
+                              ? 'bg-[#DA5062]/15 text-[#872a38]'
+                              : 'bg-[#7DA8CC]/15 text-[#476279]'
                         }`}
                       >
                         {action.urgency.replace('_', ' ')}
@@ -1333,7 +1333,7 @@ const ReportView: React.FC = () => {
                           );
                           setReport({ ...report, recommendedActions: updatedActions });
                         }}
-                        className='w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 font-sans'
+                        className='w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#7DA8CC] font-sans'
                         rows={3}
                       />
                     ) : (
@@ -1355,7 +1355,7 @@ const ReportView: React.FC = () => {
                               );
                               setReport({ ...report, recommendedActions: updatedActions });
                             }}
-                            className='ml-2 px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500'
+                            className='ml-2 px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#7DA8CC]'
                           />
                         ) : (
                           <span className='ml-2 text-gray-900 font-medium'>
@@ -1382,7 +1382,7 @@ const ReportView: React.FC = () => {
               {report.status === 'draft' && (
                 <button
                   onClick={() => handleStatusChange('completed')}
-                  className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 shadow-sm'
+                  className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-[#A1BA53] hover:bg-[#8a9f47] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#A1BA53] shadow-sm'
                 >
                   <CheckCircle className='w-4 h-4 mr-2' />
                   {t('reportView.markAsCompleted')}
@@ -1402,7 +1402,7 @@ const ReportView: React.FC = () => {
               {!report.isShared && (
                 <button
                   onClick={() => handleStatusChange('shared')}
-                  className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500'
+                  className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#956098] hover:bg-[#7f5182] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#956098]'
                 >
                   <Share2 className='w-4 h-4 mr-2' />
                   {t('reportView.makeShareable')}

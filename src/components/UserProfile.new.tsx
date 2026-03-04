@@ -492,8 +492,8 @@ const UserProfile: React.FC = () => {
 
                         {/* Error Message */}
                         {passwordError && (
-                          <div className='bg-red-50 border border-red-200 rounded-material p-3'>
-                            <p className='text-sm text-red-800'>{passwordError}</p>
+                          <div className='bg-[#DA5062]/10 border border-[#DA5062]/30 rounded-material p-3'>
+                            <p className='text-sm text-[#872a38]'>{passwordError}</p>
                           </div>
                         )}
 

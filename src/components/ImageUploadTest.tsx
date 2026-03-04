@@ -20,9 +20,9 @@ const ImageUploadTest: React.FC = () => {
 
   return (
     <div className='space-y-6'>
-      <div className='bg-blue-50 border border-blue-200 rounded-lg p-4'>
-        <h3 className='text-lg font-semibold text-blue-900 mb-2'>Image Upload Test</h3>
-        <div className='text-sm text-blue-700 space-y-1'>
+      <div className='bg-[#7DA8CC]/10 border border-[#7DA8CC]/30 rounded-lg p-4'>
+        <h3 className='text-lg font-semibold text-[#3b5060] mb-2'>Image Upload Test</h3>
+        <div className='text-sm text-[#6890b3] space-y-1'>
           <p>
             <strong>Test Report ID:</strong> {testReportId}
           </p>
@@ -35,7 +35,7 @@ const ImageUploadTest: React.FC = () => {
       <div className='flex gap-3'>
         <button
           onClick={handleTestUpload}
-          className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+          className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#7DA8CC] hover:bg-[#6890b3] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7DA8CC]'
         >
           <Upload className='w-4 h-4 mr-2' />
           Test Upload
@@ -43,10 +43,10 @@ const ImageUploadTest: React.FC = () => {
       </div>
 
       {uploadStatus && (
-        <div className='bg-green-50 border border-green-200 rounded-lg p-3'>
+        <div className='bg-[#A1BA53]/10 border border-[#A1BA53]/30 rounded-lg p-3'>
           <div className='flex items-center'>
-            <CheckCircle className='w-5 h-5 text-green-600 mr-2' />
-            <p className='text-sm text-green-800'>{uploadStatus}</p>
+            <CheckCircle className='w-5 h-5 text-[#A1BA53] mr-2' />
+            <p className='text-sm text-[#5c6a2f]'>{uploadStatus}</p>
           </div>
         </div>
       )}
@@ -84,7 +84,7 @@ const ImageUploadTest: React.FC = () => {
                     href={imageUrl}
                     target='_blank'
                     rel='noopener noreferrer'
-                    className='inline-flex items-center text-sm text-blue-600 hover:text-blue-800'
+                    className='inline-flex items-center text-sm text-[#7DA8CC] hover:text-[#476279]'
                   >
                     <Eye className='w-4 h-4 mr-1' />
                     View Full Size

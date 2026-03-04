@@ -253,11 +253,11 @@ const PublicServiceAgreementView: React.FC = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active':
-        return 'bg-green-100 text-green-800';
+        return 'bg-[#A1BA53]/15 text-[#5c6a2f]';
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-[#DA5062]/15 text-[#872a38]';
       case 'expired':
-        return 'bg-red-100 text-red-800';
+        return 'bg-[#DA5062]/15 text-[#872a38]';
       case 'cancelled':
         return 'bg-gray-100 text-gray-800';
       default:
@@ -277,7 +277,7 @@ const PublicServiceAgreementView: React.FC = () => {
     return (
       <div className='min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4'>
         <div className='max-w-md w-full bg-white rounded-xl shadow-lg p-8 text-center'>
-          <AlertCircle className='w-16 h-16 text-red-500 mx-auto mb-4' />
+          <AlertCircle className='w-16 h-16 text-[#DA5062] mx-auto mb-4' />
           <h1 className='text-2xl font-bold text-gray-900 mb-2'>
             {t('serviceAgreement.public.notFoundTitle') || 'Service Agreement Not Found'}
           </h1>
@@ -314,14 +314,14 @@ const PublicServiceAgreementView: React.FC = () => {
 
           {/* Status Banner */}
           {isAccepted && (
-            <div className='bg-green-50 border-l-4 border-green-500 p-4'>
+            <div className='bg-[#A1BA53]/10 border-l-4 border-[#A1BA53] p-4'>
               <div className='flex'>
-                <CheckCircle className='w-5 h-5 text-green-500 mr-3 mt-0.5' />
+                <CheckCircle className='w-5 h-5 text-[#A1BA53] mr-3 mt-0.5' />
                 <div>
-                  <p className='text-green-800 font-semibold'>
+                  <p className='text-[#5c6a2f] font-semibold'>
                     {t('serviceAgreement.public.accepted') || 'Service Agreement Accepted'}
                   </p>
-                  <p className='text-green-600 text-sm'>
+                  <p className='text-[#A1BA53] text-sm'>
                     {t('serviceAgreement.public.acceptedMessage', {
                       date: formatDate(agreement.acceptedAt || ''),
                     }) ||
@@ -333,14 +333,14 @@ const PublicServiceAgreementView: React.FC = () => {
           )}
 
           {isExpired && !isAccepted && (
-            <div className='bg-red-50 border-l-4 border-red-500 p-4'>
+            <div className='bg-[#DA5062]/10 border-l-4 border-[#DA5062] p-4'>
               <div className='flex'>
-                <XCircle className='w-5 h-5 text-red-500 mr-3 mt-0.5' />
+                <XCircle className='w-5 h-5 text-[#DA5062] mr-3 mt-0.5' />
                 <div>
-                  <p className='text-red-800 font-semibold'>
+                  <p className='text-[#872a38] font-semibold'>
                     {t('serviceAgreement.public.expired') || 'Service Agreement Expired'}
                   </p>
-                  <p className='text-red-600 text-sm'>
+                  <p className='text-[#DA5062] text-sm'>
                     {t('serviceAgreement.public.expiredMessage') ||
                       'This service agreement has expired.'}
                   </p>
@@ -350,14 +350,14 @@ const PublicServiceAgreementView: React.FC = () => {
           )}
 
           {!isAccepted && !isExpired && (
-            <div className='bg-blue-50 border-l-4 border-blue-500 p-4'>
+            <div className='bg-[#7DA8CC]/10 border-l-4 border-[#7DA8CC] p-4'>
               <div className='flex'>
-                <Clock className='w-5 h-5 text-blue-500 mr-3 mt-0.5' />
+                <Clock className='w-5 h-5 text-[#7DA8CC] mr-3 mt-0.5' />
                 <div>
-                  <p className='text-blue-800 font-semibold'>
+                  <p className='text-[#476279] font-semibold'>
                     {t('serviceAgreement.public.pending') || 'Pending Acceptance'}
                   </p>
-                  <p className='text-blue-600 text-sm'>
+                  <p className='text-[#7DA8CC] text-sm'>
                     {t('serviceAgreement.public.pendingMessage') ||
                       'Please review and accept this service agreement to proceed.'}
                   </p>
@@ -455,7 +455,7 @@ const PublicServiceAgreementView: React.FC = () => {
                         <div className='space-y-2 ml-4'>
                           {agreement.serviceVisits.oneAnnual && (
                             <div className='flex items-center gap-2'>
-                              <CheckCircle className='w-5 h-5 text-green-600' />
+                              <CheckCircle className='w-5 h-5 text-[#A1BA53]' />
                               <span className='text-gray-700'>
                                 {t('serviceAgreement.form.services.oneAnnual') ||
                                   '1 årligt servicebesøg'}
@@ -464,7 +464,7 @@ const PublicServiceAgreementView: React.FC = () => {
                           )}
                           {agreement.serviceVisits.twoAnnual && (
                             <div className='flex items-center gap-2'>
-                              <CheckCircle className='w-5 h-5 text-green-600' />
+                              <CheckCircle className='w-5 h-5 text-[#A1BA53]' />
                               <span className='text-gray-700'>
                                 {t('serviceAgreement.form.services.twoAnnual') ||
                                   '2 årlige servicebesøg'}
@@ -547,7 +547,7 @@ const PublicServiceAgreementView: React.FC = () => {
                           .filter(service => agreement.standardServices?.includes(service.key))
                           .map(service => (
                             <div key={service.key} className='flex items-center gap-2'>
-                              <CheckCircle className='w-5 h-5 text-green-600' />
+                              <CheckCircle className='w-5 h-5 text-[#A1BA53]' />
                               <span className='text-gray-700'>{service.label}</span>
                             </div>
                           ))}
@@ -568,7 +568,7 @@ const PublicServiceAgreementView: React.FC = () => {
                           <div className='space-y-2 ml-4'>
                             {agreement.addons.skylights.includes('skylightCleaning') && (
                               <div className='flex items-center gap-2'>
-                                <CheckCircle className='w-5 h-5 text-green-600' />
+                                <CheckCircle className='w-5 h-5 text-[#A1BA53]' />
                                 <span className='text-gray-700'>
                                   {t('serviceAgreement.form.addons.skylightCleaning') ||
                                     'Rensning/inspektion af ovenlyskupler'}
@@ -577,7 +577,7 @@ const PublicServiceAgreementView: React.FC = () => {
                             )}
                             {agreement.addons.skylights.includes('annualInspection') && (
                               <div className='flex items-center gap-2'>
-                                <CheckCircle className='w-5 h-5 text-green-600' />
+                                <CheckCircle className='w-5 h-5 text-[#A1BA53]' />
                                 <span className='text-gray-700'>
                                   {t('serviceAgreement.form.addons.annualInspection') ||
                                     'Årligt eftersyn (EN 365)'}
@@ -586,7 +586,7 @@ const PublicServiceAgreementView: React.FC = () => {
                             )}
                             {agreement.addons.skylights.includes('safetyEquipmentControl') && (
                               <div className='flex items-center gap-2'>
-                                <CheckCircle className='w-5 h-5 text-green-600' />
+                                <CheckCircle className='w-5 h-5 text-[#A1BA53]' />
                                 <span className='text-gray-700'>
                                   {t('serviceAgreement.form.addons.safetyEquipmentControl') ||
                                     'Kontrol af liner, wires, seler og karabiner'}
@@ -606,7 +606,7 @@ const PublicServiceAgreementView: React.FC = () => {
                           <div className='space-y-2 ml-4'>
                             {agreement.addons.solar.includes('solarCleaning') && (
                               <div className='flex items-center gap-2'>
-                                <CheckCircle className='w-5 h-5 text-green-600' />
+                                <CheckCircle className='w-5 h-5 text-[#A1BA53]' />
                                 <span className='text-gray-700'>
                                   {t('serviceAgreement.form.addons.solarCleaning') ||
                                     'Rensning af solceller (1–2 gange årligt)'}
@@ -626,7 +626,7 @@ const PublicServiceAgreementView: React.FC = () => {
                           <div className='space-y-2 ml-4'>
                             {agreement.addons.steel.includes('mossRemoval') && (
                               <div className='flex items-center gap-2'>
-                                <CheckCircle className='w-5 h-5 text-green-600' />
+                                <CheckCircle className='w-5 h-5 text-[#A1BA53]' />
                                 <span className='text-gray-700'>
                                   {t('serviceAgreement.form.addons.mossRemoval') ||
                                     'Rensning af lav og mos'}
@@ -635,7 +635,7 @@ const PublicServiceAgreementView: React.FC = () => {
                             )}
                             {agreement.addons.steel.includes('chemicalTreatment') && (
                               <div className='flex items-center gap-2'>
-                                <CheckCircle className='w-5 h-5 text-green-600' />
+                                <CheckCircle className='w-5 h-5 text-[#A1BA53]' />
                                 <span className='text-gray-700'>
                                   {t('serviceAgreement.form.addons.chemicalTreatment') ||
                                     'Kemisk tagbehandling'}
@@ -656,7 +656,7 @@ const PublicServiceAgreementView: React.FC = () => {
                           <div className='space-y-2 ml-4'>
                             {agreement.addons.sedum.includes('fertilization') && (
                               <div className='flex items-center gap-2'>
-                                <CheckCircle className='w-5 h-5 text-green-600' />
+                                <CheckCircle className='w-5 h-5 text-[#A1BA53]' />
                                 <span className='text-gray-700'>
                                   {t('serviceAgreement.form.addons.fertilization') ||
                                     'Gødning (forår/sommer)'}
@@ -665,7 +665,7 @@ const PublicServiceAgreementView: React.FC = () => {
                             )}
                             {agreement.addons.sedum.includes('weedControl') && (
                               <div className='flex items-center gap-2'>
-                                <CheckCircle className='w-5 h-5 text-green-600' />
+                                <CheckCircle className='w-5 h-5 text-[#A1BA53]' />
                                 <span className='text-gray-700'>
                                   {t('serviceAgreement.form.addons.weedControl') ||
                                     'Ukrudtskontrol'}
@@ -674,7 +674,7 @@ const PublicServiceAgreementView: React.FC = () => {
                             )}
                             {agreement.addons.sedum.includes('sedumRepair') && (
                               <div className='flex items-center gap-2'>
-                                <CheckCircle className='w-5 h-5 text-green-600' />
+                                <CheckCircle className='w-5 h-5 text-[#A1BA53]' />
                                 <span className='text-gray-700'>
                                   {t('serviceAgreement.form.addons.sedumRepair') ||
                                     'Reparation af sedumflader'}
@@ -683,7 +683,7 @@ const PublicServiceAgreementView: React.FC = () => {
                             )}
                             {agreement.addons.sedum.includes('substrateRefill') && (
                               <div className='flex items-center gap-2'>
-                                <CheckCircle className='w-5 h-5 text-green-600' />
+                                <CheckCircle className='w-5 h-5 text-[#A1BA53]' />
                                 <span className='text-gray-700'>
                                   {t('serviceAgreement.form.addons.substrateRefill') ||
                                     'Efterfyldning af vækstmedie'}
@@ -692,7 +692,7 @@ const PublicServiceAgreementView: React.FC = () => {
                             )}
                             {agreement.addons.sedum.includes('watering') && (
                               <div className='flex items-center gap-2'>
-                                <CheckCircle className='w-5 h-5 text-green-600' />
+                                <CheckCircle className='w-5 h-5 text-[#A1BA53]' />
                                 <span className='text-gray-700'>
                                   {t('serviceAgreement.form.addons.watering') ||
                                     'Vanding efter behov'}
@@ -846,7 +846,7 @@ const PublicServiceAgreementView: React.FC = () => {
                           href={docUrl}
                           target='_blank'
                           rel='noopener noreferrer'
-                          className='text-blue-600 hover:text-blue-800 underline'
+                          className='text-[#7DA8CC] hover:text-[#476279] underline'
                         >
                           {t('serviceAgreement.public.document', { number: index + 1 }) ||
                             `Document ${index + 1}`}
@@ -890,14 +890,14 @@ const PublicServiceAgreementView: React.FC = () => {
                   value={customerName}
                   onChange={e => setCustomerName(e.target.value)}
                   className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-slate-700 focus:border-transparent ${
-                    formErrors.customerName ? 'border-red-500' : 'border-gray-300'
+                    formErrors.customerName ? 'border-[#DA5062]' : 'border-gray-300'
                   }`}
                   placeholder={
                     t('serviceAgreement.public.form.namePlaceholder') || 'Enter your full name'
                   }
                 />
                 {formErrors.customerName && (
-                  <p className='mt-1 text-sm text-red-600'>{formErrors.customerName}</p>
+                  <p className='mt-1 text-sm text-[#DA5062]'>{formErrors.customerName}</p>
                 )}
               </div>
 
@@ -911,14 +911,14 @@ const PublicServiceAgreementView: React.FC = () => {
                   value={customerEmail}
                   onChange={e => setCustomerEmail(e.target.value)}
                   className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-slate-700 focus:border-transparent ${
-                    formErrors.customerEmail ? 'border-red-500' : 'border-gray-300'
+                    formErrors.customerEmail ? 'border-[#DA5062]' : 'border-gray-300'
                   }`}
                   placeholder={
                     t('serviceAgreement.public.form.emailPlaceholder') || 'Enter your email address'
                   }
                 />
                 {formErrors.customerEmail && (
-                  <p className='mt-1 text-sm text-red-600'>{formErrors.customerEmail}</p>
+                  <p className='mt-1 text-sm text-[#DA5062]'>{formErrors.customerEmail}</p>
                 )}
               </div>
 
@@ -928,7 +928,7 @@ const PublicServiceAgreementView: React.FC = () => {
                   {t('serviceAgreement.public.form.signature') || 'Upload Signature'} *
                 </label>
                 <div className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
-                  formErrors.signatureFile ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-slate-400'
+                  formErrors.signatureFile ? 'border-[#DA5062] bg-[#DA5062]/10' : 'border-gray-300 hover:border-slate-400'
                 }`}>
                   <input
                     type='file'
@@ -970,7 +970,7 @@ const PublicServiceAgreementView: React.FC = () => {
                   </label>
                 </div>
                 {formErrors.signatureFile && (
-                  <p className='mt-1 text-sm text-red-600'>{formErrors.signatureFile}</p>
+                  <p className='mt-1 text-sm text-[#DA5062]'>{formErrors.signatureFile}</p>
                 )}
               </div>
 
@@ -985,7 +985,7 @@ const PublicServiceAgreementView: React.FC = () => {
                       className='mt-1 mr-3 w-5 h-5 text-slate-700 border-gray-300 rounded focus:ring-slate-700'
                     />
                     <span
-                      className={`text-sm ${formErrors.agreeToTerms ? 'text-red-600' : 'text-gray-700'}`}
+                      className={`text-sm ${formErrors.agreeToTerms ? 'text-[#DA5062]' : 'text-gray-700'}`}
                     >
                       {t('serviceAgreement.public.form.agreeToTerms') ||
                         'I agree to the terms and conditions'}{' '}
@@ -993,7 +993,7 @@ const PublicServiceAgreementView: React.FC = () => {
                     </span>
                   </label>
                   {formErrors.agreeToTerms && (
-                    <p className='mt-1 text-sm text-red-600 ml-8'>{formErrors.agreeToTerms}</p>
+                    <p className='mt-1 text-sm text-[#DA5062] ml-8'>{formErrors.agreeToTerms}</p>
                   )}
                 </div>
 
@@ -1006,7 +1006,7 @@ const PublicServiceAgreementView: React.FC = () => {
                       className='mt-1 mr-3 w-5 h-5 text-slate-700 border-gray-300 rounded focus:ring-slate-700'
                     />
                     <span
-                      className={`text-sm ${formErrors.acceptAgreement ? 'text-red-600' : 'text-gray-700'}`}
+                      className={`text-sm ${formErrors.acceptAgreement ? 'text-[#DA5062]' : 'text-gray-700'}`}
                     >
                       {t('serviceAgreement.public.form.acceptAgreement') ||
                         'I understand and accept this service agreement'}{' '}
@@ -1014,7 +1014,7 @@ const PublicServiceAgreementView: React.FC = () => {
                     </span>
                   </label>
                   {formErrors.acceptAgreement && (
-                    <p className='mt-1 text-sm text-red-600 ml-8'>{formErrors.acceptAgreement}</p>
+                    <p className='mt-1 text-sm text-[#DA5062] ml-8'>{formErrors.acceptAgreement}</p>
                   )}
                 </div>
               </div>
@@ -1039,7 +1039,7 @@ const PublicServiceAgreementView: React.FC = () => {
               </button>
 
               {error && (
-                <div className='bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg'>
+                <div className='bg-[#DA5062]/10 border border-[#DA5062]/30 text-[#872a38] px-4 py-3 rounded-lg'>
                   {error}
                 </div>
               )}
@@ -1050,7 +1050,7 @@ const PublicServiceAgreementView: React.FC = () => {
         {/* Success Message */}
         {showSuccess && isAccepted && (
           <div className='bg-white rounded-xl shadow-lg p-8 text-center'>
-            <CheckCircle className='w-16 h-16 text-green-500 mx-auto mb-4' />
+            <CheckCircle className='w-16 h-16 text-[#A1BA53] mx-auto mb-4' />
             <h2 className='text-2xl font-bold text-gray-900 mb-2'>
               {t('serviceAgreement.public.successTitle') || 'Thank You!'}
             </h2>

@@ -145,7 +145,7 @@ const PortfolioHealthReport: React.FC<Props> = ({ buildings, reports, onExportPD
           <div className="flex items-center gap-2">
             <p className="text-3xl font-bold text-gray-900">{avgHealth}</p>
             {trend !== 0 && (
-              <span className={`flex items-center text-sm font-medium ${trend > 0 ? 'text-green-600' : 'text-red-600'}`}>
+              <span className={`flex items-center text-sm font-medium ${trend > 0 ? 'text-[#A1BA53]' : 'text-[#DA5062]'}`}>
                 {trend > 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
                 {Math.abs(trend)}
               </span>

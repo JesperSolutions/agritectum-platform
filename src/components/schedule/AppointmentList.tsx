@@ -39,15 +39,15 @@ const AppointmentList: React.FC<AppointmentListProps> = ({
   const getStatusColor = (status: AppointmentStatus): string => {
     switch (status) {
       case 'scheduled':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-[#7DA8CC]/15 text-[#476279]';
       case 'in_progress':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-[#DA5062]/15 text-[#872a38]';
       case 'completed':
-        return 'bg-green-100 text-green-800';
+        return 'bg-[#A1BA53]/15 text-[#5c6a2f]';
       case 'cancelled':
         return 'bg-gray-100 text-gray-800';
       case 'no_show':
-        return 'bg-red-100 text-red-800';
+        return 'bg-[#DA5062]/15 text-[#872a38]';
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -189,7 +189,7 @@ const AppointmentList: React.FC<AppointmentListProps> = ({
                           onClick={() => onStart(appointment)}
                           title={t('schedule.appointment.start')}
                         >
-                          <CheckCircle className='w-4 h-4 text-green-600' />
+                          <CheckCircle className='w-4 h-4 text-[#A1BA53]' />
                         </Button>
                       )}
 
@@ -200,7 +200,7 @@ const AppointmentList: React.FC<AppointmentListProps> = ({
                         onClick={() => onStart(appointment)}
                         title={t('schedule.appointment.createReport')}
                       >
-                        <FileText className='w-4 h-4 text-blue-600' />
+                        <FileText className='w-4 h-4 text-[#7DA8CC]' />
                       </Button>
                     )}
 
@@ -224,7 +224,7 @@ const AppointmentList: React.FC<AppointmentListProps> = ({
                             onClick={() => onCancel(appointment)}
                             title={t('schedule.appointment.cancel')}
                           >
-                            <Ban className='w-4 h-4 text-orange-600' />
+                            <Ban className='w-4 h-4 text-[#DA5062]' />
                           </Button>
 
                           <Button
@@ -233,7 +233,7 @@ const AppointmentList: React.FC<AppointmentListProps> = ({
                             onClick={() => onDelete(appointment)}
                             title={t('schedule.appointment.delete')}
                           >
-                            <Trash2 className='w-4 h-4 text-red-600' />
+                            <Trash2 className='w-4 h-4 text-[#DA5062]' />
                           </Button>
                         </>
                       )}
@@ -336,7 +336,7 @@ const AppointmentList: React.FC<AppointmentListProps> = ({
                     </Button>
 
                     <Button variant='ghost' size='sm' onClick={() => onDelete(appointment)}>
-                      <Trash2 className='w-4 h-4 text-red-600' />
+                      <Trash2 className='w-4 h-4 text-[#DA5062]' />
                     </Button>
                   </>
                 )}

@@ -157,15 +157,15 @@ export const BillingDashboard: React.FC = () => {
 
       {/* Past Due Payment Warning */}
       {currentSubscription && currentSubscription.status === 'past_due' && (
-        <Alert variant='destructive' className='border-red-300 bg-red-50'>
+        <Alert variant='destructive' className='border-[#DA5062]/40 bg-[#DA5062]/10'>
           <AlertTriangle className='h-5 w-5' />
           <AlertTitle className='text-lg font-semibold'>Payment Failed - Action Required</AlertTitle>
           <AlertDescription className='mt-2 space-y-2'>
-            <p className='text-red-900'>
+            <p className='text-[#6e2530]'>
               Your payment method was declined. Please update your payment information to avoid service interruption.
             </p>
             {getNextRetryDate() && (
-              <p className='text-red-800 flex items-center gap-2'>
+              <p className='text-[#872a38] flex items-center gap-2'>
                 <Clock className='h-4 w-4' />
                 Next automatic retry: {getNextRetryDate()?.toLocaleDateString(locale, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
               </p>
@@ -175,12 +175,12 @@ export const BillingDashboard: React.FC = () => {
                 variant='default' 
                 onClick={openCustomerPortal}
                 disabled={portalLoading}
-                className='bg-red-600 hover:bg-red-700'
+                className='bg-[#DA5062] hover:bg-[#c23d4f]'
               >
                 {portalLoading ? 'Opening Portal...' : 'Update Payment Method'}
               </Button>
             </div>
-            <p className='text-sm text-red-700 mt-2'>
+            <p className='text-sm text-[#c23d4f] mt-2'>
               Stripe will automatically retry charging your payment method on days 3, 5, 7, 9, 11, 13, and 15 after the initial failure.
               If all retries fail, your subscription will be cancelled.
             </p>
@@ -190,13 +190,13 @@ export const BillingDashboard: React.FC = () => {
 
       {/* Error Alert */}
       {error && (
-        <Card className='border-red-200 bg-red-50 rounded-material shadow-material-2'>
+        <Card className='border-[#DA5062]/30 bg-[#DA5062]/10 rounded-material shadow-material-2'>
           <CardContent className='pt-6'>
             <div className='flex gap-3'>
-              <AlertCircle className='h-5 w-5 text-red-600 flex-shrink-0 mt-0.5' />
+              <AlertCircle className='h-5 w-5 text-[#DA5062] flex-shrink-0 mt-0.5' />
               <div>
-                <h3 className='font-semibold text-red-900'>{t('billing.error.title')}</h3>
-                <p className='text-red-700 text-sm mt-1'>{error}</p>
+                <h3 className='font-semibold text-[#6e2530]'>{t('billing.error.title')}</h3>
+                <p className='text-[#c23d4f] text-sm mt-1'>{error}</p>
               </div>
             </div>
           </CardContent>
@@ -289,7 +289,7 @@ export const BillingDashboard: React.FC = () => {
 
                 <div className='space-y-2'>
                   <p className='text-sm font-medium flex items-center gap-2'>
-                    <CheckCircle className='h-4 w-4 text-green-600' />
+                    <CheckCircle className='h-4 w-4 text-[#A1BA53]' />
                     {t('billing.usage.includedFeatures')}
                   </p>
                   <ul className='text-sm text-slate-600 space-y-1 ml-6'>
@@ -435,7 +435,7 @@ export const BillingDashboard: React.FC = () => {
                     <ul className='text-sm text-slate-600 space-y-2'>
                       {plan.features.slice(0, 4).map((feature, idx) => (
                         <li key={idx} className='flex items-start gap-2'>
-                          <CheckCircle className='h-4 w-4 text-green-600 mt-0.5 flex-shrink-0' />
+                          <CheckCircle className='h-4 w-4 text-[#A1BA53] mt-0.5 flex-shrink-0' />
                           {feature}
                         </li>
                       ))}
@@ -495,7 +495,7 @@ export const BillingDashboard: React.FC = () => {
                             const monthsUntilExpiry = (expDate.getFullYear() - now.getFullYear()) * 12 + (expDate.getMonth() - now.getMonth());
                             if (monthsUntilExpiry <= 2 && monthsUntilExpiry >= 0) {
                               return (
-                                <p className='text-sm text-orange-600 flex items-center gap-1 mt-1'>
+                                <p className='text-sm text-[#DA5062] flex items-center gap-1 mt-1'>
                                   <AlertCircle className='h-3 w-3' />
                                   Card expiring soon
                                 </p>

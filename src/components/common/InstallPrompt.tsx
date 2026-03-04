@@ -83,7 +83,7 @@ const InstallPrompt: React.FC = () => {
     >
       <div className='flex items-start justify-between mb-3'>
         <div className='flex items-center gap-2'>
-          <Download className='w-5 h-5 text-blue-600' />
+          <Download className='w-5 h-5 text-[#7DA8CC]' />
           <h3 id='install-prompt-title' className='font-semibold text-gray-900 text-sm'>
             {t('common.install.title') || 'Install Taklaget App'}
           </h3>

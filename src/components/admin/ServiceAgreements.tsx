@@ -272,13 +272,13 @@ const ServiceAgreements: React.FC = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active':
-        return 'bg-green-100 text-green-800';
+        return 'bg-[#A1BA53]/15 text-[#5c6a2f]';
       case 'expired':
-        return 'bg-red-100 text-red-800';
+        return 'bg-[#DA5062]/15 text-[#872a38]';
       case 'cancelled':
         return 'bg-gray-100 text-gray-800';
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-[#DA5062]/15 text-[#872a38]';
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -288,23 +288,23 @@ const ServiceAgreements: React.FC = () => {
   const getDueDateBadge = (nextServiceDate: string) => {
     const days = getDaysUntilDue(nextServiceDate);
     if (days < 0) {
-      return { text: t('serviceAgreement.dueDate.overdue'), color: 'bg-red-100 text-red-800' };
+      return { text: t('serviceAgreement.dueDate.overdue'), color: 'bg-[#DA5062]/15 text-[#872a38]' };
     } else if (days === 0) {
-      return { text: t('serviceAgreement.dueDate.today'), color: 'bg-red-100 text-red-800' };
+      return { text: t('serviceAgreement.dueDate.today'), color: 'bg-[#DA5062]/15 text-[#872a38]' };
     } else if (days === 1) {
       return {
         text: t('serviceAgreement.dueDate.tomorrow'),
-        color: 'bg-orange-100 text-orange-800',
+        color: 'bg-[#DA5062]/15 text-[#872a38]',
       };
     } else if (days <= 3) {
       return {
         text: `${days} ${t('serviceAgreement.dueDate.days')}`,
-        color: 'bg-yellow-100 text-yellow-800',
+        color: 'bg-[#DA5062]/15 text-[#872a38]',
       };
     } else {
       return {
         text: `${days} ${t('serviceAgreement.dueDate.days')}`,
-        color: 'bg-blue-100 text-blue-800',
+        color: 'bg-[#7DA8CC]/15 text-[#476279]',
       };
     }
   };
@@ -355,7 +355,7 @@ const ServiceAgreements: React.FC = () => {
             onClick={() => setDueDateFilter('almostDue')}
             className={`p-4 rounded-lg border-2 transition-all ${
               dueDateFilter === 'almostDue'
-                ? 'border-orange-500 bg-orange-50'
+                ? 'border-[#DA5062] bg-[#DA5062]/10'
                 : 'border-gray-200 bg-white hover:border-gray-300'
             }`}
           >
@@ -366,7 +366,7 @@ const ServiceAgreements: React.FC = () => {
                 </p>
                 <p className='text-2xl font-bold text-gray-900'>{almostDueCount}</p>
               </div>
-              <AlertCircle className='h-8 w-8 text-orange-500' />
+              <AlertCircle className='h-8 w-8 text-[#DA5062]' />
             </div>
           </button>
 
@@ -374,7 +374,7 @@ const ServiceAgreements: React.FC = () => {
             onClick={() => setDueDateFilter('dueTomorrow')}
             className={`p-4 rounded-lg border-2 transition-all ${
               dueDateFilter === 'dueTomorrow'
-                ? 'border-red-500 bg-red-50'
+                ? 'border-[#DA5062] bg-[#DA5062]/10'
                 : 'border-gray-200 bg-white hover:border-gray-300'
             }`}
           >
@@ -385,7 +385,7 @@ const ServiceAgreements: React.FC = () => {
                 </p>
                 <p className='text-2xl font-bold text-gray-900'>{dueTomorrowCount}</p>
               </div>
-              <Calendar className='h-8 w-8 text-red-500' />
+              <Calendar className='h-8 w-8 text-[#DA5062]' />
             </div>
           </button>
 
@@ -393,7 +393,7 @@ const ServiceAgreements: React.FC = () => {
             onClick={() => setDueDateFilter('dueInWeek')}
             className={`p-4 rounded-lg border-2 transition-all ${
               dueDateFilter === 'dueInWeek'
-                ? 'border-yellow-500 bg-yellow-50'
+                ? 'border-[#DA5062] bg-[#DA5062]/10'
                 : 'border-gray-200 bg-white hover:border-gray-300'
             }`}
           >
@@ -404,7 +404,7 @@ const ServiceAgreements: React.FC = () => {
                 </p>
                 <p className='text-2xl font-bold text-gray-900'>{dueInWeekCount}</p>
               </div>
-              <FileCheck className='h-8 w-8 text-yellow-500' />
+              <FileCheck className='h-8 w-8 text-[#DA5062]' />
             </div>
           </button>
 
@@ -412,7 +412,7 @@ const ServiceAgreements: React.FC = () => {
             onClick={() => setDueDateFilter('dueInTwoWeeks')}
             className={`p-4 rounded-lg border-2 transition-all ${
               dueDateFilter === 'dueInTwoWeeks'
-                ? 'border-blue-500 bg-blue-50'
+                ? 'border-[#7DA8CC] bg-[#7DA8CC]/10'
                 : 'border-gray-200 bg-white hover:border-gray-300'
             }`}
           >
@@ -423,7 +423,7 @@ const ServiceAgreements: React.FC = () => {
                 </p>
                 <p className='text-2xl font-bold text-gray-900'>{dueInTwoWeeksCount}</p>
               </div>
-              <Calendar className='h-8 w-8 text-blue-500' />
+              <Calendar className='h-8 w-8 text-[#7DA8CC]' />
             </div>
           </button>
         </div>
@@ -514,7 +514,7 @@ const ServiceAgreements: React.FC = () => {
         {/* Content */}
         {/* Only show error if there's an actual error AND we have no agreements to show */}
         {error && agreements.length === 0 && (
-          <div className='bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-6'>
+          <div className='bg-[#DA5062]/10 border border-[#DA5062]/30 text-[#872a38] px-4 py-3 rounded-lg mb-6'>
             {error}
           </div>
         )}
@@ -593,7 +593,7 @@ const ServiceAgreements: React.FC = () => {
                             <div className='flex items-center justify-end gap-2'>
                               <button
                                 onClick={() => handleView(agreement)}
-                                className='text-blue-600 hover:text-blue-900'
+                                className='text-[#7DA8CC] hover:text-[#3b5060]'
                                 title={t('serviceAgreement.viewAgreement')}
                                 aria-label={t('serviceAgreement.viewAgreement')}
                               >
@@ -609,7 +609,7 @@ const ServiceAgreements: React.FC = () => {
                               </button>
                               <button
                                 onClick={() => handleDelete(agreement)}
-                                className='text-red-600 hover:text-red-900'
+                                className='text-[#DA5062] hover:text-[#6e2530]'
                                 title={t('serviceAgreement.deleteAgreement')}
                                 aria-label={t('serviceAgreement.deleteAgreement')}
                               >

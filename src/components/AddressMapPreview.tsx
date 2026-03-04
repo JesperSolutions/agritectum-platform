@@ -68,7 +68,7 @@ const AddressMapPreview: React.FC<AddressMapPreviewProps> = ({ address, classNam
           <button
             type='button'
             onClick={handleToggleMap}
-            className='flex items-center gap-1 px-3 py-1 text-sm bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition-colors'
+            className='flex items-center gap-1 px-3 py-1 text-sm bg-[#7DA8CC]/10 text-[#7DA8CC] rounded-md hover:bg-[#7DA8CC]/15 transition-colors'
           >
             {showMap ? <EyeOff className='w-4 h-4' /> : <Eye className='w-4 h-4' />}
             {showMap ? 'Dölj karta' : 'Visa karta'}
@@ -77,7 +77,7 @@ const AddressMapPreview: React.FC<AddressMapPreviewProps> = ({ address, classNam
             <button
               type='button'
               onClick={openInGoogleMaps}
-              className='flex items-center gap-1 px-3 py-1 text-sm bg-green-50 text-green-600 rounded-md hover:bg-green-100 transition-colors'
+              className='flex items-center gap-1 px-3 py-1 text-sm bg-[#A1BA53]/10 text-[#A1BA53] rounded-md hover:bg-[#A1BA53]/15 transition-colors'
             >
               <ExternalLink className='w-4 h-4' />
               Öppna i Google Maps
@@ -91,17 +91,17 @@ const AddressMapPreview: React.FC<AddressMapPreviewProps> = ({ address, classNam
           {isLoading && (
             <div className='w-full h-[300px] bg-gray-100 rounded-lg flex items-center justify-center'>
               <div className='text-center'>
-                <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2'></div>
+                <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-[#7DA8CC] mx-auto mb-2'></div>
                 <p className='text-sm text-gray-600'>Laddar satellitvy...</p>
               </div>
             </div>
           )}
 
           {mapError && (
-            <div className='w-full h-[300px] bg-red-50 border border-red-200 rounded-lg flex items-center justify-center'>
+            <div className='w-full h-[300px] bg-[#DA5062]/10 border border-[#DA5062]/30 rounded-lg flex items-center justify-center'>
               <div className='text-center'>
-                <MapPin className='w-8 h-8 text-red-400 mx-auto mb-2' />
-                <p className='text-sm text-red-600'>{mapError}</p>
+                <MapPin className='w-8 h-8 text-[#e47886] mx-auto mb-2' />
+                <p className='text-sm text-[#DA5062]'>{mapError}</p>
               </div>
             </div>
           )}

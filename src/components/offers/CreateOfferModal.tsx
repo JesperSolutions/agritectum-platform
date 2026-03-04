@@ -169,12 +169,12 @@ const CreateOfferModal: React.FC<CreateOfferModalProps> = ({ report, onClose, on
               type='text'
               value={formData.title}
               onChange={e => handleChange('title', e.target.value)}
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                errors.title ? 'border-red-500' : 'border-gray-300'
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#7DA8CC] focus:border-transparent ${
+                errors.title ? 'border-[#DA5062]' : 'border-gray-300'
               }`}
               placeholder={t('offers.create.offerTitlePlaceholder')}
             />
-            {errors.title && <p className='mt-1 text-sm text-red-600'>{errors.title}</p>}
+            {errors.title && <p className='mt-1 text-sm text-[#DA5062]'>{errors.title}</p>}
           </div>
 
           {/* Description */}
@@ -186,13 +186,13 @@ const CreateOfferModal: React.FC<CreateOfferModalProps> = ({ report, onClose, on
               value={formData.description}
               onChange={e => handleChange('description', e.target.value)}
               rows={4}
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                errors.description ? 'border-red-500' : 'border-gray-300'
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#7DA8CC] focus:border-transparent ${
+                errors.description ? 'border-[#DA5062]' : 'border-gray-300'
               }`}
               placeholder={t('offers.create.descriptionPlaceholder')}
             />
             {errors.description && (
-              <p className='mt-1 text-sm text-red-600'>{errors.description}</p>
+              <p className='mt-1 text-sm text-[#DA5062]'>{errors.description}</p>
             )}
           </div>
 
@@ -212,15 +212,15 @@ const CreateOfferModal: React.FC<CreateOfferModalProps> = ({ report, onClose, on
                   type='number'
                   value={formData.laborCost}
                   onChange={e => handleChange('laborCost', e.target.value ? parseFloat(e.target.value) : '')}
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                    errors.laborCost ? 'border-red-500' : 'border-gray-300'
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#7DA8CC] focus:border-transparent ${
+                    errors.laborCost ? 'border-[#DA5062]' : 'border-gray-300'
                   }`}
                   min='0'
                   step='0.01'
                   placeholder='0'
                 />
                 {errors.laborCost && (
-                  <p className='mt-1 text-sm text-red-600'>{errors.laborCost}</p>
+                  <p className='mt-1 text-sm text-[#DA5062]'>{errors.laborCost}</p>
                 )}
               </div>
 
@@ -232,15 +232,15 @@ const CreateOfferModal: React.FC<CreateOfferModalProps> = ({ report, onClose, on
                   type='number'
                   value={formData.materialCost}
                   onChange={e => handleChange('materialCost', e.target.value ? parseFloat(e.target.value) : '')}
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                    errors.materialCost ? 'border-red-500' : 'border-gray-300'
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#7DA8CC] focus:border-transparent ${
+                    errors.materialCost ? 'border-[#DA5062]' : 'border-gray-300'
                   }`}
                   min='0'
                   step='0.01'
                   placeholder='0'
                 />
                 {errors.materialCost && (
-                  <p className='mt-1 text-sm text-red-600'>{errors.materialCost}</p>
+                  <p className='mt-1 text-sm text-[#DA5062]'>{errors.materialCost}</p>
                 )}
               </div>
 
@@ -252,15 +252,15 @@ const CreateOfferModal: React.FC<CreateOfferModalProps> = ({ report, onClose, on
                   type='number'
                   value={formData.travelCost}
                   onChange={e => handleChange('travelCost', e.target.value ? parseFloat(e.target.value) : '')}
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                    errors.travelCost ? 'border-red-500' : 'border-gray-300'
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#7DA8CC] focus:border-transparent ${
+                    errors.travelCost ? 'border-[#DA5062]' : 'border-gray-300'
                   }`}
                   min='0'
                   step='0.01'
                   placeholder='0'
                 />
                 {errors.travelCost && (
-                  <p className='mt-1 text-sm text-red-600'>{errors.travelCost}</p>
+                  <p className='mt-1 text-sm text-[#DA5062]'>{errors.travelCost}</p>
                 )}
               </div>
 
@@ -272,15 +272,15 @@ const CreateOfferModal: React.FC<CreateOfferModalProps> = ({ report, onClose, on
                   type='number'
                   value={formData.overheadCost}
                   onChange={e => handleChange('overheadCost', e.target.value ? parseFloat(e.target.value) : '')}
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                    errors.overheadCost ? 'border-red-500' : 'border-gray-300'
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#7DA8CC] focus:border-transparent ${
+                    errors.overheadCost ? 'border-[#DA5062]' : 'border-gray-300'
                   }`}
                   min='0'
                   step='0.01'
                   placeholder='0'
                 />
                 {errors.overheadCost && (
-                  <p className='mt-1 text-sm text-red-600'>{errors.overheadCost}</p>
+                  <p className='mt-1 text-sm text-[#DA5062]'>{errors.overheadCost}</p>
                 )}
               </div>
 
@@ -292,21 +292,21 @@ const CreateOfferModal: React.FC<CreateOfferModalProps> = ({ report, onClose, on
                   type='number'
                   value={formData.profitMargin}
                   onChange={e => handleChange('profitMargin', parseFloat(e.target.value) || 0)}
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                    errors.profitMargin ? 'border-red-500' : 'border-gray-300'
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#7DA8CC] focus:border-transparent ${
+                    errors.profitMargin ? 'border-[#DA5062]' : 'border-gray-300'
                   }`}
                   min='0'
                   max='100'
                   step='0.1'
                 />
                 {errors.profitMargin && (
-                  <p className='mt-1 text-sm text-red-600'>{errors.profitMargin}</p>
+                  <p className='mt-1 text-sm text-[#DA5062]'>{errors.profitMargin}</p>
                 )}
               </div>
             </div>
 
             {/* Total Calculation */}
-            <div className='mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200'>
+            <div className='mt-4 p-4 bg-[#7DA8CC]/10 rounded-lg border border-[#7DA8CC]/30'>
               {(() => {
                 const recommendedActionsCost = (report.recommendedActions || []).reduce(
                   (sum, action) => sum + (action.estimatedCost || 0),
@@ -349,11 +349,11 @@ const CreateOfferModal: React.FC<CreateOfferModalProps> = ({ report, onClose, on
                         {profit.toLocaleString()} {currency}
                       </span>
                     </div>
-                    <div className='flex justify-between items-center mt-2 pt-2 border-t border-blue-200'>
+                    <div className='flex justify-between items-center mt-2 pt-2 border-t border-[#7DA8CC]/30'>
                       <span className='text-lg font-bold text-gray-900'>
                         {t('offers.detail.totalAmount')}:
                       </span>
-                      <span className='text-2xl font-bold text-blue-600'>
+                      <span className='text-2xl font-bold text-[#7DA8CC]'>
                         {(subtotal + profit).toLocaleString()} {currency}
                       </span>
                     </div>
@@ -374,11 +374,11 @@ const CreateOfferModal: React.FC<CreateOfferModalProps> = ({ report, onClose, on
               value={formData.validUntil}
               onChange={e => handleChange('validUntil', e.target.value)}
               min={new Date().toISOString().split('T')[0]}
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                errors.validUntil ? 'border-red-500' : 'border-gray-300'
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#7DA8CC] focus:border-transparent ${
+                errors.validUntil ? 'border-[#DA5062]' : 'border-gray-300'
               }`}
             />
-            {errors.validUntil && <p className='mt-1 text-sm text-red-600'>{errors.validUntil}</p>}
+            {errors.validUntil && <p className='mt-1 text-sm text-[#DA5062]'>{errors.validUntil}</p>}
             <p className='mt-1 text-sm text-gray-500'>{t('offers.create.validUntilDefault')}</p>
           </div>
 

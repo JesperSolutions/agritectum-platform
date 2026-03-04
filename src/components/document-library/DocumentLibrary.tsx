@@ -79,15 +79,15 @@ const DocumentLibrary: React.FC<DocumentLibraryProps> = ({
   const getDocumentIcon = (type: Document['type']) => {
     switch (type) {
       case 'agreement':
-        return <FileText className='w-5 h-5 text-blue-600' />;
+        return <FileText className='w-5 h-5 text-[#7DA8CC]' />;
       case 'report':
-        return <FileText className='w-5 h-5 text-purple-600' />;
+        return <FileText className='w-5 h-5 text-[#956098]' />;
       case 'invoice':
-        return <FileText className='w-5 h-5 text-green-600' />;
+        return <FileText className='w-5 h-5 text-[#A1BA53]' />;
       case 'certificate':
         return <FileText className='w-5 h-5 text-amber-600' />;
       case 'permit':
-        return <FileText className='w-5 h-5 text-red-600' />;
+        return <FileText className='w-5 h-5 text-[#DA5062]' />;
       default:
         return <FileText className='w-5 h-5 text-gray-600' />;
     }
@@ -107,14 +107,14 @@ const DocumentLibrary: React.FC<DocumentLibraryProps> = ({
             placeholder='Search documents...'
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            className='w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500'
+            className='w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#7DA8CC]'
           />
 
           {uniqueBuildings.length > 1 && (
             <select
               value={selectedBuilding}
               onChange={e => setSelectedBuilding(e.target.value)}
-              className='w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500'
+              className='w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#7DA8CC]'
             >
               <option value='all'>All Buildings</option>
               {uniqueBuildings.map(bId => (
@@ -128,7 +128,7 @@ const DocumentLibrary: React.FC<DocumentLibraryProps> = ({
           <select
             value={selectedType}
             onChange={e => setSelectedType(e.target.value as any)}
-            className='w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500'
+            className='w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#7DA8CC]'
           >
             <option value='all'>All Types</option>
             <option value='agreement'>Service Agreements</option>
@@ -169,7 +169,7 @@ const DocumentLibrary: React.FC<DocumentLibraryProps> = ({
                   href={doc.fileUrl}
                   target='_blank'
                   rel='noopener noreferrer'
-                  className='flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm text-blue-600 border border-blue-300 rounded-lg hover:bg-blue-50 transition-colors'
+                  className='flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm text-[#7DA8CC] border border-[#7DA8CC]/40 rounded-lg hover:bg-[#7DA8CC]/10 transition-colors'
                 >
                   <Download className='w-4 h-4' />
                   Download
@@ -178,7 +178,7 @@ const DocumentLibrary: React.FC<DocumentLibraryProps> = ({
                   <button
                     onClick={() => handleDelete(doc.id)}
                     disabled={deletingId === doc.id}
-                    className='px-3 py-2 text-red-600 border border-red-300 rounded-lg hover:bg-red-50 disabled:opacity-50 transition-colors'
+                    className='px-3 py-2 text-[#DA5062] border border-[#DA5062]/40 rounded-lg hover:bg-[#DA5062]/10 disabled:opacity-50 transition-colors'
                   >
                     <Trash2 className='w-4 h-4' />
                   </button>
@@ -209,7 +209,7 @@ const DocumentLibrary: React.FC<DocumentLibraryProps> = ({
               placeholder='Search documents...'
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500'
+              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7DA8CC]'
             />
           </div>
 
@@ -217,7 +217,7 @@ const DocumentLibrary: React.FC<DocumentLibraryProps> = ({
             <select
               value={selectedBuilding}
               onChange={e => setSelectedBuilding(e.target.value)}
-              className='px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 min-w-48'
+              className='px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7DA8CC] min-w-48'
             >
               <option value='all'>All Buildings</option>
               {uniqueBuildings.map(bId => (
@@ -231,7 +231,7 @@ const DocumentLibrary: React.FC<DocumentLibraryProps> = ({
           <select
             value={selectedType}
             onChange={e => setSelectedType(e.target.value as any)}
-            className='px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 min-w-48'
+            className='px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7DA8CC] min-w-48'
           >
             <option value='all'>All Types</option>
             <option value='agreement'>Service Agreements</option>
@@ -288,7 +288,7 @@ const DocumentLibrary: React.FC<DocumentLibraryProps> = ({
                   {buildingNames[doc.buildingId]}
                 </td>
                 <td className='px-6 py-4 text-sm'>
-                  <span className='px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800'>
+                  <span className='px-3 py-1 rounded-full text-xs font-medium bg-[#7DA8CC]/15 text-[#476279]'>
                     {doc.type}
                   </span>
                 </td>
@@ -302,7 +302,7 @@ const DocumentLibrary: React.FC<DocumentLibraryProps> = ({
                       href={doc.fileUrl}
                       target='_blank'
                       rel='noopener noreferrer'
-                      className='p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors'
+                      className='p-2 text-[#7DA8CC] hover:bg-[#7DA8CC]/10 rounded-lg transition-colors'
                       title='Download'
                     >
                       <Download className='w-4 h-4' />
@@ -311,7 +311,7 @@ const DocumentLibrary: React.FC<DocumentLibraryProps> = ({
                       <button
                         onClick={() => handleDelete(doc.id)}
                         disabled={deletingId === doc.id}
-                        className='p-2 text-red-600 hover:bg-red-50 rounded-lg disabled:opacity-50 transition-colors'
+                        className='p-2 text-[#DA5062] hover:bg-[#DA5062]/10 rounded-lg disabled:opacity-50 transition-colors'
                         title='Delete'
                       >
                         <Trash2 className='w-4 h-4' />

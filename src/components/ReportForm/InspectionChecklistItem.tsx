@@ -42,11 +42,11 @@ const InspectionChecklistItem: React.FC<InspectionChecklistItemProps> = ({
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pass':
-        return 'border-l-4 border-l-green-500 bg-green-50';
+        return 'border-l-4 border-l-green-500 bg-[#A1BA53]/10';
       case 'fail':
-        return 'border-l-4 border-l-red-500 bg-red-50';
+        return 'border-l-4 border-l-red-500 bg-[#DA5062]/10';
       case 'needs_review':
-        return 'border-l-4 border-l-yellow-500 bg-yellow-50';
+        return 'border-l-4 border-l-yellow-500 bg-[#DA5062]/10';
       default:
         return 'border-l-4 border-l-gray-300 bg-gray-50';
     }
@@ -94,11 +94,11 @@ const InspectionChecklistItem: React.FC<InspectionChecklistItemProps> = ({
             <span
               className={`${
                 currentStatus === 'pass'
-                  ? 'text-green-600'
+                  ? 'text-[#A1BA53]'
                   : currentStatus === 'fail'
-                    ? 'text-red-600'
+                    ? 'text-[#DA5062]'
                     : currentStatus === 'needs_review'
-                      ? 'text-yellow-600'
+                      ? 'text-[#DA5062]'
                       : 'text-gray-600'
               }`}
             >
@@ -109,7 +109,7 @@ const InspectionChecklistItem: React.FC<InspectionChecklistItemProps> = ({
         <div className='flex-1'>
           <label className='block text-sm font-medium text-gray-700 mb-3'>
             {label}
-            {required && <span className='text-red-500 ml-1'>*</span>}
+            {required && <span className='text-[#DA5062] ml-1'>*</span>}
           </label>
 
           {/* Status Select */}

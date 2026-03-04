@@ -119,7 +119,7 @@ export const StageProgress: React.FC<StageProgressProps> = ({ stage, compact = f
                 s === stage || 
                 (stage === 'stage2' && s === 'stage1') || 
                 (stage === 'stage3' && (s === 'stage1' || s === 'stage2'))
-                  ? 'bg-blue-600'
+                  ? 'bg-[#7DA8CC]'
                   : 'bg-slate-300'
               }`}
             />
@@ -138,7 +138,7 @@ export const StageProgress: React.FC<StageProgressProps> = ({ stage, compact = f
           <p className='text-sm text-slate-600'>{info.description}</p>
         </div>
         <div className='text-right'>
-          <div className='text-2xl font-bold text-blue-600'>{info.progress}%</div>
+          <div className='text-2xl font-bold text-[#7DA8CC]'>{info.progress}%</div>
           <div className='text-xs text-slate-500'>Progress</div>
         </div>
       </div>
@@ -146,7 +146,7 @@ export const StageProgress: React.FC<StageProgressProps> = ({ stage, compact = f
       {/* Progress Bar */}
       <div className='w-full bg-slate-300 rounded-full h-2'>
         <div
-          className='h-2 bg-blue-600 rounded-full transition-all duration-300'
+          className='h-2 bg-[#7DA8CC] rounded-full transition-all duration-300'
           style={{ width: `${info.progress}%` }}
         />
       </div>
@@ -161,7 +161,7 @@ export const StageProgress: React.FC<StageProgressProps> = ({ stage, compact = f
             (stage === 'stage3' && (s === 'stage1' || s === 'stage2'));
 
           return (
-            <div key={s} className={isActive ? 'text-blue-600 font-semibold' : 'text-slate-500'}>
+            <div key={s} className={isActive ? 'text-[#7DA8CC] font-semibold' : 'text-slate-500'}>
               {stageName.split(' ')[0]}
             </div>
           );

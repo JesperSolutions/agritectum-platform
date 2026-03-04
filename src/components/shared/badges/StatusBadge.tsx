@@ -40,17 +40,17 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({
 
   // Status color mapping using design system semantic colors
   const statusStyles: Record<string, string> = {
-    scheduled: 'bg-blue-100 text-blue-800',
-    in_progress: 'bg-yellow-100 text-yellow-800',
-    completed: 'bg-green-100 text-green-800',
-    cancelled: 'bg-red-100 text-red-800',
+    scheduled: 'bg-[#7DA8CC]/15 text-[#476279]',
+    in_progress: 'bg-[#DA5062]/15 text-[#872a38]',
+    completed: 'bg-[#A1BA53]/15 text-[#5c6a2f]',
+    cancelled: 'bg-[#DA5062]/15 text-[#872a38]',
     no_show: 'bg-slate-100 text-slate-800',
-    active: 'bg-green-100 text-green-800',
-    expired: 'bg-red-100 text-red-800',
-    pending: 'bg-yellow-100 text-yellow-800',
-    accepted: 'bg-green-100 text-green-800',
-    rejected: 'bg-red-100 text-red-800',
-    awaiting_response: 'bg-orange-100 text-orange-800',
+    active: 'bg-[#A1BA53]/15 text-[#5c6a2f]',
+    expired: 'bg-[#DA5062]/15 text-[#872a38]',
+    pending: 'bg-[#DA5062]/15 text-[#872a38]',
+    accepted: 'bg-[#A1BA53]/15 text-[#5c6a2f]',
+    rejected: 'bg-[#DA5062]/15 text-[#872a38]',
+    awaiting_response: 'bg-[#DA5062]/15 text-[#872a38]',
   };
 
   // Status translation key mapping
@@ -71,7 +71,7 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({
     return statusMap[statusValue] || '';
   };
 
-  const badgeClass = statusStyles[status] || 'bg-blue-100 text-blue-800';
+  const badgeClass = statusStyles[status] || 'bg-[#7DA8CC]/15 text-[#476279]';
 
   // Determine display label: use provided label, or translate status, or fallback to formatted status
   let displayLabel: string;

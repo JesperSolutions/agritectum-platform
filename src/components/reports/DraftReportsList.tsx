@@ -190,7 +190,7 @@ const DraftReportsList: React.FC = () => {
                         <div className='flex items-center gap-2'>
                           <div className='flex-1 w-32 bg-gray-200 rounded-full h-2'>
                             <div
-                              className='bg-blue-600 h-2 rounded-full'
+                              className='bg-[#7DA8CC] h-2 rounded-full'
                               style={{ width: `${progress}%` }}
                             />
                           </div>
@@ -210,7 +210,7 @@ const DraftReportsList: React.FC = () => {
                       </button>
                       <button
                         onClick={() => handleDeleteDraft(report)}
-                        className='px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium shadow-sm flex items-center gap-2'
+                        className='px-4 py-2 bg-[#DA5062] text-white rounded-lg hover:bg-[#c23d4f] transition-colors text-sm font-medium shadow-sm flex items-center gap-2'
                       >
                         <Trash2 className='w-4 h-4' />
                         {t('common.delete') || 'Delete'}

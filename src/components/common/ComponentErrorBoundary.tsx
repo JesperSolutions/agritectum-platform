@@ -56,19 +56,19 @@ export class ComponentErrorBoundary extends React.Component<
     if (this.state.hasError) {
       return (
         this.props.fallback || (
-          <div className='bg-red-50 border-2 border-red-200 rounded-lg p-6 flex items-start gap-4'>
-            <AlertTriangle className='w-6 h-6 text-red-600 flex-shrink-0 mt-0.5' />
+          <div className='bg-[#DA5062]/10 border-2 border-[#DA5062]/30 rounded-lg p-6 flex items-start gap-4'>
+            <AlertTriangle className='w-6 h-6 text-[#DA5062] flex-shrink-0 mt-0.5' />
             <div className='flex-1 min-w-0'>
-              <h3 className='font-semibold text-red-900'>
+              <h3 className='font-semibold text-[#6e2530]'>
                 {this.props.componentName || 'Component'} Failed to Load
               </h3>
-              <p className='text-sm text-red-700 mt-1'>
+              <p className='text-sm text-[#c23d4f] mt-1'>
                 {this.state.error?.message || 'An unexpected error occurred'}
               </p>
               {process.env.NODE_ENV === 'development' && this.state.errorInfo && (
-                <details className='mt-4 text-xs text-red-600'>
+                <details className='mt-4 text-xs text-[#DA5062]'>
                   <summary className='cursor-pointer font-medium'>Debug Info</summary>
-                  <pre className='mt-2 p-2 bg-red-100 rounded overflow-auto whitespace-pre-wrap break-words'>
+                  <pre className='mt-2 p-2 bg-[#DA5062]/15 rounded overflow-auto whitespace-pre-wrap break-words'>
                     {this.state.errorInfo.componentStack}
                   </pre>
                 </details>

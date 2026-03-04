@@ -324,15 +324,15 @@ const PortalDashboard: React.FC = () => {
   const getGradeColor = (grade: HealthGrade) => {
     switch (grade) {
       case 'A':
-        return 'text-green-700 bg-green-50 border-green-300';
+        return 'text-[#73853b] bg-[#A1BA53]/10 border-[#A1BA53]/40';
       case 'B':
-        return 'text-blue-700 bg-blue-50 border-blue-300';
+        return 'text-[#6890b3] bg-[#7DA8CC]/10 border-[#7DA8CC]/40';
       case 'C':
-        return 'text-yellow-700 bg-yellow-50 border-yellow-300';
+        return 'text-[#c23d4f] bg-[#DA5062]/10 border-[#DA5062]/35';
       case 'D':
-        return 'text-orange-700 bg-orange-50 border-orange-300';
+        return 'text-[#c23d4f] bg-[#DA5062]/10 border-[#DA5062]/40';
       case 'F':
-        return 'text-red-700 bg-red-50 border-red-300';
+        return 'text-[#c23d4f] bg-[#DA5062]/10 border-[#DA5062]/40';
     }
   };
 
@@ -401,11 +401,11 @@ const PortalDashboard: React.FC = () => {
                 {/* Grade legend */}
                 <div className='flex flex-wrap gap-2 mb-4'>
                   {[
-                    { grade: 'A', color: 'bg-green-100 text-green-700 border-green-200', range: '90-100' },
-                    { grade: 'B', color: 'bg-blue-100 text-blue-700 border-blue-200', range: '80-89' },
+                    { grade: 'A', color: 'bg-[#A1BA53]/15 text-[#73853b] border-[#A1BA53]/30', range: '90-100' },
+                    { grade: 'B', color: 'bg-[#7DA8CC]/15 text-[#6890b3] border-[#7DA8CC]/30', range: '80-89' },
                     { grade: 'C', color: 'bg-amber-100 text-amber-700 border-amber-200', range: '70-79' },
-                    { grade: 'D', color: 'bg-orange-100 text-orange-700 border-orange-200', range: '60-69' },
-                    { grade: 'F', color: 'bg-red-100 text-red-700 border-red-200', range: '0-59' },
+                    { grade: 'D', color: 'bg-[#DA5062]/15 text-[#c23d4f] border-[#DA5062]/30', range: '60-69' },
+                    { grade: 'F', color: 'bg-[#DA5062]/15 text-[#c23d4f] border-[#DA5062]/30', range: '0-59' },
                   ].map(({ grade, color, range }) => (
                     <div key={grade} className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border ${color}`}>
                       <span className='text-base'>{grade}</span>
@@ -475,7 +475,7 @@ const PortalDashboard: React.FC = () => {
               className='relative bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 overflow-hidden animate-fade-in'
               style={{ animationDelay: '100ms' }}
             >
-              <div className='absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500 to-green-600' />
+              <div className='absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#A1BA53] to-[#8a9f47]' />
               <div className='p-6'>
                 <div className='flex items-center gap-2 mb-4'>
                   <p className='text-sm font-medium text-slate-600'>{t('portal.stats.portfolioHealth')}</p>
@@ -509,7 +509,7 @@ const PortalDashboard: React.FC = () => {
               className='relative bg-white rounded-xl shadow-sm border border-slate-200 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 overflow-hidden animate-fade-in'
               style={{ animationDelay: '200ms' }}
             >
-              <div className='absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-blue-600' />
+              <div className='absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#7DA8CC] to-[#6890b3]' />
               <div className='p-6'>
                 <div className='flex items-start justify-between'>
                   <div className='flex-1'>
@@ -531,7 +531,7 @@ const PortalDashboard: React.FC = () => {
                         : getCurrencyCode()}
                     </p>
                   </div>
-                  <div className='w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-blue-500 to-blue-600'>
+                  <div className='w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-[#7DA8CC] to-[#6890b3]'>
                     <Wallet className='w-6 h-6 text-white' />
                   </div>
                 </div>
@@ -685,14 +685,14 @@ const PortalDashboard: React.FC = () => {
       case 'pendingAppointments':
         if (statistics.pendingAcceptances.length === 0) return null;
         return (
-          <div className='bg-gradient-to-br from-amber-50 to-yellow-50 border border-amber-200 rounded-xl shadow-sm overflow-hidden animate-fade-in'>
+          <div className='bg-gradient-to-br from-amber-50 to-[#DA5062]/10 border border-amber-200 rounded-xl shadow-sm overflow-hidden animate-fade-in'>
             <div className='p-6 border-b border-amber-200 bg-gradient-to-r from-amber-100/50 to-transparent'>
               <div className='flex items-center gap-3'>
                 <div className='relative'>
                   <div className='w-10 h-10 rounded-xl flex items-center justify-center bg-amber-500'>
                     <Calendar className='w-5 h-5 text-white' />
                   </div>
-                  <span className='absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center animate-pulse'>
+                  <span className='absolute -top-1 -right-1 w-5 h-5 bg-[#DA5062]/100 text-white text-xs font-bold rounded-full flex items-center justify-center animate-pulse'>
                     {statistics.pendingAcceptances.length}
                   </span>
                 </div>
@@ -748,8 +748,8 @@ const PortalDashboard: React.FC = () => {
           <div className='bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden animate-fade-in'>
             <div className='p-6 border-b border-gray-200 bg-gradient-to-r from-slate-50 to-white'>
               <div className='flex items-center gap-3'>
-                <div className='w-10 h-10 rounded-xl flex items-center justify-center bg-green-100'>
-                  <Calendar className='w-5 h-5 text-green-600' />
+                <div className='w-10 h-10 rounded-xl flex items-center justify-center bg-[#A1BA53]/15'>
+                  <Calendar className='w-5 h-5 text-[#A1BA53]' />
                 </div>
                 <div>
                   <h2 className='text-lg font-semibold text-gray-900'>
@@ -788,7 +788,7 @@ const PortalDashboard: React.FC = () => {
                     </div>
                     <div className='flex items-center gap-2'>
                       <StatusIndicator status='good' size='sm' />
-                      <span className='px-3 py-1.5 text-xs font-semibold bg-green-100 text-green-700 rounded-full border border-green-200'>
+                      <span className='px-3 py-1.5 text-xs font-semibold bg-[#A1BA53]/15 text-[#73853b] rounded-full border border-[#A1BA53]/30'>
                         {t(`schedule.status.${visit.status}`)}
                       </span>
                     </div>
@@ -820,8 +820,8 @@ const PortalDashboard: React.FC = () => {
           <div className='bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden animate-fade-in'>
             <div className='p-6 border-b border-gray-200 bg-gradient-to-r from-slate-50 to-white'>
               <div className='flex items-center gap-3'>
-                <div className='w-10 h-10 rounded-xl flex items-center justify-center bg-blue-100'>
-                  <BuildingIcon className='w-5 h-5 text-blue-600' />
+                <div className='w-10 h-10 rounded-xl flex items-center justify-center bg-[#7DA8CC]/15'>
+                  <BuildingIcon className='w-5 h-5 text-[#7DA8CC]' />
                 </div>
                 <div>
                   <h2 className='text-lg font-semibold text-gray-900'>
@@ -859,7 +859,7 @@ const PortalDashboard: React.FC = () => {
                 to='/portal/buildings'
                 className='p-5 border border-gray-200 rounded-xl hover:bg-slate-50 hover:border-slate-300 hover:-translate-y-0.5 transition-all duration-200 group'
               >
-                <div className='w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br from-green-500 to-green-600 mb-3 group-hover:scale-105 transition-transform'>
+                <div className='w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br from-[#A1BA53] to-[#8a9f47] mb-3 group-hover:scale-105 transition-transform'>
                   <BuildingIcon className='w-5 h-5 text-white' />
                 </div>
                 <p className='font-semibold text-gray-900'>{t('navigation.buildings')}</p>

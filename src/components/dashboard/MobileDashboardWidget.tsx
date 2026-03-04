@@ -42,13 +42,13 @@ export const MobileDashboardWidget: React.FC<MobileDashboardWidgetProps> = ({
         <div className='px-4 py-4 sm:px-6'>
           <div className='flex items-center justify-between'>
             <div className='flex items-center gap-2'>
-              {icon && <div className='text-blue-600'>{icon}</div>}
+              {icon && <div className='text-[#7DA8CC]'>{icon}</div>}
               <h3 className='text-lg font-semibold text-gray-900'>{title}</h3>
             </div>
             {action && (
               <button
                 onClick={action.onClick}
-                className='text-sm text-blue-600 hover:text-blue-700 font-medium'
+                className='text-sm text-[#7DA8CC] hover:text-[#6890b3] font-medium'
               >
                 {action.label}
               </button>
@@ -70,7 +70,7 @@ export const MobileDashboardWidget: React.FC<MobileDashboardWidgetProps> = ({
         className='w-full px-4 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors'
       >
         <div className='flex items-center gap-2 flex-1 min-w-0'>
-          {icon && <div className='text-blue-600 flex-shrink-0'>{icon}</div>}
+          {icon && <div className='text-[#7DA8CC] flex-shrink-0'>{icon}</div>}
           <h3 className='text-base font-semibold text-gray-900'>{title}</h3>
         </div>
         {expandable && (
@@ -91,7 +91,7 @@ export const MobileDashboardWidget: React.FC<MobileDashboardWidgetProps> = ({
             <div className='border-t border-gray-200 px-4 py-3 bg-gray-50'>
               <button
                 onClick={action.onClick}
-                className='w-full text-sm text-blue-600 hover:text-blue-700 font-medium py-2'
+                className='w-full text-sm text-[#7DA8CC] hover:text-[#6890b3] font-medium py-2'
               >
                 {action.label}
               </button>
@@ -139,7 +139,7 @@ export const CompactStat: React.FC<StatProps> = ({ label, value, icon, trend }) 
   return (
     <div className='flex items-center justify-between py-3 first:pt-0 last:pb-0 border-b border-gray-100 last:border-b-0'>
       <div className='flex items-center gap-2 flex-1'>
-        {icon && <div className='text-blue-600 flex-shrink-0'>{icon}</div>}
+        {icon && <div className='text-[#7DA8CC] flex-shrink-0'>{icon}</div>}
         <span className='text-sm text-gray-600'>{label}</span>
       </div>
       <div className='flex items-center gap-2 flex-shrink-0'>
@@ -150,9 +150,9 @@ export const CompactStat: React.FC<StatProps> = ({ label, value, icon, trend }) 
           <span
             className={`text-xs font-medium ${
               trend.direction === 'up'
-                ? 'text-green-600'
+                ? 'text-[#A1BA53]'
                 : trend.direction === 'down'
-                  ? 'text-red-600'
+                  ? 'text-[#DA5062]'
                   : 'text-gray-600'
             }`}
           >

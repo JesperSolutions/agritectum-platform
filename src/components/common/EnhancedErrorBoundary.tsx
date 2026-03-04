@@ -68,8 +68,8 @@ class EnhancedErrorBoundary extends Component<Props, State> {
       return (
         <div className='min-h-screen bg-gray-50 flex items-center justify-center p-4'>
           <div className='max-w-md w-full bg-white rounded-lg shadow-lg p-6'>
-            <div className='flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full mb-4'>
-              <AlertTriangle className='w-6 h-6 text-red-600' />
+            <div className='flex items-center justify-center w-12 h-12 mx-auto bg-[#DA5062]/15 rounded-full mb-4'>
+              <AlertTriangle className='w-6 h-6 text-[#DA5062]' />
             </div>
 
             <div className='text-center'>

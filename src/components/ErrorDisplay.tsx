@@ -47,30 +47,30 @@ const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
   const getColorClasses = () => {
     switch (type) {
       case 'error':
-        return 'bg-red-50 border-red-200 text-red-800';
+        return 'bg-[#DA5062]/10 border-[#DA5062]/30 text-[#872a38]';
       case 'warning':
-        return 'bg-yellow-50 border-yellow-200 text-yellow-800';
+        return 'bg-[#DA5062]/10 border-[#DA5062]/30 text-[#872a38]';
       case 'info':
-        return 'bg-blue-50 border-blue-200 text-blue-800';
+        return 'bg-[#7DA8CC]/10 border-[#7DA8CC]/30 text-[#476279]';
       case 'success':
-        return 'bg-green-50 border-green-200 text-green-800';
+        return 'bg-[#A1BA53]/10 border-[#A1BA53]/30 text-[#5c6a2f]';
       default:
-        return 'bg-red-50 border-red-200 text-red-800';
+        return 'bg-[#DA5062]/10 border-[#DA5062]/30 text-[#872a38]';
     }
   };
 
   const getIconColorClasses = () => {
     switch (type) {
       case 'error':
-        return 'text-red-400';
+        return 'text-[#e47886]';
       case 'warning':
-        return 'text-yellow-400';
+        return 'text-[#e47886]';
       case 'info':
-        return 'text-blue-400';
+        return 'text-[#90b8d4]';
       case 'success':
-        return 'text-green-400';
+        return 'text-[#b1c66a]';
       default:
-        return 'text-red-400';
+        return 'text-[#e47886]';
     }
   };
 
@@ -157,7 +157,7 @@ interface InlineErrorProps {
 }
 
 export const InlineError: React.FC<InlineErrorProps> = ({ message, className = '' }) => (
-  <div className={`text-sm text-red-600 mt-1 ${className}`} role='alert' aria-live='polite'>
+  <div className={`text-sm text-[#DA5062] mt-1 ${className}`} role='alert' aria-live='polite'>
     {message}
   </div>
 );

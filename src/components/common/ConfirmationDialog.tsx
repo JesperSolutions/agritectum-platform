@@ -32,17 +32,17 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
     const iconClass = 'h-6 w-6';
     switch (icon) {
       case 'trash':
-        return <Trash2 className={`${iconClass} text-red-600`} />;
+        return <Trash2 className={`${iconClass} text-[#DA5062]`} />;
       case 'edit':
-        return <Edit className={`${iconClass} text-blue-600`} />;
+        return <Edit className={`${iconClass} text-[#7DA8CC]`} />;
       case 'user-x':
-        return <UserX className={`${iconClass} text-red-600`} />;
+        return <UserX className={`${iconClass} text-[#DA5062]`} />;
       case 'user-check':
-        return <UserCheck className={`${iconClass} text-green-600`} />;
+        return <UserCheck className={`${iconClass} text-[#A1BA53]`} />;
       case 'check':
-        return <CheckCircle className={`${iconClass} text-green-600`} />;
+        return <CheckCircle className={`${iconClass} text-[#A1BA53]`} />;
       default:
-        return <AlertTriangle className={`${iconClass} text-yellow-600`} />;
+        return <AlertTriangle className={`${iconClass} text-[#DA5062]`} />;
     }
   };
 
@@ -50,33 +50,33 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
     switch (type) {
       case 'danger':
         return {
-          container: 'bg-red-100',
-          icon: 'text-red-600',
-          confirmButton: 'bg-red-600 hover:bg-red-700 text-white',
+          container: 'bg-[#DA5062]/15',
+          icon: 'text-[#DA5062]',
+          confirmButton: 'bg-[#DA5062] hover:bg-[#c23d4f] text-white',
         };
       case 'warning':
         return {
-          container: 'bg-yellow-100',
-          icon: 'text-yellow-600',
-          confirmButton: 'bg-yellow-600 hover:bg-yellow-700 text-white',
+          container: 'bg-[#DA5062]/10',
+          icon: 'text-[#DA5062]',
+          confirmButton: 'bg-[#DA5062] hover:bg-[#c23d4f] text-white',
         };
       case 'info':
         return {
-          container: 'bg-blue-100',
-          icon: 'text-blue-600',
-          confirmButton: 'bg-blue-600 hover:bg-blue-700 text-white',
+          container: 'bg-[#7DA8CC]/15',
+          icon: 'text-[#7DA8CC]',
+          confirmButton: 'bg-[#7DA8CC] hover:bg-[#6890b3] text-white',
         };
       case 'success':
         return {
-          container: 'bg-green-100',
-          icon: 'text-green-600',
-          confirmButton: 'bg-green-600 hover:bg-green-700 text-white',
+          container: 'bg-[#A1BA53]/15',
+          icon: 'text-[#A1BA53]',
+          confirmButton: 'bg-[#A1BA53] hover:bg-[#8a9f47] text-white',
         };
       default:
         return {
-          container: 'bg-red-100',
-          icon: 'text-red-600',
-          confirmButton: 'bg-red-600 hover:bg-red-700 text-white',
+          container: 'bg-[#DA5062]/15',
+          icon: 'text-[#DA5062]',
+          confirmButton: 'bg-[#DA5062] hover:bg-[#c23d4f] text-white',
         };
     }
   };

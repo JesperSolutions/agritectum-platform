@@ -45,7 +45,7 @@ export function RouteErrorBoundary() {
       <div className='sm:mx-auto sm:w-full sm:max-w-md'>
         <div className='bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10'>
           <div className='text-center'>
-            <AlertTriangle className='mx-auto h-12 w-12 text-red-500' />
+            <AlertTriangle className='mx-auto h-12 w-12 text-[#DA5062]' />
             <h1 className='mt-4 text-2xl font-bold text-slate-900'>{title}</h1>
             <p className='mt-2 text-sm text-slate-600'>{detail}</p>
 

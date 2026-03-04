@@ -348,7 +348,7 @@ const BuildingESGImprovements: React.FC = () => {
         </h2>
         <CustomerSearch onCustomerSelect={setSelectedCustomer} />
         {selectedCustomer && (
-          <div className='mt-2 text-green-700 font-semibold'>
+          <div className='mt-2 text-[#73853b] font-semibold'>
             {selectedCustomer.name}{' '}
             {selectedCustomer.email && (
               <span className='text-xs text-slate-500'>({selectedCustomer.email})</span>
@@ -379,7 +379,7 @@ const BuildingESGImprovements: React.FC = () => {
                   placeholder={t('admin.improvements.searchBuildings') || 'Search buildings...'}
                   value={searchTerm}
                   onChange={e => setSearchTerm(e.target.value)}
-                  className='w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500'
+                  className='w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53]'
                 />
               </div>
 
@@ -395,7 +395,7 @@ const BuildingESGImprovements: React.FC = () => {
                       key={building.id}
                       onClick={() => handleBuildingSelect(building.id)}
                       className={`w-full text-left p-4 border-b border-gray-200 hover:bg-gray-50 transition-colors ${
-                        selectedBuilding?.id === building.id ? 'bg-green-50 border-green-200' : ''
+                        selectedBuilding?.id === building.id ? 'bg-[#A1BA53]/10 border-[#A1BA53]/30' : ''
                       }`}
                     >
                       <div className='flex items-center justify-between'>
@@ -407,7 +407,7 @@ const BuildingESGImprovements: React.FC = () => {
                           </p>
                         </div>
                         {selectedBuilding?.id === building.id && (
-                          <CheckCircle className='w-5 h-5 text-green-600' />
+                          <CheckCircle className='w-5 h-5 text-[#A1BA53]' />
                         )}
                       </div>
                     </button>

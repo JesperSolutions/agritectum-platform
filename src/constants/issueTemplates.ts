@@ -21,7 +21,7 @@ export const ISSUE_TEMPLATES: IssueTemplate[] = [
       'Water infiltration at the roof edge, typically caused by damaged flashing or poor sealing.',
     location: 'Roof edge',
     icon: '💧',
-    color: 'text-red-600',
+    color: 'text-[#DA5062]',
   },
   {
     id: 'leak_chimney',
@@ -32,7 +32,7 @@ export const ISSUE_TEMPLATES: IssueTemplate[] = [
       'Water penetration around chimney flashing, often due to deteriorated sealant or damaged flashing.',
     location: 'Chimney area',
     icon: '🏠',
-    color: 'text-red-600',
+    color: 'text-[#DA5062]',
   },
   {
     id: 'damage_missing_tiles',
@@ -42,7 +42,7 @@ export const ISSUE_TEMPLATES: IssueTemplate[] = [
     description: 'Individual tiles have fallen off or are missing, exposing the roof structure.',
     location: 'Various locations',
     icon: '🧱',
-    color: 'text-orange-600',
+    color: 'text-[#DA5062]',
   },
   {
     id: 'damage_cracked_tiles',
@@ -52,7 +52,7 @@ export const ISSUE_TEMPLATES: IssueTemplate[] = [
     description: 'Tiles showing visible cracks, which can lead to water penetration.',
     location: 'Various locations',
     icon: '⚡',
-    color: 'text-orange-600',
+    color: 'text-[#DA5062]',
   },
   {
     id: 'wear_general',
@@ -62,7 +62,7 @@ export const ISSUE_TEMPLATES: IssueTemplate[] = [
     description: 'Normal aging and wear patterns on the roof surface.',
     location: 'General roof area',
     icon: '⏰',
-    color: 'text-yellow-600',
+    color: 'text-[#DA5062]',
   },
   {
     id: 'structural_sagging',
@@ -73,7 +73,7 @@ export const ISSUE_TEMPLATES: IssueTemplate[] = [
       'Visible sagging or deflection in the roof structure, indicating potential structural issues.',
     location: 'Roof structure',
     icon: '⚠️',
-    color: 'text-red-800',
+    color: 'text-[#872a38]',
   },
   {
     id: 'ventilation_blocked',
@@ -83,7 +83,7 @@ export const ISSUE_TEMPLATES: IssueTemplate[] = [
     description: 'Ventilation openings are blocked or obstructed, reducing air circulation.',
     location: 'Ventilation areas',
     icon: '🌪️',
-    color: 'text-blue-600',
+    color: 'text-[#7DA8CC]',
   },
   {
     id: 'gutters_clogged',
@@ -93,7 +93,7 @@ export const ISSUE_TEMPLATES: IssueTemplate[] = [
     description: 'Gutters are filled with debris, preventing proper water drainage.',
     location: 'Gutter system',
     icon: '🌿',
-    color: 'text-green-600',
+    color: 'text-[#A1BA53]',
   },
   {
     id: 'flashing_damaged',
@@ -104,7 +104,7 @@ export const ISSUE_TEMPLATES: IssueTemplate[] = [
       'Metal flashing around penetrations is damaged or missing, creating potential leak points.',
     location: 'Penetrations',
     icon: '🔧',
-    color: 'text-red-600',
+    color: 'text-[#DA5062]',
   },
   {
     id: 'moss_growth',
@@ -115,7 +115,7 @@ export const ISSUE_TEMPLATES: IssueTemplate[] = [
       'Moss or algae growth on roof surface, which can retain moisture and cause damage.',
     location: 'Shaded areas',
     icon: '🌿',
-    color: 'text-green-600',
+    color: 'text-[#A1BA53]',
   },
 ];
 
@@ -137,13 +137,13 @@ export const getSeverityIcon = (severity: IssueSeverity): string => {
 export const getSeverityColor = (severity: IssueSeverity): string => {
   switch (severity) {
     case 'critical':
-      return 'text-red-800 bg-red-100';
+      return 'text-[#872a38] bg-[#DA5062]/15';
     case 'high':
-      return 'text-red-600 bg-red-50';
+      return 'text-[#DA5062] bg-[#DA5062]/10';
     case 'medium':
-      return 'text-orange-600 bg-orange-50';
+      return 'text-[#DA5062] bg-[#DA5062]/10';
     case 'low':
-      return 'text-green-600 bg-green-50';
+      return 'text-[#A1BA53] bg-[#A1BA53]/10';
     default:
       return 'text-gray-600 bg-gray-50';
   }

@@ -93,13 +93,13 @@ export const EmailDeliveryStatus: React.FC<EmailDeliveryStatusProps> = ({
   const getStatusIcon = (state: string) => {
     switch (state?.toLowerCase()) {
       case 'success':
-        return <CheckCircle className='h-4 w-4 text-green-600' />;
+        return <CheckCircle className='h-4 w-4 text-[#A1BA53]' />;
       case 'error':
-        return <XCircle className='h-4 w-4 text-red-600' />;
+        return <XCircle className='h-4 w-4 text-[#DA5062]' />;
       case 'processing':
-        return <RefreshCw className='h-4 w-4 text-blue-600 animate-spin' />;
+        return <RefreshCw className='h-4 w-4 text-[#7DA8CC] animate-spin' />;
       case 'pending':
-        return <Clock className='h-4 w-4 text-yellow-600' />;
+        return <Clock className='h-4 w-4 text-[#DA5062]' />;
       default:
         return <AlertCircle className='h-4 w-4 text-gray-600' />;
     }
@@ -109,7 +109,7 @@ export const EmailDeliveryStatus: React.FC<EmailDeliveryStatusProps> = ({
     switch (state?.toLowerCase()) {
       case 'success':
         return (
-          <Badge variant='default' className='bg-green-100 text-green-800'>
+          <Badge variant='default' className='bg-[#A1BA53]/15 text-[#5c6a2f]'>
             Delivered
           </Badge>
         );
@@ -117,13 +117,13 @@ export const EmailDeliveryStatus: React.FC<EmailDeliveryStatusProps> = ({
         return <Badge variant='destructive'>Failed</Badge>;
       case 'processing':
         return (
-          <Badge variant='secondary' className='bg-blue-100 text-blue-800'>
+          <Badge variant='secondary' className='bg-[#7DA8CC]/15 text-[#476279]'>
             Processing
           </Badge>
         );
       case 'pending':
         return (
-          <Badge variant='outline' className='border-yellow-500 text-yellow-700'>
+          <Badge variant='outline' className='border-[#DA5062] text-[#c23d4f]'>
             Pending
           </Badge>
         );
@@ -205,9 +205,9 @@ export const EmailDeliveryStatus: React.FC<EmailDeliveryStatusProps> = ({
                 )}
 
                 {deliveryInfo.delivery.error && (
-                  <Alert className='border-red-200 bg-red-50'>
-                    <XCircle className='h-4 w-4 text-red-600' />
-                    <AlertDescription className='text-red-800'>
+                  <Alert className='border-[#DA5062]/30 bg-[#DA5062]/10'>
+                    <XCircle className='h-4 w-4 text-[#DA5062]' />
+                    <AlertDescription className='text-[#872a38]'>
                       {deliveryInfo.delivery.error}
                     </AlertDescription>
                   </Alert>
@@ -218,8 +218,8 @@ export const EmailDeliveryStatus: React.FC<EmailDeliveryStatusProps> = ({
                     {deliveryInfo.delivery.info.accepted &&
                       deliveryInfo.delivery.info.accepted.length > 0 && (
                         <div className='text-sm'>
-                          <span className='font-medium text-green-700'>Accepted:</span>
-                          <div className='ml-2 text-green-600'>
+                          <span className='font-medium text-[#73853b]'>Accepted:</span>
+                          <div className='ml-2 text-[#A1BA53]'>
                             {deliveryInfo.delivery.info.accepted.map((email, index) => (
                               <div key={index}>• {email}</div>
                             ))}
@@ -230,8 +230,8 @@ export const EmailDeliveryStatus: React.FC<EmailDeliveryStatusProps> = ({
                     {deliveryInfo.delivery.info.rejected &&
                       deliveryInfo.delivery.info.rejected.length > 0 && (
                         <div className='text-sm'>
-                          <span className='font-medium text-red-700'>Rejected:</span>
-                          <div className='ml-2 text-red-600'>
+                          <span className='font-medium text-[#c23d4f]'>Rejected:</span>
+                          <div className='ml-2 text-[#DA5062]'>
                             {deliveryInfo.delivery.info.rejected.map((email, index) => (
                               <div key={index}>• {email}</div>
                             ))}
@@ -301,9 +301,9 @@ export const EmailDeliveryStatus: React.FC<EmailDeliveryStatusProps> = ({
                       </div>
                     )}
                     {log.errorMessage && (
-                      <Alert className='border-red-200 bg-red-50'>
-                        <XCircle className='h-4 w-4 text-red-600' />
-                        <AlertDescription className='text-red-800'>
+                      <Alert className='border-[#DA5062]/30 bg-[#DA5062]/10'>
+                        <XCircle className='h-4 w-4 text-[#DA5062]' />
+                        <AlertDescription className='text-[#872a38]'>
                           {log.errorMessage}
                         </AlertDescription>
                       </Alert>

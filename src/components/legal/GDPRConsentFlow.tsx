@@ -159,7 +159,7 @@ const GDPRConsentFlow: React.FC = () => {
                   type='checkbox'
                   checked={consents.termsAccepted}
                   onChange={handleRequiredConsentToggle}
-                  className='mt-1 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer'
+                  className='mt-1 h-4 w-4 rounded border-slate-300 text-[#7DA8CC] focus:ring-[#7DA8CC] cursor-pointer'
                 />
                 <div className='ml-3 flex-1'>
                   <p className='font-medium text-slate-900'>{t('gdpr.required.title')}</p>
@@ -175,7 +175,7 @@ const GDPRConsentFlow: React.FC = () => {
                   type='checkbox'
                   checked={consents.analyticsconsent}
                   onChange={() => handleConsentChange('analyticsconsent')}
-                  className='mt-1 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer'
+                  className='mt-1 h-4 w-4 rounded border-slate-300 text-[#7DA8CC] focus:ring-[#7DA8CC] cursor-pointer'
                 />
                 <div className='ml-3 flex-1'>
                   <p className='font-medium text-slate-900'>{t('gdpr.analytics.title')}</p>
@@ -192,7 +192,7 @@ const GDPRConsentFlow: React.FC = () => {
                 href='/privacy-policy'
                 target='_blank'
                 rel='noopener noreferrer'
-                className='text-blue-600 hover:text-blue-700 underline'
+                className='text-[#7DA8CC] hover:text-[#6890b3] underline'
               >
                 {t('gdpr.links.privacyPolicy')}
               </a>
@@ -201,7 +201,7 @@ const GDPRConsentFlow: React.FC = () => {
                 href='/terms-of-service'
                 target='_blank'
                 rel='noopener noreferrer'
-                className='text-blue-600 hover:text-blue-700 underline'
+                className='text-[#7DA8CC] hover:text-[#6890b3] underline'
               >
                 {t('gdpr.links.terms')}
               </a>
@@ -210,7 +210,7 @@ const GDPRConsentFlow: React.FC = () => {
                 href='/dpa'
                 target='_blank'
                 rel='noopener noreferrer'
-                className='text-blue-600 hover:text-blue-700 underline'
+                className='text-[#7DA8CC] hover:text-[#6890b3] underline'
               >
                 {t('gdpr.links.dpa')}
               </a>
@@ -234,7 +234,7 @@ const GDPRConsentFlow: React.FC = () => {
             <button
               onClick={handleSaveConsents}
               disabled={!consents.termsAccepted}
-              className='px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+              className='px-4 py-2 text-sm font-medium text-white bg-[#7DA8CC] hover:bg-[#6890b3] rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
             >
               {t('gdpr.actions.savePreferences')}
             </button>

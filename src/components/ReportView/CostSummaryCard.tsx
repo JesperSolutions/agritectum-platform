@@ -127,8 +127,8 @@ const CostSummaryCard: React.FC<CostSummaryCardProps> = ({
       {/* Header */}
       <div className='flex items-center justify-between mb-6'>
         <div className='flex items-center space-x-3'>
-          <div className='p-2 bg-blue-100 rounded-lg'>
-            <DollarSign className='w-6 h-6 text-blue-600' />
+          <div className='p-2 bg-[#7DA8CC]/15 rounded-lg'>
+            <DollarSign className='w-6 h-6 text-[#7DA8CC]' />
           </div>
           <div>
             <h2 className='text-xl font-bold text-gray-900'>
@@ -155,7 +155,7 @@ const CostSummaryCard: React.FC<CostSummaryCardProps> = ({
             <button
               onClick={handleSave}
               disabled={isSaving || !hasChanges}
-              className='inline-flex items-center px-4 py-2 text-sm font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md hover:shadow-lg'
+              className='inline-flex items-center px-4 py-2 text-sm font-semibold text-white bg-[#A1BA53] rounded-lg hover:bg-[#8a9f47] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md hover:shadow-lg'
             >
               <Save className='w-4 h-4 mr-2' />
               {isSaving ? 'Sparar...' : t('costEstimate.save') || 'Spara'}
@@ -202,9 +202,9 @@ const CostSummaryCard: React.FC<CostSummaryCardProps> = ({
           <div
             className={`flex flex-col py-3 px-4 rounded-lg border-2 transition-all ${
               activeEditMode
-                ? 'bg-blue-50 border-blue-300'
+                ? 'bg-[#7DA8CC]/10 border-[#7DA8CC]/40'
                 : canEdit && showEditButton
-                  ? 'bg-gray-50 border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 cursor-pointer'
+                  ? 'bg-gray-50 border-gray-200 hover:border-[#7DA8CC]/40 hover:bg-[#7DA8CC]/10/50 cursor-pointer'
                   : 'bg-gray-50 border-gray-200'
             }`}
           >
@@ -212,7 +212,7 @@ const CostSummaryCard: React.FC<CostSummaryCardProps> = ({
               <label className='text-sm font-medium text-gray-700'>
                 {t('costEstimate.labor') || 'Arbetskostnad'}
               </label>
-              {activeEditMode && <Pencil className='w-3 h-3 text-blue-600' />}
+              {activeEditMode && <Pencil className='w-3 h-3 text-[#7DA8CC]' />}
             </div>
             {activeEditMode ? (
               <input
@@ -226,7 +226,7 @@ const CostSummaryCard: React.FC<CostSummaryCardProps> = ({
                     setCosts({ ...costs, laborCost: val });
                   }
                 }}
-                className='w-full px-3 py-2 text-base font-semibold border-2 border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white'
+                className='w-full px-3 py-2 text-base font-semibold border-2 border-[#90b8d4] rounded-lg focus:ring-2 focus:ring-[#7DA8CC] focus:border-[#7DA8CC] bg-white'
                 placeholder='0'
                 min='0'
                 step='100'
@@ -243,9 +243,9 @@ const CostSummaryCard: React.FC<CostSummaryCardProps> = ({
           <div
             className={`flex flex-col py-3 px-4 rounded-lg border-2 transition-all ${
               activeEditMode
-                ? 'bg-blue-50 border-blue-300'
+                ? 'bg-[#7DA8CC]/10 border-[#7DA8CC]/40'
                 : canEdit && showEditButton
-                  ? 'bg-gray-50 border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 cursor-pointer'
+                  ? 'bg-gray-50 border-gray-200 hover:border-[#7DA8CC]/40 hover:bg-[#7DA8CC]/10/50 cursor-pointer'
                   : 'bg-gray-50 border-gray-200'
             }`}
           >
@@ -253,7 +253,7 @@ const CostSummaryCard: React.FC<CostSummaryCardProps> = ({
               <label className='text-sm font-medium text-gray-700'>
                 {t('costEstimate.material') || 'Materialkostnad'}
               </label>
-              {activeEditMode && <Pencil className='w-3 h-3 text-blue-600' />}
+              {activeEditMode && <Pencil className='w-3 h-3 text-[#7DA8CC]' />}
             </div>
             {activeEditMode ? (
               <input
@@ -267,7 +267,7 @@ const CostSummaryCard: React.FC<CostSummaryCardProps> = ({
                     setCosts({ ...costs, materialCost: val });
                   }
                 }}
-                className='w-full px-3 py-2 text-base font-semibold border-2 border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white'
+                className='w-full px-3 py-2 text-base font-semibold border-2 border-[#90b8d4] rounded-lg focus:ring-2 focus:ring-[#7DA8CC] focus:border-[#7DA8CC] bg-white'
                 placeholder='0'
                 min='0'
                 step='100'
@@ -283,9 +283,9 @@ const CostSummaryCard: React.FC<CostSummaryCardProps> = ({
           <div
             className={`flex flex-col py-3 px-4 rounded-lg border-2 transition-all ${
               activeEditMode
-                ? 'bg-blue-50 border-blue-300'
+                ? 'bg-[#7DA8CC]/10 border-[#7DA8CC]/40'
                 : canEdit && showEditButton
-                  ? 'bg-gray-50 border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 cursor-pointer'
+                  ? 'bg-gray-50 border-gray-200 hover:border-[#7DA8CC]/40 hover:bg-[#7DA8CC]/10/50 cursor-pointer'
                   : 'bg-gray-50 border-gray-200'
             }`}
           >
@@ -293,7 +293,7 @@ const CostSummaryCard: React.FC<CostSummaryCardProps> = ({
               <label className='text-sm font-medium text-gray-700'>
                 {t('costEstimate.travel') || 'Resekostnad'}
               </label>
-              {activeEditMode && <Pencil className='w-3 h-3 text-blue-600' />}
+              {activeEditMode && <Pencil className='w-3 h-3 text-[#7DA8CC]' />}
             </div>
             {activeEditMode ? (
               <input
@@ -307,7 +307,7 @@ const CostSummaryCard: React.FC<CostSummaryCardProps> = ({
                     setCosts({ ...costs, travelCost: val });
                   }
                 }}
-                className='w-full px-3 py-2 text-base font-semibold border-2 border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white'
+                className='w-full px-3 py-2 text-base font-semibold border-2 border-[#90b8d4] rounded-lg focus:ring-2 focus:ring-[#7DA8CC] focus:border-[#7DA8CC] bg-white'
                 placeholder='0'
                 min='0'
                 step='100'
@@ -323,9 +323,9 @@ const CostSummaryCard: React.FC<CostSummaryCardProps> = ({
           <div
             className={`flex flex-col py-3 px-4 rounded-lg border-2 transition-all ${
               activeEditMode
-                ? 'bg-blue-50 border-blue-300'
+                ? 'bg-[#7DA8CC]/10 border-[#7DA8CC]/40'
                 : canEdit && showEditButton
-                  ? 'bg-gray-50 border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 cursor-pointer'
+                  ? 'bg-gray-50 border-gray-200 hover:border-[#7DA8CC]/40 hover:bg-[#7DA8CC]/10/50 cursor-pointer'
                   : 'bg-gray-50 border-gray-200'
             }`}
           >
@@ -333,7 +333,7 @@ const CostSummaryCard: React.FC<CostSummaryCardProps> = ({
               <label className='text-sm font-medium text-gray-700'>
                 {t('costEstimate.overhead') || 'Omkostnader'}
               </label>
-              {activeEditMode && <Pencil className='w-3 h-3 text-blue-600' />}
+              {activeEditMode && <Pencil className='w-3 h-3 text-[#7DA8CC]' />}
             </div>
             {activeEditMode ? (
               <input
@@ -347,7 +347,7 @@ const CostSummaryCard: React.FC<CostSummaryCardProps> = ({
                     setCosts({ ...costs, overheadCost: val });
                   }
                 }}
-                className='w-full px-3 py-2 text-base font-semibold border-2 border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white'
+                className='w-full px-3 py-2 text-base font-semibold border-2 border-[#90b8d4] rounded-lg focus:ring-2 focus:ring-[#7DA8CC] focus:border-[#7DA8CC] bg-white'
                 placeholder='0'
                 min='0'
                 step='100'
@@ -361,11 +361,11 @@ const CostSummaryCard: React.FC<CostSummaryCardProps> = ({
         </div>
 
         {/* Subtotal - Visual Separator */}
-        <div className='flex items-center justify-between py-4 px-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border-2 border-blue-200 mt-6'>
+        <div className='flex items-center justify-between py-4 px-4 bg-gradient-to-r from-[#7DA8CC]/10 to-indigo-50 rounded-lg border-2 border-[#7DA8CC]/30 mt-6'>
           <span className='text-base font-bold text-gray-900'>
             {t('costEstimate.subtotal') || 'Delsumma'}
           </span>
-          <span className='text-xl font-bold text-blue-700'>{formatCurrencySafe(subtotal)}</span>
+          <span className='text-xl font-bold text-[#6890b3]'>{formatCurrencySafe(subtotal)}</span>
         </div>
       </div>
     </div>

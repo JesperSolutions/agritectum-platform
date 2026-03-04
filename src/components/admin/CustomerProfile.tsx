@@ -185,7 +185,7 @@ const CustomerProfile: React.FC = () => {
     return (
       <div className='min-h-screen bg-slate-50 flex items-center justify-center'>
         <div className='text-center'>
-          <XCircle className='w-16 h-16 text-red-500 mx-auto mb-4' />
+          <XCircle className='w-16 h-16 text-[#DA5062] mx-auto mb-4' />
           <h2 className='text-2xl font-bold text-slate-900 mb-2'>
             {error || t('customerProfile.notFound') || 'Customer not found'}
           </h2>
@@ -264,7 +264,7 @@ const CustomerProfile: React.FC = () => {
                 <div className='text-sm text-slate-500 mt-2 mb-1'>
                   {t('customerProfile.totalRevenue') || 'Total Revenue'}
                 </div>
-                <div className='text-xl font-semibold text-green-600'>
+                <div className='text-xl font-semibold text-[#A1BA53]'>
                   {formatCurrency(customer.totalRevenue || 0)}
                 </div>
               </div>
@@ -381,7 +381,7 @@ const CustomerProfile: React.FC = () => {
                       <span className='font-medium text-slate-700'>
                         {t('customerProfile.totalRevenue') || 'Total Revenue'}:
                       </span>
-                      <span className='ml-2 text-green-600 font-semibold'>
+                      <span className='ml-2 text-[#A1BA53] font-semibold'>
                         {formatCurrency(customer.totalRevenue || 0)}
                       </span>
                     </div>
@@ -508,7 +508,7 @@ const CustomerProfile: React.FC = () => {
                                 </span>
                                 {/* ESG Reports count and link */}
                                 {esgReports[building.id]?.length > 0 ? (
-                                  <span className='text-green-600 flex items-center gap-1'>
+                                  <span className='text-[#A1BA53] flex items-center gap-1'>
                                     <Leaf className='w-4 h-4' />
                                     {esgReports[building.id].length}{' '}
                                     {t('customerProfile.esgReports') || 'ESG report(s)'}
@@ -524,7 +524,7 @@ const CustomerProfile: React.FC = () => {
                                     e.stopPropagation();
                                     navigate(`/portal/buildings/${building.id}`);
                                   }}
-                                  className='flex items-center gap-1 px-3 py-2 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors'
+                                  className='flex items-center gap-1 px-3 py-2 text-xs bg-[#7DA8CC]/15 text-[#6890b3] rounded hover:bg-[#7DA8CC]/25 transition-colors'
                                 >
                                   <Edit className='w-3 h-3' />
                                   Edit
@@ -537,7 +537,7 @@ const CustomerProfile: React.FC = () => {
                                     setDeletingBuildingId(building.id);
                                     setShowDeleteConfirm(true);
                                   }}
-                                  className='flex items-center gap-1 px-3 py-2 text-xs bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors'
+                                  className='flex items-center gap-1 px-3 py-2 text-xs bg-[#DA5062]/15 text-[#c23d4f] rounded hover:bg-[#DA5062]/25 transition-colors'
                                 >
                                   <Trash2 className='w-3 h-3' />
                                   Delete
@@ -558,7 +558,7 @@ const CustomerProfile: React.FC = () => {
                                               '_blank'
                                             );
                                           }}
-                                          className='flex items-center gap-1 px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full hover:bg-green-200 transition-colors'
+                                          className='flex items-center gap-1 px-2 py-1 text-xs bg-[#A1BA53]/15 text-[#73853b] rounded-full hover:bg-[#A1BA53]/25 transition-colors'
                                         >
                                           <ExternalLink className='w-3 h-3' />
                                           {t('customerProfile.viewEsgReport') || 'View ESG Report'}
@@ -581,7 +581,7 @@ const CustomerProfile: React.FC = () => {
                                       e.stopPropagation();
                                       navigate(`/admin/esg-service?buildingId=${building.id}`);
                                     }}
-                                    className='flex items-center gap-1 px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full hover:bg-green-200 transition-colors'
+                                    className='flex items-center gap-1 px-2 py-1 text-xs bg-[#A1BA53]/15 text-[#73853b] rounded-full hover:bg-[#A1BA53]/25 transition-colors'
                                   >
                                     <Leaf className='w-3 h-3' />
                                     {t('customerProfile.createEsgReport') || 'Create ESG Report'}
@@ -655,7 +655,7 @@ const CustomerProfile: React.FC = () => {
                                 <span className='font-medium text-slate-700'>
                                   {t('customerProfile.offerValue') || 'Offer Value'}:
                                 </span>{' '}
-                                <span className='text-green-600 font-semibold'>
+                                <span className='text-[#A1BA53] font-semibold'>
                                   {formatCurrency(report.offerValue)}
                                 </span>
                               </div>
@@ -755,7 +755,7 @@ const CustomerProfile: React.FC = () => {
                                   <span className='font-medium text-slate-700'>
                                     {t('customerProfile.price') || 'Price'}:
                                   </span>{' '}
-                                  <span className='text-green-600 font-semibold'>
+                                  <span className='text-[#A1BA53] font-semibold'>
                                     {formatCurrency(agreement.price)} {agreement.currency || 'DKK'}
                                   </span>
                                 </div>
@@ -778,8 +778,8 @@ const CustomerProfile: React.FC = () => {
         <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4'>
           <div className='bg-white rounded-lg shadow-xl max-w-md w-full'>
             <div className='p-6'>
-              <div className='flex items-center justify-center w-12 h-12 bg-red-100 rounded-full mx-auto mb-4'>
-                <AlertCircle className='w-6 h-6 text-red-600' />
+              <div className='flex items-center justify-center w-12 h-12 bg-[#DA5062]/15 rounded-full mx-auto mb-4'>
+                <AlertCircle className='w-6 h-6 text-[#DA5062]' />
               </div>
               <h3 className='text-lg font-medium text-gray-900 text-center mb-2'>
                 Delete Building?
@@ -799,7 +799,7 @@ const CustomerProfile: React.FC = () => {
                 </button>
                 <button
                   onClick={() => handleDeleteBuilding(deletingBuildingId)}
-                  className='px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors'
+                  className='px-4 py-2 text-sm font-medium text-white bg-[#DA5062] rounded-lg hover:bg-[#c23d4f] transition-colors'
                 >
                   Delete
                 </button>

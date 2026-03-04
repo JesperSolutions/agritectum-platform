@@ -407,7 +407,7 @@ const BuildingDetail: React.FC = () => {
         </p>
         <Link
           to='/portal/buildings'
-          className='text-green-600 hover:text-green-700 mt-4 inline-block'
+          className='text-[#A1BA53] hover:text-[#73853b] mt-4 inline-block'
         >
           {t('buildings.backToBuildings') || t('dashboard.viewAll') || 'Back to Buildings'}
         </Link>
@@ -419,21 +419,21 @@ const BuildingDetail: React.FC = () => {
     <div className='space-y-6'>
       {/* Error Messages */}
       {errors.length > 0 && (
-        <div className='bg-red-50 border border-red-200 rounded-lg p-4'>
+        <div className='bg-[#DA5062]/10 border border-[#DA5062]/30 rounded-lg p-4'>
           <div className='flex items-start gap-3'>
-            <AlertCircle className='w-5 h-5 text-red-600 flex-shrink-0 mt-0.5' />
+            <AlertCircle className='w-5 h-5 text-[#DA5062] flex-shrink-0 mt-0.5' />
             <div className='flex-1'>
-              <h3 className='font-semibold text-red-900 mb-2'>Issues encountered</h3>
+              <h3 className='font-semibold text-[#6e2530] mb-2'>Issues encountered</h3>
               <ul className='space-y-1'>
                 {errors.map((error, idx) => (
-                  <li key={idx} className='text-sm text-red-700'>
+                  <li key={idx} className='text-sm text-[#c23d4f]'>
                     • {error}
                   </li>
                 ))}
               </ul>
               <button
                 onClick={() => setErrors([])}
-                className='mt-3 text-sm text-red-600 hover:text-red-700 font-medium'
+                className='mt-3 text-sm text-[#DA5062] hover:text-[#c23d4f] font-medium'
               >
                 Dismiss
               </button>
@@ -481,7 +481,7 @@ const BuildingDetail: React.FC = () => {
                 setThumbnailError(null);
                 setEditing(true);
               }}
-              className='inline-flex items-center px-4 py-2 text-green-600 hover:bg-green-50 rounded-lg border border-green-200 transition-colors'
+              className='inline-flex items-center px-4 py-2 text-[#A1BA53] hover:bg-[#A1BA53]/10 rounded-lg border border-[#A1BA53]/30 transition-colors'
               title='Edit building'
             >
               <Edit className='w-4 h-4 mr-2' />
@@ -505,7 +505,7 @@ const BuildingDetail: React.FC = () => {
           )}
           <button
             onClick={() => setShowDeleteDialog(true)}
-            className='inline-flex items-center px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg border border-red-200 transition-colors'
+            className='inline-flex items-center px-4 py-2 text-[#DA5062] hover:bg-[#DA5062]/10 rounded-lg border border-[#DA5062]/30 transition-colors'
             title='Delete building'
           >
             <Trash2 className='w-4 h-4 mr-2' />
@@ -603,7 +603,7 @@ const BuildingDetail: React.FC = () => {
                 />
               </div>
               {thumbnailError && (
-                <p className='mt-1 text-sm text-red-600'>{thumbnailError}</p>
+                <p className='mt-1 text-sm text-[#DA5062]'>{thumbnailError}</p>
               )}
               <p className='mt-1 text-xs text-gray-500'>{t('buildings.thumbnail.help')}</p>
             </div>
@@ -617,7 +617,7 @@ const BuildingDetail: React.FC = () => {
                 value={formData.address}
                 onChange={e => setFormData({ ...formData, address: e.target.value })}
                 required
-                className='w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500'
+                className='w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53]'
               />
             </div>
             <div className='grid grid-cols-2 gap-4'>
@@ -633,7 +633,7 @@ const BuildingDetail: React.FC = () => {
                       buildingType: e.target.value as Building['buildingType'],
                     })
                   }
-                  className='w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500'
+                  className='w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53]'
                 >
                   <option value='residential'>{t('buildings.residential')}</option>
                   <option value='commercial'>{t('buildings.commercial')}</option>
@@ -649,7 +649,7 @@ const BuildingDetail: React.FC = () => {
                   onChange={e =>
                     setFormData({ ...formData, roofType: e.target.value as Building['roofType'] })
                   }
-                  className='w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500'
+                  className='w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53]'
                 >
                   <option value='tile'>{t('roofTypes.tile')}</option>
                   <option value='metal'>{t('roofTypes.metal')}</option>
@@ -674,7 +674,7 @@ const BuildingDetail: React.FC = () => {
                 type='number'
                 value={formData.roofSize}
                 onChange={e => setFormData({ ...formData, roofSize: e.target.value })}
-                className='w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500'
+                className='w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53]'
               />
             </div>
             
@@ -683,14 +683,14 @@ const BuildingDetail: React.FC = () => {
               <h3 className='text-lg font-semibold text-gray-900 mb-4'>{t('buildings.esgFeatures') || 'ESG Features'}</h3>
               
               {/* Solar Panels */}
-              <div className='bg-yellow-50 rounded-lg p-4 mb-4'>
+              <div className='bg-[#DA5062]/10 rounded-lg p-4 mb-4'>
                 <div className='flex items-center mb-3'>
                   <input
                     type='checkbox'
                     id='editHasSolarPanels'
                     checked={formData.hasSolarPanels}
                     onChange={e => setFormData({ ...formData, hasSolarPanels: e.target.checked })}
-                    className='w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500'
+                    className='w-4 h-4 text-[#A1BA53] border-gray-300 rounded focus:ring-[#A1BA53]'
                   />
                   <label htmlFor='editHasSolarPanels' className='ml-2 text-sm font-medium text-gray-900'>
                     {t('buildings.hasSolarPanels') || 'Has Solar Panels (Solpaneler)'}
@@ -710,7 +710,7 @@ const BuildingDetail: React.FC = () => {
                         placeholder='0'
                         step='1'
                         min='0'
-                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 text-sm'
+                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53] text-sm'
                       />
                     </div>
                     <div>
@@ -724,7 +724,7 @@ const BuildingDetail: React.FC = () => {
                         placeholder='0'
                         step='0.1'
                         min='0'
-                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 text-sm'
+                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53] text-sm'
                       />
                     </div>
                     <div>
@@ -735,7 +735,7 @@ const BuildingDetail: React.FC = () => {
                         type='date'
                         value={formData.solarInstallationDate}
                         onChange={e => setFormData({ ...formData, solarInstallationDate: e.target.value })}
-                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 text-sm'
+                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53] text-sm'
                       />
                     </div>
                   </div>
@@ -750,7 +750,7 @@ const BuildingDetail: React.FC = () => {
                     id='editHasWhiteRoof'
                     checked={formData.hasWhiteRoof}
                     onChange={e => setFormData({ ...formData, hasWhiteRoof: e.target.checked })}
-                    className='w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500'
+                    className='w-4 h-4 text-[#A1BA53] border-gray-300 rounded focus:ring-[#A1BA53]'
                   />
                   <label htmlFor='editHasWhiteRoof' className='ml-2 text-sm font-medium text-gray-900'>
                     {t('buildings.hasWhiteRoof') || 'Has White Roof (Hvidt Tag)'}
@@ -770,7 +770,7 @@ const BuildingDetail: React.FC = () => {
                         placeholder='0'
                         step='0.01'
                         min='0'
-                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 text-sm'
+                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53] text-sm'
                       />
                     </div>
                     <div>
@@ -785,7 +785,7 @@ const BuildingDetail: React.FC = () => {
                         step='1'
                         min='0'
                         max='100'
-                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 text-sm'
+                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53] text-sm'
                       />
                     </div>
                     <div>
@@ -796,7 +796,7 @@ const BuildingDetail: React.FC = () => {
                         type='date'
                         value={formData.whiteRoofInstallationDate}
                         onChange={e => setFormData({ ...formData, whiteRoofInstallationDate: e.target.value })}
-                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 text-sm'
+                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53] text-sm'
                       />
                     </div>
                   </div>
@@ -804,14 +804,14 @@ const BuildingDetail: React.FC = () => {
               </div>
               
               {/* NOx Treatment */}
-              <div className='bg-blue-50 rounded-lg p-4 mb-4'>
+              <div className='bg-[#7DA8CC]/10 rounded-lg p-4 mb-4'>
                 <div className='flex items-center mb-3'>
                   <input
                     type='checkbox'
                     id='editHasNoxTreatment'
                     checked={formData.hasNoxTreatment}
                     onChange={e => setFormData({ ...formData, hasNoxTreatment: e.target.checked })}
-                    className='w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500'
+                    className='w-4 h-4 text-[#A1BA53] border-gray-300 rounded focus:ring-[#A1BA53]'
                   />
                   <label htmlFor='editHasNoxTreatment' className='ml-2 text-sm font-medium text-gray-900'>
                     {t('buildings.hasNoxTreatment') || 'Has NOx Treatment System'}
@@ -827,7 +827,7 @@ const BuildingDetail: React.FC = () => {
                       <select
                         value={formData.noxType}
                         onChange={e => setFormData({ ...formData, noxType: e.target.value as typeof formData.noxType })}
-                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 text-sm'
+                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53] text-sm'
                       >
                         <option value='SCR'>{t('buildings.noxTypeSCR') || 'SCR (Selective Catalytic Reduction)'}</option>
                         <option value='EGR'>{t('buildings.noxTypeEGR') || 'EGR (Exhaust Gas Recirculation)'}</option>
@@ -842,7 +842,7 @@ const BuildingDetail: React.FC = () => {
                         type='date'
                         value={formData.noxInstallationDate}
                         onChange={e => setFormData({ ...formData, noxInstallationDate: e.target.value })}
-                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 text-sm'
+                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53] text-sm'
                       />
                     </div>
                   </div>
@@ -850,14 +850,14 @@ const BuildingDetail: React.FC = () => {
               </div>
               
               {/* Green Roof */}
-              <div className='bg-green-50 rounded-lg p-4'>
+              <div className='bg-[#A1BA53]/10 rounded-lg p-4'>
                 <div className='flex items-center mb-3'>
                   <input
                     type='checkbox'
                     id='editHasGreenRoof'
                     checked={formData.hasGreenRoof}
                     onChange={e => setFormData({ ...formData, hasGreenRoof: e.target.checked })}
-                    className='w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500'
+                    className='w-4 h-4 text-[#A1BA53] border-gray-300 rounded focus:ring-[#A1BA53]'
                   />
                   <label htmlFor='editHasGreenRoof' className='ml-2 text-sm font-medium text-gray-900'>
                     {t('buildings.hasGreenRoof') || 'Has Green Roof'}
@@ -877,7 +877,7 @@ const BuildingDetail: React.FC = () => {
                         placeholder='0'
                         step='0.01'
                         min='0'
-                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 text-sm'
+                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53] text-sm'
                       />
                     </div>
                     <div>
@@ -887,7 +887,7 @@ const BuildingDetail: React.FC = () => {
                       <select
                         value={formData.greenRoofType}
                         onChange={e => setFormData({ ...formData, greenRoofType: e.target.value as typeof formData.greenRoofType })}
-                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 text-sm'
+                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53] text-sm'
                       >
                         <option value='extensive'>{t('buildings.greenRoofExtensive') || 'Extensive'}</option>
                         <option value='intensive'>{t('buildings.greenRoofIntensive') || 'Intensive'}</option>
@@ -902,7 +902,7 @@ const BuildingDetail: React.FC = () => {
                         type='date'
                         value={formData.greenRoofInstallationDate}
                         onChange={e => setFormData({ ...formData, greenRoofInstallationDate: e.target.value })}
-                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 text-sm'
+                        className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53] text-sm'
                       />
                     </div>
                   </div>
@@ -912,7 +912,7 @@ const BuildingDetail: React.FC = () => {
             
             <button
               type='submit'
-              className='flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium shadow-sm'
+              className='flex items-center gap-2 px-4 py-2 bg-[#A1BA53] text-white rounded-lg hover:bg-[#8a9f47] transition-colors text-sm font-medium shadow-sm'
             >
               <Save className='w-4 h-4' />
               <span>{t('buildings.saveChanges') || 'Save Changes'}</span>
@@ -998,7 +998,7 @@ const BuildingDetail: React.FC = () => {
                     href={`https://www.openstreetmap.org/?mlat=${building.latitude}&mlon=${building.longitude}&zoom=16`}
                     target='_blank'
                     rel='noopener noreferrer'
-                    className='text-blue-600 hover:text-blue-700 hover:underline text-sm flex items-center space-x-1'
+                    className='text-[#7DA8CC] hover:text-[#6890b3] hover:underline text-sm flex items-center space-x-1'
                   >
                     <span>
                       {building.latitude.toFixed(6)}, {building.longitude.toFixed(6)}
@@ -1200,7 +1200,7 @@ const BuildingDetail: React.FC = () => {
       {!editing && esgReports.length > 0 && (
         <div className='bg-white rounded-lg shadow p-6 border border-slate-200'>
           <h2 className='text-xl font-semibold mb-4 flex items-center'>
-            <Leaf className='w-5 h-5 mr-2 text-green-600' />
+            <Leaf className='w-5 h-5 mr-2 text-[#A1BA53]' />
             {t('buildings.esgReports.title') || 'ESG Reports'}
           </h2>
           {loadingRelated ? (
@@ -1222,8 +1222,8 @@ const BuildingDetail: React.FC = () => {
                         <div className='flex items-start justify-between'>
                           <div className='flex-1'>
                             <div className='flex items-center gap-2 mb-2'>
-                              <div className='p-2 bg-green-100 rounded-lg'>
-                                <Leaf className='w-4 h-4 text-green-600' />
+                              <div className='p-2 bg-[#A1BA53]/15 rounded-lg'>
+                                <Leaf className='w-4 h-4 text-[#A1BA53]' />
                               </div>
                               <div>
                                 <h3 className='font-semibold text-gray-900'>
@@ -1267,7 +1267,7 @@ const BuildingDetail: React.FC = () => {
                               </div>
                             </div>
                           </div>
-                          <ExternalLink className='w-5 h-5 text-green-600 flex-shrink-0 ml-3' />
+                          <ExternalLink className='w-5 h-5 text-[#A1BA53] flex-shrink-0 ml-3' />
                         </div>
                       </ListCard>
                     </a>
@@ -1342,7 +1342,7 @@ const BuildingDetail: React.FC = () => {
                         <div className='flex items-center space-x-2 ml-4'>
                           {activity.status && <StatusBadge status={activity.status} />}
                           {activity.link && (
-                            <Link to={activity.link} className='text-blue-600 hover:text-blue-700'>
+                            <Link to={activity.link} className='text-[#7DA8CC] hover:text-[#6890b3]'>
                               <ExternalLink className='w-4 h-4' />
                             </Link>
                           )}
@@ -1368,8 +1368,8 @@ const BuildingDetail: React.FC = () => {
         <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4'>
           <div className='bg-white rounded-lg shadow-xl max-w-md w-full'>
             <div className='p-6'>
-              <div className='flex items-center justify-center w-12 h-12 bg-red-100 rounded-full mx-auto mb-4'>
-                <AlertCircle className='w-6 h-6 text-red-600' />
+              <div className='flex items-center justify-center w-12 h-12 bg-[#DA5062]/15 rounded-full mx-auto mb-4'>
+                <AlertCircle className='w-6 h-6 text-[#DA5062]' />
               </div>
               <h3 className='text-lg font-medium text-gray-900 text-center mb-2'>
                 Delete Building?
@@ -1377,7 +1377,7 @@ const BuildingDetail: React.FC = () => {
               <p className='text-sm text-gray-600 text-center mb-6'>
                 {building?.address || 'This building'} will be permanently deleted. This action cannot be undone.
                 {reports.length > 0 && (
-                  <span className='block mt-4 text-red-600 font-medium'>
+                  <span className='block mt-4 text-[#DA5062] font-medium'>
                     Note: Only in-progress reports can be kept. {reports.filter(r => r.status !== 'in-progress').length} completed/archived report(s) must be removed first.
                   </span>
                 )}
@@ -1393,7 +1393,7 @@ const BuildingDetail: React.FC = () => {
                 <button
                   onClick={handleDeleteBuilding}
                   disabled={isDeleting}
-                  className='px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed'
+                  className='px-4 py-2 text-sm font-medium text-white bg-[#DA5062] rounded-lg hover:bg-[#c23d4f] disabled:opacity-50 disabled:cursor-not-allowed'
                 >
                   {isDeleting ? 'Deleting...' : 'Delete'}
                 </button>

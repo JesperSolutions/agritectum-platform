@@ -134,8 +134,8 @@ const BuildingComparisonTool: React.FC = () => {
     : 0;
 
   const getTrendIcon = (value: number, avg: number) => {
-    if (value > avg * 1.1) return <TrendingUp className='w-4 h-4 text-red-600' />;
-    if (value < avg * 0.9) return <TrendingDown className='w-4 h-4 text-green-600' />;
+    if (value > avg * 1.1) return <TrendingUp className='w-4 h-4 text-[#DA5062]' />;
+    if (value < avg * 0.9) return <TrendingDown className='w-4 h-4 text-[#A1BA53]' />;
     return <Minus className='w-4 h-4 text-gray-600' />;
   };
 
@@ -162,15 +162,15 @@ const BuildingComparisonTool: React.FC = () => {
               key={building.id}
               className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition ${
                 selectedBuildings.includes(building.id)
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'border-gray-200 hover:border-blue-300'
+                  ? 'border-[#7DA8CC] bg-[#7DA8CC]/10'
+                  : 'border-gray-200 hover:border-[#7DA8CC]/40'
               }`}
             >
               <input
                 type='checkbox'
                 checked={selectedBuildings.includes(building.id)}
                 onChange={() => handleBuildingToggle(building.id)}
-                className='w-4 h-4 text-blue-600'
+                className='w-4 h-4 text-[#7DA8CC]'
               />
               <div className='flex-1 min-w-0'>
                 <p className='font-medium text-gray-900 truncate'>
@@ -185,7 +185,7 @@ const BuildingComparisonTool: React.FC = () => {
         <button
           onClick={handleCompare}
           disabled={selectedBuildings.length < 2 || comparing}
-          className='w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition font-semibold'
+          className='w-full px-6 py-3 bg-[#7DA8CC] text-white rounded-lg hover:bg-[#6890b3] disabled:bg-gray-300 disabled:cursor-not-allowed transition font-semibold'
         >
           {comparing ? 'Comparing...' : `Compare ${selectedBuildings.length} Buildings`}
         </button>
@@ -299,10 +299,10 @@ const BuildingComparisonTool: React.FC = () => {
                         <span
                           className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                             comparison.conditionScore >= 80
-                              ? 'bg-green-100 text-green-800'
+                              ? 'bg-[#A1BA53]/15 text-[#5c6a2f]'
                               : comparison.conditionScore >= 60
-                              ? 'bg-yellow-100 text-yellow-800'
-                              : 'bg-red-100 text-red-800'
+                              ? 'bg-[#DA5062]/15 text-[#872a38]'
+                              : 'bg-[#DA5062]/15 text-[#872a38]'
                           }`}
                         >
                           {comparison.conditionScore}/100
@@ -313,11 +313,11 @@ const BuildingComparisonTool: React.FC = () => {
                       </td>
                       <td className='px-6 py-4 whitespace-nowrap'>
                         {comparison.issuesCount > 0 ? (
-                          <span className='text-sm text-red-600 font-medium'>
+                          <span className='text-sm text-[#DA5062] font-medium'>
                             {comparison.issuesCount} issues
                           </span>
                         ) : (
-                          <span className='text-sm text-green-600'>No issues</span>
+                          <span className='text-sm text-[#A1BA53]'>No issues</span>
                         )}
                       </td>
                       <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>
@@ -333,9 +333,9 @@ const BuildingComparisonTool: React.FC = () => {
           </div>
 
           {/* Insights */}
-          <div className='bg-blue-50 border border-blue-200 rounded-lg p-6'>
-            <h3 className='text-lg font-semibold text-blue-900 mb-3'>Key Insights</h3>
-            <ul className='space-y-2 text-sm text-blue-800'>
+          <div className='bg-[#7DA8CC]/10 border border-[#7DA8CC]/30 rounded-lg p-6'>
+            <h3 className='text-lg font-semibold text-[#3b5060] mb-3'>Key Insights</h3>
+            <ul className='space-y-2 text-sm text-[#476279]'>
               <li>
                 • <strong>Highest Cost:</strong>{' '}
                 {comparisons[0]?.buildingName} (€{comparisons[0]?.totalCosts.toLocaleString()})

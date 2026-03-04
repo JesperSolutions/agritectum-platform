@@ -34,16 +34,16 @@ const IntlDemo: React.FC = () => {
         <div>
           <h3 className='font-semibold text-gray-900 mb-2'>Status Translations:</h3>
           <div className='flex flex-wrap gap-2'>
-            <span className='px-2 py-1 bg-orange-100 text-orange-800 rounded text-sm'>
+            <span className='px-2 py-1 bg-[#DA5062]/15 text-[#872a38] rounded text-sm'>
               {t('report.status.draft')}
             </span>
-            <span className='px-2 py-1 bg-green-100 text-green-800 rounded text-sm'>
+            <span className='px-2 py-1 bg-[#A1BA53]/15 text-[#5c6a2f] rounded text-sm'>
               {t('report.status.completed')}
             </span>
-            <span className='px-2 py-1 bg-purple-100 text-purple-800 rounded text-sm'>
+            <span className='px-2 py-1 bg-[#956098]/15 text-[#553657] rounded text-sm'>
               {t('report.status.offerSent')}
             </span>
-            <span className='px-2 py-1 bg-red-100 text-red-800 rounded text-sm'>
+            <span className='px-2 py-1 bg-[#DA5062]/15 text-[#872a38] rounded text-sm'>
               {t('report.status.offerRejected')}
             </span>
           </div>
@@ -99,16 +99,16 @@ const IntlDemo: React.FC = () => {
         <div>
           <h3 className='font-semibold text-gray-900 mb-2'>Roof Types (Swedish):</h3>
           <div className='flex flex-wrap gap-2'>
-            <span className='px-2 py-1 bg-blue-100 text-blue-800 rounded text-sm'>
+            <span className='px-2 py-1 bg-[#7DA8CC]/15 text-[#476279] rounded text-sm'>
               {t('roofTypes.tile')}
             </span>
-            <span className='px-2 py-1 bg-blue-100 text-blue-800 rounded text-sm'>
+            <span className='px-2 py-1 bg-[#7DA8CC]/15 text-[#476279] rounded text-sm'>
               {t('roofTypes.metal')}
             </span>
-            <span className='px-2 py-1 bg-blue-100 text-blue-800 rounded text-sm'>
+            <span className='px-2 py-1 bg-[#7DA8CC]/15 text-[#476279] rounded text-sm'>
               {t('roofTypes.shingle')}
             </span>
-            <span className='px-2 py-1 bg-blue-100 text-blue-800 rounded text-sm'>
+            <span className='px-2 py-1 bg-[#7DA8CC]/15 text-[#476279] rounded text-sm'>
               {t('roofTypes.slate')}
             </span>
           </div>
@@ -117,16 +117,16 @@ const IntlDemo: React.FC = () => {
         <div>
           <h3 className='font-semibold text-gray-900 mb-2'>Issue Severity (Swedish):</h3>
           <div className='flex flex-wrap gap-2'>
-            <span className='px-2 py-1 bg-green-100 text-green-800 rounded text-sm'>
+            <span className='px-2 py-1 bg-[#A1BA53]/15 text-[#5c6a2f] rounded text-sm'>
               {t('severity.low')}
             </span>
-            <span className='px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-sm'>
+            <span className='px-2 py-1 bg-[#DA5062]/15 text-[#872a38] rounded text-sm'>
               {t('severity.medium')}
             </span>
-            <span className='px-2 py-1 bg-orange-100 text-orange-800 rounded text-sm'>
+            <span className='px-2 py-1 bg-[#DA5062]/15 text-[#872a38] rounded text-sm'>
               {t('severity.high')}
             </span>
-            <span className='px-2 py-1 bg-red-100 text-red-800 rounded text-sm'>
+            <span className='px-2 py-1 bg-[#DA5062]/15 text-[#872a38] rounded text-sm'>
               {t('severity.critical')}
             </span>
           </div>

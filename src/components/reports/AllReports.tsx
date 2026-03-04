@@ -438,21 +438,21 @@ const AllReports: React.FC<AllReportsProps> = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'draft':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-[#DA5062]/15 text-[#872a38]';
       case 'completed':
-        return 'bg-green-100 text-green-800';
+        return 'bg-[#A1BA53]/15 text-[#5c6a2f]';
       case 'sent':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-[#7DA8CC]/15 text-[#476279]';
       case 'shared':
-        return 'bg-purple-100 text-purple-800';
+        return 'bg-[#956098]/15 text-[#553657]';
       case 'offer_sent':
-        return 'bg-purple-100 text-purple-800';
+        return 'bg-[#956098]/15 text-[#553657]';
       case 'offer_accepted':
-        return 'bg-green-100 text-green-800';
+        return 'bg-[#A1BA53]/15 text-[#5c6a2f]';
       case 'offer_rejected':
-        return 'bg-red-100 text-red-800';
+        return 'bg-[#DA5062]/15 text-[#872a38]';
       case 'offer_expired':
-        return 'bg-orange-100 text-orange-800';
+        return 'bg-[#DA5062]/15 text-[#872a38]';
       case 'archived':
         return 'bg-slate-100 text-slate-800';
       default:
@@ -501,7 +501,7 @@ const AllReports: React.FC<AllReportsProps> = () => {
     return (
       <div className='min-h-screen bg-slate-50 flex items-center justify-center'>
         <div className='text-center'>
-          <div className='text-red-600 text-6xl mb-4'>🚫</div>
+          <div className='text-[#DA5062] text-6xl mb-4'>🚫</div>
           <h2 className='text-2xl font-bold text-slate-900 mb-2'>{t('errors.access.denied')}</h2>
           <p className='text-slate-600'>{t('errors.access.deniedMessage')}</p>
           <p className='text-sm text-slate-500 mt-2'>
@@ -892,16 +892,16 @@ const AllReports: React.FC<AllReportsProps> = () => {
         {/* Loading State */}
         {loading && (
           <div className='flex items-center justify-center py-12'>
-            <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600'></div>
+            <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-[#7DA8CC]'></div>
             <span className='ml-3 text-slate-600'>Loading reports...</span>
           </div>
         )}
 
         {/* Error State */}
         {error && (
-          <div className='bg-red-50 border border-red-200 rounded-md p-4 mb-6'>
+          <div className='bg-[#DA5062]/10 border border-[#DA5062]/30 rounded-md p-4 mb-6'>
             <div className='flex'>
-              <div className='text-red-400'>
+              <div className='text-[#e47886]'>
                 <svg className='h-5 w-5' viewBox='0 0 20 20' fill='currentColor'>
                   <path
                     fillRule='evenodd'
@@ -911,8 +911,8 @@ const AllReports: React.FC<AllReportsProps> = () => {
                 </svg>
               </div>
               <div className='ml-3'>
-                <h3 className='text-sm font-medium text-red-800'>Error loading reports</h3>
-                <p className='mt-1 text-sm text-red-700'>{error}</p>
+                <h3 className='text-sm font-medium text-[#872a38]'>Error loading reports</h3>
+                <p className='mt-1 text-sm text-[#c23d4f]'>{error}</p>
               </div>
             </div>
           </div>
@@ -971,7 +971,7 @@ const AllReports: React.FC<AllReportsProps> = () => {
                               >
                                 {selectedReports.size === filteredAndSortedReports.length &&
                                 filteredAndSortedReports.length > 0 ? (
-                                  <CheckSquare className='h-4 w-4 text-blue-600' />
+                                  <CheckSquare className='h-4 w-4 text-[#7DA8CC]' />
                                 ) : (
                                   <Square className='h-4 w-4 text-slate-400' />
                                 )}
@@ -1006,7 +1006,7 @@ const AllReports: React.FC<AllReportsProps> = () => {
                                   className='flex items-center justify-center'
                                 >
                                   {selectedReports.has(report.id) ? (
-                                    <CheckSquare className='h-4 w-4 text-blue-600' />
+                                    <CheckSquare className='h-4 w-4 text-[#7DA8CC]' />
                                   ) : (
                                     <Square className='h-4 w-4 text-slate-400' />
                                   )}
@@ -1018,7 +1018,7 @@ const AllReports: React.FC<AllReportsProps> = () => {
                                     <div className='flex items-center gap-2'>
                                       <span>{report.customerName || 'Unknown Customer'}</span>
                                       {report.customerType === 'company' && (
-                                        <span className='px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded-full'>
+                                        <span className='px-2 py-0.5 text-xs bg-[#7DA8CC]/15 text-[#476279] rounded-full'>
                                           {t('form.fields.customerTypeCompany') || 'Company'}
                                         </span>
                                       )}
@@ -1070,7 +1070,7 @@ const AllReports: React.FC<AllReportsProps> = () => {
                                   <Tooltip content='View Report Details'>
                                     <button
                                       onClick={() => handleViewReport(report)}
-                                      className='text-blue-600 hover:text-blue-900 p-2 rounded hover:bg-blue-50 min-w-[40px] min-h-[40px] flex items-center justify-center'
+                                      className='text-[#7DA8CC] hover:text-[#3b5060] p-2 rounded hover:bg-[#7DA8CC]/10 min-w-[40px] min-h-[40px] flex items-center justify-center'
                                     >
                                       <Eye className='h-4 w-4' />
                                     </button>
@@ -1078,7 +1078,7 @@ const AllReports: React.FC<AllReportsProps> = () => {
                                   <Tooltip content='Delete Report'>
                                     <button
                                       onClick={() => handleDeleteReport(report)}
-                                      className='text-red-600 hover:text-red-900 p-2 rounded hover:bg-red-50 min-w-[40px] min-h-[40px] flex items-center justify-center'
+                                      className='text-[#DA5062] hover:text-[#6e2530] p-2 rounded hover:bg-[#DA5062]/10 min-w-[40px] min-h-[40px] flex items-center justify-center'
                                     >
                                       <Trash2 className='h-4 w-4' />
                                     </button>
@@ -1105,7 +1105,7 @@ const AllReports: React.FC<AllReportsProps> = () => {
                                 className='mr-3'
                               >
                                 {selectedReports.has(report.id) ? (
-                                  <CheckSquare className='h-5 w-5 text-blue-600' />
+                                  <CheckSquare className='h-5 w-5 text-[#7DA8CC]' />
                                 ) : (
                                   <Square className='h-5 w-5 text-gray-400' />
                                 )}
@@ -1154,7 +1154,7 @@ const AllReports: React.FC<AllReportsProps> = () => {
                             <Tooltip content='View Report Details'>
                               <button
                                 onClick={() => handleViewReport(report)}
-                                className='text-blue-600 hover:text-blue-900 p-2 rounded hover:bg-blue-50'
+                                className='text-[#7DA8CC] hover:text-[#3b5060] p-2 rounded hover:bg-[#7DA8CC]/10'
                               >
                                 <Eye className='h-4 w-4' />
                               </button>
@@ -1162,7 +1162,7 @@ const AllReports: React.FC<AllReportsProps> = () => {
                             <Tooltip content='Delete Report'>
                               <button
                                 onClick={() => handleDeleteReport(report)}
-                                className='text-red-600 hover:text-red-900 p-2 rounded hover:bg-red-50'
+                                className='text-[#DA5062] hover:text-[#6e2530] p-2 rounded hover:bg-[#DA5062]/10'
                               >
                                 <Trash2 className='h-4 w-4' />
                               </button>
@@ -1303,10 +1303,10 @@ const AllReports: React.FC<AllReportsProps> = () => {
                           <span
                             className={`px-2 py-1 text-xs font-semibold rounded-full ${
                               issue.severity === 'critical'
-                                ? 'bg-red-100 text-red-800'
+                                ? 'bg-[#DA5062]/15 text-[#872a38]'
                                 : issue.severity === 'high'
-                                  ? 'bg-orange-100 text-orange-800'
-                                  : 'bg-yellow-100 text-yellow-800'
+                                  ? 'bg-[#DA5062]/15 text-[#872a38]'
+                                  : 'bg-[#DA5062]/15 text-[#872a38]'
                             }`}
                           >
                             {issue.severity}

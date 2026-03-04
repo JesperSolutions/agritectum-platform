@@ -12,10 +12,10 @@ export function getFocusRing(color: 'slate' | 'red' | 'blue' | 'green' = 'slate'
   const focusColors = {
     slate:
       'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:ring-offset-2',
-    red: 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2',
-    blue: 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2',
+    red: 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#DA5062] focus-visible:ring-offset-2',
+    blue: 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7DA8CC] focus-visible:ring-offset-2',
     green:
-      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2',
+      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A1BA53] focus-visible:ring-offset-2',
   };
   return focusColors[color];
 }

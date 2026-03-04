@@ -1,13 +1,13 @@
 /**
  * Typography Tokens - Material Design System
  *
- * Roboto font family with standardized typography scale.
- * Based on Material Design 3 typography system.
+ * Outfit font family with standardized typography scale.
+ * Based on Google Outfit design system.
  */
 
 // Font Family
 export const fontFamily = {
-  sans: ['Roboto', 'system-ui', '-apple-system', 'sans-serif'],
+  sans: ['Outfit', 'system-ui', '-apple-system', 'sans-serif'],
   mono: ['JetBrains Mono', 'Fira Code', 'Monaco', 'monospace'],
 };
 
@@ -95,8 +95,8 @@ export const textTransform = {
 export const label = {
   default: 'block text-sm font-medium text-slate-700 mb-2',
   required:
-    'block text-sm font-medium text-slate-700 mb-2 after:content-["*"] after:ml-0.5 after:text-red-500',
-  error: 'block text-sm font-medium text-red-700 mb-2',
+    'block text-sm font-medium text-slate-700 mb-2 after:content-["*"] after:ml-0.5 after:text-[#DA5062]',
+  error: 'block text-sm font-medium text-[#c23d4f] mb-2',
 };
 
 // Export unified typography tokens

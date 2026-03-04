@@ -94,7 +94,7 @@ const StatusDropdown: React.FC<StatusDropdownProps> = ({
             to={item.path}
             className={`flex items-center px-3 py-2 text-sm font-medium transition-colors ${
               isActive
-                ? 'bg-blue-100 text-blue-700 border-r-2 border-blue-700'
+                ? 'bg-[#7DA8CC]/15 text-[#6890b3] border-r-2 border-[#6890b3]'
                 : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
             }`}
           >
@@ -103,7 +103,7 @@ const StatusDropdown: React.FC<StatusDropdownProps> = ({
             {item.count > 0 && (
               <span
                 className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${
-                  isActive ? 'bg-blue-200 text-blue-800' : 'bg-gray-200 text-gray-700'
+                  isActive ? 'bg-[#7DA8CC]/25 text-[#476279]' : 'bg-gray-200 text-gray-700'
                 }`}
               >
                 {item.count}

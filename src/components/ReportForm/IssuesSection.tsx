@@ -24,10 +24,10 @@ const issueTypeOptions: { value: IssueType; label: string }[] = [
 ];
 
 const severityOptions: { value: IssueSeverity; label: string; color: string }[] = [
-  { value: 'low', label: 'Low', color: 'text-green-600' },
-  { value: 'medium', label: 'Medium', color: 'text-yellow-600' },
-  { value: 'high', label: 'High', color: 'text-orange-600' },
-  { value: 'critical', label: 'Critical', color: 'text-red-600' },
+  { value: 'low', label: 'Low', color: 'text-[#A1BA53]' },
+  { value: 'medium', label: 'Medium', color: 'text-[#DA5062]' },
+  { value: 'high', label: 'High', color: 'text-[#DA5062]' },
+  { value: 'critical', label: 'Critical', color: 'text-[#DA5062]' },
 ];
 
 const IssuesSection: React.FC<IssuesSectionProps> = ({
@@ -42,7 +42,7 @@ const IssuesSection: React.FC<IssuesSectionProps> = ({
     <div className='bg-white p-6 rounded-lg shadow-sm border border-gray-200'>
       <div className='flex items-center justify-between mb-4'>
         <div className='flex items-center'>
-          <AlertTriangle className='w-5 h-5 text-blue-600 mr-2' />
+          <AlertTriangle className='w-5 h-5 text-[#7DA8CC] mr-2' />
           <h3 className='text-lg font-semibold text-gray-900'>Issues Found</h3>
         </div>
         <AccessibleButton
@@ -76,7 +76,7 @@ const IssuesSection: React.FC<IssuesSectionProps> = ({
                   onClick={() => onRemoveIssue(index)}
                   leftIcon={<Trash2 className='w-4 h-4' />}
                   aria-label={`Remove issue ${index + 1}`}
-                  className='text-red-600 hover:text-red-700'
+                  className='text-[#DA5062] hover:text-[#c23d4f]'
                 >
                   Remove
                 </AccessibleButton>
@@ -85,12 +85,12 @@ const IssuesSection: React.FC<IssuesSectionProps> = ({
               <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                 <div>
                   <label className='block text-sm font-medium text-gray-700 mb-1'>
-                    Issue Type <span className='text-red-500'>*</span>
+                    Issue Type <span className='text-[#DA5062]'>*</span>
                   </label>
                   <select
                     value={issue.type}
                     onChange={e => onUpdateIssue(index, { type: e.target.value as IssueType })}
-                    className='block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
+                    className='block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#7DA8CC] focus:border-[#7DA8CC] sm:text-sm'
                   >
                     <option value=''>Select issue type</option>
                     {issueTypeOptions.map(option => (
@@ -103,14 +103,14 @@ const IssuesSection: React.FC<IssuesSectionProps> = ({
 
                 <div>
                   <label className='block text-sm font-medium text-gray-700 mb-1'>
-                    Severity <span className='text-red-500'>*</span>
+                    Severity <span className='text-[#DA5062]'>*</span>
                   </label>
                   <select
                     value={issue.severity}
                     onChange={e =>
                       onUpdateIssue(index, { severity: e.target.value as IssueSeverity })
                     }
-                    className='block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
+                    className='block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#7DA8CC] focus:border-[#7DA8CC] sm:text-sm'
                   >
                     <option value=''>Select severity</option>
                     {severityOptions.map(option => (
@@ -123,26 +123,26 @@ const IssuesSection: React.FC<IssuesSectionProps> = ({
 
                 <div className='md:col-span-2'>
                   <label className='block text-sm font-medium text-gray-700 mb-1'>
-                    Description <span className='text-red-500'>*</span>
+                    Description <span className='text-[#DA5062]'>*</span>
                   </label>
                   <textarea
                     value={issue.description}
                     onChange={e => onUpdateIssue(index, { description: e.target.value })}
                     rows={3}
-                    className='block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
+                    className='block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#7DA8CC] focus:border-[#7DA8CC] sm:text-sm'
                     placeholder='Describe the issue in detail...'
                   />
                 </div>
 
                 <div className='md:col-span-2'>
                   <label className='block text-sm font-medium text-gray-700 mb-1'>
-                    Location <span className='text-red-500'>*</span>
+                    Location <span className='text-[#DA5062]'>*</span>
                   </label>
                   <input
                     type='text'
                     value={issue.location}
                     onChange={e => onUpdateIssue(index, { location: e.target.value })}
-                    className='block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
+                    className='block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#7DA8CC] focus:border-[#7DA8CC] sm:text-sm'
                     placeholder='e.g., North side, near chimney, etc.'
                   />
                 </div>
@@ -153,7 +153,7 @@ const IssuesSection: React.FC<IssuesSectionProps> = ({
       )}
 
       {errors.issuesFound && touched.issuesFound && (
-        <p className='text-sm text-red-600 mt-2'>{errors.issuesFound}</p>
+        <p className='text-sm text-[#DA5062] mt-2'>{errors.issuesFound}</p>
       )}
     </div>
   );

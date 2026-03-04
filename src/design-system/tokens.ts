@@ -31,28 +31,28 @@ export const colors = {
   // Semantic Colors (Status Indicators)
   semantic: {
     success: {
-      bg: 'bg-green-100',
-      text: 'text-green-800',
-      border: 'border-green-200',
-      badge: 'bg-green-100 text-green-800',
+      bg: 'bg-[#A1BA53]/15',
+      text: 'text-[#5c6a2f]',
+      border: 'border-[#A1BA53]/30',
+      badge: 'bg-[#A1BA53]/15 text-[#5c6a2f]',
     },
     error: {
-      bg: 'bg-red-100',
-      text: 'text-red-800',
-      border: 'border-red-200',
-      badge: 'bg-red-100 text-red-800',
+      bg: 'bg-[#DA5062]/15',
+      text: 'text-[#872a38]',
+      border: 'border-[#DA5062]/30',
+      badge: 'bg-[#DA5062]/15 text-[#872a38]',
     },
     warning: {
-      bg: 'bg-yellow-100',
-      text: 'text-yellow-800',
-      border: 'border-yellow-200',
-      badge: 'bg-yellow-100 text-yellow-800',
+      bg: 'bg-[#DA5062]/15',
+      text: 'text-[#872a38]',
+      border: 'border-[#DA5062]/25',
+      badge: 'bg-[#DA5062]/15 text-[#872a38]',
     },
     info: {
-      bg: 'bg-blue-100',
-      text: 'text-blue-800',
-      border: 'border-blue-200',
-      badge: 'bg-blue-100 text-blue-800',
+      bg: 'bg-[#7DA8CC]/15',
+      text: 'text-[#476279]',
+      border: 'border-[#7DA8CC]/30',
+      badge: 'bg-[#7DA8CC]/15 text-[#476279]',
     },
   },
 
@@ -74,11 +74,11 @@ export const colors = {
         'px-4 py-2 border border-slate-200 rounded-lg shadow-sm text-sm font-medium text-slate-700 bg-white hover:bg-slate-50',
     },
     danger: {
-      bg: 'bg-red-600',
+      bg: 'bg-[#DA5062]',
       text: 'text-white',
-      hover: 'hover:bg-red-700',
+      hover: 'hover:bg-[#c23d4f]',
       className:
-        'px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium shadow-sm',
+        'px-4 py-2 bg-[#DA5062] text-white rounded-lg hover:bg-[#c23d4f] transition-colors text-sm font-medium shadow-sm',
     },
     ghost: {
       text: 'text-slate-700',
@@ -136,7 +136,7 @@ export const shadows = {
 export const formInput = {
   base: 'w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-slate-500 focus:border-slate-500 shadow-sm',
   error:
-    'w-full border border-red-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-red-500 focus:border-red-500 shadow-sm',
+    'w-full border border-[#DA5062]/40 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#DA5062] focus:border-[#DA5062] shadow-sm',
   disabled:
     'w-full border border-slate-300 rounded-lg px-3 py-2 bg-slate-100 text-slate-500 cursor-not-allowed',
 };
@@ -150,11 +150,11 @@ export const card = {
 
 // Status Badge Tokens
 export const statusBadge = {
-  success: 'px-2 py-0.5 text-xs bg-green-100 text-green-800 rounded-full',
-  error: 'px-2 py-0.5 text-xs bg-red-100 text-red-800 rounded-full',
-  warning: 'px-2 py-0.5 text-xs bg-yellow-100 text-yellow-800 rounded-full',
-  info: 'px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded-full',
-  purple: 'px-2 py-0.5 text-xs bg-purple-100 text-purple-800 rounded-full',
+  success: 'px-2 py-0.5 text-xs bg-[#A1BA53]/15 text-[#5c6a2f] rounded-full',
+  error: 'px-2 py-0.5 text-xs bg-[#DA5062]/15 text-[#872a38] rounded-full',
+  warning: 'px-2 py-0.5 text-xs bg-[#DA5062]/15 text-[#872a38] rounded-full',
+  info: 'px-2 py-0.5 text-xs bg-[#7DA8CC]/15 text-[#476279] rounded-full',
+  purple: 'px-2 py-0.5 text-xs bg-[#956098]/15 text-[#553657] rounded-full',
 };
 
 // Table Tokens
@@ -181,7 +181,7 @@ export const typography = {
   label: {
     default: 'block text-sm font-medium text-slate-700 mb-2',
     required:
-      'block text-sm font-medium text-slate-700 mb-2 after:content-["*"] after:ml-0.5 after:text-red-500',
+      'block text-sm font-medium text-slate-700 mb-2 after:content-["*"] after:ml-0.5 after:text-[#DA5062]',
   },
 };
 

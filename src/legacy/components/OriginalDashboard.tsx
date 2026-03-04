@@ -142,17 +142,17 @@ const OriginalDashboard: React.FC = () => {
   const getStatusIcon = useCallback((status: string) => {
     switch (status) {
       case 'draft':
-        return <Clock className='w-4 h-4 text-orange-500' />;
+        return <Clock className='w-4 h-4 text-[#DA5062]' />;
       case 'completed':
-        return <CheckCircle className='w-4 h-4 text-green-500' />;
+        return <CheckCircle className='w-4 h-4 text-[#A1BA53]' />;
       case 'sent':
-        return <CheckCircle className='w-4 h-4 text-blue-500' />;
+        return <CheckCircle className='w-4 h-4 text-[#7DA8CC]' />;
       case 'offer_sent':
-        return <Send className='w-4 h-4 text-purple-500' />;
+        return <Send className='w-4 h-4 text-[#956098]' />;
       case 'offer_accepted':
-        return <CheckCircle className='w-4 h-4 text-green-600' />;
+        return <CheckCircle className='w-4 h-4 text-[#A1BA53]' />;
       case 'offer_rejected':
-        return <X className='w-4 h-4 text-red-500' />;
+        return <X className='w-4 h-4 text-[#DA5062]' />;
       case 'offer_expired':
         return <Clock className='w-4 h-4 text-gray-500' />;
       case 'archived':
@@ -165,19 +165,19 @@ const OriginalDashboard: React.FC = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'draft':
-        return 'bg-orange-100 text-orange-800';
+        return 'bg-[#DA5062]/15 text-[#872a38]';
       case 'completed':
-        return 'bg-green-100 text-green-800';
+        return 'bg-[#A1BA53]/15 text-[#5c6a2f]';
       case 'sent':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-[#7DA8CC]/15 text-[#476279]';
       case 'shared':
-        return 'bg-purple-100 text-purple-800';
+        return 'bg-[#956098]/15 text-[#553657]';
       case 'offer_sent':
-        return 'bg-purple-100 text-purple-800';
+        return 'bg-[#956098]/15 text-[#553657]';
       case 'offer_accepted':
-        return 'bg-green-100 text-green-800';
+        return 'bg-[#A1BA53]/15 text-[#5c6a2f]';
       case 'offer_rejected':
-        return 'bg-red-100 text-red-800';
+        return 'bg-[#DA5062]/15 text-[#872a38]';
       case 'offer_expired':
         return 'bg-gray-100 text-gray-800';
       case 'archived':
@@ -280,7 +280,7 @@ const OriginalDashboard: React.FC = () => {
               <p className='text-gray-600 capitalize'>
                 {currentUser?.role} Dashboard
                 {branchInfo && (
-                  <span className='ml-2 text-blue-600 font-medium'>• {branchInfo.name}</span>
+                  <span className='ml-2 text-[#7DA8CC] font-medium'>• {branchInfo.name}</span>
                 )}
                 {!branchInfo && currentUser?.branchId && (
                   <span className='ml-2 text-gray-500 text-sm'>• Loading branch info...</span>
@@ -292,7 +292,7 @@ const OriginalDashboard: React.FC = () => {
           {(currentUser?.role === 'inspector' || currentUser?.role === 'branchAdmin') && (
             <Link
               to='/report/new'
-              className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors'
+              className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#7DA8CC] hover:bg-[#6890b3] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7DA8CC] transition-colors'
             >
               <Plus className='w-4 h-4 mr-2' />
               New Report
@@ -308,10 +308,10 @@ const OriginalDashboard: React.FC = () => {
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
             <Link
               to='/report/new'
-              className='flex items-center p-4 border border-gray-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 transition-colors group'
+              className='flex items-center p-4 border border-gray-200 rounded-lg hover:bg-[#7DA8CC]/10 hover:border-[#7DA8CC]/40 transition-colors group'
             >
-              <div className='flex-shrink-0 w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200'>
-                <Plus className='w-5 h-5 text-blue-600' />
+              <div className='flex-shrink-0 w-10 h-10 bg-[#7DA8CC]/15 rounded-lg flex items-center justify-center group-hover:bg-[#7DA8CC]/25'>
+                <Plus className='w-5 h-5 text-[#7DA8CC]' />
               </div>
               <div className='ml-3'>
                 <div className='text-sm font-medium text-gray-900'>New Report</div>
@@ -322,10 +322,10 @@ const OriginalDashboard: React.FC = () => {
             {currentUser?.role === 'branchAdmin' && (
               <Link
                 to='/admin/customers'
-                className='flex items-center p-4 border border-gray-200 rounded-lg hover:bg-green-50 hover:border-green-300 transition-colors group'
+                className='flex items-center p-4 border border-gray-200 rounded-lg hover:bg-[#A1BA53]/10 hover:border-[#A1BA53]/40 transition-colors group'
               >
-                <div className='flex-shrink-0 w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200'>
-                  <User className='w-5 h-5 text-green-600' />
+                <div className='flex-shrink-0 w-10 h-10 bg-[#A1BA53]/15 rounded-lg flex items-center justify-center group-hover:bg-[#A1BA53]/25'>
+                  <User className='w-5 h-5 text-[#A1BA53]' />
                 </div>
                 <div className='ml-3'>
                   <div className='text-sm font-medium text-gray-900'>Add Customer</div>
@@ -336,10 +336,10 @@ const OriginalDashboard: React.FC = () => {
 
             <Link
               to='/admin/reports'
-              className='flex items-center p-4 border border-gray-200 rounded-lg hover:bg-purple-50 hover:border-purple-300 transition-colors group'
+              className='flex items-center p-4 border border-gray-200 rounded-lg hover:bg-[#956098]/10 hover:border-[#956098]/40 transition-colors group'
             >
-              <div className='flex-shrink-0 w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center group-hover:bg-purple-200'>
-                <FileText className='w-5 h-5 text-purple-600' />
+              <div className='flex-shrink-0 w-10 h-10 bg-[#956098]/15 rounded-lg flex items-center justify-center group-hover:bg-[#956098]/25'>
+                <FileText className='w-5 h-5 text-[#956098]' />
               </div>
               <div className='ml-3'>
                 <div className='text-sm font-medium text-gray-900'>View All Reports</div>
@@ -350,10 +350,10 @@ const OriginalDashboard: React.FC = () => {
             {currentUser?.role === 'branchAdmin' && (
               <Link
                 to='/admin/users'
-                className='flex items-center p-4 border border-gray-200 rounded-lg hover:bg-orange-50 hover:border-orange-300 transition-colors group'
+                className='flex items-center p-4 border border-gray-200 rounded-lg hover:bg-[#DA5062]/10 hover:border-[#DA5062]/40 transition-colors group'
               >
-                <div className='flex-shrink-0 w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center group-hover:bg-orange-200'>
-                  <User className='w-5 h-5 text-orange-600' />
+                <div className='flex-shrink-0 w-10 h-10 bg-[#DA5062]/15 rounded-lg flex items-center justify-center group-hover:bg-[#DA5062]/25'>
+                  <User className='w-5 h-5 text-[#DA5062]' />
                 </div>
                 <div className='ml-3'>
                   <div className='text-sm font-medium text-gray-900'>Invite Inspector</div>
@@ -365,10 +365,10 @@ const OriginalDashboard: React.FC = () => {
             {(currentUser?.role === 'branchAdmin' || currentUser?.role === 'superadmin') && (
               <Link
                 to='/admin/testing'
-                className='flex items-center p-4 border border-gray-200 rounded-lg hover:bg-purple-50 hover:border-purple-300 transition-colors group'
+                className='flex items-center p-4 border border-gray-200 rounded-lg hover:bg-[#956098]/10 hover:border-[#956098]/40 transition-colors group'
               >
-                <div className='flex-shrink-0 w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center group-hover:bg-purple-200'>
-                  <Settings className='w-5 h-5 text-purple-600' />
+                <div className='flex-shrink-0 w-10 h-10 bg-[#956098]/15 rounded-lg flex items-center justify-center group-hover:bg-[#956098]/25'>
+                  <Settings className='w-5 h-5 text-[#956098]' />
                 </div>
                 <div className='ml-3'>
                   <div className='text-sm font-medium text-gray-900'>Admin Testing</div>
@@ -393,39 +393,39 @@ const OriginalDashboard: React.FC = () => {
           icon={FileText}
           label={t('dashboard.stats.totalReports')}
           value={stats.total}
-          color='bg-blue-500'
+          color='bg-[#7DA8CC]/100'
         />
         <StatCard
           icon={Send}
           label={t('dashboard.stats.offersSent')}
           value={stats.offersSent}
-          color='bg-purple-500'
+          color='bg-[#956098]/100'
         />
         <StatCard
           icon={CheckCircle}
           label={t('dashboard.stats.offersAccepted')}
           value={stats.offersAccepted}
-          color='bg-green-500'
+          color='bg-[#A1BA53]/100'
         />
         <StatCard
           icon={Clock}
           label={t('dashboard.stats.draftReports')}
           value={stats.draft}
-          color='bg-orange-500'
+          color='bg-[#DA5062]/100'
         />
       </div>
 
       {/* Offline Reports Warning */}
       {state.reports.filter(r => r.offline).length > 0 && (
-        <div className='bg-orange-50 border border-orange-200 rounded-lg p-4'>
+        <div className='bg-[#DA5062]/10 border border-[#DA5062]/25 rounded-lg p-4'>
           <div className='flex items-center'>
-            <AlertTriangle className='w-5 h-5 text-orange-400' />
+            <AlertTriangle className='w-5 h-5 text-[#e47886]' />
             <div className='ml-3'>
-              <h3 className='text-sm font-medium text-orange-800'>
+              <h3 className='text-sm font-medium text-[#872a38]'>
                 You have {state.reports.filter(r => r.offline).length} offline report(s) pending
                 sync
               </h3>
-              <p className='text-sm text-orange-700 mt-1'>
+              <p className='text-sm text-[#c23d4f] mt-1'>
                 These reports will be automatically synced when you're back online.
               </p>
             </div>
@@ -455,12 +455,12 @@ const OriginalDashboard: React.FC = () => {
                   placeholder={t('dashboard.searchReports')}
                   value={searchTerm}
                   onChange={e => setSearchTerm(e.target.value)}
-                  className='block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
+                  className='block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-[#7DA8CC] focus:border-[#7DA8CC] sm:text-sm'
                 />
               </div>
               <button
                 onClick={() => setShowFilters(!showFilters)}
-                className={`inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${showFilters ? 'bg-blue-50 border-blue-300' : ''}`}
+                className={`inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7DA8CC] ${showFilters ? 'bg-[#7DA8CC]/10 border-[#7DA8CC]/40' : ''}`}
               >
                 <Filter className='h-4 w-4 mr-1' />
                 {t('dashboard.filter')}
@@ -483,7 +483,7 @@ const OriginalDashboard: React.FC = () => {
                     id='status-filter'
                     value={statusFilter}
                     onChange={e => setStatusFilter(e.target.value)}
-                    className='mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md'
+                    className='mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-[#7DA8CC] focus:border-[#7DA8CC] sm:text-sm rounded-md'
                   >
                     <option value='all'>All Statuses</option>
                     <option value='draft'>Draft</option>
@@ -496,7 +496,7 @@ const OriginalDashboard: React.FC = () => {
                   <div className='flex items-end'>
                     <button
                       onClick={clearFilters}
-                      className='inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+                      className='inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7DA8CC]'
                     >
                       <X className='h-4 w-4 mr-1' />
                       Clear
@@ -519,7 +519,7 @@ const OriginalDashboard: React.FC = () => {
               <div className='mt-6'>
                 <Link
                   to='/report/new'
-                  className='inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+                  className='inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[#7DA8CC] hover:bg-[#6890b3] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7DA8CC]'
                 >
                   <Plus className='w-4 h-4 mr-2' />
                   New Report
@@ -536,7 +536,7 @@ const OriginalDashboard: React.FC = () => {
             </p>
             <button
               onClick={clearFilters}
-              className='mt-4 inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+              className='mt-4 inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7DA8CC]'
             >
               <X className='h-4 w-4 mr-1' />
               {t('actions.clear')} {t('dashboard.filter')}
@@ -560,7 +560,7 @@ const OriginalDashboard: React.FC = () => {
                             {report.customerName}
                           </p>
                           {report.isOffer && (
-                            <span className='inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800'>
+                            <span className='inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-[#956098]/15 text-[#553657]'>
                               <DollarSign className='w-3 h-3 mr-1' />
                               Offer
                             </span>
@@ -579,7 +579,7 @@ const OriginalDashboard: React.FC = () => {
                             {report.createdByName}
                           </div>
                           {report.offerValue && (
-                            <div className='flex items-center text-xs text-green-600 font-medium'>
+                            <div className='flex items-center text-xs text-[#A1BA53] font-medium'>
                               <DollarSign className='w-3 h-3 mr-1' />
                               {formatCurrencySafe(report.offerValue)}
                             </div>

@@ -149,7 +149,7 @@ const ESGOverview: React.FC = () => {
             <h3 className='text-xl font-semibold'>{t('buildings.buildingsTable.header')}</h3>
             <button
               onClick={exportCSV}
-              className='flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium'
+              className='flex items-center gap-2 px-4 py-2 bg-[#A1BA53] text-white rounded-lg hover:bg-[#8a9f47] transition-colors text-sm font-medium'
             >
               <Download className='w-4 h-4' />
               {t('buildings.buildingsTable.exportCsv')}
@@ -163,7 +163,7 @@ const ESGOverview: React.FC = () => {
               <select
                 value={filter}
                 onChange={e => setFilter(e.target.value as typeof filter)}
-                className='px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500'
+                className='px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#A1BA53]'
               >
                 <option value='all'>{t('buildings.buildingsTable.filterAll')}</option>
                 <option value='solar'>{t('buildings.buildingsTable.filterSolar')}</option>
@@ -176,7 +176,7 @@ const ESGOverview: React.FC = () => {
             <select
               value={sortBy}
               onChange={e => setSortBy(e.target.value as typeof sortBy)}
-              className='px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500'
+              className='px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#A1BA53]'
             >
               <option value='name'>{t('buildings.buildingsTable.sortName')}</option>
               <option value='potential'>{t('buildings.buildingsTable.sortPotential')}</option>
@@ -246,7 +246,7 @@ const ESGOverview: React.FC = () => {
                         <div className='flex items-center gap-2'>
                           <div className='w-16 h-2 bg-gray-200 rounded-full overflow-hidden'>
                             <div
-                              className='h-full bg-green-500'
+                              className='h-full bg-[#A1BA53]'
                               style={{
                                 width: `${building.esgMetrics?.sustainabilityScore || 0}%`,
                               }}
@@ -387,27 +387,27 @@ const ESGOverview: React.FC = () => {
       {/* CO2 Metrics */}
       <div className='bg-white rounded-lg shadow-lg p-6 border border-slate-200'>
         <h3 className='text-xl font-semibold mb-4 flex items-center'>
-          <Zap className='w-5 h-5 mr-2 text-yellow-600' />
+          <Zap className='w-5 h-5 mr-2 text-[#DA5062]' />
           {t('buildings.co2.title')}
         </h3>
         <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
           <div>
             <p className='text-sm text-gray-600 mb-1'>{t('buildings.co2.totalFootprint')}</p>
-            <p className='text-3xl font-bold text-red-600'>
+            <p className='text-3xl font-bold text-[#DA5062]'>
               {metrics.totalCO2Footprint.toLocaleString()}
             </p>
             <p className='text-xs text-gray-500 mt-1'>{t('buildings.co2.perYear')}</p>
           </div>
           <div>
             <p className='text-sm text-gray-600 mb-1'>{t('buildings.co2.totalOffset')}</p>
-            <p className='text-3xl font-bold text-green-600'>
+            <p className='text-3xl font-bold text-[#A1BA53]'>
               {metrics.totalCO2Offset.toLocaleString()}
             </p>
             <p className='text-xs text-gray-500 mt-1'>{t('buildings.co2.perYear')}</p>
           </div>
           <div>
             <p className='text-sm text-gray-600 mb-1'>{t('buildings.co2.netFootprint')}</p>
-            <p className='text-3xl font-bold text-orange-600'>
+            <p className='text-3xl font-bold text-[#DA5062]'>
               {metrics.netCO2Footprint.toLocaleString()}
             </p>
             <p className='text-xs text-gray-500 mt-1'>{t('buildings.co2.perYear')}</p>
@@ -449,9 +449,9 @@ const KPICard: React.FC<{
   color: string;
 }> = ({ label, value, icon: Icon, color }) => {
   const colorClasses = {
-    blue: 'bg-blue-50 text-blue-600',
-    green: 'bg-green-50 text-green-600',
-    purple: 'bg-purple-50 text-purple-600',
+    blue: 'bg-[#7DA8CC]/10 text-[#7DA8CC]',
+    green: 'bg-[#A1BA53]/10 text-[#A1BA53]',
+    purple: 'bg-[#956098]/10 text-[#956098]',
   };
 
   return (
@@ -477,9 +477,9 @@ const FeatureCard: React.FC<{
   color: string;
 }> = ({ title, stats, icon: Icon, color }) => {
   const colorClasses = {
-    yellow: 'bg-yellow-50 text-yellow-600 border-yellow-200',
-    green: 'bg-green-50 text-green-600 border-green-200',
-    blue: 'bg-blue-50 text-blue-600 border-blue-200',
+    yellow: 'bg-[#DA5062]/10 text-[#DA5062] border-[#DA5062]/30',
+    green: 'bg-[#A1BA53]/10 text-[#A1BA53] border-[#A1BA53]/30',
+    blue: 'bg-[#7DA8CC]/10 text-[#7DA8CC] border-[#7DA8CC]/30',
     gray: 'bg-gray-50 text-gray-600 border-gray-200',
     cyan: 'bg-cyan-50 text-cyan-600 border-cyan-200',
   };
@@ -511,9 +511,9 @@ const FeatureBadge: React.FC<{
   color: string;
 }> = ({ icon: Icon, label, color }) => {
   const colorClasses = {
-    yellow: 'bg-yellow-100 text-yellow-800',
-    green: 'bg-green-100 text-green-800',
-    blue: 'bg-blue-100 text-blue-800',
+    yellow: 'bg-[#DA5062]/15 text-[#872a38]',
+    green: 'bg-[#A1BA53]/15 text-[#5c6a2f]',
+    blue: 'bg-[#7DA8CC]/15 text-[#476279]',
     gray: 'bg-gray-100 text-gray-800',
   };
 
@@ -541,8 +541,8 @@ const AlertSection: React.FC<{
     <div
       className={`rounded-lg shadow-lg p-6 border ${
         type === 'alert'
-          ? 'bg-orange-50 border-orange-200'
-          : 'bg-green-50 border-green-200'
+          ? 'bg-[#DA5062]/10 border-[#DA5062]/30'
+          : 'bg-[#A1BA53]/10 border-[#A1BA53]/30'
       }`}
     >
       <div className='mb-4'>
@@ -556,8 +556,8 @@ const AlertSection: React.FC<{
             key={insight.buildingId}
             className={`p-4 rounded-lg border ${
               type === 'alert'
-                ? 'bg-white border-orange-200'
-                : 'bg-white border-green-200'
+                ? 'bg-white border-[#DA5062]/30'
+                : 'bg-white border-[#A1BA53]/30'
             }`}
           >
             <div className='flex items-start justify-between mb-2'>
@@ -568,8 +568,8 @@ const AlertSection: React.FC<{
               <span
                 className={`text-sm font-bold ${
                   type === 'alert'
-                    ? 'text-orange-600'
-                    : 'text-green-600'
+                    ? 'text-[#DA5062]'
+                    : 'text-[#A1BA53]'
                 }`}
               >
                 {insight.sustainabilityPotentialScore}/100
@@ -616,7 +616,7 @@ const ConsultationCTA: React.FC<{ metrics: ESGPortfolioMetrics }> = ({ metrics }
   if (!hasOpportunity) return null;
 
   return (
-    <div className='bg-gradient-to-r from-green-600 to-emerald-600 rounded-lg shadow-xl p-8 text-white border-2 border-green-400'>
+    <div className='bg-gradient-to-r from-[#A1BA53] to-emerald-600 rounded-lg shadow-xl p-8 text-white border-2 border-[#b1c66a]'>
       <div className='max-w-4xl mx-auto'>
         <div className='flex items-center gap-4 mb-4'>
           <AlertCircle className='w-8 h-8 flex-shrink-0' />
@@ -653,7 +653,7 @@ const ConsultationCTA: React.FC<{ metrics: ESGPortfolioMetrics }> = ({ metrics }
         <div className='flex flex-col sm:flex-row gap-4'>
           <a
             href='tel:+4540000000'
-            className='flex items-center justify-center gap-2 bg-white text-green-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors'
+            className='flex items-center justify-center gap-2 bg-white text-[#A1BA53] px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors'
           >
             <Phone className='w-5 h-5' />
             {t('buildings.cta.callExpert')}

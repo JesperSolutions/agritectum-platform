@@ -286,15 +286,15 @@ const QuickActions: React.FC<QuickActionsProps> = ({
   const getActionColor = (color: string = 'primary') => {
     switch (color) {
       case 'primary':
-        return 'bg-blue-600 hover:bg-blue-700 text-white';
+        return 'bg-[#7DA8CC] hover:bg-[#6890b3] text-white';
       case 'secondary':
-        return 'bg-gray-600 hover:bg-gray-700 text-white';
+        return 'bg-[#956098] hover:bg-[#7f5182] text-white';
       case 'success':
-        return 'bg-green-600 hover:bg-green-700 text-white';
+        return 'bg-[#A1BA53] hover:bg-[#8a9f47] text-white';
       case 'warning':
-        return 'bg-yellow-600 hover:bg-yellow-700 text-white';
+        return 'bg-[#DA5062] hover:bg-[#c23d4f] text-white';
       default:
-        return 'bg-blue-600 hover:bg-blue-700 text-white';
+        return 'bg-[#7DA8CC] hover:bg-[#6890b3] text-white';
     }
   };
 
@@ -345,9 +345,9 @@ const QuickActions: React.FC<QuickActionsProps> = ({
         onClick={() => setIsOpen(!isOpen)}
         className={`w-14 h-14 rounded-full shadow-lg transition-all duration-300 transform ${
           isOpen
-            ? 'bg-red-600 hover:bg-red-700 rotate-45'
-            : 'bg-blue-600 hover:bg-blue-700 hover:scale-105'
-        } text-white flex items-center justify-center focus:outline-none focus:ring-4 focus:ring-blue-300`}
+            ? 'bg-[#DA5062] hover:bg-[#c23d4f] rotate-45'
+            : 'bg-[#7DA8CC] hover:bg-[#6890b3] hover:scale-105'
+        } text-white flex items-center justify-center focus:outline-none focus:ring-4 focus:ring-[#7DA8CC]/30`}
         aria-label={isOpen ? t('quickActions.closeMenu') : t('quickActions.openMenu')}
       >
         {isOpen ? <X className='w-6 h-6' /> : <Plus className='w-6 h-6' />}

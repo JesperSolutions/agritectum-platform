@@ -276,7 +276,7 @@ const CustomerProfile: React.FC = () => {
 
                 <div className='space-y-2'>
                   <Label htmlFor='displayName'>
-                    {t('profile.fullNameLabel')} <span className='text-red-600'>*</span>
+                    {t('profile.fullNameLabel')} <span className='text-[#DA5062]'>*</span>
                   </Label>
                   <Input
                     id='displayName'

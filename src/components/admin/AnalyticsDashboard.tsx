@@ -49,7 +49,7 @@ import { formatCurrencyAmount, getCurrencyCode } from '../../utils/currency';
 import type { SupportedLocale } from '../../utils/geolocation';
 import { logger } from '../../utils/logger';
 
-const COLORS = ['#0f172a', '#1e293b', '#475569', '#64748b', '#94a3b8', '#cbd5e1'];
+const COLORS = ['#7DA8CC', '#A1BA53', '#956098', '#DA5062', '#476279', '#5c6a2f'];
 
 interface AnalyticsData {
   // KPIs & Metrics
@@ -963,21 +963,21 @@ const AnalyticsDashboard: React.FC = () => {
                 content='Total revenue from reports, offers, and service agreements'
                 id='total-business-revenue-tooltip'
               >
-                <div className='bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 p-6 rounded-xl shadow-sm hover:shadow-md transition-all'>
+                <div className='bg-gradient-to-br from-[#7DA8CC]/10 to-[#7DA8CC]/20 border-2 border-[#7DA8CC]/30 p-6 rounded-xl shadow-sm hover:shadow-md transition-all'>
                   <div className='flex items-center justify-between'>
                     <div className='flex-1'>
                       <div className='flex items-center mb-2'>
-                        <div className='w-8 h-8 bg-blue-200 rounded-lg flex items-center justify-center mr-2'>
-                          <DollarSign className='w-4 h-4 text-blue-700' />
+                        <div className='w-8 h-8 bg-[#7DA8CC]/25 rounded-lg flex items-center justify-center mr-2'>
+                          <DollarSign className='w-4 h-4 text-[#476279]' />
                         </div>
-                        <p className='text-blue-700 text-sm font-medium'>
+                        <p className='text-[#476279] text-sm font-medium'>
                           {t('analytics.totalBusinessRevenue') || 'Total Business Revenue'}
                         </p>
                       </div>
-                      <p className='text-3xl font-bold text-blue-900 mb-1'>
+                      <p className='text-3xl font-bold text-[#3b5060] mb-1'>
                         {formatCurrencyAmount(analyticsData.totalBusinessRevenue, currentLocale)}
                       </p>
-                      <p className='text-blue-600 text-sm flex items-center'>
+                      <p className='text-[#7DA8CC] text-sm flex items-center'>
                         <TrendingUp className='w-3 h-3 mr-1' />
                         All revenue sources
                       </p>
@@ -990,21 +990,21 @@ const AnalyticsDashboard: React.FC = () => {
                 content='Total earnings this month from all sources'
                 id='monthly-earnings-tooltip'
               >
-                <div className='bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-200 p-6 rounded-xl shadow-sm hover:shadow-md transition-all'>
+                <div className='bg-gradient-to-br from-[#A1BA53]/10 to-[#A1BA53]/20 border-2 border-[#A1BA53]/30 p-6 rounded-xl shadow-sm hover:shadow-md transition-all'>
                   <div className='flex items-center justify-between'>
                     <div className='flex-1'>
                       <div className='flex items-center mb-2'>
-                        <div className='w-8 h-8 bg-green-200 rounded-lg flex items-center justify-center mr-2'>
-                          <Calendar className='w-4 h-4 text-green-700' />
+                        <div className='w-8 h-8 bg-[#A1BA53]/25 rounded-lg flex items-center justify-center mr-2'>
+                          <Calendar className='w-4 h-4 text-[#5c6a2f]' />
                         </div>
-                        <p className='text-green-700 text-sm font-medium'>
+                        <p className='text-[#5c6a2f] text-sm font-medium'>
                           {t('analytics.monthlyEarnings') || 'Monthly Earnings'}
                         </p>
                       </div>
-                      <p className='text-3xl font-bold text-green-900 mb-1'>
+                      <p className='text-3xl font-bold text-[#445023] mb-1'>
                         {formatCurrencyAmount(analyticsData.monthlyEarnings, currentLocale)}
                       </p>
-                      <p className='text-green-600 text-sm flex items-center'>
+                      <p className='text-[#A1BA53] text-sm flex items-center'>
                         <TrendingUp className='w-3 h-3 mr-1' />
                         This month
                       </p>
@@ -1017,21 +1017,21 @@ const AnalyticsDashboard: React.FC = () => {
                 content='Total earnings this year from all sources'
                 id='yearly-earnings-tooltip'
               >
-                <div className='bg-gradient-to-br from-purple-50 to-purple-100 border-2 border-purple-200 p-6 rounded-xl shadow-sm hover:shadow-md transition-all'>
+                <div className='bg-gradient-to-br from-[#956098]/10 to-[#956098]/20 border-2 border-[#956098]/30 p-6 rounded-xl shadow-sm hover:shadow-md transition-all'>
                   <div className='flex items-center justify-between'>
                     <div className='flex-1'>
                       <div className='flex items-center mb-2'>
-                        <div className='w-8 h-8 bg-purple-200 rounded-lg flex items-center justify-center mr-2'>
-                          <Award className='w-4 h-4 text-purple-700' />
+                        <div className='w-8 h-8 bg-[#956098]/25 rounded-lg flex items-center justify-center mr-2'>
+                          <Award className='w-4 h-4 text-[#553657]' />
                         </div>
-                        <p className='text-purple-700 text-sm font-medium'>
+                        <p className='text-[#553657] text-sm font-medium'>
                           {t('analytics.yearlyEarnings') || 'Yearly Earnings'}
                         </p>
                       </div>
-                      <p className='text-3xl font-bold text-purple-900 mb-1'>
+                      <p className='text-3xl font-bold text-[#432b45] mb-1'>
                         {formatCurrencyAmount(analyticsData.yearlyEarnings, currentLocale)}
                       </p>
-                      <p className='text-purple-600 text-sm flex items-center'>
+                      <p className='text-[#956098] text-sm flex items-center'>
                         <TrendingUp className='w-3 h-3 mr-1' />
                         This year
                       </p>
@@ -1058,14 +1058,14 @@ const AnalyticsDashboard: React.FC = () => {
                     <Line
                       type='monotone'
                       dataKey='reports'
-                      stroke='#0f172a'
+                      stroke='#7DA8CC'
                       name={t('analytics.reports')}
                       strokeWidth={2}
                     />
                     <Line
                       type='monotone'
                       dataKey='revenue'
-                      stroke='#475569'
+                      stroke='#A1BA53'
                       name={t('analytics.revenue')}
                       strokeWidth={2}
                     />
@@ -1311,8 +1311,8 @@ const AnalyticsDashboard: React.FC = () => {
                       <YAxis />
                       <Tooltip />
                       <Legend />
-                      <Bar dataKey='count' fill='#0f172a' name={t('analytics.reports')} />
-                      <Bar dataKey='revenue' fill='#475569' name={t('analytics.revenue')} />
+                      <Bar dataKey='count' fill='#7DA8CC' name={t('analytics.reports')} />
+                      <Bar dataKey='revenue' fill='#A1BA53' name={t('analytics.revenue')} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -1595,7 +1595,7 @@ const AnalyticsDashboard: React.FC = () => {
                       className='flex items-center justify-between p-3 bg-slate-50 rounded-lg'
                     >
                       <div className='flex items-center'>
-                        <div className='w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-semibold text-sm'>
+                        <div className='w-8 h-8 bg-[#7DA8CC]/15 rounded-full flex items-center justify-center text-[#7DA8CC] font-semibold text-sm'>
                           {index + 1}
                         </div>
                         <div className='ml-3'>
@@ -1641,7 +1641,7 @@ const AnalyticsDashboard: React.FC = () => {
                       </div>
                       <div className='w-full bg-slate-200 rounded-full h-2'>
                         <div
-                          className='bg-blue-600 h-2 rounded-full'
+                          className='bg-[#7DA8CC] h-2 rounded-full'
                           style={{
                             width: `${(branch.reports / Math.max(...analyticsData.branchPerformance.map(b => b.reports))) * 100}%`,
                           }}

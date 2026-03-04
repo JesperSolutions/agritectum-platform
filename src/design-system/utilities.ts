@@ -143,8 +143,8 @@ export function migrateGrayToSlate(className: string): string {
 export function getFocusRingClass(color: 'slate' | 'red' | 'blue' = 'slate'): string {
   const colors = {
     slate: 'focus:ring-2 focus:ring-slate-500 focus:border-slate-500',
-    red: 'focus:ring-2 focus:ring-red-500 focus:border-red-500',
-    blue: 'focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
+    red: 'focus:ring-2 focus:ring-[#DA5062] focus:border-[#DA5062]',
+    blue: 'focus:ring-2 focus:ring-[#7DA8CC] focus:border-[#7DA8CC]',
   };
   return colors[color];
 }

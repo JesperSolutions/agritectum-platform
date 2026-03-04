@@ -105,13 +105,13 @@ const PortfolioDashboard: React.FC = () => {
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'critical':
-        return 'text-red-600 bg-red-100';
+        return 'text-[#DA5062] bg-[#DA5062]/15';
       case 'high':
-        return 'text-orange-600 bg-orange-100';
+        return 'text-[#DA5062] bg-[#DA5062]/15';
       case 'medium':
-        return 'text-yellow-600 bg-yellow-100';
+        return 'text-[#DA5062] bg-[#DA5062]/15';
       default:
-        return 'text-blue-600 bg-blue-100';
+        return 'text-[#7DA8CC] bg-[#7DA8CC]/15';
     }
   };
 
@@ -151,7 +151,7 @@ const PortfolioDashboard: React.FC = () => {
         </div>
         <button
           onClick={() => navigate('/portal/buildings')}
-          className='px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition'
+          className='px-4 py-2 bg-[#7DA8CC] text-white rounded-lg hover:bg-[#6890b3] transition'
         >
           View All Buildings
         </button>
@@ -163,22 +163,22 @@ const PortfolioDashboard: React.FC = () => {
           icon={Building2}
           label='Total Buildings'
           value={metrics.totalBuildings.toString()}
-          iconColor='text-blue-600'
-          bgColor='bg-blue-100'
+          iconColor='text-[#7DA8CC]'
+          bgColor='bg-[#7DA8CC]/15'
         />
         <MetricCard
           icon={DollarSign}
           label='Portfolio Value'
           value={`€${(metrics.totalValue / 1000000).toFixed(2)}M`}
-          iconColor='text-green-600'
-          bgColor='bg-green-100'
+          iconColor='text-[#A1BA53]'
+          bgColor='bg-[#A1BA53]/15'
         />
         <MetricCard
           icon={TrendingUp}
           label='Portfolio ROI'
           value={`${metrics.portfolioROI.toFixed(1)}%`}
-          iconColor='text-purple-600'
-          bgColor='bg-purple-100'
+          iconColor='text-[#956098]'
+          bgColor='bg-[#956098]/15'
         />
         <MetricCard
           icon={Home}
@@ -302,13 +302,13 @@ const PortfolioDashboard: React.FC = () => {
             </div>
             <div className='flex justify-between'>
               <span className='text-gray-600'>Annual Income:</span>
-              <span className='font-semibold text-green-600'>
+              <span className='font-semibold text-[#A1BA53]'>
                 €{metrics.totalAnnualIncome.toLocaleString()}
               </span>
             </div>
             <div className='flex justify-between'>
               <span className='text-gray-600'>Annual Costs:</span>
-              <span className='font-semibold text-red-600'>
+              <span className='font-semibold text-[#DA5062]'>
                 €{metrics.totalAnnualCosts.toLocaleString()}
               </span>
             </div>
@@ -317,8 +317,8 @@ const PortfolioDashboard: React.FC = () => {
               <span
                 className={`font-bold ${
                   metrics.totalAnnualIncome - metrics.totalAnnualCosts > 0
-                    ? 'text-green-600'
-                    : 'text-red-600'
+                    ? 'text-[#A1BA53]'
+                    : 'text-[#DA5062]'
                 }`}
               >
                 €{(metrics.totalAnnualIncome - metrics.totalAnnualCosts).toLocaleString()}
@@ -341,10 +341,10 @@ const PortfolioDashboard: React.FC = () => {
                 <div
                   className={`h-2 rounded-full ${
                     metrics.averageConditionScore >= 80
-                      ? 'bg-green-500'
+                      ? 'bg-[#A1BA53]'
                       : metrics.averageConditionScore >= 60
-                      ? 'bg-yellow-500'
-                      : 'bg-red-500'
+                      ? 'bg-[#DA5062]/100'
+                      : 'bg-[#DA5062]/100'
                   }`}
                   style={{ width: `${metrics.averageConditionScore}%` }}
                 />
@@ -352,7 +352,7 @@ const PortfolioDashboard: React.FC = () => {
             </div>
             <div className='flex items-center justify-between p-3 bg-gray-50 rounded'>
               <span className='text-sm text-gray-600'>Buildings in Good Condition</span>
-              <span className='text-lg font-bold text-green-600'>
+              <span className='text-lg font-bold text-[#A1BA53]'>
                 {metrics.totalBuildings - metrics.buildingsRequiringAttention}
               </span>
             </div>
@@ -393,9 +393,9 @@ const AlertCard: React.FC<{
   onClick: () => void;
 }> = ({ icon: Icon, label, value, color, onClick }) => {
   const colorClasses = {
-    red: { bg: 'bg-red-50', text: 'text-red-600', border: 'border-red-200', icon: 'text-red-600' },
-    orange: { bg: 'bg-orange-50', text: 'text-orange-600', border: 'border-orange-200', icon: 'text-orange-600' },
-    yellow: { bg: 'bg-yellow-50', text: 'text-yellow-600', border: 'border-yellow-200', icon: 'text-yellow-600' },
+    red: { bg: 'bg-[#DA5062]/10', text: 'text-[#DA5062]', border: 'border-[#DA5062]/30', icon: 'text-[#DA5062]' },
+    orange: { bg: 'bg-[#DA5062]/10', text: 'text-[#DA5062]', border: 'border-[#DA5062]/30', icon: 'text-[#DA5062]' },
+    yellow: { bg: 'bg-[#DA5062]/10', text: 'text-[#DA5062]', border: 'border-[#DA5062]/30', icon: 'text-[#DA5062]' },
   };
 
   const classes = colorClasses[color];

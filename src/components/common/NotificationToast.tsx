@@ -35,11 +35,11 @@ const NotificationToast: React.FC<NotificationToastProps> = ({
   const getIcon = () => {
     switch (type) {
       case 'success':
-        return <CheckCircle className='w-5 h-5 text-green-500' />;
+        return <CheckCircle className='w-5 h-5 text-[#A1BA53]' />;
       case 'error':
-        return <XCircle className='w-5 h-5 text-red-500' />;
+        return <XCircle className='w-5 h-5 text-[#DA5062]' />;
       case 'warning':
-        return <AlertTriangle className='w-5 h-5 text-yellow-500' />;
+        return <AlertTriangle className='w-5 h-5 text-[#DA5062]' />;
       default:
         return null;
     }
@@ -48,11 +48,11 @@ const NotificationToast: React.FC<NotificationToastProps> = ({
   const getBackgroundColor = () => {
     switch (type) {
       case 'success':
-        return 'bg-green-50 border-green-200';
+        return 'bg-[#A1BA53]/10 border-[#A1BA53]/30';
       case 'error':
-        return 'bg-red-50 border-red-200';
+        return 'bg-[#DA5062]/10 border-[#DA5062]/30';
       case 'warning':
-        return 'bg-yellow-50 border-yellow-200';
+        return 'bg-[#DA5062]/10 border-[#DA5062]/30';
       default:
         return 'bg-gray-50 border-gray-200';
     }
@@ -61,11 +61,11 @@ const NotificationToast: React.FC<NotificationToastProps> = ({
   const getTextColor = () => {
     switch (type) {
       case 'success':
-        return 'text-green-800';
+        return 'text-[#5c6a2f]';
       case 'error':
-        return 'text-red-800';
+        return 'text-[#872a38]';
       case 'warning':
-        return 'text-yellow-800';
+        return 'text-[#872a38]';
       default:
         return 'text-gray-800';
     }

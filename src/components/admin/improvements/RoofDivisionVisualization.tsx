@@ -20,10 +20,10 @@ const RoofDivisionVisualization: React.FC<RoofDivisionVisualizationProps> = ({
   const { t } = useIntl();
 
   const improvementColors: Record<ImprovementType, string> = {
-    green_roof: 'bg-green-500',
-    solar_panels: 'bg-yellow-500',
-    water_management: 'bg-blue-500',
-    insulation: 'bg-purple-500',
+    green_roof: 'bg-[#A1BA53]',
+    solar_panels: 'bg-[#DA5062]/100',
+    water_management: 'bg-[#7DA8CC]/100',
+    insulation: 'bg-[#956098]',
     cooling: 'bg-cyan-500',
     biodiversity: 'bg-emerald-500',
   };
@@ -124,17 +124,17 @@ const RoofDivisionVisualization: React.FC<RoofDivisionVisualizationProps> = ({
           <span
             className={`text-lg font-bold ${
               totalPercentage === 100
-                ? 'text-green-600'
+                ? 'text-[#A1BA53]'
                 : totalPercentage > 100
-                  ? 'text-red-600'
-                  : 'text-yellow-600'
+                  ? 'text-[#DA5062]'
+                  : 'text-[#DA5062]'
             }`}
           >
             {totalPercentage}%
           </span>
         </div>
         {totalPercentage > 100 && (
-          <p className='text-xs text-red-600 mt-1'>
+          <p className='text-xs text-[#DA5062] mt-1'>
             {t('admin.improvements.overAllocated') || 'Warning: Total exceeds 100%'}
           </p>
         )}

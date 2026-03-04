@@ -390,7 +390,7 @@ const AddressWithMapV2: React.FC<AddressWithMapV2Props> = ({
       {/* Input Field */}
       <div className='relative'>
         <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-          <MapPin className={`h-5 w-5 ${hasError ? 'text-red-500' : 'text-gray-400'}`} />
+          <MapPin className={`h-5 w-5 ${hasError ? 'text-[#DA5062]' : 'text-gray-400'}`} />
         </div>
 
         <input
@@ -410,8 +410,8 @@ const AddressWithMapV2: React.FC<AddressWithMapV2Props> = ({
             sm:text-sm
             ${
               hasError
-                ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                : 'border-gray-300 focus:border-blue-600 focus:ring-blue-600'
+                ? 'border-[#DA5062] focus:border-[#DA5062] focus:ring-[#DA5062]'
+                : 'border-gray-300 focus:border-[#7DA8CC] focus:ring-[#7DA8CC]'
             }
             ${disabled ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'}
           `}
@@ -431,7 +431,7 @@ const AddressWithMapV2: React.FC<AddressWithMapV2Props> = ({
         {/* Loading Indicator */}
         {isLoading && (
           <div className='absolute inset-y-0 right-0 pr-3 flex items-center'>
-            <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600'></div>
+            <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-[#7DA8CC]'></div>
           </div>
         )}
       </div>
@@ -444,7 +444,7 @@ const AddressWithMapV2: React.FC<AddressWithMapV2Props> = ({
         >
           {isLoading ? (
             <div className='px-4 py-3 text-center text-gray-500'>
-              <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mx-auto'></div>
+              <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-[#7DA8CC] mx-auto'></div>
               <span className='ml-2'>Söker...</span>
             </div>
           ) : (
@@ -478,7 +478,7 @@ const AddressWithMapV2: React.FC<AddressWithMapV2Props> = ({
           {(!map || tilesLoading) && (
             <div className='absolute inset-0 w-full h-full bg-gray-100 flex items-center justify-center z-10'>
               <div className='text-center'>
-                <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2'></div>
+                <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-[#7DA8CC] mx-auto mb-2'></div>
                 <p className='text-sm text-gray-600'>
                   {tilesLoading ? t('address.map.loading') : 'Initialiserar...'}
                 </p>
@@ -491,7 +491,7 @@ const AddressWithMapV2: React.FC<AddressWithMapV2Props> = ({
 
       {/* Error Message */}
       {(error || errorMessage) && (
-        <p className='mt-1 text-sm text-red-600 flex items-center'>
+        <p className='mt-1 text-sm text-[#DA5062] flex items-center'>
           <span className='mr-1'>⚠</span>
           {error || errorMessage}
         </p>

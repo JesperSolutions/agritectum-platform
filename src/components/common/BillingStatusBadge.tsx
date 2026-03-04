@@ -45,9 +45,9 @@ const BillingStatusBadge: React.FC<BillingStatusBadgeProps> = ({
 
   // Color classes
   const colorClasses = {
-    green: 'bg-green-100 text-green-800 border-green-200',
-    yellow: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-    red: 'bg-red-100 text-red-800 border-red-200',
+    green: 'bg-[#A1BA53]/15 text-[#5c6a2f] border-[#A1BA53]/30',
+    yellow: 'bg-[#DA5062]/10 text-[#872a38] border-[#DA5062]/20',
+    red: 'bg-[#DA5062]/15 text-[#872a38] border-[#DA5062]/30',
     gray: 'bg-gray-100 text-gray-800 border-gray-200',
   };
 

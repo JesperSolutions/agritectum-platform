@@ -35,10 +35,10 @@ const PortalLogin: React.FC = () => {
   };
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-slate-50 via-green-50/30 to-slate-100 flex items-center justify-center px-4 py-12'>
+    <div className='min-h-screen bg-gradient-to-br from-slate-50 via-[#A1BA53]/10/30 to-slate-100 flex items-center justify-center px-4 py-12'>
       {/* Decorative background elements */}
       <div className='absolute inset-0 overflow-hidden pointer-events-none'>
-        <div className='absolute -top-40 -right-40 w-80 h-80 bg-green-200/20 rounded-full blur-3xl'></div>
+        <div className='absolute -top-40 -right-40 w-80 h-80 bg-[#A1BA53]/25/20 rounded-full blur-3xl'></div>
         <div className='absolute -bottom-40 -left-40 w-80 h-80 bg-slate-200/20 rounded-full blur-3xl'></div>
       </div>
 
@@ -58,7 +58,7 @@ const PortalLogin: React.FC = () => {
         <CardContent className='px-8 pb-10'>
           <form onSubmit={handleSubmit} className='space-y-6'>
             {error && (
-              <div className='bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-material text-sm animate-in fade-in duration-200'>
+              <div className='bg-[#DA5062]/10 border border-[#DA5062]/30 text-[#c23d4f] px-4 py-3 rounded-material text-sm animate-in fade-in duration-200'>
                 {error}
               </div>
             )}

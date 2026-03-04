@@ -84,7 +84,7 @@ const MultiImageUpload: React.FC<MultiImageUploadProps> = ({
                     type='button'
                     onClick={() => handleImageRemove(index)}
                     disabled={disabled}
-                    className='p-2 bg-red-500 bg-opacity-90 rounded-full hover:bg-opacity-100 transition-colors disabled:opacity-50'
+                    className='p-2 bg-[#DA5062]/100 bg-opacity-90 rounded-full hover:bg-opacity-100 transition-colors disabled:opacity-50'
                     aria-label='Remove image'
                   >
                     <X className='w-4 h-4 text-white' />
@@ -119,9 +119,9 @@ const MultiImageUpload: React.FC<MultiImageUploadProps> = ({
 
       {/* Image Limit Warning */}
       {images.length >= maxImages && (
-        <div className='flex items-center justify-center p-4 bg-yellow-50 border border-yellow-200 rounded-lg'>
-          <AlertCircle className='w-5 h-5 text-yellow-600 mr-2' />
-          <p className='text-sm text-yellow-800'>
+        <div className='flex items-center justify-center p-4 bg-[#DA5062]/10 border border-[#DA5062]/30 rounded-lg'>
+          <AlertCircle className='w-5 h-5 text-[#DA5062] mr-2' />
+          <p className='text-sm text-[#872a38]'>
             Maximum {maxImages} images reached for this issue
           </p>
         </div>

@@ -59,8 +59,8 @@ export const SubmitButton: React.FC<SubmitButtonProps> = ({
       'bg-slate-800 text-white shadow-sm',
       'hover:bg-slate-700 active:bg-slate-900',
       'focus-visible:ring-slate-500',
-      isSuccess && 'bg-green-600 hover:bg-green-600',
-      isError && 'bg-red-600 hover:bg-red-600'
+      isSuccess && 'bg-[#A1BA53] hover:bg-[#A1BA53]',
+      isError && 'bg-[#DA5062] hover:bg-[#DA5062]'
     ),
     secondary: cn(
       'bg-slate-100 text-slate-900 shadow-sm',
@@ -78,9 +78,9 @@ export const SubmitButton: React.FC<SubmitButtonProps> = ({
       'focus-visible:ring-slate-500'
     ),
     danger: cn(
-      'bg-red-600 text-white shadow-sm',
-      'hover:bg-red-700 active:bg-red-800',
-      'focus-visible:ring-red-500'
+      'bg-[#DA5062] text-white shadow-sm',
+      'hover:bg-[#c23d4f] active:bg-[#872a38]',
+      'focus-visible:ring-[#DA5062]'
     ),
   };
 

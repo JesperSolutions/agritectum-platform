@@ -765,7 +765,7 @@ Avsluta prenumeration: {{unsubscribeLink}}`,
     return (
       <div className='min-h-screen bg-slate-50 flex items-center justify-center'>
         <div className='text-center'>
-          <div className='text-red-600 text-6xl mb-4'>🚫</div>
+          <div className='text-[#DA5062] text-6xl mb-4'>🚫</div>
           <h2 className='text-2xl font-bold text-slate-900 mb-2'>{t('errors.access.denied')}</h2>
           <p className='text-gray-600'>Only superadmins can access email template viewer.</p>
         </div>
@@ -781,7 +781,7 @@ Avsluta prenumeration: {{unsubscribeLink}}`,
           <div className='flex items-center justify-between'>
             <div>
               <h1 className='text-3xl font-light text-gray-900 tracking-tight flex items-center'>
-                <Mail className='h-8 w-8 mr-3 text-blue-600' />
+                <Mail className='h-8 w-8 mr-3 text-[#7DA8CC]' />
                 Email Template Viewer
               </h1>
               <p className='mt-2 text-gray-600 font-light'>
@@ -822,7 +822,7 @@ Avsluta prenumeration: {{unsubscribeLink}}`,
                       onClick={() => handleTemplateSelect(template)}
                       className={`w-full text-left p-4 rounded-lg border transition-colors ${
                         selectedTemplate?.name === template.name
-                          ? 'border-blue-500 bg-blue-50'
+                          ? 'border-[#7DA8CC] bg-[#7DA8CC]/10'
                           : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                       }`}
                     >
@@ -860,7 +860,7 @@ Avsluta prenumeration: {{unsubscribeLink}}`,
                         onClick={() => setPreviewMode('desktop')}
                         className={`p-2 rounded ${
                           previewMode === 'desktop'
-                            ? 'bg-blue-100 text-blue-600'
+                            ? 'bg-[#7DA8CC]/15 text-[#7DA8CC]'
                             : 'text-gray-400 hover:text-gray-600'
                         }`}
                       >
@@ -870,7 +870,7 @@ Avsluta prenumeration: {{unsubscribeLink}}`,
                         onClick={() => setPreviewMode('mobile')}
                         className={`p-2 rounded ${
                           previewMode === 'mobile'
-                            ? 'bg-blue-100 text-blue-600'
+                            ? 'bg-[#7DA8CC]/15 text-[#7DA8CC]'
                             : 'text-gray-400 hover:text-gray-600'
                         }`}
                       >
@@ -880,7 +880,7 @@ Avsluta prenumeration: {{unsubscribeLink}}`,
                         onClick={() => setShowCode(!showCode)}
                         className={`p-2 rounded ${
                           showCode
-                            ? 'bg-blue-100 text-blue-600'
+                            ? 'bg-[#7DA8CC]/15 text-[#7DA8CC]'
                             : 'text-gray-400 hover:text-gray-600'
                         }`}
                       >
@@ -914,9 +914,9 @@ Avsluta prenumeration: {{unsubscribeLink}}`,
                       <div className='border border-gray-200 rounded-lg overflow-hidden'>
                         <div className='bg-gray-100 px-4 py-2 border-b border-gray-200'>
                           <div className='flex items-center space-x-2'>
-                            <div className='w-3 h-3 bg-red-400 rounded-full'></div>
-                            <div className='w-3 h-3 bg-yellow-400 rounded-full'></div>
-                            <div className='w-3 h-3 bg-green-400 rounded-full'></div>
+                            <div className='w-3 h-3 bg-[#DA5062]/80 rounded-full'></div>
+                            <div className='w-3 h-3 bg-[#DA5062]/70 rounded-full'></div>
+                            <div className='w-3 h-3 bg-[#b1c66a] rounded-full'></div>
                             <span className='text-xs text-gray-600 ml-2'>
                               {selectedTemplate.subject}
                             </span>

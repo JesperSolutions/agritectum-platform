@@ -126,7 +126,7 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({
   return (
     <div className="border-t pt-6">
       <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-        <FileText className="h-5 w-5 text-blue-600" />
+        <FileText className="h-5 w-5 text-[#7DA8CC]" />
         {t('documents.title')}
       </h3>
 
@@ -144,7 +144,7 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({
               </span>
             </label>
             {isFull && (
-              <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
+              <span className="text-xs bg-[#DA5062]/15 text-[#872a38] px-2 py-1 rounded">
                 {t('documents.upload.maxReached')}
               </span>
             )}
@@ -154,7 +154,7 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({
             className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
               isFull
                 ? 'border-gray-300 bg-gray-100 cursor-not-allowed'
-                : 'border-blue-300 bg-blue-50 hover:border-blue-400 hover:bg-blue-100 cursor-pointer'
+                : 'border-[#7DA8CC]/40 bg-[#7DA8CC]/10 hover:border-[#90b8d4] hover:bg-[#7DA8CC]/15 cursor-pointer'
             }`}
             onClick={() => {
               if (!isFull && !isUploading && fileInputRef.current) {
@@ -171,7 +171,7 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({
               className="hidden"
             />
 
-            <Upload className="h-8 w-8 text-blue-600 mx-auto mb-2" />
+            <Upload className="h-8 w-8 text-[#7DA8CC] mx-auto mb-2" />
             {isUploading ? (
               <p className="text-gray-600 font-medium">{t('documents.upload.uploading')}</p>
             ) : isFull ? (
@@ -191,16 +191,16 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({
 
           {/* Messages */}
           {uploadError && (
-            <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
-              <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-red-700">{uploadError}</p>
+            <div className="mt-3 p-3 bg-[#DA5062]/10 border border-[#DA5062]/30 rounded-lg flex items-start gap-2">
+              <AlertCircle className="h-5 w-5 text-[#DA5062] flex-shrink-0 mt-0.5" />
+              <p className="text-sm text-[#c23d4f]">{uploadError}</p>
             </div>
           )}
 
           {uploadSuccess && (
-            <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg flex items-start gap-2">
-              <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-green-700">{uploadSuccess}</p>
+            <div className="mt-3 p-3 bg-[#A1BA53]/10 border border-[#A1BA53]/30 rounded-lg flex items-start gap-2">
+              <CheckCircle className="h-5 w-5 text-[#A1BA53] flex-shrink-0 mt-0.5" />
+              <p className="text-sm text-[#73853b]">{uploadSuccess}</p>
             </div>
           )}
         </div>
@@ -242,7 +242,7 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({
                     <button
                       onClick={() => handleDownload(document)}
                       disabled={downloadingId === document.id}
-                      className="p-2 text-gray-500 hover:text-blue-600 hover:bg-white rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="p-2 text-gray-500 hover:text-[#7DA8CC] hover:bg-white rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       title={t('documents.actions.download')}
                     >
                       <Download className="h-4 w-4" />
@@ -250,7 +250,7 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({
                     <button
                       onClick={() => handleDelete(document)}
                       disabled={deletingId === document.id}
-                      className="p-2 text-gray-500 hover:text-red-600 hover:bg-white rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="p-2 text-gray-500 hover:text-[#DA5062] hover:bg-white rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       title={t('documents.actions.delete')}
                     >
                       <Trash2 className="h-4 w-4" />

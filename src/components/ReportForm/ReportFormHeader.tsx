@@ -32,7 +32,7 @@ const ReportFormHeader: React.FC<ReportFormHeaderProps> = ({
               : t('reportForm.header.editReport')}
           </h1>
           {autoSaving && (
-            <p className='text-sm text-blue-600 mt-1'>{t('reportForm.header.autoSaving')}</p>
+            <p className='text-sm text-[#7DA8CC] mt-1'>{t('reportForm.header.autoSaving')}</p>
           )}
         </div>
 

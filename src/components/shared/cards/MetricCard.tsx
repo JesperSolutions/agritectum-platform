@@ -56,7 +56,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
           {trend && (
             <p
               className={`text-sm flex items-center mt-1 ${
-                trend.isPositive !== false ? 'text-green-600' : 'text-red-600'
+                trend.isPositive !== false ? 'text-[#A1BA53]' : 'text-[#DA5062]'
               }`}
             >
               {trend.isPositive !== false ? '↑' : '↓'} {trend.value} {trend.label}

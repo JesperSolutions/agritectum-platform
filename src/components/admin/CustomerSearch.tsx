@@ -140,7 +140,7 @@ const CustomerSearch: React.FC<CustomerSearchProps> = ({
         )}
       </div>
 
-      {error && <div className='text-red-500 text-sm mt-1 px-1'>{error}</div>}
+      {error && <div className='text-[#DA5062] text-sm mt-1 px-1'>{error}</div>}
 
       {showDropdown && results.length > 0 && (
         <ul

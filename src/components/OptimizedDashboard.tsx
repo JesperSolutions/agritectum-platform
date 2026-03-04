@@ -42,7 +42,7 @@ const KPICard: React.FC<KPICardProps> = ({ label, value, trend, color, icon: Ico
         <p className='text-2xl font-bold text-gray-900'>{value}</p>
         {trend !== undefined && (
           <div
-            className={`flex items-center text-sm ${trend >= 0 ? 'text-green-600' : 'text-red-600'}`}
+            className={`flex items-center text-sm ${trend >= 0 ? 'text-[#A1BA53]' : 'text-[#DA5062]'}`}
           >
             {trend >= 0 ? (
               <TrendingUp className='w-4 h-4 mr-1' />
@@ -77,7 +77,7 @@ const QuickActionButton: React.FC<QuickActionButtonProps> = ({
     onClick={onClick}
     className={`inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
       variant === 'primary'
-        ? 'bg-blue-600 text-white hover:bg-blue-700'
+        ? 'bg-[#7DA8CC] text-white hover:bg-[#6890b3]'
         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
     }`}
   >
@@ -99,7 +99,7 @@ const BranchContext: React.FC<BranchContextProps> = ({
   reportsThisWeek,
   avgCompletionTime,
 }) => (
-  <div className='bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 mb-6'>
+  <div className='bg-gradient-to-r from-[#7DA8CC]/10 to-indigo-50 rounded-lg p-6 mb-6'>
     <div className='flex items-center justify-between'>
       <div>
         <h2 className='text-xl font-semibold text-gray-900'>
@@ -115,15 +115,15 @@ const BranchContext: React.FC<BranchContextProps> = ({
       </div>
       <div className='flex space-x-6 text-sm'>
         <div className='text-center'>
-          <div className='text-2xl font-bold text-blue-600'>{activeInspectors}</div>
+          <div className='text-2xl font-bold text-[#7DA8CC]'>{activeInspectors}</div>
           <div className='text-gray-500'>Active Inspectors</div>
         </div>
         <div className='text-center'>
-          <div className='text-2xl font-bold text-green-600'>{reportsThisWeek}</div>
+          <div className='text-2xl font-bold text-[#A1BA53]'>{reportsThisWeek}</div>
           <div className='text-gray-500'>Reports This Week</div>
         </div>
         <div className='text-center'>
-          <div className='text-2xl font-bold text-purple-600'>{avgCompletionTime}</div>
+          <div className='text-2xl font-bold text-[#956098]'>{avgCompletionTime}</div>
           <div className='text-gray-500'>Avg. Completion (days)</div>
         </div>
       </div>
@@ -155,7 +155,7 @@ const AnalyticsPreview: React.FC<AnalyticsPreviewProps> = ({ reports }) => {
         <h3 className='text-lg font-medium text-gray-900'>Reports This Week</h3>
         <Link
           to='/admin/analytics'
-          className='text-sm text-blue-600 hover:text-blue-700 flex items-center'
+          className='text-sm text-[#7DA8CC] hover:text-[#6890b3] flex items-center'
         >
           View Full Analytics
           <BarChart3 className='w-4 h-4 ml-1' />
@@ -165,7 +165,7 @@ const AnalyticsPreview: React.FC<AnalyticsPreviewProps> = ({ reports }) => {
         {weeklyData.map((day, _index) => (
           <div key={day.date} className='flex-1 flex flex-col items-center'>
             <div
-              className='bg-blue-500 rounded-t w-full transition-all duration-300 hover:bg-blue-600'
+              className='bg-[#7DA8CC]/100 rounded-t w-full transition-all duration-300 hover:bg-[#7DA8CC]'
               style={{
                 height: `${Math.max(4, (day.count / Math.max(...weeklyData.map(d => d.count), 1)) * 60)}px`,
               }}
@@ -319,19 +319,19 @@ const OptimizedDashboard: React.FC = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'draft':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-[#DA5062]/15 text-[#872a38]';
       case 'completed':
-        return 'bg-green-100 text-green-800';
+        return 'bg-[#A1BA53]/15 text-[#5c6a2f]';
       case 'sent':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-[#7DA8CC]/15 text-[#476279]';
       case 'offer_sent':
-        return 'bg-purple-100 text-purple-800';
+        return 'bg-[#956098]/15 text-[#553657]';
       case 'offer_accepted':
-        return 'bg-green-100 text-green-800';
+        return 'bg-[#A1BA53]/15 text-[#5c6a2f]';
       case 'offer_rejected':
-        return 'bg-red-100 text-red-800';
+        return 'bg-[#DA5062]/15 text-[#872a38]';
       case 'offer_expired':
-        return 'bg-orange-100 text-orange-800';
+        return 'bg-[#DA5062]/15 text-[#872a38]';
       case 'archived':
         return 'bg-gray-100 text-gray-800';
       default:
@@ -362,28 +362,28 @@ const OptimizedDashboard: React.FC = () => {
             label='Total Offers'
             value={kpis.total.value}
             trend={kpis.total.trend}
-            color='bg-blue-500'
+            color='bg-[#7DA8CC]/100'
             icon={FileText}
           />
           <KPICard
             label='Draft Offers'
             value={kpis.drafts.value}
             trend={kpis.drafts.trend}
-            color='bg-yellow-500'
+            color='bg-[#DA5062]/100'
             icon={Clock}
           />
           <KPICard
             label='Completed'
             value={kpis.completed.value}
             trend={kpis.completed.trend}
-            color='bg-green-500'
+            color='bg-[#A1BA53]'
             icon={CheckCircle}
           />
           <KPICard
             label='Sent'
             value={kpis.sent.value}
             trend={kpis.sent.trend}
-            color='bg-purple-500'
+            color='bg-[#956098]'
             icon={Send}
           />
           <KPICard
@@ -414,7 +414,7 @@ const OptimizedDashboard: React.FC = () => {
                     placeholder='Search offers...'
                     value={searchTerm}
                     onChange={e => setSearchTerm(e.target.value)}
-                    className='pl-10 pr-4 py-2 border border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500'
+                    className='pl-10 pr-4 py-2 border border-gray-300 rounded-md text-sm focus:ring-[#7DA8CC] focus:border-[#7DA8CC]'
                   />
                 </div>
 
@@ -431,7 +431,7 @@ const OptimizedDashboard: React.FC = () => {
                 {(currentUser?.role === 'inspector' || currentUser?.role === 'branchAdmin') && (
                   <Link
                     to='/report/new'
-                    className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors'
+                    className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#7DA8CC] hover:bg-[#6890b3] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7DA8CC] transition-colors'
                   >
                     <Plus className='w-4 h-4 mr-2' />
                     New Report
@@ -448,7 +448,7 @@ const OptimizedDashboard: React.FC = () => {
                   <select
                     value={statusFilter}
                     onChange={e => setStatusFilter(e.target.value)}
-                    className='block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500'
+                    className='block w-full rounded-md border-gray-300 shadow-sm focus:ring-[#7DA8CC] focus:border-[#7DA8CC]'
                   >
                     <option value='all'>All Statuses</option>
                     <option value='draft'>Draft</option>
@@ -466,7 +466,7 @@ const OptimizedDashboard: React.FC = () => {
                   <select
                     value={inspectorFilter}
                     onChange={e => setInspectorFilter(e.target.value)}
-                    className='block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500'
+                    className='block w-full rounded-md border-gray-300 shadow-sm focus:ring-[#7DA8CC] focus:border-[#7DA8CC]'
                   >
                     <option value='all'>All Inspectors</option>
                     {inspectors.map(inspector => (
@@ -511,8 +511,8 @@ const OptimizedDashboard: React.FC = () => {
                     <div className='flex-1 min-w-0'>
                       <div className='flex items-center space-x-3'>
                         <div className='flex-shrink-0'>
-                          <div className='w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center'>
-                            <Building className='w-5 h-5 text-blue-600' />
+                          <div className='w-10 h-10 bg-[#7DA8CC]/15 rounded-full flex items-center justify-center'>
+                            <Building className='w-5 h-5 text-[#7DA8CC]' />
                           </div>
                         </div>
                         <div className='flex-1 min-w-0'>

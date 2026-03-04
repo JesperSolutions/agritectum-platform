@@ -202,14 +202,14 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({ isOpen, onC
             <>
               {/* Error/Success Messages */}
               {error && (
-                <div className='bg-red-50 border border-red-200 rounded-lg p-3'>
-                  <p className='text-sm text-red-800'>{error}</p>
+                <div className='bg-[#DA5062]/10 border border-[#DA5062]/30 rounded-lg p-3'>
+                  <p className='text-sm text-[#872a38]'>{error}</p>
                 </div>
               )}
 
               {success && (
-                <div className='bg-green-50 border border-green-200 rounded-lg p-3'>
-                  <p className='text-sm text-green-800'>{t('notifications.preferencesSaved')}</p>
+                <div className='bg-[#A1BA53]/10 border border-[#A1BA53]/30 rounded-lg p-3'>
+                  <p className='text-sm text-[#5c6a2f]'>{t('notifications.preferencesSaved')}</p>
                 </div>
               )}
 

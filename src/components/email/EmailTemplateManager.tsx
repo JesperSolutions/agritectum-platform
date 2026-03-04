@@ -48,7 +48,7 @@ const EmailTemplateManager: React.FC<EmailTemplateManagerProps> = ({
         {/* Header */}
         <div className='flex items-center justify-between p-6 border-b border-gray-200'>
           <div className='flex items-center space-x-3'>
-            <Mail className='w-6 h-6 text-blue-600' />
+            <Mail className='w-6 h-6 text-[#7DA8CC]' />
             <h2 className='text-xl font-semibold text-gray-900'>Email Templates</h2>
           </div>
           <button onClick={onClose} className='text-gray-400 hover:text-gray-600 transition-colors'>
@@ -69,7 +69,7 @@ const EmailTemplateManager: React.FC<EmailTemplateManagerProps> = ({
                   type='text'
                   value={editingTemplate.name}
                   onChange={e => setEditingTemplate({ ...editingTemplate, name: e.target.value })}
-                  className='w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
+                  className='w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7DA8CC]'
                 />
               </div>
 
@@ -81,7 +81,7 @@ const EmailTemplateManager: React.FC<EmailTemplateManagerProps> = ({
                   onChange={e =>
                     setEditingTemplate({ ...editingTemplate, subject: e.target.value })
                   }
-                  className='w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
+                  className='w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7DA8CC]'
                 />
               </div>
 
@@ -91,7 +91,7 @@ const EmailTemplateManager: React.FC<EmailTemplateManagerProps> = ({
                   value={editingTemplate.body}
                   onChange={e => setEditingTemplate({ ...editingTemplate, body: e.target.value })}
                   rows={15}
-                  className='w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
+                  className='w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#7DA8CC]'
                 />
               </div>
 
@@ -124,7 +124,7 @@ const EmailTemplateManager: React.FC<EmailTemplateManagerProps> = ({
                       <h3 className='text-lg font-medium text-gray-900 mb-2'>
                         {template.name}
                         {template.isDefault && (
-                          <span className='ml-2 px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full'>
+                          <span className='ml-2 px-2 py-1 text-xs bg-[#7DA8CC]/15 text-[#476279] rounded-full'>
                             Default
                           </span>
                         )}
@@ -139,7 +139,7 @@ const EmailTemplateManager: React.FC<EmailTemplateManagerProps> = ({
                     <div className='flex space-x-2 ml-4'>
                       <button
                         onClick={() => handleSelectTemplate(template)}
-                        className='px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors'
+                        className='px-3 py-1 text-sm bg-[#7DA8CC] text-white rounded-md hover:bg-[#6890b3] transition-colors'
                       >
                         Use Template
                       </button>

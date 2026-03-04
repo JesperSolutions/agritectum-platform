@@ -47,17 +47,17 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
     const iconClass = 'h-6 w-6';
     switch (icon) {
       case 'trash':
-        return <Trash2 className={`${iconClass} text-red-600`} />;
+        return <Trash2 className={`${iconClass} text-[#DA5062]`} />;
       case 'edit':
-        return <Edit className={`${iconClass} text-blue-600`} />;
+        return <Edit className={`${iconClass} text-[#7DA8CC]`} />;
       case 'user-x':
-        return <UserX className={`${iconClass} text-red-600`} />;
+        return <UserX className={`${iconClass} text-[#DA5062]`} />;
       case 'user-check':
-        return <UserCheck className={`${iconClass} text-green-600`} />;
+        return <UserCheck className={`${iconClass} text-[#A1BA53]`} />;
       case 'check':
-        return <CheckCircle className={`${iconClass} text-green-600`} />;
+        return <CheckCircle className={`${iconClass} text-[#A1BA53]`} />;
       default:
-        return <AlertTriangle className={`${iconClass} text-yellow-600`} />;
+        return <AlertTriangle className={`${iconClass} text-[#DA5062]`} />;
     }
   };
 

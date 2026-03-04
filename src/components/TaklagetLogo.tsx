@@ -30,8 +30,8 @@ const TaklagetLogo: React.FC<TaklagetLogoProps> = ({
       {/* Text */}
       {showText && (
         <div className='flex flex-col'>
-          <span className={`font-bold text-blue-900 ${text}`}>TAKLAGET</span>
-          <span className={`text-blue-700 font-medium ${size === 'sm' ? 'text-xs' : 'text-sm'}`}>
+          <span className={`font-bold text-[#3b5060] ${text}`}>TAKLAGET</span>
+          <span className={`text-[#6890b3] font-medium ${size === 'sm' ? 'text-xs' : 'text-sm'}`}>
             Sverige
           </span>
         </div>

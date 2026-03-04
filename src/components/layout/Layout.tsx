@@ -204,7 +204,7 @@ const Layout: React.FC = () => {
   const SyncIndicator = () => {
     if (state.syncInProgress) {
       return (
-        <div className='flex items-center space-x-2 text-blue-600'>
+        <div className='flex items-center space-x-2 text-[#7DA8CC]'>
           <Sync className='w-4 h-4 animate-spin' />
           <span className='text-sm'>Syncing...</span>
         </div>
@@ -213,11 +213,11 @@ const Layout: React.FC = () => {
 
     if (state.isOffline) {
       return (
-        <div className='flex items-center space-x-2 text-orange-600'>
+        <div className='flex items-center space-x-2 text-[#DA5062]'>
           <WifiOff className='w-4 h-4' />
           <span className='text-sm'>{t('common.offline')}</span>
           {state.offlineReports.length > 0 && (
-            <span className='bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded-full'>
+            <span className='bg-[#DA5062]/15 text-[#872a38] text-xs px-2 py-1 rounded-full'>
               {state.offlineReports.length} pending
             </span>
           )}

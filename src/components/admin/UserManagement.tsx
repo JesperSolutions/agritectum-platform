@@ -541,11 +541,11 @@ const UserManagement: React.FC = () => {
   const getRoleColor = (role: UserRole) => {
     switch (role) {
       case 'superadmin':
-        return 'bg-red-100 text-red-800';
+        return 'bg-[#DA5062]/15 text-[#872a38]';
       case 'branchAdmin':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-[#7DA8CC]/15 text-[#476279]';
       case 'inspector':
-        return 'bg-green-100 text-green-800';
+        return 'bg-[#A1BA53]/15 text-[#5c6a2f]';
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -620,11 +620,11 @@ const UserManagement: React.FC = () => {
 
       {/* Error Message */}
       {error && (
-        <div className='bg-red-50 border border-red-200 rounded-lg p-4'>
+        <div className='bg-[#DA5062]/10 border border-[#DA5062]/30 rounded-lg p-4'>
           <div className='flex'>
-            <AlertTriangle className='w-5 h-5 text-red-400' />
+            <AlertTriangle className='w-5 h-5 text-[#e47886]' />
             <div className='ml-3'>
-              <h3 className='text-sm font-medium text-red-800'>{error}</h3>
+              <h3 className='text-sm font-medium text-[#872a38]'>{error}</h3>
             </div>
           </div>
         </div>
@@ -658,13 +658,13 @@ const UserManagement: React.FC = () => {
                     onChange={handleEmailChange}
                     className={`mt-1 block w-full px-4 py-2.5 border rounded-lg shadow-sm focus:ring-2 focus:ring-slate-500 focus:border-slate-500 ${
                       fieldErrors.email
-                        ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+                        ? 'border-[#DA5062]/40 focus:border-[#DA5062] focus:ring-[#DA5062]'
                         : 'border-slate-300'
                     }`}
                     placeholder={t('admin.userManagement.emailPlaceholder')}
                   />
                   {fieldErrors.email && (
-                    <p className='mt-1 text-xs text-red-600'>{fieldErrors.email}</p>
+                    <p className='mt-1 text-xs text-[#DA5062]'>{fieldErrors.email}</p>
                   )}
                 </div>
 
@@ -684,7 +684,7 @@ const UserManagement: React.FC = () => {
                       onChange={handleDisplayNameChange}
                       className={`mt-1 block w-full px-4 py-2.5 border rounded-lg shadow-sm focus:ring-2 focus:ring-slate-500 focus:border-slate-500 ${
                         fieldErrors.displayName
-                          ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+                          ? 'border-[#DA5062]/40 focus:border-[#DA5062] focus:ring-[#DA5062]'
                           : 'border-slate-300'
                       }`}
                       placeholder={t('admin.userManagement.displayNamePlaceholder')}
@@ -697,7 +697,7 @@ const UserManagement: React.FC = () => {
                     )}
                   </div>
                   {fieldErrors.displayName && (
-                    <p className='mt-1 text-xs text-red-600'>{fieldErrors.displayName}</p>
+                    <p className='mt-1 text-xs text-[#DA5062]'>{fieldErrors.displayName}</p>
                   )}
                 </div>
               </div>
@@ -801,7 +801,7 @@ const UserManagement: React.FC = () => {
                         onChange={handlePasswordChange}
                         className={`block w-full px-4 py-2.5 pr-20 rounded-l-lg border focus:ring-2 focus:ring-slate-500 focus:border-slate-500 ${
                           fieldErrors.password
-                            ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+                            ? 'border-[#DA5062]/40 focus:border-[#DA5062] focus:ring-[#DA5062]'
                             : 'border-slate-300'
                         }`}
                         placeholder={t('admin.userManagement.passwordPlaceholder')}
@@ -839,7 +839,7 @@ const UserManagement: React.FC = () => {
                     </button>
                   </div>
                   {fieldErrors.password && (
-                    <p className='mt-1 text-xs text-red-600'>{fieldErrors.password}</p>
+                    <p className='mt-1 text-xs text-[#DA5062]'>{fieldErrors.password}</p>
                   )}
                 </div>
 
@@ -853,12 +853,12 @@ const UserManagement: React.FC = () => {
                       <span
                         className={`text-xs font-semibold ${
                           passwordStrength.strength === 'weak'
-                            ? 'text-red-600'
+                            ? 'text-[#DA5062]'
                             : passwordStrength.strength === 'fair'
-                              ? 'text-orange-600'
+                              ? 'text-[#DA5062]'
                               : passwordStrength.strength === 'good'
-                                ? 'text-yellow-600'
-                                : 'text-green-600'
+                                ? 'text-[#DA5062]'
+                                : 'text-[#A1BA53]'
                         }`}
                       >
                         {passwordStrength.strength === 'weak'
@@ -874,12 +874,12 @@ const UserManagement: React.FC = () => {
                       <div
                         className={`h-2 rounded-full transition-all duration-300 ${
                           passwordStrength.strength === 'weak'
-                            ? 'bg-red-500'
+                            ? 'bg-[#DA5062]/100'
                             : passwordStrength.strength === 'fair'
-                              ? 'bg-orange-500'
+                              ? 'bg-[#DA5062]'
                               : passwordStrength.strength === 'good'
-                                ? 'bg-yellow-500'
-                                : 'bg-green-500'
+                                ? 'bg-[#DA5062]/100'
+                                : 'bg-[#A1BA53]'
                         }`}
                         style={{ width: `${(passwordStrength.score / 8) * 100}%` }}
                       />
@@ -888,7 +888,7 @@ const UserManagement: React.FC = () => {
                       <ul className='mt-2 text-xs text-slate-600 space-y-1'>
                         {passwordStrength.feedback.map((item, index) => (
                           <li key={index} className='flex items-center'>
-                            <span className='text-red-500 mr-1'>•</span>
+                            <span className='text-[#DA5062] mr-1'>•</span>
                             {item}
                           </li>
                         ))}
@@ -972,8 +972,8 @@ const UserManagement: React.FC = () => {
                           <span
                             className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                               user.isActive
-                                ? 'bg-green-100 text-green-800'
-                                : 'bg-red-100 text-red-800'
+                                ? 'bg-[#A1BA53]/15 text-[#5c6a2f]'
+                                : 'bg-[#DA5062]/15 text-[#872a38]'
                             }`}
                           >
                             {user.isActive
@@ -997,8 +997,8 @@ const UserManagement: React.FC = () => {
                         onClick={() => handleToggleStatus(user)}
                         className={`p-2 rounded-md transition-colors ${
                           user.isActive
-                            ? 'text-red-600 hover:text-red-800 hover:bg-red-50'
-                            : 'text-green-600 hover:text-green-800 hover:bg-green-50'
+                            ? 'text-[#DA5062] hover:text-[#872a38] hover:bg-[#DA5062]/10'
+                            : 'text-[#A1BA53] hover:text-[#5c6a2f] hover:bg-[#A1BA53]/10'
                         }`}
                       >
                         {user.isActive ? (
@@ -1012,7 +1012,7 @@ const UserManagement: React.FC = () => {
                     <Tooltip content={t('admin.userManagement.editUser')}>
                       <button
                         onClick={() => handleEdit(user)}
-                        className='p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-md transition-colors'
+                        className='p-2 text-[#7DA8CC] hover:text-[#476279] hover:bg-[#7DA8CC]/10 rounded-md transition-colors'
                       >
                         <Edit className='w-4 h-4' />
                       </button>
@@ -1022,7 +1022,7 @@ const UserManagement: React.FC = () => {
                       <button
                         onClick={() => handleResetPassword(user)}
                         disabled={isResettingPassword}
-                        className='p-2 text-orange-600 hover:text-orange-800 hover:bg-orange-50 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+                        className='p-2 text-[#DA5062] hover:text-[#872a38] hover:bg-[#DA5062]/10 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
                       >
                         <RefreshCw
                           className={`w-4 h-4 ${isResettingPassword ? 'animate-spin' : ''}`}
@@ -1034,7 +1034,7 @@ const UserManagement: React.FC = () => {
                       <button
                         onClick={() => handleViewPassword(user)}
                         disabled={isViewingPassword}
-                        className='p-2 text-purple-600 hover:text-purple-800 hover:bg-purple-50 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+                        className='p-2 text-[#956098] hover:text-[#553657] hover:bg-[#956098]/10 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
                       >
                         <Key className={`w-4 h-4 ${isViewingPassword ? 'animate-pulse' : ''}`} />
                       </button>
@@ -1043,7 +1043,7 @@ const UserManagement: React.FC = () => {
                     <Tooltip content={t('admin.userManagement.deleteUser')}>
                       <button
                         onClick={() => handleDelete(user)}
-                        className='p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-md transition-colors'
+                        className='p-2 text-[#DA5062] hover:text-[#872a38] hover:bg-[#DA5062]/10 rounded-md transition-colors'
                       >
                         <Trash2 className='w-4 h-4' />
                       </button>

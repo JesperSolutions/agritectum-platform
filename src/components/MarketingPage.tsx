@@ -61,13 +61,13 @@ const MarketingPage: React.FC = () => {
   };
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100'>
+    <div className='min-h-screen bg-gradient-to-br from-[#7DA8CC]/10 to-indigo-100'>
       {/* Header */}
       <header className='fixed top-0 w-full bg-white/95 backdrop-blur-sm shadow-sm z-50'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='flex justify-between items-center py-4'>
             <div className='flex items-center space-x-3'>
-              <Building2 className='h-8 w-8 text-blue-600' />
+              <Building2 className='h-8 w-8 text-[#7DA8CC]' />
               <div>
                 <h1 className='text-2xl font-bold text-gray-900'>{t('marketing.brand.name')}</h1>
                 <p className='text-sm text-gray-600'>{t('marketing.brand.tagline')}</p>
@@ -91,7 +91,7 @@ const MarketingPage: React.FC = () => {
             key={index}
             onClick={() => scrollToSection(index)}
             className={`w-3 h-3 rounded-full transition-all duration-300 ${
-              activeSection === index ? 'bg-blue-600 scale-125' : 'bg-gray-300 hover:bg-gray-400'
+              activeSection === index ? 'bg-[#7DA8CC] scale-125' : 'bg-gray-300 hover:bg-gray-400'
             }`}
           />
         ))}
@@ -103,7 +103,7 @@ const MarketingPage: React.FC = () => {
         className='min-h-screen flex items-center justify-center pt-20 relative overflow-hidden'
       >
         {/* Background Pattern */}
-        <div className='absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-indigo-50'></div>
+        <div className='absolute inset-0 bg-gradient-to-br from-[#7DA8CC]/10 via-white to-indigo-50'></div>
         <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%233b82f6%22%20fill-opacity%3D%220.05%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%222%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-40"></div>
 
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10'>
@@ -111,14 +111,14 @@ const MarketingPage: React.FC = () => {
             className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
           >
             {/* Badge */}
-            <div className='inline-flex items-center px-4 py-2 rounded-full bg-green-100 text-green-800 text-sm font-medium mb-8'>
+            <div className='inline-flex items-center px-4 py-2 rounded-full bg-[#A1BA53]/15 text-[#5c6a2f] text-sm font-medium mb-8'>
               <CheckCircle className='h-4 w-4 mr-2' />
               Production Ready Platform
             </div>
 
             <h1 className='text-6xl md:text-7xl font-bold text-gray-900 mb-8 leading-tight'>
               Revolutionise Roof
-              <span className='text-blue-600 block'>Inspection Management</span>
+              <span className='text-[#7DA8CC] block'>Inspection Management</span>
             </h1>
             <p className='text-xl md:text-2xl text-gray-600 mb-8 max-w-4xl mx-auto leading-relaxed'>
               Multi-branch operations • ESG reporting • Offline-first capabilities
@@ -131,7 +131,7 @@ const MarketingPage: React.FC = () => {
             <div className='flex flex-col sm:flex-row justify-center gap-4 mb-16'>
               <Link
                 to='/dashboard'
-                className='inline-flex items-center px-8 py-4 border border-transparent text-lg font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg'
+                className='inline-flex items-center px-8 py-4 border border-transparent text-lg font-medium rounded-lg text-white bg-[#7DA8CC] hover:bg-[#6890b3] transition-all duration-300 transform hover:scale-105 shadow-lg'
               >
                 Schedule a Demo
                 <ArrowRight className='ml-2 h-5 w-5' />
@@ -145,15 +145,15 @@ const MarketingPage: React.FC = () => {
             {/* Key Metrics */}
             <div className='grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto'>
               <div className='text-center'>
-                <div className='text-3xl font-bold text-blue-600 mb-2'>40%</div>
+                <div className='text-3xl font-bold text-[#7DA8CC] mb-2'>40%</div>
                 <div className='text-gray-600'>Faster Reports</div>
               </div>
               <div className='text-center'>
-                <div className='text-3xl font-bold text-green-600 mb-2'>25%</div>
+                <div className='text-3xl font-bold text-[#A1BA53] mb-2'>25%</div>
                 <div className='text-gray-600'>Higher Acceptance</div>
               </div>
               <div className='text-center'>
-                <div className='text-3xl font-bold text-purple-600 mb-2'>100%</div>
+                <div className='text-3xl font-bold text-[#956098] mb-2'>100%</div>
                 <div className='text-gray-600'>GDPR Compliant</div>
               </div>
             </div>
@@ -177,11 +177,11 @@ const MarketingPage: React.FC = () => {
           <div className='grid grid-cols-1 lg:grid-cols-2 gap-16 items-center'>
             {/* Problems */}
             <div>
-              <h3 className='text-2xl font-bold text-red-600 mb-8'>Current Pain Points</h3>
+              <h3 className='text-2xl font-bold text-[#DA5062] mb-8'>Current Pain Points</h3>
               <div className='space-y-6'>
                 <div className='flex items-start'>
-                  <div className='w-8 h-8 bg-red-100 rounded-full flex items-center justify-center mr-4 mt-1'>
-                    <span className='text-red-600 font-bold'>×</span>
+                  <div className='w-8 h-8 bg-[#DA5062]/15 rounded-full flex items-center justify-center mr-4 mt-1'>
+                    <span className='text-[#DA5062] font-bold'>×</span>
                   </div>
                   <div>
                     <h4 className='font-semibold text-gray-900 mb-2'>Manual Scheduling Chaos</h4>
@@ -192,8 +192,8 @@ const MarketingPage: React.FC = () => {
                   </div>
                 </div>
                 <div className='flex items-start'>
-                  <div className='w-8 h-8 bg-red-100 rounded-full flex items-center justify-center mr-4 mt-1'>
-                    <span className='text-red-600 font-bold'>×</span>
+                  <div className='w-8 h-8 bg-[#DA5062]/15 rounded-full flex items-center justify-center mr-4 mt-1'>
+                    <span className='text-[#DA5062] font-bold'>×</span>
                   </div>
                   <div>
                     <h4 className='font-semibold text-gray-900 mb-2'>Inconsistent Reports</h4>
@@ -203,8 +203,8 @@ const MarketingPage: React.FC = () => {
                   </div>
                 </div>
                 <div className='flex items-start'>
-                  <div className='w-8 h-8 bg-red-100 rounded-full flex items-center justify-center mr-4 mt-1'>
-                    <span className='text-red-600 font-bold'>×</span>
+                  <div className='w-8 h-8 bg-[#DA5062]/15 rounded-full flex items-center justify-center mr-4 mt-1'>
+                    <span className='text-[#DA5062] font-bold'>×</span>
                   </div>
                   <div>
                     <h4 className='font-semibold text-gray-900 mb-2'>Slow Approval Process</h4>
@@ -215,8 +215,8 @@ const MarketingPage: React.FC = () => {
                   </div>
                 </div>
                 <div className='flex items-start'>
-                  <div className='w-8 h-8 bg-red-100 rounded-full flex items-center justify-center mr-4 mt-1'>
-                    <span className='text-red-600 font-bold'>×</span>
+                  <div className='w-8 h-8 bg-[#DA5062]/15 rounded-full flex items-center justify-center mr-4 mt-1'>
+                    <span className='text-[#DA5062] font-bold'>×</span>
                   </div>
                   <div>
                     <h4 className='font-semibold text-gray-900 mb-2'>Compliance Risks</h4>
@@ -231,11 +231,11 @@ const MarketingPage: React.FC = () => {
 
             {/* Solutions */}
             <div>
-              <h3 className='text-2xl font-bold text-green-600 mb-8'>Taklaget Solution</h3>
+              <h3 className='text-2xl font-bold text-[#A1BA53] mb-8'>Taklaget Solution</h3>
               <div className='space-y-6'>
                 <div className='flex items-start'>
-                  <div className='w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-4 mt-1'>
-                    <CheckCircle className='h-5 w-5 text-green-600' />
+                  <div className='w-8 h-8 bg-[#A1BA53]/15 rounded-full flex items-center justify-center mr-4 mt-1'>
+                    <CheckCircle className='h-5 w-5 text-[#A1BA53]' />
                   </div>
                   <div>
                     <h4 className='font-semibold text-gray-900 mb-2'>
@@ -247,8 +247,8 @@ const MarketingPage: React.FC = () => {
                   </div>
                 </div>
                 <div className='flex items-start'>
-                  <div className='w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-4 mt-1'>
-                    <CheckCircle className='h-5 w-5 text-green-600' />
+                  <div className='w-8 h-8 bg-[#A1BA53]/15 rounded-full flex items-center justify-center mr-4 mt-1'>
+                    <CheckCircle className='h-5 w-5 text-[#A1BA53]' />
                   </div>
                   <div>
                     <h4 className='font-semibold text-gray-900 mb-2'>
@@ -260,8 +260,8 @@ const MarketingPage: React.FC = () => {
                   </div>
                 </div>
                 <div className='flex items-start'>
-                  <div className='w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-4 mt-1'>
-                    <CheckCircle className='h-5 w-5 text-green-600' />
+                  <div className='w-8 h-8 bg-[#A1BA53]/15 rounded-full flex items-center justify-center mr-4 mt-1'>
+                    <CheckCircle className='h-5 w-5 text-[#A1BA53]' />
                   </div>
                   <div>
                     <h4 className='font-semibold text-gray-900 mb-2'>Automated Offer Management</h4>
@@ -271,8 +271,8 @@ const MarketingPage: React.FC = () => {
                   </div>
                 </div>
                 <div className='flex items-start'>
-                  <div className='w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-4 mt-1'>
-                    <CheckCircle className='h-5 w-5 text-green-600' />
+                  <div className='w-8 h-8 bg-[#A1BA53]/15 rounded-full flex items-center justify-center mr-4 mt-1'>
+                    <CheckCircle className='h-5 w-5 text-[#A1BA53]' />
                   </div>
                   <div>
                     <h4 className='font-semibold text-gray-900 mb-2'>GDPR-Compliant Platform</h4>
@@ -300,29 +300,29 @@ const MarketingPage: React.FC = () => {
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8'>
             {/* Schedule */}
             <div className='bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2'>
-              <div className='w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6'>
-                <Calendar className='h-8 w-8 text-blue-600' />
+              <div className='w-16 h-16 bg-[#7DA8CC]/15 rounded-full flex items-center justify-center mx-auto mb-6'>
+                <Calendar className='h-8 w-8 text-[#7DA8CC]' />
               </div>
               <h3 className='text-xl font-bold text-gray-900 mb-4 text-center'>Schedule</h3>
               <ul className='space-y-3 text-sm text-gray-600'>
                 <li className='flex items-start'>
-                  <CheckCircle className='h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0' />
+                  <CheckCircle className='h-4 w-4 text-[#A1BA53] mr-2 mt-0.5 flex-shrink-0' />
                   <span>Multi-branch calendar management</span>
                 </li>
                 <li className='flex items-start'>
-                  <CheckCircle className='h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0' />
+                  <CheckCircle className='h-4 w-4 text-[#A1BA53] mr-2 mt-0.5 flex-shrink-0' />
                   <span>Automated appointment reminders</span>
                 </li>
                 <li className='flex items-start'>
-                  <CheckCircle className='h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0' />
+                  <CheckCircle className='h-4 w-4 text-[#A1BA53] mr-2 mt-0.5 flex-shrink-0' />
                   <span>GPS-based route optimization</span>
                 </li>
                 <li className='flex items-start'>
-                  <CheckCircle className='h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0' />
+                  <CheckCircle className='h-4 w-4 text-[#A1BA53] mr-2 mt-0.5 flex-shrink-0' />
                   <span>Inspector availability tracking</span>
                 </li>
                 <li className='flex items-start'>
-                  <CheckCircle className='h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0' />
+                  <CheckCircle className='h-4 w-4 text-[#A1BA53] mr-2 mt-0.5 flex-shrink-0' />
                   <span>Conflict detection & resolution</span>
                 </li>
               </ul>
@@ -330,29 +330,29 @@ const MarketingPage: React.FC = () => {
 
             {/* Inspect */}
             <div className='bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2'>
-              <div className='w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6'>
-                <Eye className='h-8 w-8 text-green-600' />
+              <div className='w-16 h-16 bg-[#A1BA53]/15 rounded-full flex items-center justify-center mx-auto mb-6'>
+                <Eye className='h-8 w-8 text-[#A1BA53]' />
               </div>
               <h3 className='text-xl font-bold text-gray-900 mb-4 text-center'>Inspect</h3>
               <ul className='space-y-3 text-sm text-gray-600'>
                 <li className='flex items-start'>
-                  <CheckCircle className='h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0' />
+                  <CheckCircle className='h-4 w-4 text-[#A1BA53] mr-2 mt-0.5 flex-shrink-0' />
                   <span>Offline-capable mobile interface</span>
                 </li>
                 <li className='flex items-start'>
-                  <CheckCircle className='h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0' />
+                  <CheckCircle className='h-4 w-4 text-[#A1BA53] mr-2 mt-0.5 flex-shrink-0' />
                   <span>High-resolution photo capture</span>
                 </li>
                 <li className='flex items-start'>
-                  <CheckCircle className='h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0' />
+                  <CheckCircle className='h-4 w-4 text-[#A1BA53] mr-2 mt-0.5 flex-shrink-0' />
                   <span>Predefined inspection templates</span>
                 </li>
                 <li className='flex items-start'>
-                  <CheckCircle className='h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0' />
+                  <CheckCircle className='h-4 w-4 text-[#A1BA53] mr-2 mt-0.5 flex-shrink-0' />
                   <span>Voice-to-text annotations</span>
                 </li>
                 <li className='flex items-start'>
-                  <CheckCircle className='h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0' />
+                  <CheckCircle className='h-4 w-4 text-[#A1BA53] mr-2 mt-0.5 flex-shrink-0' />
                   <span>Auto-save & cloud sync</span>
                 </li>
               </ul>
@@ -360,29 +360,29 @@ const MarketingPage: React.FC = () => {
 
             {/* Report */}
             <div className='bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2'>
-              <div className='w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6'>
-                <FileText className='h-8 w-8 text-purple-600' />
+              <div className='w-16 h-16 bg-[#956098]/15 rounded-full flex items-center justify-center mx-auto mb-6'>
+                <FileText className='h-8 w-8 text-[#956098]' />
               </div>
               <h3 className='text-xl font-bold text-gray-900 mb-4 text-center'>Report</h3>
               <ul className='space-y-3 text-sm text-gray-600'>
                 <li className='flex items-start'>
-                  <CheckCircle className='h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0' />
+                  <CheckCircle className='h-4 w-4 text-[#A1BA53] mr-2 mt-0.5 flex-shrink-0' />
                   <span>Professional PDF generation</span>
                 </li>
                 <li className='flex items-start'>
-                  <CheckCircle className='h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0' />
+                  <CheckCircle className='h-4 w-4 text-[#A1BA53] mr-2 mt-0.5 flex-shrink-0' />
                   <span>Structured issue categorization</span>
                 </li>
                 <li className='flex items-start'>
-                  <CheckCircle className='h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0' />
+                  <CheckCircle className='h-4 w-4 text-[#A1BA53] mr-2 mt-0.5 flex-shrink-0' />
                   <span>Automated severity assessment</span>
                 </li>
                 <li className='flex items-start'>
-                  <CheckCircle className='h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0' />
+                  <CheckCircle className='h-4 w-4 text-[#A1BA53] mr-2 mt-0.5 flex-shrink-0' />
                   <span>Customer-branded templates</span>
                 </li>
                 <li className='flex items-start'>
-                  <CheckCircle className='h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0' />
+                  <CheckCircle className='h-4 w-4 text-[#A1BA53] mr-2 mt-0.5 flex-shrink-0' />
                   <span>GDPR-compliant data handling</span>
                 </li>
               </ul>
@@ -390,29 +390,29 @@ const MarketingPage: React.FC = () => {
 
             {/* Offer */}
             <div className='bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2'>
-              <div className='w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6'>
-                <DollarSign className='h-8 w-8 text-yellow-600' />
+              <div className='w-16 h-16 bg-[#DA5062]/15 rounded-full flex items-center justify-center mx-auto mb-6'>
+                <DollarSign className='h-8 w-8 text-[#DA5062]' />
               </div>
               <h3 className='text-xl font-bold text-gray-900 mb-4 text-center'>Offer</h3>
               <ul className='space-y-3 text-sm text-gray-600'>
                 <li className='flex items-start'>
-                  <CheckCircle className='h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0' />
+                  <CheckCircle className='h-4 w-4 text-[#A1BA53] mr-2 mt-0.5 flex-shrink-0' />
                   <span>Instant offer generation</span>
                 </li>
                 <li className='flex items-start'>
-                  <CheckCircle className='h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0' />
+                  <CheckCircle className='h-4 w-4 text-[#A1BA53] mr-2 mt-0.5 flex-shrink-0' />
                   <span>Dynamic pricing calculations</span>
                 </li>
                 <li className='flex items-start'>
-                  <CheckCircle className='h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0' />
+                  <CheckCircle className='h-4 w-4 text-[#A1BA53] mr-2 mt-0.5 flex-shrink-0' />
                   <span>Customer approval tracking</span>
                 </li>
                 <li className='flex items-start'>
-                  <CheckCircle className='h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0' />
+                  <CheckCircle className='h-4 w-4 text-[#A1BA53] mr-2 mt-0.5 flex-shrink-0' />
                   <span>Automated follow-up workflows</span>
                 </li>
                 <li className='flex items-start'>
-                  <CheckCircle className='h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0' />
+                  <CheckCircle className='h-4 w-4 text-[#A1BA53] mr-2 mt-0.5 flex-shrink-0' />
                   <span>Contract management integration</span>
                 </li>
               </ul>
@@ -438,16 +438,16 @@ const MarketingPage: React.FC = () => {
 
           <div className='relative'>
             {/* Timeline Line */}
-            <div className='absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-blue-500 to-green-500'></div>
+            <div className='absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-[#7DA8CC] to-[#8a9f47]'></div>
 
             {/* Timeline Items */}
             <div className='space-y-20'>
               {/* Production Ready */}
               <div className='flex items-center'>
                 <div className='w-1/2 pr-8 text-right'>
-                  <div className='bg-green-50 p-8 rounded-2xl shadow-lg transform hover:scale-105 transition-all duration-300'>
+                  <div className='bg-[#A1BA53]/10 p-8 rounded-2xl shadow-lg transform hover:scale-105 transition-all duration-300'>
                     <div className='flex items-center justify-end mb-4'>
-                      <CheckCircle2 className='h-8 w-8 text-green-600 mr-3' />
+                      <CheckCircle2 className='h-8 w-8 text-[#A1BA53] mr-3' />
                       <h3 className='text-2xl font-bold text-gray-900'>Production Ready</h3>
                     </div>
                     <p className='text-gray-600 mb-4'>
@@ -456,16 +456,16 @@ const MarketingPage: React.FC = () => {
                       synchronization.
                     </p>
                     <div className='flex flex-wrap gap-2 justify-end mb-4'>
-                      <span className='px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm'>
+                      <span className='px-3 py-1 bg-[#A1BA53]/15 text-[#5c6a2f] rounded-full text-sm'>
                         Multi-branch
                       </span>
-                      <span className='px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm'>
+                      <span className='px-3 py-1 bg-[#A1BA53]/15 text-[#5c6a2f] rounded-full text-sm'>
                         Role-based Access
                       </span>
-                      <span className='px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm'>
+                      <span className='px-3 py-1 bg-[#A1BA53]/15 text-[#5c6a2f] rounded-full text-sm'>
                         Offline PWA
                       </span>
-                      <span className='px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm'>
+                      <span className='px-3 py-1 bg-[#A1BA53]/15 text-[#5c6a2f] rounded-full text-sm'>
                         PDF Generation
                       </span>
                     </div>
@@ -475,7 +475,7 @@ const MarketingPage: React.FC = () => {
                     </p>
                   </div>
                 </div>
-                <div className='w-16 h-16 bg-green-500 rounded-full flex items-center justify-center shadow-lg z-10'>
+                <div className='w-16 h-16 bg-[#A1BA53] rounded-full flex items-center justify-center shadow-lg z-10'>
                   <CheckCircle className='h-8 w-8 text-white' />
                 </div>
                 <div className='w-1/2 pl-8'></div>
@@ -484,27 +484,27 @@ const MarketingPage: React.FC = () => {
               {/* In Development */}
               <div className='flex items-center'>
                 <div className='w-1/2 pr-8'></div>
-                <div className='w-16 h-16 bg-yellow-500 rounded-full flex items-center justify-center shadow-lg z-10'>
+                <div className='w-16 h-16 bg-[#DA5062]/100 rounded-full flex items-center justify-center shadow-lg z-10'>
                   <Clock className='h-8 w-8 text-white' />
                 </div>
                 <div className='w-1/2 pl-8'>
-                  <div className='bg-yellow-50 p-8 rounded-2xl shadow-lg transform hover:scale-105 transition-all duration-300'>
+                  <div className='bg-[#DA5062]/10 p-8 rounded-2xl shadow-lg transform hover:scale-105 transition-all duration-300'>
                     <div className='flex items-center mb-4'>
-                      <Clock className='h-8 w-8 text-yellow-600 mr-3' />
+                      <Clock className='h-8 w-8 text-[#DA5062] mr-3' />
                       <h3 className='text-2xl font-bold text-gray-900'>In Development</h3>
                     </div>
                     <p className='text-gray-600 mb-4'>Enhanced workflow features coming soon</p>
                     <div className='flex flex-wrap gap-2'>
-                      <span className='px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm'>
+                      <span className='px-3 py-1 bg-[#DA5062]/15 text-[#872a38] rounded-full text-sm'>
                         Advanced Scheduling
                       </span>
-                      <span className='px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm'>
+                      <span className='px-3 py-1 bg-[#DA5062]/15 text-[#872a38] rounded-full text-sm'>
                         Photo Annotation
                       </span>
-                      <span className='px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm'>
+                      <span className='px-3 py-1 bg-[#DA5062]/15 text-[#872a38] rounded-full text-sm'>
                         Visual Analytics
                       </span>
-                      <span className='px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm'>
+                      <span className='px-3 py-1 bg-[#DA5062]/15 text-[#872a38] rounded-full text-sm'>
                         Customer Portal
                       </span>
                     </div>
@@ -515,29 +515,29 @@ const MarketingPage: React.FC = () => {
               {/* Future Plans */}
               <div className='flex items-center'>
                 <div className='w-1/2 pr-8 text-right'>
-                  <div className='bg-blue-50 p-8 rounded-2xl shadow-lg transform hover:scale-105 transition-all duration-300'>
+                  <div className='bg-[#7DA8CC]/10 p-8 rounded-2xl shadow-lg transform hover:scale-105 transition-all duration-300'>
                     <div className='flex items-center justify-end mb-4'>
-                      <Star className='h-8 w-8 text-blue-600 mr-3' />
+                      <Star className='h-8 w-8 text-[#7DA8CC] mr-3' />
                       <h3 className='text-2xl font-bold text-gray-900'>Future Vision</h3>
                     </div>
                     <p className='text-gray-600 mb-4'>Advanced features for scaling businesses</p>
                     <div className='flex flex-wrap gap-2 justify-end'>
-                      <span className='px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm'>
+                      <span className='px-3 py-1 bg-[#7DA8CC]/15 text-[#476279] rounded-full text-sm'>
                         Route Optimization
                       </span>
-                      <span className='px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm'>
+                      <span className='px-3 py-1 bg-[#7DA8CC]/15 text-[#476279] rounded-full text-sm'>
                         Inventory Management
                       </span>
-                      <span className='px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm'>
+                      <span className='px-3 py-1 bg-[#7DA8CC]/15 text-[#476279] rounded-full text-sm'>
                         Payment Integration
                       </span>
-                      <span className='px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm'>
+                      <span className='px-3 py-1 bg-[#7DA8CC]/15 text-[#476279] rounded-full text-sm'>
                         AI Insights
                       </span>
                     </div>
                   </div>
                 </div>
-                <div className='w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center shadow-lg z-10'>
+                <div className='w-16 h-16 bg-[#7DA8CC]/100 rounded-full flex items-center justify-center shadow-lg z-10'>
                   <Star className='h-8 w-8 text-white' />
                 </div>
                 <div className='w-1/2 pl-8'></div>
@@ -560,14 +560,14 @@ const MarketingPage: React.FC = () => {
 
           <div className='grid grid-cols-1 md:grid-cols-2 gap-12'>
             {/* Security */}
-            <div className='bg-gradient-to-br from-blue-50 to-indigo-100 p-8 rounded-3xl shadow-lg'>
+            <div className='bg-gradient-to-br from-[#7DA8CC]/10 to-indigo-100 p-8 rounded-3xl shadow-lg'>
               <div className='flex items-center mb-6'>
-                <Shield className='h-8 w-8 text-blue-600 mr-3' />
+                <Shield className='h-8 w-8 text-[#7DA8CC] mr-3' />
                 <h3 className='text-2xl font-bold text-gray-900'>Security & Privacy</h3>
               </div>
               <div className='space-y-4'>
                 <div className='flex items-start'>
-                  <CheckCircle className='h-5 w-5 text-green-500 mr-3 mt-1' />
+                  <CheckCircle className='h-5 w-5 text-[#A1BA53] mr-3 mt-1' />
                   <div>
                     <h4 className='font-semibold text-gray-900'>GDPR Compliance</h4>
                     <p className='text-sm text-gray-600'>
@@ -576,7 +576,7 @@ const MarketingPage: React.FC = () => {
                   </div>
                 </div>
                 <div className='flex items-start'>
-                  <CheckCircle className='h-5 w-5 text-green-500 mr-3 mt-1' />
+                  <CheckCircle className='h-5 w-5 text-[#A1BA53] mr-3 mt-1' />
                   <div>
                     <h4 className='font-semibold text-gray-900'>Role-Based Access Control</h4>
                     <p className='text-sm text-gray-600'>
@@ -585,7 +585,7 @@ const MarketingPage: React.FC = () => {
                   </div>
                 </div>
                 <div className='flex items-start'>
-                  <CheckCircle className='h-5 w-5 text-green-500 mr-3 mt-1' />
+                  <CheckCircle className='h-5 w-5 text-[#A1BA53] mr-3 mt-1' />
                   <div>
                     <h4 className='font-semibold text-gray-900'>Data Encryption</h4>
                     <p className='text-sm text-gray-600'>
@@ -594,7 +594,7 @@ const MarketingPage: React.FC = () => {
                   </div>
                 </div>
                 <div className='flex items-start'>
-                  <CheckCircle className='h-5 w-5 text-green-500 mr-3 mt-1' />
+                  <CheckCircle className='h-5 w-5 text-[#A1BA53] mr-3 mt-1' />
                   <div>
                     <h4 className='font-semibold text-gray-900'>Audit Trails</h4>
                     <p className='text-sm text-gray-600'>
@@ -606,14 +606,14 @@ const MarketingPage: React.FC = () => {
             </div>
 
             {/* ESG */}
-            <div className='bg-gradient-to-br from-green-50 to-emerald-100 p-8 rounded-3xl shadow-lg'>
+            <div className='bg-gradient-to-br from-[#A1BA53]/10 to-emerald-100 p-8 rounded-3xl shadow-lg'>
               <div className='flex items-center mb-6'>
-                <Star className='h-8 w-8 text-green-600 mr-3' />
+                <Star className='h-8 w-8 text-[#A1BA53] mr-3' />
                 <h3 className='text-2xl font-bold text-gray-900'>ESG Reporting</h3>
               </div>
               <div className='space-y-4'>
                 <div className='flex items-start'>
-                  <CheckCircle className='h-5 w-5 text-green-500 mr-3 mt-1' />
+                  <CheckCircle className='h-5 w-5 text-[#A1BA53] mr-3 mt-1' />
                   <div>
                     <h4 className='font-semibold text-gray-900'>CO₂ Impact Tracking</h4>
                     <p className='text-sm text-gray-600'>
@@ -622,7 +622,7 @@ const MarketingPage: React.FC = () => {
                   </div>
                 </div>
                 <div className='flex items-start'>
-                  <CheckCircle className='h-5 w-5 text-green-500 mr-3 mt-1' />
+                  <CheckCircle className='h-5 w-5 text-[#A1BA53] mr-3 mt-1' />
                   <div>
                     <h4 className='font-semibold text-gray-900'>Material Lifecycle</h4>
                     <p className='text-sm text-gray-600'>
@@ -631,7 +631,7 @@ const MarketingPage: React.FC = () => {
                   </div>
                 </div>
                 <div className='flex items-start'>
-                  <CheckCircle className='h-5 w-5 text-green-500 mr-3 mt-1' />
+                  <CheckCircle className='h-5 w-5 text-[#A1BA53] mr-3 mt-1' />
                   <div>
                     <h4 className='font-semibold text-gray-900'>Safety Compliance</h4>
                     <p className='text-sm text-gray-600'>
@@ -640,7 +640,7 @@ const MarketingPage: React.FC = () => {
                   </div>
                 </div>
                 <div className='flex items-start'>
-                  <CheckCircle className='h-5 w-5 text-green-500 mr-3 mt-1' />
+                  <CheckCircle className='h-5 w-5 text-[#A1BA53] mr-3 mt-1' />
                   <div>
                     <h4 className='font-semibold text-gray-900'>Nordic Standards</h4>
                     <p className='text-sm text-gray-600'>
@@ -659,29 +659,29 @@ const MarketingPage: React.FC = () => {
             </h3>
             <div className='grid grid-cols-2 md:grid-cols-4 gap-6'>
               <div className='text-center'>
-                <div className='w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3'>
-                  <Shield className='h-8 w-8 text-blue-600' />
+                <div className='w-16 h-16 bg-[#7DA8CC]/15 rounded-full flex items-center justify-center mx-auto mb-3'>
+                  <Shield className='h-8 w-8 text-[#7DA8CC]' />
                 </div>
                 <h4 className='font-semibold text-gray-900'>ISO 27001</h4>
                 <p className='text-sm text-gray-600'>Information Security</p>
               </div>
               <div className='text-center'>
-                <div className='w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3'>
-                  <Star className='h-8 w-8 text-green-600' />
+                <div className='w-16 h-16 bg-[#A1BA53]/15 rounded-full flex items-center justify-center mx-auto mb-3'>
+                  <Star className='h-8 w-8 text-[#A1BA53]' />
                 </div>
                 <h4 className='font-semibold text-gray-900'>GDPR</h4>
                 <p className='text-sm text-gray-600'>Data Protection</p>
               </div>
               <div className='text-center'>
-                <div className='w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3'>
-                  <Building2 className='h-8 w-8 text-purple-600' />
+                <div className='w-16 h-16 bg-[#956098]/15 rounded-full flex items-center justify-center mx-auto mb-3'>
+                  <Building2 className='h-8 w-8 text-[#956098]' />
                 </div>
                 <h4 className='font-semibold text-gray-900'>Nordic</h4>
                 <p className='text-sm text-gray-600'>Standards</p>
               </div>
               <div className='text-center'>
-                <div className='w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-3'>
-                  <CheckCircle className='h-8 w-8 text-yellow-600' />
+                <div className='w-16 h-16 bg-[#DA5062]/15 rounded-full flex items-center justify-center mx-auto mb-3'>
+                  <CheckCircle className='h-8 w-8 text-[#DA5062]' />
                 </div>
                 <h4 className='font-semibold text-gray-900'>SOC 2</h4>
                 <p className='text-sm text-gray-600'>Compliance</p>
@@ -706,9 +706,9 @@ const MarketingPage: React.FC = () => {
 
           <div className='grid grid-cols-1 md:grid-cols-3 gap-8'>
             {/* Superadmin */}
-            <div className='bg-gradient-to-br from-red-50 to-red-100 p-8 rounded-3xl shadow-lg transform hover:scale-105 transition-all duration-300'>
+            <div className='bg-gradient-to-br from-[#DA5062]/10 to-[#DA5062]/20 p-8 rounded-3xl shadow-lg transform hover:scale-105 transition-all duration-300'>
               <div className='text-center mb-6'>
-                <div className='w-20 h-20 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-4'>
+                <div className='w-20 h-20 bg-[#DA5062]/100 rounded-full flex items-center justify-center mx-auto mb-4'>
                   <Settings className='h-10 w-10 text-white' />
                 </div>
                 <h3 className='text-2xl font-bold text-gray-900'>
@@ -720,25 +720,25 @@ const MarketingPage: React.FC = () => {
               </div>
               <div className='space-y-3'>
                 <div className='flex items-center'>
-                  <CheckCircle className='h-5 w-5 text-green-500 mr-3' />
+                  <CheckCircle className='h-5 w-5 text-[#A1BA53] mr-3' />
                   <span className='text-gray-700'>
                     {t('marketing.userRoles.superadmin.manageBranches')}
                   </span>
                 </div>
                 <div className='flex items-center'>
-                  <CheckCircle className='h-5 w-5 text-green-500 mr-3' />
+                  <CheckCircle className='h-5 w-5 text-[#A1BA53] mr-3' />
                   <span className='text-gray-700'>
                     {t('marketing.userRoles.superadmin.viewAllReports')}
                   </span>
                 </div>
                 <div className='flex items-center'>
-                  <CheckCircle className='h-5 w-5 text-green-500 mr-3' />
+                  <CheckCircle className='h-5 w-5 text-[#A1BA53] mr-3' />
                   <span className='text-gray-700'>
                     {t('marketing.userRoles.superadmin.createUsers')}
                   </span>
                 </div>
                 <div className='flex items-center'>
-                  <CheckCircle className='h-5 w-5 text-green-500 mr-3' />
+                  <CheckCircle className='h-5 w-5 text-[#A1BA53] mr-3' />
                   <span className='text-gray-700'>
                     {t('marketing.userRoles.superadmin.systemAnalytics')}
                   </span>
@@ -747,9 +747,9 @@ const MarketingPage: React.FC = () => {
             </div>
 
             {/* Branch Admin */}
-            <div className='bg-gradient-to-br from-blue-50 to-blue-100 p-8 rounded-3xl shadow-lg transform hover:scale-105 transition-all duration-300'>
+            <div className='bg-gradient-to-br from-[#7DA8CC]/10 to-[#7DA8CC]/20 p-8 rounded-3xl shadow-lg transform hover:scale-105 transition-all duration-300'>
               <div className='text-center mb-6'>
-                <div className='w-20 h-20 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4'>
+                <div className='w-20 h-20 bg-[#7DA8CC]/100 rounded-full flex items-center justify-center mx-auto mb-4'>
                   <Users className='h-10 w-10 text-white' />
                 </div>
                 <h3 className='text-2xl font-bold text-gray-900'>
@@ -761,34 +761,34 @@ const MarketingPage: React.FC = () => {
               </div>
               <div className='space-y-3'>
                 <div className='flex items-center'>
-                  <CheckCircle className='h-5 w-5 text-green-500 mr-3' />
+                  <CheckCircle className='h-5 w-5 text-[#A1BA53] mr-3' />
                   <span className='text-gray-700'>
                     {t('marketing.userRoles.branchAdmin.manageBranchOnly')}
                   </span>
                 </div>
                 <div className='flex items-center'>
-                  <CheckCircle className='h-5 w-5 text-green-500 mr-3' />
+                  <CheckCircle className='h-5 w-5 text-[#A1BA53] mr-3' />
                   <span className='text-gray-700'>
                     {t('marketing.userRoles.branchAdmin.viewBranchReports')}
                   </span>
                 </div>
                 <div className='flex items-center'>
-                  <CheckCircle className='h-5 w-5 text-green-500 mr-3' />
+                  <CheckCircle className='h-5 w-5 text-[#A1BA53] mr-3' />
                   <span className='text-gray-700'>
                     {t('marketing.userRoles.branchAdmin.manageInspectors')}
                   </span>
                 </div>
                 <div className='flex items-center'>
-                  <CheckCircle className='h-5 w-5 text-green-500 mr-3' />
+                  <CheckCircle className='h-5 w-5 text-[#A1BA53] mr-3' />
                   <span className='text-gray-700'>Create appointments</span>
                 </div>
               </div>
             </div>
 
             {/* Inspector */}
-            <div className='bg-gradient-to-br from-green-50 to-green-100 p-8 rounded-3xl shadow-lg transform hover:scale-105 transition-all duration-300'>
+            <div className='bg-gradient-to-br from-[#A1BA53]/10 to-[#A1BA53]/20 p-8 rounded-3xl shadow-lg transform hover:scale-105 transition-all duration-300'>
               <div className='text-center mb-6'>
-                <div className='w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4'>
+                <div className='w-20 h-20 bg-[#A1BA53] rounded-full flex items-center justify-center mx-auto mb-4'>
                   <Eye className='h-10 w-10 text-white' />
                 </div>
                 <h3 className='text-2xl font-bold text-gray-900'>Inspector</h3>
@@ -796,19 +796,19 @@ const MarketingPage: React.FC = () => {
               </div>
               <div className='space-y-3'>
                 <div className='flex items-center'>
-                  <CheckCircle className='h-5 w-5 text-green-500 mr-3' />
+                  <CheckCircle className='h-5 w-5 text-[#A1BA53] mr-3' />
                   <span className='text-gray-700'>Create reports</span>
                 </div>
                 <div className='flex items-center'>
-                  <CheckCircle className='h-5 w-5 text-green-500 mr-3' />
+                  <CheckCircle className='h-5 w-5 text-[#A1BA53] mr-3' />
                   <span className='text-gray-700'>Edit own reports</span>
                 </div>
                 <div className='flex items-center'>
-                  <CheckCircle className='h-5 w-5 text-green-500 mr-3' />
+                  <CheckCircle className='h-5 w-5 text-[#A1BA53] mr-3' />
                   <span className='text-gray-700'>View appointments</span>
                 </div>
                 <div className='flex items-center'>
-                  <CheckCircle className='h-5 w-5 text-green-500 mr-3' />
+                  <CheckCircle className='h-5 w-5 text-[#A1BA53] mr-3' />
                   <span className='text-gray-700'>Update status</span>
                 </div>
               </div>
@@ -831,7 +831,7 @@ const MarketingPage: React.FC = () => {
             {/* Case Study */}
             <div className='bg-white p-8 rounded-2xl shadow-lg'>
               <div className='flex items-center mb-6'>
-                <Building2 className='h-8 w-8 text-blue-600 mr-3' />
+                <Building2 className='h-8 w-8 text-[#7DA8CC] mr-3' />
                 <div>
                   <h3 className='text-xl font-bold text-gray-900'>Nordic Roofing AB</h3>
                   <p className='text-gray-600'>Multi-branch operation • 25 inspectors</p>
@@ -839,11 +839,11 @@ const MarketingPage: React.FC = () => {
               </div>
               <div className='grid grid-cols-2 gap-4 mb-6'>
                 <div className='text-center'>
-                  <div className='text-3xl font-bold text-green-600 mb-1'>40%</div>
+                  <div className='text-3xl font-bold text-[#A1BA53] mb-1'>40%</div>
                   <div className='text-sm text-gray-600'>Faster Reports</div>
                 </div>
                 <div className='text-center'>
-                  <div className='text-3xl font-bold text-blue-600 mb-1'>25%</div>
+                  <div className='text-3xl font-bold text-[#7DA8CC] mb-1'>25%</div>
                   <div className='text-sm text-gray-600'>Higher Acceptance</div>
                 </div>
               </div>
@@ -857,7 +857,7 @@ const MarketingPage: React.FC = () => {
             {/* Testimonial */}
             <div className='bg-white p-8 rounded-2xl shadow-lg'>
               <div className='flex items-center mb-6'>
-                <Users className='h-8 w-8 text-green-600 mr-3' />
+                <Users className='h-8 w-8 text-[#A1BA53] mr-3' />
                 <div>
                   <h3 className='text-xl font-bold text-gray-900'>Stockholm Roofing</h3>
                   <p className='text-gray-600'>Single branch • 8 inspectors</p>
@@ -865,11 +865,11 @@ const MarketingPage: React.FC = () => {
               </div>
               <div className='grid grid-cols-2 gap-4 mb-6'>
                 <div className='text-center'>
-                  <div className='text-3xl font-bold text-purple-600 mb-1'>60%</div>
+                  <div className='text-3xl font-bold text-[#956098] mb-1'>60%</div>
                   <div className='text-sm text-gray-600'>Less Admin Time</div>
                 </div>
                 <div className='text-center'>
-                  <div className='text-3xl font-bold text-yellow-600 mb-1'>100%</div>
+                  <div className='text-3xl font-bold text-[#DA5062] mb-1'>100%</div>
                   <div className='text-sm text-gray-600'>GDPR Compliant</div>
                 </div>
               </div>
@@ -882,7 +882,7 @@ const MarketingPage: React.FC = () => {
           </div>
 
           {/* Employee Wiki Section */}
-          <div className='bg-gradient-to-r from-blue-50 to-purple-50 rounded-3xl p-8'>
+          <div className='bg-gradient-to-r from-[#7DA8CC]/10 to-[#956098]/10 rounded-3xl p-8'>
             <div className='text-center mb-8'>
               <h3 className='text-3xl font-bold text-gray-900 mb-4'>Employee Knowledge Base</h3>
               <p className='text-lg text-gray-600 max-w-2xl mx-auto'>
@@ -892,8 +892,8 @@ const MarketingPage: React.FC = () => {
 
             <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
               <div className='bg-white p-6 rounded-xl shadow-sm'>
-                <div className='w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4'>
-                  <FileText className='h-6 w-6 text-blue-600' />
+                <div className='w-12 h-12 bg-[#7DA8CC]/15 rounded-lg flex items-center justify-center mb-4'>
+                  <FileText className='h-6 w-6 text-[#7DA8CC]' />
                 </div>
                 <h4 className='font-semibold text-gray-900 mb-2'>Quick Start Guides</h4>
                 <ul className='text-sm text-gray-600 space-y-1'>
@@ -905,8 +905,8 @@ const MarketingPage: React.FC = () => {
               </div>
 
               <div className='bg-white p-6 rounded-xl shadow-sm'>
-                <div className='w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4'>
-                  <Play className='h-6 w-6 text-green-600' />
+                <div className='w-12 h-12 bg-[#A1BA53]/15 rounded-lg flex items-center justify-center mb-4'>
+                  <Play className='h-6 w-6 text-[#A1BA53]' />
                 </div>
                 <h4 className='font-semibold text-gray-900 mb-2'>Video Tutorials</h4>
                 <ul className='text-sm text-gray-600 space-y-1'>
@@ -918,8 +918,8 @@ const MarketingPage: React.FC = () => {
               </div>
 
               <div className='bg-white p-6 rounded-xl shadow-sm'>
-                <div className='w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4'>
-                  <Settings className='h-6 w-6 text-purple-600' />
+                <div className='w-12 h-12 bg-[#956098]/15 rounded-lg flex items-center justify-center mb-4'>
+                  <Settings className='h-6 w-6 text-[#956098]' />
                 </div>
                 <h4 className='font-semibold text-gray-900 mb-2'>Support & FAQ</h4>
                 <ul className='text-sm text-gray-600 space-y-1'>
@@ -934,7 +934,7 @@ const MarketingPage: React.FC = () => {
             <div className='text-center mt-8'>
               <Link
                 to='/dashboard'
-                className='inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition-colors'
+                className='inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-[#7DA8CC] hover:bg-[#6890b3] transition-colors'
               >
                 Access Knowledge Base
                 <ArrowRight className='ml-2 h-4 w-4' />
@@ -959,38 +959,38 @@ const MarketingPage: React.FC = () => {
 
           <div className='grid grid-cols-1 md:grid-cols-2 gap-12'>
             {/* Frontend */}
-            <div className='bg-gradient-to-br from-blue-50 to-indigo-100 p-8 rounded-3xl shadow-lg'>
+            <div className='bg-gradient-to-br from-[#7DA8CC]/10 to-indigo-100 p-8 rounded-3xl shadow-lg'>
               <h3 className='text-2xl font-bold text-gray-900 mb-6 flex items-center'>
-                <div className='w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mr-3'>
+                <div className='w-8 h-8 bg-[#7DA8CC]/100 rounded-full flex items-center justify-center mr-3'>
                   <span className='text-white font-bold'>F</span>
                 </div>
                 Frontend Stack
               </h3>
               <div className='grid grid-cols-2 gap-4'>
                 <div className='bg-white p-4 rounded-xl shadow-sm'>
-                  <div className='w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-3'>
-                    <span className='text-blue-600 font-bold'>R</span>
+                  <div className='w-12 h-12 bg-[#7DA8CC]/15 rounded-lg flex items-center justify-center mb-3'>
+                    <span className='text-[#7DA8CC] font-bold'>R</span>
                   </div>
                   <h4 className='font-semibold text-gray-900'>React 18</h4>
                   <p className='text-sm text-gray-600'>Modern UI framework</p>
                 </div>
                 <div className='bg-white p-4 rounded-xl shadow-sm'>
-                  <div className='w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-3'>
-                    <span className='text-blue-600 font-bold'>TS</span>
+                  <div className='w-12 h-12 bg-[#7DA8CC]/15 rounded-lg flex items-center justify-center mb-3'>
+                    <span className='text-[#7DA8CC] font-bold'>TS</span>
                   </div>
                   <h4 className='font-semibold text-gray-900'>TypeScript</h4>
                   <p className='text-sm text-gray-600'>Type safety</p>
                 </div>
                 <div className='bg-white p-4 rounded-xl shadow-sm'>
-                  <div className='w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-3'>
-                    <span className='text-blue-600 font-bold'>T</span>
+                  <div className='w-12 h-12 bg-[#7DA8CC]/15 rounded-lg flex items-center justify-center mb-3'>
+                    <span className='text-[#7DA8CC] font-bold'>T</span>
                   </div>
                   <h4 className='font-semibold text-gray-900'>Tailwind</h4>
                   <p className='text-sm text-gray-600'>Utility-first CSS</p>
                 </div>
                 <div className='bg-white p-4 rounded-xl shadow-sm'>
-                  <div className='w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-3'>
-                    <span className='text-blue-600 font-bold'>P</span>
+                  <div className='w-12 h-12 bg-[#7DA8CC]/15 rounded-lg flex items-center justify-center mb-3'>
+                    <span className='text-[#7DA8CC] font-bold'>P</span>
                   </div>
                   <h4 className='font-semibold text-gray-900'>PWA</h4>
                   <p className='text-sm text-gray-600'>Progressive Web App</p>
@@ -999,38 +999,38 @@ const MarketingPage: React.FC = () => {
             </div>
 
             {/* Backend */}
-            <div className='bg-gradient-to-br from-green-50 to-emerald-100 p-8 rounded-3xl shadow-lg'>
+            <div className='bg-gradient-to-br from-[#A1BA53]/10 to-emerald-100 p-8 rounded-3xl shadow-lg'>
               <h3 className='text-2xl font-bold text-gray-900 mb-6 flex items-center'>
-                <div className='w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mr-3'>
+                <div className='w-8 h-8 bg-[#A1BA53] rounded-full flex items-center justify-center mr-3'>
                   <span className='text-white font-bold'>B</span>
                 </div>
                 Backend & Services
               </h3>
               <div className='grid grid-cols-2 gap-4'>
                 <div className='bg-white p-4 rounded-xl shadow-sm'>
-                  <div className='w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-3'>
-                    <span className='text-green-600 font-bold'>F</span>
+                  <div className='w-12 h-12 bg-[#A1BA53]/15 rounded-lg flex items-center justify-center mb-3'>
+                    <span className='text-[#A1BA53] font-bold'>F</span>
                   </div>
                   <h4 className='font-semibold text-gray-900'>Firebase</h4>
                   <p className='text-sm text-gray-600'>Authentication</p>
                 </div>
                 <div className='bg-white p-4 rounded-xl shadow-sm'>
-                  <div className='w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-3'>
-                    <span className='text-green-600 font-bold'>F</span>
+                  <div className='w-12 h-12 bg-[#A1BA53]/15 rounded-lg flex items-center justify-center mb-3'>
+                    <span className='text-[#A1BA53] font-bold'>F</span>
                   </div>
                   <h4 className='font-semibold text-gray-900'>Firestore</h4>
                   <p className='text-sm text-gray-600'>Real-time database</p>
                 </div>
                 <div className='bg-white p-4 rounded-xl shadow-sm'>
-                  <div className='w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-3'>
-                    <span className='text-green-600 font-bold'>C</span>
+                  <div className='w-12 h-12 bg-[#A1BA53]/15 rounded-lg flex items-center justify-center mb-3'>
+                    <span className='text-[#A1BA53] font-bold'>C</span>
                   </div>
                   <h4 className='font-semibold text-gray-900'>Cloud Functions</h4>
                   <p className='text-sm text-gray-600'>Serverless backend</p>
                 </div>
                 <div className='bg-white p-4 rounded-xl shadow-sm'>
-                  <div className='w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-3'>
-                    <span className='text-green-600 font-bold'>P</span>
+                  <div className='w-12 h-12 bg-[#A1BA53]/15 rounded-lg flex items-center justify-center mb-3'>
+                    <span className='text-[#A1BA53] font-bold'>P</span>
                   </div>
                   <h4 className='font-semibold text-gray-900'>Puppeteer</h4>
                   <p className='text-sm text-gray-600'>PDF generation</p>
@@ -1043,7 +1043,7 @@ const MarketingPage: React.FC = () => {
           <div className='text-center mt-16'>
             <Link
               to='/dashboard'
-              className='inline-flex items-center px-12 py-4 border border-transparent text-xl font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg'
+              className='inline-flex items-center px-12 py-4 border border-transparent text-xl font-medium rounded-lg text-white bg-[#7DA8CC] hover:bg-[#6890b3] transition-all duration-300 transform hover:scale-105 shadow-lg'
             >
               Start Your Free Trial
               <ArrowRight className='ml-3 h-6 w-6' />
@@ -1056,7 +1056,7 @@ const MarketingPage: React.FC = () => {
       <footer className='bg-gray-900 text-white py-12'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center'>
           <div className='flex items-center justify-center space-x-3 mb-4'>
-            <Building2 className='h-8 w-8 text-blue-400' />
+            <Building2 className='h-8 w-8 text-[#90b8d4]' />
             <span className='text-2xl font-bold'>Taklaget Service</span>
           </div>
           <p className='text-gray-400 mb-6'>

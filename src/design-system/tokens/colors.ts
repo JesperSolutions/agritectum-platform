@@ -1,8 +1,8 @@
 /**
  * Color Tokens - Material Design System
  *
+ * AG Brand Colors: Green (#A1BA53), Red (#DA5062), Blue (#7DA8CC), Purple (#956098)
  * Unified slate color palette for consistent UI styling.
- * Brand colors (orange, blue, yellow) are reserved for marketing pages only.
  */
 
 // Slate Color Palette (Primary UI Colors)
@@ -35,7 +35,7 @@ export const borders = {
   default: 'border-slate-200',
   input: 'border-slate-300',
   focus: 'border-slate-500',
-  error: 'border-red-500',
+  error: 'border-[#DA5062]',
   card: 'border-slate-200',
   divider: 'border-slate-200',
 };
@@ -52,39 +52,39 @@ export const text = {
   onSecondary: 'text-white',
 };
 
-// Semantic Colors (Status Indicators)
+// Semantic Colors (Status Indicators - using AG Brand Colors)
 export const semantic = {
   success: {
-    bg: 'bg-green-100',
-    bgHover: 'bg-green-200',
-    text: 'text-green-800',
-    border: 'border-green-200',
-    badge: 'bg-green-100 text-green-800',
-    button: 'bg-green-600 hover:bg-green-700 text-white',
+    bg: 'bg-[#A1BA53]/15',
+    bgHover: 'bg-[#A1BA53]/25',
+    text: 'text-[#5c6a2f]',
+    border: 'border-[#A1BA53]/30',
+    badge: 'bg-[#A1BA53]/15 text-[#5c6a2f]',
+    button: 'bg-[#A1BA53] hover:bg-[#8a9f47] text-white',
   },
   error: {
-    bg: 'bg-red-100',
-    bgHover: 'bg-red-200',
-    text: 'text-red-800',
-    border: 'border-red-200',
-    badge: 'bg-red-100 text-red-800',
-    button: 'bg-red-600 hover:bg-red-700 text-white',
+    bg: 'bg-[#DA5062]/15',
+    bgHover: 'bg-[#DA5062]/25',
+    text: 'text-[#872a38]',
+    border: 'border-[#DA5062]/30',
+    badge: 'bg-[#DA5062]/15 text-[#872a38]',
+    button: 'bg-[#DA5062] hover:bg-[#c23d4f] text-white',
   },
   warning: {
-    bg: 'bg-yellow-100',
-    bgHover: 'bg-yellow-200',
-    text: 'text-yellow-800',
-    border: 'border-yellow-200',
-    badge: 'bg-yellow-100 text-yellow-800',
-    button: 'bg-yellow-600 hover:bg-yellow-700 text-white',
+    bg: 'bg-[#DA5062]/10',
+    bgHover: 'bg-[#DA5062]/20',
+    text: 'text-[#872a38]',
+    border: 'border-[#DA5062]/20',
+    badge: 'bg-[#DA5062]/10 text-[#872a38]',
+    button: 'bg-[#DA5062] hover:bg-[#c23d4f] text-white',
   },
   info: {
-    bg: 'bg-blue-100',
-    bgHover: 'bg-blue-200',
-    text: 'text-blue-800',
-    border: 'border-blue-200',
-    badge: 'bg-blue-100 text-blue-800',
-    button: 'bg-blue-600 hover:bg-blue-700 text-white',
+    bg: 'bg-[#7DA8CC]/15',
+    bgHover: 'bg-[#7DA8CC]/25',
+    text: 'text-[#476279]',
+    border: 'border-[#7DA8CC]/30',
+    badge: 'bg-[#7DA8CC]/15 text-[#476279]',
+    button: 'bg-[#7DA8CC] hover:bg-[#6890b3] text-white',
   },
 };
 
@@ -106,11 +106,11 @@ export const button = {
     focus: 'focus-visible:ring-slate-500',
   },
   danger: {
-    bg: 'bg-red-600',
-    bgHover: 'hover:bg-red-700',
-    bgActive: 'active:bg-red-800',
+    bg: 'bg-[#DA5062]',
+    bgHover: 'hover:bg-[#c23d4f]',
+    bgActive: 'active:bg-[#872a38]',
     text: 'text-white',
-    focus: 'focus-visible:ring-red-500',
+    focus: 'focus-visible:ring-[#DA5062]',
   },
   ghost: {
     bg: 'bg-transparent',
@@ -136,12 +136,12 @@ export const input = {
   bgDisabled: 'bg-slate-100',
   border: 'border-slate-300',
   borderFocus: 'focus-visible:border-slate-500',
-  borderError: 'border-red-500',
+  borderError: 'border-[#DA5062]',
   text: 'text-slate-900',
   textPlaceholder: 'text-slate-400',
   textDisabled: 'text-slate-500',
   ring: 'focus-visible:ring-slate-500',
-  ringError: 'focus-visible:ring-red-500',
+  ringError: 'focus-visible:ring-[#DA5062]',
 };
 
 // Card Colors

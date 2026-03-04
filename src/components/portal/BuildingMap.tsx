@@ -242,7 +242,7 @@ const BuildingMap: React.FC<BuildingMapProps> = ({
           href={`https://www.openstreetmap.org/?mlat=${coords.lat}&mlon=${coords.lon}&zoom=16`}
           target='_blank'
           rel='noopener noreferrer'
-          className='text-blue-600 hover:text-blue-700 hover:underline'
+          className='text-[#7DA8CC] hover:text-[#6890b3] hover:underline'
         >
           {t('buildings.map.viewOnMap') || 'View on OpenStreetMap'}
         </a>

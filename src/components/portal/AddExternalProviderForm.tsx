@@ -131,9 +131,9 @@ const AddExternalProviderForm: React.FC<AddExternalProviderFormProps> = ({
 
         <form onSubmit={handleSubmit} className='p-6 space-y-6'>
           {/* Info Banner */}
-          <div className='bg-blue-50 border border-blue-200 rounded-lg p-4 flex gap-3'>
-            <AlertCircle className='w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5' />
-            <div className='text-sm text-blue-900'>
+          <div className='bg-[#7DA8CC]/10 border border-[#7DA8CC]/30 rounded-lg p-4 flex gap-3'>
+            <AlertCircle className='w-5 h-5 text-[#7DA8CC] flex-shrink-0 mt-0.5' />
+            <div className='text-sm text-[#3b5060]'>
               <p className='font-semibold mb-1'>
                 {t('externalProvider.infoTitle') || 'Add roofers not yet on the platform'}
               </p>
@@ -146,20 +146,20 @@ const AddExternalProviderForm: React.FC<AddExternalProviderFormProps> = ({
 
           {/* Duplicate Warning */}
           {duplicateProviders.length > 0 && (
-            <div className='bg-yellow-50 border border-yellow-200 rounded-lg p-4'>
+            <div className='bg-[#DA5062]/10 border border-[#DA5062]/30 rounded-lg p-4'>
               <div className='flex gap-3'>
-                <AlertCircle className='w-5 h-5 text-yellow-600 flex-shrink-0' />
+                <AlertCircle className='w-5 h-5 text-[#DA5062] flex-shrink-0' />
                 <div className='flex-1'>
-                  <p className='text-sm font-semibold text-yellow-900 mb-2'>
+                  <p className='text-sm font-semibold text-[#6e2530] mb-2'>
                     Similar provider(s) found:
                   </p>
                   {duplicateProviders.map(provider => (
-                    <div key={provider.id} className='text-sm text-yellow-800 mb-1'>
+                    <div key={provider.id} className='text-sm text-[#872a38] mb-1'>
                       • {provider.companyName}
                       {provider.cvr && ` (CVR: ${provider.cvr})`}
                     </div>
                   ))}
-                  <p className='text-xs text-yellow-700 mt-2'>
+                  <p className='text-xs text-[#c23d4f] mt-2'>
                     Check if this is the same company before creating a new entry.
                   </p>
                 </div>
@@ -177,13 +177,13 @@ const AddExternalProviderForm: React.FC<AddExternalProviderFormProps> = ({
               value={formData.companyName}
               onChange={e => setFormData({ ...formData, companyName: e.target.value })}
               onBlur={checkForDuplicates}
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                errors.companyName ? 'border-red-300' : 'border-gray-300'
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#7DA8CC] focus:border-transparent ${
+                errors.companyName ? 'border-[#DA5062]/40' : 'border-gray-300'
               }`}
               placeholder='e.g., ABC Roofing ApS'
             />
             {errors.companyName && (
-              <p className='text-sm text-red-600 mt-1'>{errors.companyName}</p>
+              <p className='text-sm text-[#DA5062] mt-1'>{errors.companyName}</p>
             )}
           </div>
 
@@ -196,13 +196,13 @@ const AddExternalProviderForm: React.FC<AddExternalProviderFormProps> = ({
               type='text'
               value={formData.contactName}
               onChange={e => setFormData({ ...formData, contactName: e.target.value })}
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                errors.contactName ? 'border-red-300' : 'border-gray-300'
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#7DA8CC] focus:border-transparent ${
+                errors.contactName ? 'border-[#DA5062]/40' : 'border-gray-300'
               }`}
               placeholder='e.g., John Hansen'
             />
             {errors.contactName && (
-              <p className='text-sm text-red-600 mt-1'>{errors.contactName}</p>
+              <p className='text-sm text-[#DA5062] mt-1'>{errors.contactName}</p>
             )}
           </div>
 
@@ -216,12 +216,12 @@ const AddExternalProviderForm: React.FC<AddExternalProviderFormProps> = ({
                 type='email'
                 value={formData.email}
                 onChange={e => setFormData({ ...formData, email: e.target.value })}
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                  errors.email ? 'border-red-300' : 'border-gray-300'
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#7DA8CC] focus:border-transparent ${
+                  errors.email ? 'border-[#DA5062]/40' : 'border-gray-300'
                 }`}
                 placeholder='contact@roofing.dk'
               />
-              {errors.email && <p className='text-sm text-red-600 mt-1'>{errors.email}</p>}
+              {errors.email && <p className='text-sm text-[#DA5062] mt-1'>{errors.email}</p>}
             </div>
 
             <div>
@@ -232,12 +232,12 @@ const AddExternalProviderForm: React.FC<AddExternalProviderFormProps> = ({
                 type='tel'
                 value={formData.phone}
                 onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                  errors.phone ? 'border-red-300' : 'border-gray-300'
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#7DA8CC] focus:border-transparent ${
+                  errors.phone ? 'border-[#DA5062]/40' : 'border-gray-300'
                 }`}
                 placeholder='+45 12 34 56 78'
               />
-              {errors.phone && <p className='text-sm text-red-600 mt-1'>{errors.phone}</p>}
+              {errors.phone && <p className='text-sm text-[#DA5062] mt-1'>{errors.phone}</p>}
             </div>
           </div>
 
@@ -250,7 +250,7 @@ const AddExternalProviderForm: React.FC<AddExternalProviderFormProps> = ({
               type='text'
               value={formData.address}
               onChange={e => setFormData({ ...formData, address: e.target.value })}
-              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7DA8CC] focus:border-transparent'
               placeholder='Street, City, Postal Code'
             />
           </div>
@@ -265,7 +265,7 @@ const AddExternalProviderForm: React.FC<AddExternalProviderFormProps> = ({
               value={formData.cvr}
               onChange={e => setFormData({ ...formData, cvr: e.target.value })}
               onBlur={checkForDuplicates}
-              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7DA8CC] focus:border-transparent'
               placeholder='12345678'
             />
             <p className='text-xs text-gray-600 mt-1'>
@@ -281,7 +281,7 @@ const AddExternalProviderForm: React.FC<AddExternalProviderFormProps> = ({
             <textarea
               value={formData.notes}
               onChange={e => setFormData({ ...formData, notes: e.target.value })}
-              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7DA8CC] focus:border-transparent'
               rows={3}
               placeholder='Any additional information about this provider...'
             />
@@ -320,7 +320,7 @@ const AddExternalProviderForm: React.FC<AddExternalProviderFormProps> = ({
             <button
               type='submit'
               disabled={loading || searchingDuplicates}
-              className='flex-1 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold disabled:opacity-50 flex items-center justify-center gap-2'
+              className='flex-1 px-6 py-2 bg-[#7DA8CC] text-white rounded-lg hover:bg-[#6890b3] font-semibold disabled:opacity-50 flex items-center justify-center gap-2'
             >
               {loading ? (
                 <>

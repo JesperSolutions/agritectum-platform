@@ -96,7 +96,7 @@ const EmailPreview: React.FC<EmailPreviewProps> = ({
         <DialogHeader className='flex flex-row items-center justify-between space-y-0 pb-4'>
           <div className='flex flex-col'>
             <DialogTitle className='flex items-center space-x-2'>
-              <Eye className='h-5 w-5 text-blue-600' />
+              <Eye className='h-5 w-5 text-[#7DA8CC]' />
               <span>Email Preview</span>
             </DialogTitle>
             <DialogDescription className='sr-only'>
@@ -110,15 +110,15 @@ const EmailPreview: React.FC<EmailPreviewProps> = ({
 
         {loading && (
           <div className='flex items-center justify-center py-8'>
-            <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600'></div>
+            <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-[#7DA8CC]'></div>
             <span className='ml-2 text-gray-600'>Generating preview...</span>
           </div>
         )}
 
         {error && (
-          <div className='bg-red-50 border border-red-200 rounded-lg p-4 mb-4'>
+          <div className='bg-[#DA5062]/10 border border-[#DA5062]/30 rounded-lg p-4 mb-4'>
             <div className='flex items-center'>
-              <div className='text-red-600 text-sm'>{error}</div>
+              <div className='text-[#DA5062] text-sm'>{error}</div>
             </div>
           </div>
         )}
@@ -212,7 +212,7 @@ const EmailPreview: React.FC<EmailPreviewProps> = ({
               <Button variant='outline' onClick={onClose}>
                 Cancel
               </Button>
-              <Button onClick={handleSendEmail} className='bg-blue-600 hover:bg-blue-700'>
+              <Button onClick={handleSendEmail} className='bg-[#7DA8CC] hover:bg-[#6890b3]'>
                 Send Email
               </Button>
             </div>

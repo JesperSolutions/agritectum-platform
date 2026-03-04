@@ -339,7 +339,7 @@ export const skipLinks = {
     skipLink.href = `#${targetId}`;
     skipLink.textContent = text;
     skipLink.className =
-      'sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 focus:z-50 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded';
+      'sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#7DA8CC] focus:text-white focus:rounded';
     return skipLink;
   },
 
@@ -360,4 +360,4 @@ export const skipLinks = {
 
 // Screen reader only class
 export const srOnly =
-  'sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 focus:z-50 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded';
+  'sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#7DA8CC] focus:text-white focus:rounded';
