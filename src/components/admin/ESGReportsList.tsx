@@ -211,11 +211,11 @@ const ESGReportsList: React.FC = () => {
     <div className='min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 font-material'>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
         {/* Header */}
-        <div className='mb-6'>
-          <h1 className='text-3xl font-bold text-gray-900'>
+        <div className='mb-6 bg-gradient-to-r from-slate-900 to-slate-700 rounded-2xl shadow-lg p-8 text-white'>
+          <h1 className='text-3xl font-bold tracking-tight'>
             {t('admin.esgReports.title') || 'ESG Reports'}
           </h1>
-          <p className='mt-2 text-gray-600'>
+          <p className='text-white/80 mt-2 text-base font-light'>
             {t('admin.esgReports.subtitle') || 'Manage and view all ESG service reports'}
           </p>
         </div>

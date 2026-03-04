@@ -454,11 +454,11 @@ const ESGService: React.FC = () => {
       <style>{rangeInputStyles}</style>
       <div className='space-y-8'>
         {/* Header */}
-        <div>
-          <h1 className='text-3xl font-bold text-gray-900'>
+        <div className='bg-gradient-to-r from-slate-900 to-slate-700 rounded-2xl shadow-lg p-8 text-white'>
+          <h1 className='text-3xl font-bold tracking-tight'>
             {t('admin.esgService.title') || 'ESG Service'}
           </h1>
-          <p className='mt-2 text-gray-600'>
+          <p className='text-white/80 mt-2 text-base font-light'>
             {t('admin.esgService.subtitle') ||
               'Create ESG reports with intelligent roof allocation'}
           </p>

@@ -741,14 +741,14 @@ const QATestingPage: React.FC = () => {
     <div className='min-h-screen bg-gray-50 p-6'>
       <div className='max-w-7xl mx-auto'>
         {/* Header */}
-        <div className='bg-white rounded-lg shadow-sm p-6 mb-6'>
+        <div className='bg-gradient-to-r from-slate-900 to-slate-700 rounded-2xl shadow-lg p-8 text-white mb-6'>
           <div className='flex items-center justify-between'>
             <div>
-              <h1 className='text-3xl font-bold text-gray-900 flex items-center gap-3'>
-                <Shield className='w-8 h-8 text-[#7DA8CC]' />
+              <h1 className='text-3xl font-bold tracking-tight flex items-center gap-3'>
+                <Shield className='w-8 h-8 text-white/80' />
                 QA Testing Dashboard
               </h1>
-              <p className='text-gray-600 mt-2'>
+              <p className='text-white/80 mt-2 text-base font-light'>
                 Comprehensive testing suite for all application functionality
               </p>
             </div>
@@ -756,7 +756,7 @@ const QATestingPage: React.FC = () => {
               <button
                 onClick={runAllTests}
                 disabled={isRunning}
-                className='px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium shadow-sm disabled:opacity-50 flex items-center gap-2'
+                className='px-4 py-2 bg-white text-slate-900 rounded-lg hover:bg-slate-50 transition-colors text-sm font-medium shadow-sm disabled:opacity-50 flex items-center gap-2'
               >
                 <RefreshCw className={`w-4 h-4 ${isRunning ? 'animate-spin' : ''}`} />
                 Run All Tests
@@ -764,7 +764,7 @@ const QATestingPage: React.FC = () => {
               <button
                 onClick={clearResults}
                 disabled={isRunning}
-                className='px-4 py-2 bg-slate-600 text-white rounded-lg hover:bg-slate-700 transition-colors text-sm font-medium shadow-sm disabled:opacity-50'
+                className='px-4 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors text-sm font-medium shadow-sm disabled:opacity-50'
               >
                 Clear Results
               </button>

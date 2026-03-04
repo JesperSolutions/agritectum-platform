@@ -23,16 +23,16 @@ const ReportFormHeader: React.FC<ReportFormHeaderProps> = ({
   const { t } = useIntl();
 
   return (
-    <div className='bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-6'>
+    <div className='bg-gradient-to-r from-slate-900 to-slate-700 rounded-2xl shadow-lg p-6 mb-6 text-white'>
       <div className='flex items-center justify-between flex-wrap gap-4'>
         <div>
-          <h1 className='text-2xl font-bold text-gray-900'>
+          <h1 className='text-2xl font-bold tracking-tight'>
             {mode === 'create'
               ? t('reportForm.header.newInspection')
               : t('reportForm.header.editReport')}
           </h1>
           {autoSaving && (
-            <p className='text-sm text-[#7DA8CC] mt-1'>{t('reportForm.header.autoSaving')}</p>
+            <p className='text-sm text-white/70 mt-1'>{t('reportForm.header.autoSaving')}</p>
           )}
         </div>
 

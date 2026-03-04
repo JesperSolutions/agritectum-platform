@@ -124,9 +124,9 @@ const AdminTestingPage: React.FC = () => {
   return (
     <div className='min-h-screen bg-gray-50 py-8'>
       <div className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8'>
-        <div className='mb-8'>
-          <h1 className='text-3xl font-bold text-gray-900'>Admin Testing Center</h1>
-          <p className='mt-2 text-gray-600'>
+        <div className='mb-8 bg-gradient-to-r from-slate-900 to-slate-700 rounded-2xl shadow-lg p-8 text-white'>
+          <h1 className='text-3xl font-bold tracking-tight'>Admin Testing Center</h1>
+          <p className='text-white/80 mt-2 text-base font-light'>
             Test and verify system functionality for production readiness
           </p>
         </div>

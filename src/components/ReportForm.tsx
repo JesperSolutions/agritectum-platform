@@ -1913,10 +1913,10 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
     <FormErrorBoundary>
       <div className='max-w-4xl mx-auto bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen py-8 px-4 sm:px-6 lg:px-8'>
         {/* Header */}
-        <div className='bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-6 overflow-hidden'>
+        <div className='bg-gradient-to-r from-slate-900 to-slate-700 rounded-2xl shadow-lg p-6 mb-6 overflow-hidden text-white'>
           <div className='flex items-center justify-between flex-wrap gap-4'>
             <div>
-              <h1 className='text-2xl font-bold text-slate-900'>
+              <h1 className='text-2xl font-bold tracking-tight'>
                 {mode === 'create'
                   ? formData.isOffer
                     ? t('form.title.createOffer')
@@ -1926,9 +1926,9 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                     : t('form.title.edit')}
               </h1>
               <div className='mt-1 flex items-center space-x-2'>
-                {autoSaving && <p className='text-sm text-slate-700'>{t('form.autoSaving')}</p>}
+                {autoSaving && <p className='text-sm text-white/70'>{t('form.autoSaving')}</p>}
                 {loadingCustomerData && (
-                  <p className='text-sm text-slate-500'>{t('form.loadingCustomerData')}</p>
+                  <p className='text-sm text-white/60'>{t('form.loadingCustomerData')}</p>
                 )}
                 {/* Prior reports loading disabled */}
               </div>
@@ -1949,8 +1949,8 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                     <div
                       className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-medium ${
                         step <= currentStep
-                          ? 'bg-slate-700 text-white'
-                          : 'bg-slate-200 text-slate-600'
+                          ? 'bg-white text-slate-900'
+                          : 'bg-white/20 text-white/60'
                       }`}
                     >
                       {step}
@@ -1958,19 +1958,19 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                     {step < 4 && (
                       <div
                         className={`w-4 sm:w-8 h-0.5 mx-1 sm:mx-2 ${
-                          step < currentStep ? 'bg-slate-700' : 'bg-slate-200'
+                          step < currentStep ? 'bg-white' : 'bg-white/20'
                         }`}
                       />
                     )}
                   </div>
                 ))}
               </div>
-              <div className='text-xs sm:text-sm text-slate-500 text-center'>
+              <div className='text-xs sm:text-sm text-white/60 text-center'>
                 {t('form.steps.stepOf', { current: currentStep, total: totalSteps })}
                 {currentStep === totalSteps && ` - ${t('form.steps.finalReview')}`}
               </div>
             </div>
-            <div className='mt-2 text-sm text-slate-600'>
+            <div className='mt-2 text-sm text-white/70'>
               {currentStep === 1 && t('form.sections.customerInfo')}
               {currentStep === 2 && t('form.sections.inspectionDetails')}
               {currentStep === 3 && t('form.sections.issues')}

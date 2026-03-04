@@ -324,17 +324,16 @@ const SchedulePage: React.FC = () => {
   return (
     <div className='space-y-6 font-material max-w-7xl mx-auto'>
       {/* Header */}
-      <div className='bg-white rounded-xl shadow-lg overflow-hidden'>
-        <div className='bg-gradient-to-r from-slate-900 to-slate-700 px-6 py-8'>
-          <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
-            <div>
-              <h1 className='text-3xl sm:text-4xl font-bold text-white tracking-tight mb-2'>
-                {t('schedule.title')}
-              </h1>
-              <p className='text-base sm:text-lg text-slate-200 font-light'>
-                {t('schedule.subtitle')}
-              </p>
-            </div>
+      <div className='bg-gradient-to-r from-slate-900 to-slate-700 rounded-2xl shadow-lg p-8 text-white'>
+        <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
+          <div>
+            <h1 className='text-3xl font-bold tracking-tight'>
+              {t('schedule.title')}
+            </h1>
+            <p className='text-white/80 mt-2 text-base font-light'>
+              {t('schedule.subtitle')}
+            </p>
+          </div>
             <div className='flex items-center gap-2'>
               <button
                 onClick={loadAppointments}
@@ -355,7 +354,6 @@ const SchedulePage: React.FC = () => {
               )}
             </div>
           </div>
-        </div>
       </div>
 
       {/* Enhanced Filter Panel */}

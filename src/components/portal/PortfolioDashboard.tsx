@@ -144,17 +144,19 @@ const PortfolioDashboard: React.FC = () => {
   return (
     <div className='space-y-6 p-6'>
       {/* Header */}
-      <div className='flex justify-between items-center'>
-        <div>
-          <h1 className='text-3xl font-bold text-gray-900'>Portfolio Overview</h1>
-          <p className='text-gray-600 mt-1'>Manage and analyze your building portfolio</p>
+      <div className='bg-gradient-to-r from-slate-900 to-slate-700 rounded-2xl shadow-lg p-8 text-white'>
+        <div className='flex justify-between items-center'>
+          <div>
+            <h1 className='text-3xl font-bold tracking-tight'>Portfolio Overview</h1>
+            <p className='text-white/80 mt-2 text-base font-light'>Manage and analyze your building portfolio</p>
+          </div>
+          <button
+            onClick={() => navigate('/portal/buildings')}
+            className='px-4 py-2 bg-white text-slate-900 rounded-lg hover:bg-slate-50 transition font-medium shadow-sm'
+          >
+            View All Buildings
+          </button>
         </div>
-        <button
-          onClick={() => navigate('/portal/buildings')}
-          className='px-4 py-2 bg-[#7DA8CC] text-white rounded-lg hover:bg-[#6890b3] transition'
-        >
-          View All Buildings
-        </button>
       </div>
 
       {/* Key Metrics Cards */}

@@ -40,8 +40,8 @@ During installation, configure:
 
 - **SMTP Host**: `smtp.mailersend.net`
 - **SMTP Port**: `2525` (or `587`)
-- **Username**: `MS_pSTeeA@test-dnvo4d912qrg5r86.mlsender.net`
-- **Password**: `mssp.NTOLQYw.351ndgwp1z5lzqx8.TameInd`
+- **Username**: `<SMTP_USERNAME from MailerSend dashboard>`
+- **Password**: `<stored in Google Secret Manager - NEVER commit>`
 - **Mail Collection**: `mail`
 - **Templates Collection**: `emailTemplates`
 - **Default FROM**: `noreply@taklaget.app`

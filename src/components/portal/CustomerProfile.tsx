@@ -134,13 +134,17 @@ const CustomerProfile: React.FC = () => {
   return (
     <div className='max-w-5xl mx-auto p-6'>
       {/* Page Header */}
-      <div className='mb-6'>
-        <h1 className='text-3xl font-light tracking-tight text-slate-900'>
-          {t('profile.title') || 'Profile Settings'}
-        </h1>
-        <p className='text-slate-600 mt-2'>
-          {t('profile.subtitle') || 'Manage your account information and preferences'}
-        </p>
+      <div className='bg-gradient-to-r from-slate-900 to-slate-700 rounded-2xl shadow-lg p-8 text-white mb-6'>
+        <div className='flex items-center justify-between'>
+          <div>
+            <h1 className='text-3xl font-bold tracking-tight'>
+              {t('profile.title') || 'Profile Settings'}
+            </h1>
+            <p className='text-white/80 mt-2 text-base font-light'>
+              {t('profile.subtitle') || 'Manage your account information and preferences'}
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Tab Navigation */}

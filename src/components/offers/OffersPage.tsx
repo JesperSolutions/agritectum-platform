@@ -324,7 +324,7 @@ const OffersPage: React.FC = () => {
         <div className='bg-gradient-to-r from-slate-900 to-slate-700 rounded-b-2xl shadow-lg p-8 text-white'>
           <div className='flex items-center justify-between'>
             <div>
-              <h1 className='text-3xl font-medium tracking-tight'>{t('offers.title')}</h1>
+              <h1 className='text-3xl font-bold tracking-tight'>{t('offers.title')}</h1>
               <p className='text-white text-opacity-90 mt-2 text-base font-light'>
                 {t('offers.subtitle')}
               </p>

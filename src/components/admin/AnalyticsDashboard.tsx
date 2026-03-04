@@ -712,17 +712,17 @@ const AnalyticsDashboard: React.FC = () => {
   return (
     <div className='space-y-6 font-material max-w-7xl mx-auto bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen py-8'>
       {/* Material Design Header */}
-      <div className='bg-white p-8 rounded-xl shadow-sm border border-slate-200'>
+      <div className='bg-gradient-to-r from-slate-900 to-slate-700 rounded-2xl shadow-lg p-8 text-white'>
         <div className='flex items-center justify-between'>
           <div>
-            <h2 className='text-3xl font-bold text-slate-900 flex items-center tracking-tight'>
-              <BarChart3 className='w-8 h-8 mr-3 text-slate-600' />
+            <h2 className='text-3xl font-bold tracking-tight flex items-center'>
+              <BarChart3 className='w-8 h-8 mr-3 text-white/80' />
               {t('analytics.dashboard')}
             </h2>
-            <p className='text-base text-slate-600 mt-2'>{t('analytics.comprehensiveInsights')}</p>
+            <p className='text-white/80 mt-2 text-base font-light'>{t('analytics.comprehensiveInsights')}</p>
           </div>
           <div className='flex items-center space-x-4'>
-            <div className='flex items-center space-x-2 text-sm text-slate-500'>
+            <div className='flex items-center space-x-2 text-sm text-white/70'>
               <Calendar className='w-4 h-4' />
               <span>
                 {t('common.lastUpdated')}: {new Date().toLocaleDateString()}
@@ -734,8 +734,8 @@ const AnalyticsDashboard: React.FC = () => {
                 onClick={() => setShowFilters(!showFilters)}
                 className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm transition-colors shadow-sm ${
                   showFilters
-                    ? 'bg-slate-200 text-slate-900 border border-slate-300'
-                    : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                    ? 'bg-white/20 text-white border border-white/30'
+                    : 'bg-white/10 hover:bg-white/20 text-white'
                 }`}
               >
                 <Filter className='w-4 h-4' />
@@ -747,7 +747,7 @@ const AnalyticsDashboard: React.FC = () => {
               <div className='relative'>
                 <button
                   onClick={() => exportData('csv')}
-                  className='flex items-center space-x-2 px-3 py-2 bg-slate-700 hover:bg-slate-800 text-white rounded-lg text-sm transition-colors shadow-sm'
+                  className='flex items-center space-x-2 px-3 py-2 bg-white hover:bg-slate-50 text-slate-900 rounded-lg text-sm transition-colors shadow-sm'
                 >
                   <Download className='w-4 h-4' />
                   <span>{t('common.buttons.export')}</span>

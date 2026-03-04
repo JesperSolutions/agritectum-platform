@@ -534,17 +534,17 @@ const AllReports: React.FC<AllReportsProps> = () => {
     <div className='min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 font-material'>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
         {/* Material Design Header */}
-        <div className='mb-8 bg-white rounded-xl shadow-sm border border-slate-200 p-6'>
+        <div className='mb-8 bg-gradient-to-r from-slate-900 to-slate-700 rounded-2xl shadow-lg p-8 text-white'>
           <div className='flex items-center justify-between'>
             <div>
-              <h1 className='text-3xl font-bold text-slate-900 tracking-tight'>
+              <h1 className='text-3xl font-bold tracking-tight'>
                 {currentUser?.role === 'branchAdmin'
                   ? t('reports.branchReports')
                   : currentUser?.role === 'inspector'
                     ? t('navigation.myReports')
                     : t('reports.title')}
               </h1>
-              <p className='mt-2 text-slate-600'>
+              <p className='text-white/80 mt-2 text-base font-light'>
                 {currentUser?.role === 'branchAdmin'
                   ? `${t('reports.subtitle')} (${filteredAndSortedReports.length} total)`
                   : currentUser?.role === 'inspector'
@@ -555,13 +555,13 @@ const AllReports: React.FC<AllReportsProps> = () => {
             <div className='flex flex-wrap gap-3 items-center justify-end'>
               {selectedReports.size > 0 && (
                 <div className='flex items-center space-x-2 bg-slate-100 px-4 py-2 rounded-lg border border-slate-200'>
-                  <span className='text-sm font-medium text-slate-900'>
+                  <span className='text-sm font-medium text-white'>
                     {selectedReports.size} selected
                   </span>
                   <button
                     onClick={handleBulkExport}
                     disabled={isBulkExporting}
-                    className='inline-flex items-center px-3 py-1 text-sm font-medium text-white bg-slate-700 rounded-lg hover:bg-slate-800 disabled:opacity-50 shadow-sm'
+                    className='inline-flex items-center px-3 py-1 text-sm font-medium text-slate-900 bg-white rounded-lg hover:bg-slate-50 disabled:opacity-50 shadow-sm'
                   >
                     {isBulkExporting ? (
                       <>
@@ -578,7 +578,7 @@ const AllReports: React.FC<AllReportsProps> = () => {
                   <button
                     onClick={confirmBulkDelete}
                     disabled={isBulkDeleting}
-                    className='inline-flex items-center px-3 py-1 text-sm font-medium text-white bg-slate-700 rounded-lg hover:bg-slate-800 disabled:opacity-50 shadow-sm'
+                    className='inline-flex items-center px-3 py-1 text-sm font-medium text-slate-900 bg-white rounded-lg hover:bg-slate-50 disabled:opacity-50 shadow-sm'
                   >
                     {isBulkDeleting ? (
                       <>
@@ -594,7 +594,7 @@ const AllReports: React.FC<AllReportsProps> = () => {
                   </button>
                   <button
                     onClick={() => setSelectedReports(new Set())}
-                    className='text-slate-700 hover:text-slate-900 text-sm font-medium'
+                    className='text-white/70 hover:text-white text-sm font-medium'
                   >
                     Clear
                   </button>
@@ -603,20 +603,20 @@ const AllReports: React.FC<AllReportsProps> = () => {
 
               <button
                 onClick={() => setShowCustomerSearch(!showCustomerSearch)}
-                className='inline-flex items-center px-3 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 shadow-sm'
+                className='inline-flex items-center px-3 py-2 border border-white/30 rounded-lg text-sm font-medium text-white hover:bg-white/10 shadow-sm'
               >
                 <User className='h-4 w-4 mr-2' />
                 {showCustomerSearch ? t('customer.hideSearch') : t('customer.search')}
               </button>
 
               {/* View Mode Toggle */}
-              <div className='flex items-center gap-2 bg-slate-100 rounded-lg p-1 border border-slate-200'>
+              <div className='flex items-center gap-2 bg-white/10 rounded-lg p-1'>
                 <button
                   onClick={() => setViewMode('enhanced')}
                   className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
                     viewMode === 'enhanced'
                       ? 'bg-white text-slate-900 shadow-sm'
-                      : 'text-slate-600 hover:text-slate-900'
+                      : 'text-white/70 hover:text-white'
                   }`}
                 >
                   📊 Analytics
@@ -626,7 +626,7 @@ const AllReports: React.FC<AllReportsProps> = () => {
                   className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
                     viewMode === 'traditional'
                       ? 'bg-white text-slate-900 shadow-sm'
-                      : 'text-slate-600 hover:text-slate-900'
+                      : 'text-white/70 hover:text-white'
                   }`}
                 >
                   📋 List
@@ -634,7 +634,7 @@ const AllReports: React.FC<AllReportsProps> = () => {
               </div>
               <button
                 onClick={() => setShowFilters(!showFilters)}
-                className='inline-flex items-center px-3 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 shadow-sm'
+                className='inline-flex items-center px-3 py-2 border border-white/30 rounded-lg text-sm font-medium text-white hover:bg-white/10 shadow-sm'
               >
                 <Filter className='h-4 w-4 mr-2' />
                 {showFilters ? t('reports.hideFilters') : t('reports.showFilters')}
@@ -644,10 +644,10 @@ const AllReports: React.FC<AllReportsProps> = () => {
               <div className='relative'>
                 <button
                   onClick={() => setShowToolsMenu(prev => !prev)}
-                  className='inline-flex items-center px-3 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 shadow-sm'
+                  className='inline-flex items-center px-3 py-2 border border-white/30 rounded-lg text-sm font-medium text-white hover:bg-white/10 shadow-sm'
                 >
                   {t('reports.tools') || 'Tools'}
-                  <ChevronDown className='h-4 w-4 ml-2 text-slate-500' />
+                  <ChevronDown className='h-4 w-4 ml-2 text-white/60' />
                 </button>
                 {showToolsMenu && (
                   <div className='absolute right-0 mt-2 w-64 bg-white border border-slate-200 rounded-lg shadow-lg z-10'>
@@ -671,7 +671,7 @@ const AllReports: React.FC<AllReportsProps> = () => {
               </div>
               <button
                 onClick={() => fetchReports()}
-                className='inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-slate-700 hover:bg-slate-800 shadow-sm'
+                className='inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-slate-900 bg-white hover:bg-slate-50 shadow-sm'
               >
                 {t('reports.refresh')}
               </button>

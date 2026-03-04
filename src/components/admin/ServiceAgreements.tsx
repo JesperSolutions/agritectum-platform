@@ -321,27 +321,27 @@ const ServiceAgreements: React.FC = () => {
     <div className='min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 font-material'>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
         {/* Material Design Header */}
-        <div className='mb-8 bg-white p-8 rounded-xl shadow-sm border border-slate-200'>
+        <div className='mb-8 bg-gradient-to-r from-slate-900 to-slate-700 rounded-2xl shadow-lg p-8 text-white'>
           <div className='flex items-center justify-between'>
             <div>
-              <h1 className='text-3xl font-bold text-slate-900 tracking-tight'>
+              <h1 className='text-3xl font-bold tracking-tight'>
                 {t('serviceAgreement.title')}
               </h1>
-              <p className='mt-2 text-slate-600'>
+              <p className='text-white/80 mt-2 text-base font-light'>
                 {t('serviceAgreement.subtitle', { count: filteredAgreements.length })}
               </p>
             </div>
             <div className='flex space-x-3'>
               <button
                 onClick={handleCreate}
-                className='inline-flex items-center px-6 py-3 border border-transparent rounded-lg shadow-sm hover:shadow-md text-sm font-medium text-white bg-slate-700 hover:bg-slate-800 transition-all uppercase tracking-wide'
+                className='inline-flex items-center px-6 py-3 border border-transparent rounded-lg shadow-sm hover:shadow-md text-sm font-medium text-slate-900 bg-white hover:bg-slate-50 transition-all uppercase tracking-wide'
               >
                 <Plus className='h-5 w-5 mr-2' />
                 {t('serviceAgreement.addAgreement')}
               </button>
               <button
                 onClick={fetchAgreements}
-                className='inline-flex items-center px-4 py-2 border border-slate-200 rounded-lg shadow-sm text-sm font-medium text-slate-700 bg-white hover:bg-slate-50'
+                className='inline-flex items-center px-4 py-2 border border-white/30 rounded-lg shadow-sm text-sm font-medium text-white hover:bg-white/10'
               >
                 {t('serviceAgreement.refresh') || 'Uppdatera'}
               </button>

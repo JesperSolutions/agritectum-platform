@@ -777,21 +777,21 @@ Avsluta prenumeration: {{unsubscribeLink}}`,
     <div className='min-h-screen bg-gray-50 font-material'>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
         {/* Header */}
-        <div className='mb-8 bg-white rounded-material shadow-material-2 p-6'>
+        <div className='mb-8 bg-gradient-to-r from-slate-900 to-slate-700 rounded-2xl shadow-lg p-8 text-white'>
           <div className='flex items-center justify-between'>
             <div>
-              <h1 className='text-3xl font-light text-gray-900 tracking-tight flex items-center'>
-                <Mail className='h-8 w-8 mr-3 text-[#7DA8CC]' />
+              <h1 className='text-3xl font-bold tracking-tight flex items-center'>
+                <Mail className='h-8 w-8 mr-3 text-white/80' />
                 Email Template Viewer
               </h1>
-              <p className='mt-2 text-gray-600 font-light'>
+              <p className='text-white/80 mt-2 text-base font-light'>
                 Preview and test email templates without sending actual emails
               </p>
             </div>
             <div className='flex space-x-3'>
               <button
                 onClick={() => setLoading(true)}
-                className='inline-flex items-center px-4 py-2 border border-slate-300 rounded-lg shadow-sm text-sm font-medium text-slate-700 bg-white hover:bg-slate-50'
+                className='inline-flex items-center px-4 py-2 border border-white/30 rounded-lg shadow-sm text-sm font-medium text-white hover:bg-white/10'
               >
                 <RefreshCw className='h-4 w-4 mr-2' />
                 Refresh

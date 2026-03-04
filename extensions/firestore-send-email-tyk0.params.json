@@ -5,8 +5,8 @@
   "DEFAULT_FROM": "noreply@taklaget.app",
   "DEFAULT_REPLY_TO": "support@taklaget.app",
   "MAIL_COLLECTION": "mail",
-  "SMTP_CONNECTION_URI": "smtps://MS_JABy3i@test-yxj6lj9qdz74do2r.mlsender.net@smtp.mailersend.net:587",
-  "SMTP_PASSWORD": "projects/956094535116/secrets/SMTP_PASSWORD/versions/1",
+  "SMTP_CONNECTION_URI": "smtps://YOUR_SMTP_USERNAME@smtp.mailersend.net:587",
+  "SMTP_PASSWORD": "projects/YOUR_PROJECT_ID/secrets/SMTP_PASSWORD/versions/latest",
   "TEMPLATES_COLLECTION": "mail-templates",
   "TTL_EXPIRE_TYPE": "week",
   "TTL_EXPIRE_VALUE": "1"

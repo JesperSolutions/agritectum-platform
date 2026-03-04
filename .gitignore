@@ -36,6 +36,28 @@ service-account*.json
 config/credentials/*.json
 !config/credentials/*.example.json
 
+# Security: Extension config with credentials (use .env.example as template)
+extension-manifest.json
+extensions.yaml
+extensions/*.params.json
+!extensions/*.env.example
+
+# Security: Temporary scripts with credentials
+install_extension.py
+deploy_extension.py
+auto_install_extension.py
+install_ext.bat
+install-email-extension.sh
+test-email.js
+send-test-email.js
+check-email-status.js
+check-email-full.js
+find-marcus.js
+update-marcus-email.js
+generate-marcus-password.js
+send-mailersend-test.js
+scripts/send-test-email.cjs
+
 # Security: Environment Files with Secrets
 *.env.local
 *.env.production

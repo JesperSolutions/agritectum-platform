@@ -573,19 +573,19 @@ const UserManagement: React.FC = () => {
   return (
     <div className='space-y-6 font-material max-w-7xl mx-auto bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen py-8'>
       {/* Material Design Header */}
-      <div className='bg-white p-8 rounded-xl shadow-sm border border-slate-200'>
+      <div className='bg-gradient-to-r from-slate-900 to-slate-700 rounded-2xl shadow-lg p-8 text-white'>
         <div className='flex items-center justify-between flex-wrap gap-4'>
           <div>
-            <h1 className='text-3xl font-bold text-slate-900 flex items-center tracking-tight'>
-              <Users className='w-8 h-8 mr-3 text-slate-600' />
+            <h1 className='text-3xl font-bold tracking-tight flex items-center'>
+              <Users className='w-8 h-8 mr-3 text-white/80' />
               {t('admin.userManagement.title')}
             </h1>
-            <p className='text-slate-600 mt-2'>{t('admin.userManagement.subtitle')}</p>
+            <p className='text-white/80 mt-2 text-base font-light'>{t('admin.userManagement.subtitle')}</p>
           </div>
 
           <button
             onClick={() => setShowForm(true)}
-            className='inline-flex items-center px-6 py-3 border border-transparent text-sm font-medium rounded-lg text-white bg-slate-700 hover:bg-slate-800 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-all uppercase tracking-wide'
+            className='inline-flex items-center px-6 py-3 border border-transparent text-sm font-medium rounded-lg text-slate-900 bg-white hover:bg-slate-50 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white/50 transition-all uppercase tracking-wide'
           >
             <Plus className='w-5 h-5 mr-2' />
             {t('admin.userManagement.addUser')}

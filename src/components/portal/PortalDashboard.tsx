@@ -887,15 +887,21 @@ const PortalDashboard: React.FC = () => {
   return (
     <div className='space-y-8'>
       {/* Header with Customize Button */}
-      <div className='flex items-start justify-between'>
-        <button
-          onClick={() => setShowCustomizer(true)}
-          className='flex items-center gap-2 px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors shadow-sm whitespace-nowrap'
-          title={t('portal.customizer.buttonTitle')}
-        >
-          <Sliders className='w-4 h-4' />
-          {t('portal.customizer.button')}
-        </button>
+      <div className='bg-gradient-to-r from-slate-900 to-slate-700 rounded-2xl shadow-lg p-8 text-white'>
+        <div className='flex items-center justify-between'>
+          <div>
+            <h1 className='text-3xl font-bold tracking-tight'>{t('portal.dashboard.title') || 'Portal Dashboard'}</h1>
+            <p className='text-white/80 mt-2 text-base font-light'>{t('portal.dashboard.subtitle') || 'Your building overview and management'}</p>
+          </div>
+          <button
+            onClick={() => setShowCustomizer(true)}
+            className='flex items-center gap-2 px-4 py-2 bg-white text-slate-900 rounded-lg hover:bg-slate-50 transition-colors shadow-sm whitespace-nowrap font-medium'
+            title={t('portal.customizer.buttonTitle')}
+          >
+            <Sliders className='w-4 h-4' />
+            {t('portal.customizer.button')}
+          </button>
+        </div>
       </div>
 
       {/* Render widgets in customized order */}

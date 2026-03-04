@@ -226,14 +226,14 @@ const CustomerProfile: React.FC = () => {
             {t('customerProfile.backToCustomers') || 'Back to Customers'}
           </button>
 
-          <div className='bg-white rounded-xl shadow-sm border border-slate-200 p-6'>
+          <div className='bg-gradient-to-r from-slate-900 to-slate-700 rounded-2xl shadow-lg p-8 text-white'>
             <div className='flex items-start justify-between'>
               <div>
-                <h1 className='text-3xl font-bold text-slate-900 mb-2'>{customer.name}</h1>
+                <h1 className='text-3xl font-bold tracking-tight mb-2'>{customer.name}</h1>
                 {customer.company && (
-                  <p className='text-lg text-slate-600 mb-4'>{customer.company}</p>
+                  <p className='text-lg text-white/80 mb-4'>{customer.company}</p>
                 )}
-                <div className='flex flex-wrap gap-4 text-sm text-slate-600'>
+                <div className='flex flex-wrap gap-4 text-sm text-white/70'>
                   {customer.email && (
                     <div className='flex items-center gap-2'>
                       <Mail className='w-4 h-4' />
@@ -255,13 +255,13 @@ const CustomerProfile: React.FC = () => {
                 </div>
               </div>
               <div className='text-right'>
-                <div className='text-sm text-slate-500 mb-1'>
+                <div className='text-sm text-white/60 mb-1'>
                   {t('customerProfile.totalReports') || 'Total Reports'}
                 </div>
-                <div className='text-2xl font-bold text-slate-900'>
+                <div className='text-2xl font-bold text-white'>
                   {customer.totalReports || 0}
                 </div>
-                <div className='text-sm text-slate-500 mt-2 mb-1'>
+                <div className='text-sm text-white/60 mt-2 mb-1'>
                   {t('customerProfile.totalRevenue') || 'Total Revenue'}
                 </div>
                 <div className='text-xl font-semibold text-[#A1BA53]'>

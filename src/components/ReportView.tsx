@@ -507,14 +507,14 @@ const ReportView: React.FC = () => {
     <FormErrorBoundary>
       <div className='max-w-4xl mx-auto space-y-6'>
         {/* Header */}
-        <div className='bg-white p-6 rounded-xl shadow-sm border border-slate-200'>
+        <div className='bg-gradient-to-r from-slate-900 to-slate-700 rounded-2xl shadow-lg p-6 text-white'>
           <div className='flex items-start justify-between gap-6'>
             {/* Left Section - Logo and Title */}
             <div className='flex items-start gap-4 flex-1 min-w-0'>
               {/* Branch Logo */}
               <div className='flex-shrink-0'>
                 {branchInfo?.logoUrl ? (
-                  <div className='bg-white rounded-xl p-2 border border-slate-200 shadow-sm'>
+                  <div className='bg-white rounded-xl p-2 shadow-sm'>
                     <img
                       src={branchInfo.logoUrl}
                       alt={`${branchInfo.name} logo`}
@@ -531,7 +531,7 @@ const ReportView: React.FC = () => {
                   </div>
                 ) : null}
                 {(!branchInfo?.logoUrl || branchInfo.logoUrl === '') && (
-                  <div className='fallback-logo flex items-center justify-center bg-white rounded-xl p-2 border border-slate-200 shadow-sm'>
+                  <div className='fallback-logo flex items-center justify-center bg-white rounded-xl p-2 shadow-sm'>
                     <AgritectumLogo size='sm' showText={false} />
                   </div>
                 )}
@@ -540,20 +540,20 @@ const ReportView: React.FC = () => {
               {/* Title and Info */}
               <div className='flex-1 min-w-0'>
                 <div className='flex items-center gap-3 mb-2'>
-                  <h1 className='text-2xl font-bold text-slate-900'>
+                  <h1 className='text-2xl font-bold tracking-tight'>
                     {t('reports.public.title') || 'Takservice rapport'}
                   </h1>
                   {report.isOffer && (
-                    <span className='inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700'>
+                    <span className='inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-white/20 text-white'>
                       <DollarSign className='w-3 h-3 mr-1' />
                       {t('offer.fields.isOffer')}
                     </span>
                   )}
                 </div>
-                <p className='text-slate-900 font-medium mb-1'>{report.customerName}</p>
-                {branchInfo && <p className='text-sm text-slate-600'>{branchInfo.name}</p>}
+                <p className='text-white font-medium mb-1'>{report.customerName}</p>
+                {branchInfo && <p className='text-sm text-white/70'>{branchInfo.name}</p>}
                 {report.offerValue && (
-                  <p className='text-sm text-slate-600 mt-1'>
+                  <p className='text-sm text-white/70 mt-1'>
                     {t('offer.fields.offerValue')}: {formatCurrencySafe(report.offerValue)}
                   </p>
                 )}

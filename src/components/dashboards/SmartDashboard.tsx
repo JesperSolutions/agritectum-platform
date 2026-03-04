@@ -572,7 +572,7 @@ const SmartDashboard: React.FC = () => {
       <div className='bg-gradient-to-r from-slate-900 to-slate-700 rounded-2xl shadow-lg p-8 text-white'>
         <div className='flex items-center justify-between'>
           <div>
-            <h1 className='text-3xl font-medium tracking-tight'>{headerConfig.title}</h1>
+            <h1 className='text-3xl font-bold tracking-tight'>{headerConfig.title}</h1>
             <p className='text-white text-opacity-90 mt-2 text-base font-light'>
               {headerConfig.subtitle}
             </p>

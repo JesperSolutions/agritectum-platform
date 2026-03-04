@@ -142,9 +142,9 @@ const BuildingComparisonTool: React.FC = () => {
   return (
     <div className='space-y-6 p-6'>
       {/* Header */}
-      <div>
-        <h1 className='text-3xl font-bold text-gray-900'>Building Comparison</h1>
-        <p className='text-gray-600 mt-1'>Compare costs, performance, and metrics across your buildings</p>
+      <div className='bg-gradient-to-r from-slate-900 to-slate-700 rounded-2xl shadow-lg p-8 text-white'>
+        <h1 className='text-3xl font-bold tracking-tight'>Building Comparison</h1>
+        <p className='text-white/80 mt-2 text-base font-light'>Compare costs, performance, and metrics across your buildings</p>
       </div>
 
       {/* Building Selection */}
