@@ -1,5 +1,6 @@
 import puppeteer from 'puppeteer';
 import { onRequest } from 'firebase-functions/v2/https';
+import * as admin from 'firebase-admin';
 
 /**
  * Simplified PDF Generation Service
@@ -19,10 +20,17 @@ import { onRequest } from 'firebase-functions/v2/https';
  */
 export const generateReportPDF = onRequest({ region: 'europe-west1' }, async (req, res) => {
   try {
-    // Enable CORS
-    res.set('Access-Control-Allow-Origin', '*');
+    // CORS - restrict to known origins
+    const allowedOrigins = [
+      'https://agritectum-platform.web.app',
+      'https://agritectum-platform.firebaseapp.com',
+    ];
+    const origin = req.headers.origin || '';
+    if (allowedOrigins.includes(origin)) {
+      res.set('Access-Control-Allow-Origin', origin);
+    }
     res.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    res.set('Access-Control-Allow-Headers', 'Content-Type');
+    res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
     if (req.method === 'OPTIONS') {
       res.status(204).send('');
@@ -37,6 +45,20 @@ export const generateReportPDF = onRequest({ region: 'europe-west1' }, async (re
       return;
     }
 
+    // Verify the caller is authenticated
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      res.status(401).json({ success: false, error: 'Missing or invalid Authorization header' });
+      return;
+    }
+    try {
+      const idToken = authHeader.split('Bearer ')[1];
+      await admin.auth().verifyIdToken(idToken);
+    } catch (tokenError) {
+      res.status(401).json({ success: false, error: 'Invalid or expired authentication token' });
+      return;
+    }
+
     const { reportId, format, margin } = req.body;
 
     if (!reportId) {
@@ -48,7 +70,7 @@ export const generateReportPDF = onRequest({ region: 'europe-west1' }, async (re
     }
 
     // Construct the public report URL
-    const baseUrl = process.env.APP_URL || 'https://taklaget-service-app.web.app';
+    const baseUrl = process.env.APP_URL || 'https://agritectum-platform.web.app';
     const reportUrl = `${baseUrl}/report/public/${reportId}`;
 
     console.log(`🖨️ Generating PDF for report: ${reportId}`);

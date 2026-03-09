@@ -81,14 +81,12 @@ export const resetUserPassword = onCall(
         password: passwordToSet,
       });
 
-      // Store password in Firestore for viewing (encrypted or plain - for admin convenience)
-      // Note: In production, you might want to encrypt this or use a secure vault
+      // Record that a password reset occurred (do NOT store the password in plaintext)
       await admin
         .firestore()
         .collection('users')
         .doc(userId)
         .update({
-          temporaryPassword: passwordToSet,
           passwordLastReset: admin.firestore.FieldValue.serverTimestamp(),
           passwordResetBy: decodedToken.uid,
           passwordResetByName: requesterRecord.displayName || requesterRecord.email || 'Admin',

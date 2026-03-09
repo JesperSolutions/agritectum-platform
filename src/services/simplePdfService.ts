@@ -34,12 +34,22 @@ export const generateReportPDF = async (
   try {
     logger.log(`🖨️ Generating PDF for report: ${reportId}`);
 
+    // Get the current user's auth token
+    const { getAuth } = await import('firebase/auth');
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+      throw new Error('Must be authenticated to generate PDFs');
+    }
+    const idToken = await currentUser.getIdToken();
+
     // Call the Cloud Function directly
     const functionUrl = 'https://generatereportpdf-3xlrn5fcnq-ew.a.run.app';
     const response = await fetch(functionUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${idToken}`,
       },
       body: JSON.stringify({
         reportId,

@@ -2,10 +2,28 @@ import * as functions from 'firebase-functions/v1';
 import * as admin from 'firebase-admin';
 
 // One-time backfill: convert ISO string dates to Firestore Timestamps for reports
-// Usage: call via HTTPS with optional ?dryRun=true
+// Usage: call via HTTPS with Authorization Bearer token, optional ?dryRun=true
 
 export const backfillReportTimestamps = functions.region('europe-west1').https.onRequest(async (req, res) => {
   try {
+    // Verify the caller is an authenticated superadmin
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      res.status(401).json({ success: false, error: 'Missing or invalid Authorization header' });
+      return;
+    }
+    try {
+      const idToken = authHeader.split('Bearer ')[1];
+      const decodedToken = await admin.auth().verifyIdToken(idToken);
+      if (decodedToken.role !== 'superadmin' && (decodedToken.permissionLevel || 0) < 2) {
+        res.status(403).json({ success: false, error: 'Only superadmins can run backfill operations' });
+        return;
+      }
+    } catch (tokenError) {
+      res.status(401).json({ success: false, error: 'Invalid or expired authentication token' });
+      return;
+    }
+
     const dryRun = (req.query.dryRun as string) === 'true';
     const db = admin.firestore();
 
