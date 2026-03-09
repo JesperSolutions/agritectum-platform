@@ -35,7 +35,7 @@ export const generateReportPDF = async (
     logger.log(`🖨️ Generating PDF for report: ${reportId}`);
 
     // Call the Cloud Function directly
-    const functionUrl = 'https://generatereportpdf-yitis2ljlq-ew.a.run.app';
+    const functionUrl = 'https://generatereportpdf-3xlrn5fcnq-ew.a.run.app';
     const response = await fetch(functionUrl, {
       method: 'POST',
       headers: {

@@ -28,6 +28,9 @@ const ErrorPage = () => {
  */
 export const UnauthorizedPage = () => {
   const { t } = useIntl();
+  // Determine correct dashboard based on current path
+  const isPortalRoute = window.location.pathname.startsWith('/portal');
+  const dashboardUrl = isPortalRoute ? '/portal/dashboard' : '/dashboard';
   return (
     <div className='min-h-screen bg-slate-50 flex items-center justify-center'>
       <div className='bg-white p-8 rounded-lg shadow-md text-center'>
@@ -36,7 +39,7 @@ export const UnauthorizedPage = () => {
         </h1>
         <p className='text-slate-600 mb-6'>{t('errors.routing.accessDeniedMessage')}</p>
         <button
-          onClick={() => (window.location.href = '/dashboard')}
+          onClick={() => (window.location.href = dashboardUrl)}
           className='px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium shadow-sm'
         >
           {t('common.goToDashboard')}

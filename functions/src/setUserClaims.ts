@@ -54,14 +54,35 @@ export const setUserClaims = functions.region('europe-west1').https.onCall(async
 });
 
 /**
- * HTTP endpoint to set custom claims (for testing)
+ * HTTP endpoint to set custom claims (restricted to superadmins)
  * POST /setUserClaims
  * Body: { uid: string, claims: { role: string, permissionLevel: number, branchId?: string } }
+ * Requires: Authorization Bearer token from a superadmin
  */
 export const setUserClaimsHttp = functions.region('europe-west1').https.onRequest(async (req, res) => {
   // Only allow POST requests
   if (req.method !== 'POST') {
     res.status(405).send('Method Not Allowed');
+    return;
+  }
+
+  // Verify the caller is authenticated and is a superadmin
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    res.status(401).json({ success: false, error: 'Missing or invalid Authorization header' });
+    return;
+  }
+
+  try {
+    const idToken = authHeader.split('Bearer ')[1];
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+
+    if (decodedToken.role !== 'superadmin' && (decodedToken.permissionLevel || 0) < 2) {
+      res.status(403).json({ success: false, error: 'Only superadmins can set custom claims' });
+      return;
+    }
+  } catch (tokenError) {
+    res.status(401).json({ success: false, error: 'Invalid or expired authentication token' });
     return;
   }
 

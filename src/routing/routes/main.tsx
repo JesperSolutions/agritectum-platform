@@ -58,9 +58,11 @@ export const mainRoutes: RouteObject[] = [
       {
         path: 'profile',
         element: (
-          <Suspense fallback={<LoadingFallback />}>
-            <LazyUserProfile />
-          </Suspense>
+          <ProtectedRoute allowedRoles={['superadmin', 'branchAdmin', 'inspector']}>
+            <Suspense fallback={<LoadingFallback />}>
+              <LazyUserProfile />
+            </Suspense>
+          </ProtectedRoute>
         ),
         errorElement: <RouteErrorBoundary />,
       },

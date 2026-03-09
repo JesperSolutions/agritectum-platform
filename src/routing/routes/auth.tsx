@@ -57,6 +57,9 @@ export const getAuthRoutes = (currentUser: any): RouteObject[] => [
     element:
       currentUser?.userType === 'customer' ? (
         <Navigate to='/portal/dashboard' replace />
+      ) : currentUser && currentUser.userType !== 'customer' ? (
+        // Internal users (roofers/admins) should not access the customer portal login
+        <Navigate to='/dashboard' replace />
       ) : (
         <ErrorBoundary>
           <Suspense fallback={<LoadingFallback />}>

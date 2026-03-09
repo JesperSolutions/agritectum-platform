@@ -102,13 +102,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const branchIds = claims.branchIds || userDocData.branchIds;
     const companyId = claims.companyId || userDocData.companyId;
 
+    // Determine role: use claims, then Firestore doc, then derive from userType
+    // Do NOT default to 'inspector' — use empty string to indicate unresolved role
+    const resolvedRole = claims.role || userDocData.role || (userType === 'customer' ? 'customer' : '');
+
     return {
       uid: firebaseUser.uid,
       email: firebaseUser.email!,
       displayName: firebaseUser.displayName || '',
-      role: (claims.role ||
-        userDocData.role ||
-        (userType === 'customer' ? 'customer' : 'inspector')) as UserRole,
+      role: (resolvedRole || 'inspector') as UserRole,
       permissionLevel: permissionLevel,
       branchId: branchId,
       branchIds: branchIds,

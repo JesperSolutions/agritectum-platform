@@ -24,9 +24,16 @@ interface Employee {
 }
 
 export const createUserWithAuth = onRequest({ region: 'europe-west1' }, async (req, res) => {
-  // Set CORS headers
-  res.set('Access-Control-Allow-Origin', '*');
-  res.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  // Set CORS headers - restrict to known origins
+  const allowedOrigins = [
+    'https://agritectum-platform.web.app',
+    'https://agritectum-platform.firebaseapp.com',
+  ];
+  const origin = req.headers.origin || '';
+  if (allowedOrigins.includes(origin)) {
+    res.set('Access-Control-Allow-Origin', origin);
+  }
+  res.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
   // Handle preflight requests
@@ -45,8 +52,51 @@ export const createUserWithAuth = onRequest({ region: 'europe-west1' }, async (r
   }
 
   try {
+    // Verify the caller is authenticated and has admin privileges
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      res.status(401).json({
+        success: false,
+        error: 'Missing or invalid Authorization header',
+      });
+      return;
+    }
+
+    const idToken = authHeader.split('Bearer ')[1];
+    let callerClaims;
+    try {
+      const decodedToken = await admin.auth().verifyIdToken(idToken);
+      callerClaims = decodedToken;
+    } catch (tokenError) {
+      res.status(401).json({
+        success: false,
+        error: 'Invalid or expired authentication token',
+      });
+      return;
+    }
+
+    // Only superadmins and branchAdmins can create users
+    const callerRole = callerClaims.role;
+    const callerPermissionLevel = callerClaims.permissionLevel || 0;
+    if (callerRole !== 'superadmin' && callerRole !== 'branchAdmin' && callerPermissionLevel < 1) {
+      res.status(403).json({
+        success: false,
+        error: 'Insufficient permissions. Only admins can create users.',
+      });
+      return;
+    }
+
     const { email, password, displayName, role, branchId, isActive, invitedBy }: CreateUserRequest =
       req.body;
+
+    // Prevent privilege escalation: branchAdmins cannot create superadmins
+    if (callerRole === 'branchAdmin' && role === 'superadmin') {
+      res.status(403).json({
+        success: false,
+        error: 'Branch admins cannot create superadmin accounts',
+      });
+      return;
+    }
 
     // Validate required fields
     if (!email || !password || !displayName || !role || !branchId) {

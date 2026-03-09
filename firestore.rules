@@ -107,8 +107,11 @@ service cloud.firestore {
         (request.auth.uid == userId)
       );
       
-      // Allow authenticated users to delete users
-      allow delete: if isAuthenticated();
+      // Only superadmins and branch admins can delete users
+      allow delete: if isAuthenticated() && (
+        isSuperadmin() ||
+        (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
+      );
       
       // Preferences subcollection (onboarding, settings, etc.)
       match /preferences/{document=**} {
@@ -269,9 +272,14 @@ service cloud.firestore {
         isBranchAdmin()
       ) && request.resource.data.createdBy == request.auth.uid;
       
-      // Update allowed for marking invitation as used (during signup)
+      // Update allowed for marking invitation as used (during signup with valid token)
       // or by the admin who created it
-      allow update: if true;
+      allow update: if isAuthenticated() && (
+        isSuperadmin() ||
+        isBranchAdmin() ||
+        // Allow the invited customer to mark their own invitation as used
+        (request.resource.data.status == 'used' && request.resource.data.usedBy == request.auth.uid)
+      );
       
       // Only admins can delete invitations
       allow delete: if isAuthenticated() && (
@@ -337,7 +345,8 @@ service cloud.firestore {
         isSuperadmin() ||
         isBranchAdmin()
       );
-      allow create: if true; // Allow public access logging
+      // Allow authenticated users to create access logs (not fully public)
+      allow create: if isAuthenticated();
       allow update, delete: if false; // No updates or deletes allowed
     }
     
@@ -505,8 +514,7 @@ service cloud.firestore {
       allow read: if isAuthenticated() && (
         isCustomer() && (
           resource.data.id == getUserCompanyId() ||
-          // Allow if customer's user document has this companyId
-          request.auth.uid != null
+          companyId == getUserCompanyId()
         ) ||
         isSuperadmin() ||
         (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||

@@ -36,16 +36,23 @@ export const createUserWithAuth = async (
   try {
     logger.log('🔍 Creating user with Firebase Auth:', userData.email);
 
-    // Get the current Firebase project ID
-    const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID || 'agritectum-platform';
+    // Get the current user's auth token to verify caller identity
+    const { getAuth } = await import('firebase/auth');
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+      throw new Error('Must be authenticated to create users');
+    }
+    const idToken = await currentUser.getIdToken();
 
-    // Construct the Cloud Function URL
-    const functionUrl = `https://createuserwithauth-yitis2ljlq-uc.a.run.app`;
+    // Cloud Run URL for the v2 createUserWithAuth function (europe-west1)
+    const functionUrl = 'https://createuserwithauth-3xlrn5fcnq-ew.a.run.app';
 
     const response = await fetch(functionUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${idToken}`,
       },
       body: JSON.stringify(userData),
     });
