@@ -7,6 +7,7 @@
   "etags": {
     "agritectum-platform": {
       "extensionInstances": {
+        "firestore-send-email": "bbd6d3ef3408d3c1af13225e90b3b8333dc950dc4d10691a188b719092ff243a",
         "firestore-stripe-payments": "6873f212c3bd8fd1f83c1758b7e30f19161f1cdecf1e25bd6b7d21f789df5531"
       }
     }
