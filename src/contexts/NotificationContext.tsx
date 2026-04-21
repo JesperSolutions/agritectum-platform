@@ -16,7 +16,7 @@
  * @since 2024-09-22
  */
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from './AuthContext';
 import { useToast } from './ToastContext';
 import { logger } from '../utils/logger';
@@ -63,7 +63,12 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
   const [stats, setStats] = useState<NotificationStats | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [unsubscribe, setUnsubscribe] = useState<(() => void) | null>(null);
+  // Fix #6: store the unsubscribe function in a ref so the effect cleanup
+  // closure actually sees the latest value. Previously this was React state,
+  // which meant the cleanup callback captured `null` (the state value at the
+  // time the effect ran) and the Firestore listener was never torn down —
+  // leaking one listener per user-id change.
+  const unsubscribeRef = useRef<(() => void) | null>(null);
 
   // Calculate unread count
   const unreadCount = notifications.filter(n => !n.read).length;
@@ -216,7 +221,11 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
         }
       );
 
-      setUnsubscribe(() => unsubscribeFn);
+      // Tear down any previous listener before storing the new one.
+      if (unsubscribeRef.current) {
+        unsubscribeRef.current();
+      }
+      unsubscribeRef.current = unsubscribeFn;
 
       // Load initial stats
       loadStats();
@@ -226,23 +235,14 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
       setLoading(false);
     }
 
-    // Cleanup on unmount or user change
+    // Cleanup on unmount or user change.
     return () => {
-      if (unsubscribe) {
-        unsubscribe();
-        setUnsubscribe(null);
+      if (unsubscribeRef.current) {
+        unsubscribeRef.current();
+        unsubscribeRef.current = null;
       }
     };
   }, [currentUser?.uid, loadStats]);
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      if (unsubscribe) {
-        unsubscribe();
-      }
-    };
-  }, [unsubscribe]);
 
   const value: NotificationContextType = {
     notifications,
