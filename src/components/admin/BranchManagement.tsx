@@ -306,7 +306,9 @@ const BranchManagement: React.FC = () => {
                 <Building className='w-8 h-8 mr-3 text-white/80' />
                 {t('admin.branchManagement.title')}
               </h1>
-              <p className='text-white/80 mt-2 text-base font-light'>{t('admin.branchManagement.subtitle')}</p>
+              <p className='text-white/80 mt-2 text-base font-light'>
+                {t('admin.branchManagement.subtitle')}
+              </p>
             </div>
 
             <button
@@ -568,8 +570,10 @@ const BranchManagement: React.FC = () => {
                         <div className='relative'>
                           <img
                             src={selectedBranch.logoUrl}
-                            alt={`${selectedBranch.name} logo`}
+                            alt={t('admin.branches.logo.alt', { name: selectedBranch.name })}
                             className='w-16 h-16 object-cover rounded-lg border border-slate-300'
+                            loading='lazy'
+                            decoding='async'
                           />
                           <button
                             onClick={async () => {

@@ -337,5 +337,6 @@
   "admin.esgReports.co2Saved": "CO₂ gespart/Jahr",
   "admin.esgReports.energySaved": "Energie gespart/Jahr",
   "admin.esgReports.lifetimeCO2": "Lebenszyklus-CO₂",
-  "admin.esgReports.biodiversity": "Biodiversität"
+  "admin.esgReports.biodiversity": "Biodiversität",
+  "admin.branches.logo.alt": "{name}-Logo"
 }

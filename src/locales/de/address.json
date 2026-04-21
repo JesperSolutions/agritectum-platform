@@ -91,5 +91,6 @@
   "address.accessibility.searchResults": "Adressförslag",
   "address.accessibility.mapView": "Kartvy av adress",
   "address.accessibility.selectAddress": "Välj adress från förslag",
-  "address.accessibility.clearAddress": "Rensa adress"
+  "address.accessibility.clearAddress": "Rensa adress",
+  "address.map.satelliteAlt": "Satellitenansicht von {address}"
 }
