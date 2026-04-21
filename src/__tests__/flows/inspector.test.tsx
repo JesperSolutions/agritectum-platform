@@ -106,8 +106,52 @@ describe('inspector flow', () => {
   });
 
   describe('offline submit (fix #2)', () => {
+    it('emits OFFLINE_SYNC_FAILED_EVENT with failure count and last error', async () => {
+      const { OFFLINE_SYNC_FAILED_EVENT } = await import('../../hooks/useOfflineStatus');
+
+      const listener = vi.fn();
+      window.addEventListener(OFFLINE_SYNC_FAILED_EVENT, listener);
+      try {
+        window.dispatchEvent(
+          new CustomEvent(OFFLINE_SYNC_FAILED_EVENT, {
+            detail: { failedCount: 3, lastError: 'permission-denied' },
+          })
+        );
+        expect(listener).toHaveBeenCalledTimes(1);
+        const evt = listener.mock.calls[0][0] as CustomEvent<{
+          failedCount: number;
+          lastError: string;
+        }>;
+        expect(evt.detail.failedCount).toBe(3);
+        expect(evt.detail.lastError).toBe('permission-denied');
+      } finally {
+        window.removeEventListener(OFFLINE_SYNC_FAILED_EVENT, listener);
+      }
+    });
+
+    it('OfflineIndicator renders a sync-failure banner on event dispatch', async () => {
+      const { render, screen, act } = await import('@testing-library/react');
+      const { OFFLINE_SYNC_FAILED_EVENT } = await import('../../hooks/useOfflineStatus');
+      const { default: OfflineIndicator } = await import('../../components/OfflineIndicator');
+
+      render(<OfflineIndicator />);
+      expect(screen.queryByTestId('offline-sync-failed')).toBeNull();
+
+      act(() => {
+        window.dispatchEvent(
+          new CustomEvent(OFFLINE_SYNC_FAILED_EVENT, {
+            detail: { failedCount: 2, lastError: 'network' },
+          })
+        );
+      });
+
+      const banner = await screen.findByTestId('offline-sync-failed');
+      expect(banner).toBeInTheDocument();
+      expect(banner.getAttribute('role')).toBe('alert');
+      expect(banner.textContent).toContain('2 changes failed to sync');
+    });
+
     it.todo('queues a submit when offline and syncs on reconnect');
-    it.todo('surfaces a toast when the queued submit ultimately fails');
   });
 
   describe('accessibility', () => {

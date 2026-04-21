@@ -7,6 +7,12 @@ interface OfflineStatus {
   wasOffline: boolean;
   lastOnlineTime: Date | null;
   lastOfflineTime: Date | null;
+  /** Number of changes that failed to sync on the most recent attempt. */
+  failedSyncCount: number;
+  /** Error from the most recent sync attempt, if any. */
+  lastSyncError: Error | null;
+  /** True while a sync pass is in flight. */
+  isSyncing: boolean;
 }
 
 interface OfflineActions {
@@ -15,11 +21,22 @@ interface OfflineActions {
   syncPendingChanges: () => Promise<void>;
 }
 
+/** Event name consumers can listen to for surfaced sync failures. */
+export const OFFLINE_SYNC_FAILED_EVENT = 'offline-sync-failed';
+
+export interface OfflineSyncFailedDetail {
+  failedCount: number;
+  lastError: string;
+}
+
 export const useOfflineStatus = (): OfflineStatus & OfflineActions => {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [wasOffline, setWasOffline] = useState(false);
   const [lastOnlineTime, setLastOnlineTime] = useState<Date | null>(null);
   const [lastOfflineTime, setLastOfflineTime] = useState<Date | null>(null);
+  const [failedSyncCount, setFailedSyncCount] = useState(0);
+  const [lastSyncError, setLastSyncError] = useState<Error | null>(null);
+  const [isSyncing, setIsSyncing] = useState(false);
 
   // Handle online/offline events
   useEffect(() => {
@@ -63,6 +80,10 @@ export const useOfflineStatus = (): OfflineStatus & OfflineActions => {
   const syncPendingChanges = useCallback(async () => {
     if (!isOnline) return;
 
+    setIsSyncing(true);
+    let failed = 0;
+    let lastError: Error | null = null;
+
     try {
       // Get pending changes from IndexedDB
       const pendingChanges = await getPendingChanges();
@@ -72,11 +93,37 @@ export const useOfflineStatus = (): OfflineStatus & OfflineActions => {
           await syncChange(change);
           await removePendingChange(change.id);
         } catch (error) {
-          console.error('Failed to sync change:', error);
+          failed += 1;
+          lastError = error instanceof Error ? error : new Error(String(error));
+          // Fix #2: surface individual failures through the project logger
+          // instead of swallowing them to console. Per-change outcome is
+          // aggregated below and exposed via hook state + event for UI.
+          logger.error('[offline-sync] failed to sync change', {
+            id: change?.id,
+            error: lastError.message,
+          });
         }
       }
     } catch (error) {
-      console.error('Failed to sync pending changes:', error);
+      lastError = error instanceof Error ? error : new Error(String(error));
+      logger.error('[offline-sync] failed to enumerate pending changes', lastError);
+    } finally {
+      setFailedSyncCount(failed);
+      setLastSyncError(lastError);
+      setIsSyncing(false);
+      if (failed > 0 || (lastError && !failed)) {
+        // Fix #2: emit a window event so OfflineIndicator (or other shells)
+        // can present a user-visible notification. Keeps the hook free of
+        // direct UI dependencies.
+        window.dispatchEvent(
+          new CustomEvent<OfflineSyncFailedDetail>(OFFLINE_SYNC_FAILED_EVENT, {
+            detail: {
+              failedCount: failed,
+              lastError: lastError?.message ?? 'unknown',
+            },
+          })
+        );
+      }
     }
   }, [isOnline]);
 
@@ -86,6 +133,9 @@ export const useOfflineStatus = (): OfflineStatus & OfflineActions => {
     wasOffline,
     lastOnlineTime,
     lastOfflineTime,
+    failedSyncCount,
+    lastSyncError,
+    isSyncing,
     retry,
     clearOfflineData,
     syncPendingChanges,

@@ -1,9 +1,11 @@
 import React, { useState, useMemo } from 'react';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
-import { Building, FileText, Calendar, Trash2, Download, Eye } from 'lucide-react';
+import { Building, FileText, Calendar, Trash2, Download, Eye, AlertTriangle } from 'lucide-react';
 import { useIntl } from '../../hooks/useIntl';
-import { formatDate } from '../../utils/dateUtils';
+import { formatDate } from '../../utils/dateFormatter';
 import EmptyState from '../empty-states/EmptyState';
+import AccessibleModal from '../AccessibleModal';
+import AccessibleButton from '../AccessibleButton';
 
 export interface Document {
   id: string;
@@ -35,6 +37,10 @@ const DocumentLibrary: React.FC<DocumentLibraryProps> = ({
   const [selectedType, setSelectedType] = useState<Document['type'] | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  // Fix #3: require an AccessibleModal confirmation before deleting a
+  // document. The document to delete is held in local state while the modal
+  // is open; cancel clears it without calling onDelete.
+  const [pendingDelete, setPendingDelete] = useState<Document | null>(null);
 
   const filteredDocuments = useMemo(() => {
     return documents.filter(doc => {
@@ -57,12 +63,23 @@ const DocumentLibrary: React.FC<DocumentLibraryProps> = ({
     return map;
   }, [documents]);
 
-  const handleDelete = async (documentId: string) => {
+  const requestDelete = (document: Document) => {
     if (!onDelete) return;
-    
+    setPendingDelete(document);
+  };
+
+  const cancelDelete = () => {
+    setPendingDelete(null);
+  };
+
+  const confirmDelete = async () => {
+    if (!onDelete || !pendingDelete) return;
+
+    const documentId = pendingDelete.id;
     setDeletingId(documentId);
     try {
       await onDelete(documentId);
+      setPendingDelete(null);
     } finally {
       setDeletingId(null);
     }
@@ -96,6 +113,46 @@ const DocumentLibrary: React.FC<DocumentLibraryProps> = ({
   if (documents.length === 0 && !loading) {
     return <EmptyState type='documents' />;
   }
+
+  // Fix #3: shared delete-confirmation modal rendered in both mobile and
+  // desktop branches. Reuses AccessibleModal for focus trap + ARIA.
+  const deleteConfirmModal = (
+    <AccessibleModal
+      isOpen={pendingDelete !== null}
+      onClose={cancelDelete}
+      title={t('common.confirm.title')}
+      size='sm'
+    >
+      <div className='space-y-4'>
+        <div className='flex items-start gap-3'>
+          <AlertTriangle
+            className='w-6 h-6 text-[#DA5062] flex-shrink-0 mt-0.5'
+            aria-hidden='true'
+          />
+          <p className='text-sm text-gray-700'>
+            {pendingDelete ? t('documents.confirmDelete', { fileName: pendingDelete.name }) : ''}
+          </p>
+        </div>
+        <div className='flex justify-end gap-2'>
+          <AccessibleButton
+            variant='secondary'
+            onClick={cancelDelete}
+            disabled={deletingId !== null}
+          >
+            {t('common.buttons.cancel')}
+          </AccessibleButton>
+          <AccessibleButton
+            variant='danger'
+            onClick={confirmDelete}
+            loading={deletingId !== null}
+            disabled={deletingId !== null}
+          >
+            {t('common.buttons.delete')}
+          </AccessibleButton>
+        </div>
+      </div>
+    </AccessibleModal>
+  );
 
   if (isMobile) {
     return (
@@ -143,10 +200,7 @@ const DocumentLibrary: React.FC<DocumentLibraryProps> = ({
         {/* Mobile Card List */}
         <div className='space-y-3'>
           {filteredDocuments.map(doc => (
-            <div
-              key={doc.id}
-              className='bg-white rounded-lg border border-gray-200 p-4 space-y-3'
-            >
+            <div key={doc.id} className='bg-white rounded-lg border border-gray-200 p-4 space-y-3'>
               <div className='flex items-start gap-3'>
                 {getDocumentIcon(doc.type)}
                 <div className='flex-1 min-w-0'>
@@ -176,9 +230,10 @@ const DocumentLibrary: React.FC<DocumentLibraryProps> = ({
                 </a>
                 {onDelete && (
                   <button
-                    onClick={() => handleDelete(doc.id)}
+                    onClick={() => requestDelete(doc)}
                     disabled={deletingId === doc.id}
                     className='px-3 py-2 text-[#DA5062] border border-[#DA5062]/40 rounded-lg hover:bg-[#DA5062]/10 disabled:opacity-50 transition-colors'
+                    aria-label={t('documents.actions.delete')}
                   >
                     <Trash2 className='w-4 h-4' />
                   </button>
@@ -193,6 +248,7 @@ const DocumentLibrary: React.FC<DocumentLibraryProps> = ({
             <p className='text-gray-600'>No documents found</p>
           </div>
         )}
+        {deleteConfirmModal}
       </div>
     );
   }
@@ -284,9 +340,7 @@ const DocumentLibrary: React.FC<DocumentLibraryProps> = ({
                     <span className='font-medium text-gray-900'>{doc.name}</span>
                   </div>
                 </td>
-                <td className='px-6 py-4 text-sm text-gray-600'>
-                  {buildingNames[doc.buildingId]}
-                </td>
+                <td className='px-6 py-4 text-sm text-gray-600'>{buildingNames[doc.buildingId]}</td>
                 <td className='px-6 py-4 text-sm'>
                   <span className='px-3 py-1 rounded-full text-xs font-medium bg-[#7DA8CC]/15 text-[#476279]'>
                     {doc.type}
@@ -309,10 +363,11 @@ const DocumentLibrary: React.FC<DocumentLibraryProps> = ({
                     </a>
                     {onDelete && (
                       <button
-                        onClick={() => handleDelete(doc.id)}
+                        onClick={() => requestDelete(doc)}
                         disabled={deletingId === doc.id}
                         className='p-2 text-[#DA5062] hover:bg-[#DA5062]/10 rounded-lg disabled:opacity-50 transition-colors'
-                        title='Delete'
+                        title={t('documents.actions.delete')}
+                        aria-label={t('documents.actions.delete')}
                       >
                         <Trash2 className='w-4 h-4' />
                       </button>
@@ -331,6 +386,7 @@ const DocumentLibrary: React.FC<DocumentLibraryProps> = ({
           <p className='text-gray-600'>No documents found matching your filters</p>
         </div>
       )}
+      {deleteConfirmModal}
     </div>
   );
 };
