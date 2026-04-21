@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { WifiOff, AlertTriangle } from 'lucide-react';
 import { OFFLINE_SYNC_FAILED_EVENT, type OfflineSyncFailedDetail } from '../hooks/useOfflineStatus';
+import { useIntl } from '../hooks/useIntl';
 
 const OfflineIndicator: React.FC = () => {
+  const { t } = useIntl();
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [showOfflineMessage, setShowOfflineMessage] = useState(false);
   // Fix #2: surface sync failures to the user. When useOfflineStatus emits
@@ -50,7 +52,7 @@ const OfflineIndicator: React.FC = () => {
         >
           <WifiOff className='w-4 h-4' />
           <span className='text-sm font-medium'>
-            {showOfflineMessage ? 'Offline - Working locally' : 'Offline'}
+            {showOfflineMessage ? t('common.offlineWorkingLocally') : t('common.offline')}
           </span>
         </div>
       )}
@@ -65,20 +67,18 @@ const OfflineIndicator: React.FC = () => {
           <div className='flex-1'>
             <p className='text-sm font-medium'>
               {syncFailure.failedCount > 0
-                ? `${syncFailure.failedCount} change${
-                    syncFailure.failedCount === 1 ? '' : 's'
-                  } failed to sync`
-                : 'Sync failed'}
+                ? t('common.syncFailedWithCount', { count: syncFailure.failedCount })
+                : t('common.syncFailed')}
             </p>
             <p className='text-xs opacity-90 mt-0.5'>
-              {syncFailure.lastError || 'Please check your connection and try again.'}
+              {syncFailure.lastError || t('common.syncErrorFallback')}
             </p>
           </div>
           <button
             type='button'
             onClick={() => setSyncFailure(null)}
             className='text-white/80 hover:text-white text-sm ml-2'
-            aria-label='Dismiss sync failure notice'
+            aria-label={t('common.dismissSyncFailure')}
           >
             ×
           </button>

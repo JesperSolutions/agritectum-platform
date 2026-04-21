@@ -20,6 +20,8 @@ import * as branchLogoService from '../../services/branchLogoService';
 import * as userService from '../../services/userService';
 import { Branch, User } from '../../types';
 import LoadingSpinner from '../common/LoadingSpinner';
+import AccessibleModal from '../AccessibleModal';
+import AccessibleButton from '../AccessibleButton';
 
 const BranchManagement: React.FC = () => {
   const { currentUser } = useAuth();
@@ -259,10 +261,6 @@ const BranchManagement: React.FC = () => {
   };
 
   const handleDelete = async (branchId: string) => {
-    if (!window.confirm(t('common.deleteBranchConfirmation'))) {
-      return;
-    }
-
     try {
       setLoading(true);
       await branchService.deleteBranch(branchId);
@@ -276,6 +274,28 @@ const BranchManagement: React.FC = () => {
       setError('Failed to delete branch');
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Fix #9: replace blocking `window.confirm` with an AccessibleModal so
+  // destructive branch deletion is keyboard/ARIA friendly and visually
+  // consistent with the rest of the platform.
+  const [pendingDeleteBranch, setPendingDeleteBranch] = useState<Branch | null>(null);
+  const [isDeletingBranch, setIsDeletingBranch] = useState(false);
+
+  const requestDeleteBranch = (branch: Branch) => setPendingDeleteBranch(branch);
+  const cancelDeleteBranch = () => {
+    if (isDeletingBranch) return;
+    setPendingDeleteBranch(null);
+  };
+  const confirmDeleteBranch = async () => {
+    if (!pendingDeleteBranch) return;
+    setIsDeletingBranch(true);
+    try {
+      await handleDelete(pendingDeleteBranch.id);
+    } finally {
+      setIsDeletingBranch(false);
+      setPendingDeleteBranch(null);
     }
   };
 
@@ -523,9 +543,10 @@ const BranchManagement: React.FC = () => {
                         <button
                           onClick={e => {
                             e.stopPropagation();
-                            handleDelete(branch.id);
+                            requestDeleteBranch(branch);
                           }}
                           className='text-[#DA5062] hover:text-[#872a38] transition-colors'
+                          aria-label={t('admin.branches.deleteBranch')}
                         >
                           <Trash2 className='w-4 h-4' />
                         </button>
@@ -696,6 +717,40 @@ const BranchManagement: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Fix #9: destructive branch-deletion confirmation dialog. */}
+      <AccessibleModal
+        isOpen={pendingDeleteBranch !== null}
+        onClose={cancelDeleteBranch}
+        title={t('common.confirm.title')}
+        size='sm'
+      >
+        <div className='space-y-4'>
+          <p className='text-slate-700'>{t('common.deleteBranchConfirmation')}</p>
+          {pendingDeleteBranch && (
+            <p className='text-sm text-slate-500'>
+              <strong>{pendingDeleteBranch.name}</strong>
+            </p>
+          )}
+          <div className='flex justify-end gap-2 pt-2'>
+            <AccessibleButton
+              variant='secondary'
+              onClick={cancelDeleteBranch}
+              disabled={isDeletingBranch}
+            >
+              {t('common.buttons.cancel')}
+            </AccessibleButton>
+            <AccessibleButton
+              variant='danger'
+              onClick={confirmDeleteBranch}
+              loading={isDeletingBranch}
+              disabled={isDeletingBranch}
+            >
+              {t('common.buttons.delete')}
+            </AccessibleButton>
+          </div>
+        </div>
+      </AccessibleModal>
     </div>
   );
 };

@@ -277,5 +277,13 @@
   "gdpr.links.dpa": "Data Processing Agreement",
   "gdpr.actions.rejectAll": "Reject all",
   "gdpr.actions.acceptAll": "Accept all",
-  "gdpr.actions.savePreferences": "Save preferences"
+  "gdpr.actions.savePreferences": "Save preferences",
+  "common.filtering": "Filtering...",
+  "common.noItemsFound": "No items found",
+  "common.adjustSearch": "Try adjusting your search",
+  "common.offlineWorkingLocally": "Offline - Working locally",
+  "common.syncFailedWithCount": "{count, plural, one {# change failed to sync} other {# changes failed to sync}}",
+  "common.syncFailed": "Sync failed",
+  "common.syncErrorFallback": "Please check your connection and try again.",
+  "common.dismissSyncFailure": "Dismiss sync failure notice"
 }

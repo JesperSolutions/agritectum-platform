@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { FixedSizeList as List } from 'react-window';
 import { memoryManager } from '../services/memoryManagementService';
+import { useIntl } from '../hooks/useIntl';
 
 interface VirtualListProps<T> {
   items: T[];
@@ -104,6 +105,7 @@ function VirtualList<T>({
   searchTerm = '',
   filterFunction,
 }: VirtualListProps<T>) {
+  const { t } = useIntl();
   const listRef = useRef<List>(null);
   const [filteredItems, setFilteredItems] = useState<T[]>(items);
   const [isFiltering, setIsFiltering] = useState(false);
@@ -189,7 +191,7 @@ function VirtualList<T>({
         {loadingComponent || (
           <div className='flex items-center space-x-2'>
             <div className='animate-spin rounded-full h-6 w-6 border-b-2 border-[#7DA8CC]'></div>
-            <span>Loading...</span>
+            <span>{t('common.messages.loading')}</span>
           </div>
         )}
       </div>
@@ -205,8 +207,8 @@ function VirtualList<T>({
       >
         {emptyComponent || (
           <div className='text-center text-gray-500'>
-            <p>No items found</p>
-            {searchTerm && <p className='text-sm'>Try adjusting your search</p>}
+            <p>{t('common.noItemsFound')}</p>
+            {searchTerm && <p className='text-sm'>{t('common.adjustSearch')}</p>}
           </div>
         )}
       </div>
@@ -222,7 +224,7 @@ function VirtualList<T>({
       >
         <div className='flex items-center space-x-2'>
           <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-[#7DA8CC]'></div>
-          <span className='text-sm text-gray-600'>Filtering...</span>
+          <span className='text-sm text-gray-600'>{t('common.filtering')}</span>
         </div>
       </div>
     );

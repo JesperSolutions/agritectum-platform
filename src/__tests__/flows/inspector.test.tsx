@@ -131,10 +131,27 @@ describe('inspector flow', () => {
 
     it('OfflineIndicator renders a sync-failure banner on event dispatch', async () => {
       const { render, screen, act } = await import('@testing-library/react');
+      const { IntlProvider } = await import('react-intl');
       const { OFFLINE_SYNC_FAILED_EVENT } = await import('../../hooks/useOfflineStatus');
       const { default: OfflineIndicator } = await import('../../components/OfflineIndicator');
 
-      render(<OfflineIndicator />);
+      // OfflineIndicator now uses react-intl for all strings; wrap with a
+      // minimal IntlProvider and provide just the keys we assert against.
+      const messages = {
+        'common.offline': 'Offline',
+        'common.offlineWorkingLocally': 'Offline - Working locally',
+        'common.syncFailedWithCount':
+          '{count, plural, one {# change failed to sync} other {# changes failed to sync}}',
+        'common.syncFailed': 'Sync failed',
+        'common.syncErrorFallback': 'Please check your connection and try again.',
+        'common.dismissSyncFailure': 'Dismiss sync failure notice',
+      };
+
+      render(
+        <IntlProvider locale='en' messages={messages} defaultLocale='en'>
+          <OfflineIndicator />
+        </IntlProvider>
+      );
       expect(screen.queryByTestId('offline-sync-failed')).toBeNull();
 
       act(() => {

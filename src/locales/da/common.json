@@ -1,7 +1,6 @@
 {
   "app.title": "Agritectum Platform - Taginspektioner",
   "app.subtitle": "Professionelle taginspektioner og tilbud",
-
   "common.buttons.save": "Gem",
   "common.buttons.cancel": "Annuller",
   "common.buttons.delete": "Slet",
@@ -39,9 +38,7 @@
   "common.buttons.deleting": "Sletter...",
   "common.buttons.processing": "Behandler...",
   "common.saving": "Gemmer...",
-
   "common.signOut": "Log ud",
-
   "common.status.active": "Aktiv",
   "common.status.inactive": "Inaktiv",
   "common.status.pending": "Afventer",
@@ -52,7 +49,6 @@
   "common.status.archived": "Arkiveret",
   "common.status.published": "Publiceret",
   "common.status.unpublished": "Upubliceret",
-
   "common.labels.name": "Navn",
   "common.labels.email": "E-mail",
   "common.labels.phone": "Telefon",
@@ -70,7 +66,6 @@
   "common.labels.modified": "Ændret",
   "common.labels.optional": "valgfrit",
   "common.labels.required": "obligatorisk",
-
   "common.messages.loading": "Indlæser...",
   "common.messages.saving": "Gemmer...",
   "common.messages.deleting": "Sletter...",
@@ -81,29 +76,24 @@
   "common.messages.info": "Information",
   "common.messages.confirm": "Bekræft",
   "common.messages.cancel": "Annuller",
-
   "common.validation.required": "Dette felt er obligatorisk",
   "common.validation.email": "Indtast en gyldig e-mailadresse",
   "common.validation.phone": "Indtast et gyldigt telefonnummer",
   "common.validation.minLength": "Mindst {min} tegn påkrævet",
   "common.validation.maxLength": "Maks {max} tegn tilladt",
   "common.validation.pattern": "Ugyldigt format",
-
   "common.pagination.previous": "Forrige",
   "common.pagination.next": "Næste",
   "common.pagination.page": "Side",
   "common.pagination.of": "af",
   "common.pagination.showing": "Viser {start}-{end} af {total}",
   "common.pagination.itemsPerPage": "Elementer per side",
-
   "common.emptyState.title": "Ingen elementer",
   "common.emptyState.description": "Der er ingen elementer at vise i øjeblikket.",
   "common.emptyState.action": "Opret første element",
-
   "common.errorState.title": "Der opstod en fejl",
   "common.errorState.description": "Vi kunne ikke indlæse data. Prøv igen senere.",
   "common.errorState.retry": "Prøv igen",
-
   "roofTypes.tile": "Tegl",
   "roofTypes.metal": "Metal",
   "roofTypes.shingle": "Teglsten",
@@ -116,30 +106,25 @@
   "roofTypes.flat_tpo": "Fladt - TPO",
   "roofTypes.flat_epdm": "Fladt - EPDM",
   "roofTypes.other": "Andet",
-
   "severity.low": "Lav",
   "severity.medium": "Medium",
   "severity.high": "Høj",
   "severity.critical": "Kritisk",
-
   "urgency.immediate": "Umiddelbar",
   "urgency.short_term": "Kort sigt",
   "urgency.long_term": "Lang sigt",
-
   "common.confirm.title": "Bekræft handling",
   "common.confirm.message": "Er du sikker på, at du vil fortsætte?",
   "common.confirm.description": "Denne handling kan ikke fortrydes.",
   "common.confirm.yes": "Ja",
   "common.confirm.no": "Nej",
   "common.continue": "Fortsæt",
-
   "common.delete": "Slet",
   "common.cancel": "Annuller",
   "common.deleteReportConfirmation": "Er du sikker på, at du vil slette rapporten for {customerName}? Denne handling kan ikke fortrydes.",
   "common.deleteSelectedReportsConfirmation": "Er du sikker på, at du vil slette {count} rapporter? Denne handling kan ikke fortrydes.",
   "common.deleteCustomerConfirmation": "Er du sikker på, at du vil slette kunden {name}? Alle relaterede rapporter og data vil også blive slettet.",
   "common.deleteBranchConfirmation": "Er du sikker på, at du vil slette denne filial? Alle brugere, rapporter og data vil blive fjernet permanent.",
-
   "common.accessibility.close": "Luk",
   "common.accessibility.menu": "Menu",
   "common.accessibility.navigation": "Navigation",
@@ -148,23 +133,18 @@
   "common.accessibility.loading": "Indlæser indhold",
   "common.accessibility.error": "Fejlmeddelelse",
   "common.accessibility.success": "Succesmeddelelse",
-
   "common.lastUpdated": "Sidst opdateret",
   "common.offlineMode": "Du er offline. Ændringer vil blive synkroniseret, når forbindelsen er genoprettet.",
   "common.somethingWentWrong": "Noget gik galt",
   "common.somethingUnexpectedHappened": "Der opstod en uventet fejl. Prøv at opdatere siden.",
   "common.goToDashboard": "Gå til dashboard",
-
   "common.install.title": "Installer Agritectum-app",
   "common.install.description": "Installer for offline-adgang og hurtigere ydeevne",
   "common.install.button": "Installer nu",
-
   "actions.edit": "Rediger",
   "actions.export": "Eksporter",
-
   "reportView.copyLink": "Kopier link",
   "reportView.qrCode": "QR-kode",
-
   "issueTemplates.title": "Vælg skabelon til problem",
   "issueTemplates.searchPlaceholder": "Søg skabeloner...",
   "issueTemplates.allTypes": "Alle typer",
@@ -172,7 +152,6 @@
   "issueTemplates.templatesFound": "{count} skabelon{plural} fundet",
   "issueTemplates.templatesFound.one": "{count} skabelon fundet",
   "issueTemplates.templatesFound.other": "{count} skabeloner fundet",
-
   "issueTypes.leak": "Lækage",
   "issueTypes.damage": "Skade",
   "issueTypes.wear": "Slid",
@@ -181,47 +160,36 @@
   "issueTypes.gutters": "Tagrender",
   "issueTypes.flashing": "Taglist",
   "issueTypes.other": "Andet",
-
   "issueTemplates.roofEdgeLeak.title": "Lækage ved tagkant",
   "issueTemplates.roofEdgeLeak.description": "Vandindtrængning ved tagkanten, normalt forårsaget af beskadiget taglist eller dårlig tætning.",
   "issueTemplates.roofEdgeLeak.location": "Tagkant",
-
   "issueTemplates.chimneyLeak.title": "Lækage ved skorsten",
   "issueTemplates.chimneyLeak.description": "Vandindtrængning omkring skorstenens taglist, ofte på grund af forværret tætning eller beskadiget taglist.",
   "issueTemplates.chimneyLeak.location": "Skorstenområde",
-
   "issueTemplates.missingTiles.title": "Manglende tagsten",
   "issueTemplates.missingTiles.description": "Enkelte tagsten er faldet af eller mangler, hvilket eksponerer tagstrukturen.",
   "issueTemplates.missingTiles.location": "Forskellige steder",
-
   "issueTemplates.crackedTiles.title": "Revnede tagsten",
   "issueTemplates.crackedTiles.description": "Tagsten med synlige revner, hvilket kan føre til vandindtrængning.",
   "issueTemplates.crackedTiles.location": "Forskellige steder",
-
   "issueTemplates.generalWear.title": "Generel slid",
   "issueTemplates.generalWear.description": "Normal aldring og slid på tagfladen.",
   "issueTemplates.generalWear.location": "Generelt tagområde",
-
   "issueTemplates.roofSagging.title": "Tag der synker",
   "issueTemplates.roofSagging.description": "Synlig nedbøjning eller afbøjning i tagstrukturen, hvilket indikerer potentielle strukturelle problemer.",
   "issueTemplates.roofSagging.location": "Tagstruktur",
-
   "issueTemplates.blockedVentilation.title": "Blokeret ventilation",
   "issueTemplates.blockedVentilation.description": "Ventilationsåbninger er blokerede eller hindret, hvilket reducerer luftcirkulationen.",
   "issueTemplates.blockedVentilation.location": "Ventilationsområder",
-
   "issueTemplates.cloggedGutters.title": "Tilstoppede tagrender",
   "issueTemplates.cloggedGutters.description": "Tagrender er fyldt med skrald, hvilket forhindrer ordentlig vandafledning.",
   "issueTemplates.cloggedGutters.location": "Rensystem",
-
   "issueTemplates.damagedFlashing.title": "Beskadiget taglist",
   "issueTemplates.damagedFlashing.description": "Metaltaglist omkring gennemgange er beskadiget eller mangler, hvilket skaber potentielle lækagepunkter.",
   "issueTemplates.damagedFlashing.location": "Gennemgange",
-
   "issueTemplates.mossGrowth.title": "Mos",
   "issueTemplates.mossGrowth.description": "Mos eller algevækst på tagfladen, hvilket kan beholde fugt og forårsage skader.",
   "issueTemplates.mossGrowth.location": "Skyggede områder",
-
   "inspection.checklist": "Inspektionstjekliste",
   "inspection.selectStatus": "Vælg status...",
   "inspection.status": "Status",
@@ -248,9 +216,7 @@
   "inspection.technicalInstallationsHint": "Inspicér HVAC, ventilation og øvrige installationer",
   "inspection.insulationAssessment": "Vurdering af isoleringstype",
   "inspection.insulationAssessmentHint": "Vurdér isoleringstype og -tilstand",
-
   "roofImage.pinInstruction": "💡 Klik på billedet for at tilføje markører, der markerer problemsteder. Markører kan linkes til specifikke problemer.",
-
   "common.signedInAs": "Logget ind som",
   "common.back": "Tilbage",
   "common.goBackToDashboard": "Gå tilbage til oversigten",
@@ -258,7 +224,6 @@
   "common.roles.inspector": "Inspektør",
   "common.roles.branchAdmin": "Filialadministrator",
   "common.roles.superAdmin": "Superadministrator",
-
   "gdpr.title": "Privatliv og databeskyttelse",
   "gdpr.subtitle": "GDPR-overholdelse",
   "gdpr.intro": "Vi passer godt på dine data og overholder GDPR. Vælg dine indstillinger nedenfor.",
@@ -271,5 +236,13 @@
   "gdpr.links.dpa": "Databehandleraftale",
   "gdpr.actions.rejectAll": "Afvis alle",
   "gdpr.actions.acceptAll": "Accepter alle",
-  "gdpr.actions.savePreferences": "Gem valg"
+  "gdpr.actions.savePreferences": "Gem valg",
+  "common.filtering": "Filtrerer...",
+  "common.noItemsFound": "Ingen elementer fundet",
+  "common.adjustSearch": "Prøv at justere din søgning",
+  "common.offlineWorkingLocally": "Offline - Arbejder lokalt",
+  "common.syncFailedWithCount": "{count, plural, one {# ændring kunne ikke synkroniseres} other {# ændringer kunne ikke synkroniseres}}",
+  "common.syncFailed": "Synkronisering mislykkedes",
+  "common.syncErrorFallback": "Tjek din forbindelse og prøv igen.",
+  "common.dismissSyncFailure": "Luk meddelelse om synkroniseringsfejl"
 }

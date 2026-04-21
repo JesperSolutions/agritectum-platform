@@ -1,7 +1,6 @@
 {
   "app.title": "Agritectum Platform - Dachinspektionen",
   "app.subtitle": "Professionelle Dachinspektionen und Angebote",
-
   "common.buttons.save": "Speichern",
   "common.buttons.cancel": "Abbrechen",
   "common.buttons.delete": "Löschen",
@@ -38,9 +37,7 @@
   "common.buttons.deleting": "Löscht...",
   "common.buttons.processing": "Verarbeitet...",
   "common.saving": "Speichert...",
-
   "common.signOut": "Abmelden",
-
   "common.status.active": "Aktiv",
   "common.status.inactive": "Inaktiv",
   "common.status.pending": "Ausstehend",
@@ -51,7 +48,6 @@
   "common.status.archived": "Archiviert",
   "common.status.published": "Veröffentlicht",
   "common.status.unpublished": "Nicht veröffentlicht",
-
   "common.labels.name": "Name",
   "common.labels.email": "E-Mail",
   "common.labels.phone": "Telefon",
@@ -69,7 +65,6 @@
   "common.labels.modified": "Geändert",
   "common.labels.optional": "optional",
   "common.labels.required": "erforderlich",
-
   "common.messages.loading": "Lädt...",
   "common.messages.saving": "Speichert...",
   "common.messages.deleting": "Löscht...",
@@ -80,29 +75,24 @@
   "common.messages.info": "Information",
   "common.messages.confirm": "Bestätigen",
   "common.messages.cancel": "Abbrechen",
-
   "common.validation.required": "Dieses Feld ist erforderlich",
   "common.validation.email": "Geben Sie eine gültige E-Mail-Adresse ein",
   "common.validation.phone": "Geben Sie eine gültige Telefonnummer ein",
   "common.validation.minLength": "Mindestens {min} Zeichen erforderlich",
   "common.validation.maxLength": "Maximal {max} Zeichen erlaubt",
   "common.validation.pattern": "Ungültiges Format",
-
   "common.pagination.previous": "Zurück",
   "common.pagination.next": "Weiter",
   "common.pagination.page": "Seite",
   "common.pagination.of": "von",
   "common.pagination.showing": "Zeige {start}-{end} von {total}",
   "common.pagination.itemsPerPage": "Elemente pro Seite",
-
   "common.emptyState.title": "Keine Elemente",
   "common.emptyState.description": "Derzeit sind keine Elemente zum Anzeigen vorhanden.",
   "common.emptyState.action": "Erstes Element erstellen",
-
   "common.errorState.title": "Ein Fehler ist aufgetreten",
   "common.errorState.description": "Daten konnten nicht geladen werden. Bitte versuchen Sie es später erneut.",
   "common.errorState.retry": "Erneut versuchen",
-
   "roofTypes.tile": "Ziegel",
   "roofTypes.metal": "Metall",
   "roofTypes.shingle": "Dachziegel",
@@ -115,30 +105,25 @@
   "roofTypes.flat_tpo": "Flach - TPO",
   "roofTypes.flat_epdm": "Flach - EPDM",
   "roofTypes.other": "Andere",
-
   "severity.low": "Niedrig",
   "severity.medium": "Mittel",
   "severity.high": "Hoch",
   "severity.critical": "Kritisch",
-
   "urgency.immediate": "Sofort",
   "urgency.short_term": "Kurzfristig",
   "urgency.long_term": "Langfristig",
-
   "common.confirm.title": "Aktion bestätigen",
   "common.confirm.message": "Sind Sie sicher, dass Sie fortfahren möchten?",
   "common.confirm.description": "Diese Aktion kann nicht rückgängig gemacht werden.",
   "common.confirm.yes": "Ja",
   "common.confirm.no": "Nein",
   "common.continue": "Fortsetzen",
-
   "common.delete": "Löschen",
   "common.cancel": "Abbrechen",
   "common.deleteReportConfirmation": "Sind Sie sicher, dass Sie den Bericht für {customerName} löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
   "common.deleteSelectedReportsConfirmation": "Sind Sie sicher, dass Sie {count} Berichte löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
   "common.deleteCustomerConfirmation": "Sind Sie sicher, dass Sie den Kunden {name} löschen möchten? Alle zugehörigen Berichte und Daten werden ebenfalls gelöscht.",
   "common.deleteBranchConfirmation": "Sind Sie sicher, dass Sie diese Filiale löschen möchten? Alle Benutzer, Berichte und Daten werden dauerhaft entfernt.",
-
   "common.accessibility.close": "Schließen",
   "common.accessibility.menu": "Menü",
   "common.accessibility.navigation": "Navigation",
@@ -147,23 +132,18 @@
   "common.accessibility.loading": "Lädt Inhalt",
   "common.accessibility.error": "Fehlermeldung",
   "common.accessibility.success": "Erfolgsmeldung",
-
   "common.lastUpdated": "Zuletzt aktualisiert",
   "common.offlineMode": "Sie sind offline. Änderungen werden synchronisiert, sobald die Verbindung wiederhergestellt ist.",
   "common.somethingWentWrong": "Etwas ist schief gelaufen",
   "common.somethingUnexpectedHappened": "Ein unerwarteter Fehler ist aufgetreten. Bitte aktualisieren Sie die Seite.",
   "common.goToDashboard": "Zum Dashboard gehen",
-
   "common.install.title": "Agritectum-App installieren",
   "common.install.description": "Installieren für Offline-Zugriff und bessere Leistung",
   "common.install.button": "Jetzt installieren",
-
   "actions.edit": "Bearbeiten",
   "actions.export": "Exportieren",
-
   "reportView.copyLink": "Link kopieren",
   "reportView.qrCode": "QR-Code",
-
   "issueTemplates.title": "Vorlage für Problem auswählen",
   "issueTemplates.searchPlaceholder": "Vorlagen suchen...",
   "issueTemplates.allTypes": "Alle Typen",
@@ -171,7 +151,6 @@
   "issueTemplates.templatesFound": "{count} Vorlage{plural} gefunden",
   "issueTemplates.templatesFound.one": "{count} Vorlage gefunden",
   "issueTemplates.templatesFound.other": "{count} Vorlagen gefunden",
-
   "issueTypes.leak": "Leckage",
   "issueTypes.damage": "Schaden",
   "issueTypes.wear": "Verschleiß",
@@ -180,47 +159,36 @@
   "issueTypes.gutters": "Dachrinnen",
   "issueTypes.flashing": "Dachrand",
   "issueTypes.other": "Andere",
-
   "issueTemplates.roofEdgeLeak.title": "Leckage am Dachrand",
   "issueTemplates.roofEdgeLeak.description": "Wassereintritt am Dachrand, normalerweise verursacht durch beschädigte Dachrandabdeckung oder schlechte Abdichtung.",
   "issueTemplates.roofEdgeLeak.location": "Dachrand",
-
   "issueTemplates.chimneyLeak.title": "Leckage am Schornstein",
   "issueTemplates.chimneyLeak.description": "Wassereintritt um die Schornsteinabdeckung, oft aufgrund verschlechterter Abdichtung oder beschädigter Abdeckung.",
   "issueTemplates.chimneyLeak.location": "Schornsteinbereich",
-
   "issueTemplates.missingTiles.title": "Fehlende Dachziegel",
   "issueTemplates.missingTiles.description": "Einzelne Dachziegel sind abgefallen oder fehlen, was die Dachstruktur freilegt.",
   "issueTemplates.missingTiles.location": "Verschiedene Stellen",
-
   "issueTemplates.crackedTiles.title": "Rissige Dachziegel",
   "issueTemplates.crackedTiles.description": "Dachziegel mit sichtbaren Rissen, die zu Wassereintritt führen können.",
   "issueTemplates.crackedTiles.location": "Verschiedene Stellen",
-
   "issueTemplates.generalWear.title": "Allgemeiner Verschleiß",
   "issueTemplates.generalWear.description": "Normale Alterung und Verschleiß auf der Dachoberfläche.",
   "issueTemplates.generalWear.location": "Allgemeiner Dachbereich",
-
   "issueTemplates.roofSagging.title": "Durchhängendes Dach",
   "issueTemplates.roofSagging.description": "Sichtbare Durchbiegung oder Abweichung in der Dachstruktur, was auf mögliche strukturelle Probleme hinweist.",
   "issueTemplates.roofSagging.location": "Dachstruktur",
-
   "issueTemplates.blockedVentilation.title": "Blockierte Belüftung",
   "issueTemplates.blockedVentilation.description": "Belüftungsöffnungen sind blockiert oder behindert, was die Luftzirkulation reduziert.",
   "issueTemplates.blockedVentilation.location": "Belüftungsbereiche",
-
   "issueTemplates.cloggedGutters.title": "Verstopfte Dachrinnen",
   "issueTemplates.cloggedGutters.description": "Dachrinnen sind mit Müll gefüllt, was eine ordnungsgemäße Wasserableitung verhindert.",
   "issueTemplates.cloggedGutters.location": "Rinnensystem",
-
   "issueTemplates.damagedFlashing.title": "Beschädigte Dachrandabdeckung",
   "issueTemplates.damagedFlashing.description": "Metall-Dachrandabdeckung um Durchdringungen ist beschädigt oder fehlt, was mögliche Leckstellen schafft.",
   "issueTemplates.damagedFlashing.location": "Durchdringungen",
-
   "issueTemplates.mossGrowth.title": "Moos",
   "issueTemplates.mossGrowth.description": "Moos- oder Algenwachstum auf der Dachoberfläche, das Feuchtigkeit halten und Schäden verursachen kann.",
   "issueTemplates.mossGrowth.location": "Schattige Bereiche",
-
   "inspection.checklist": "Inspektionscheckliste",
   "inspection.selectStatus": "Status wählen...",
   "inspection.status": "Status",
@@ -247,9 +215,7 @@
   "inspection.technicalInstallationsHint": "Überprüfen Sie HVAC, Lüftung und sonstige Installationen",
   "inspection.insulationAssessment": "Bewertung des Isolierungstyps",
   "inspection.insulationAssessmentHint": "Bewerten Sie den Isolierungstyp und dessen Zustand",
-
   "roofImage.pinInstruction": "💡 Klicken Sie auf das Bild, um Markierungen hinzuzufügen, die Problemstellen kennzeichnen. Markierungen können mit spezifischen Problemen verknüpft werden.",
-
   "common.signedInAs": "Angemeldet als",
   "common.roles.customer": "Kunde",
   "common.roles.inspector": "Inspektor",
@@ -257,7 +223,6 @@
   "common.roles.superAdmin": "Superadministrator",
   "common.back": "Zurück",
   "common.goBackToDashboard": "Zurück zum Dashboard",
-
   "gdpr.title": "Datenschutz und Privatsphäre",
   "gdpr.subtitle": "DSGVO-Konformität",
   "gdpr.intro": "Wir nehmen Datenschutz ernst und halten die DSGVO ein. Wählen Sie Ihre Einstellungen unten.",
@@ -270,5 +235,13 @@
   "gdpr.links.dpa": "Auftragsverarbeitungsvertrag",
   "gdpr.actions.rejectAll": "Alle ablehnen",
   "gdpr.actions.acceptAll": "Alle akzeptieren",
-  "gdpr.actions.savePreferences": "Auswahl speichern"
+  "gdpr.actions.savePreferences": "Auswahl speichern",
+  "common.filtering": "Filtern...",
+  "common.noItemsFound": "Keine Einträge gefunden",
+  "common.adjustSearch": "Versuchen Sie, Ihre Suche anzupassen",
+  "common.offlineWorkingLocally": "Offline - Lokal arbeiten",
+  "common.syncFailedWithCount": "{count, plural, one {# Änderung konnte nicht synchronisiert werden} other {# Änderungen konnten nicht synchronisiert werden}}",
+  "common.syncFailed": "Synchronisierung fehlgeschlagen",
+  "common.syncErrorFallback": "Bitte prüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
+  "common.dismissSyncFailure": "Synchronisierungsfehler-Hinweis schließen"
 }
