@@ -1,0 +1,59 @@
+name: Feature request
+description: Propose a new feature or enhancement.
+title: '[feat]: '
+labels: ['type:feature', 'status:triage']
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Auth / Onboarding
+        - Inspector / Reports
+        - Customer Portal
+        - Branch Admin
+        - Offers / Stripe
+        - Notifications / Email
+        - Offline / PWA
+        - i18n
+        - Tooling / CI
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / user pain
+      description: What user need are we solving? Who is affected?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: dropdown
+    id: rbac
+    attributes:
+      label: Does this feature touch RBAC (custom claims, Firestore rules, route guards)?
+      options:
+        - 'No'
+        - 'Yes — details below'
+  - type: dropdown
+    id: i18n
+    attributes:
+      label: Does this feature add user-facing strings?
+      options:
+        - 'No'
+        - 'Yes — will add keys to all five locales'
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      placeholder: |
+        - [ ] ...

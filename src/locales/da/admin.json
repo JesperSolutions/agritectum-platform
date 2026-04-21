@@ -380,5 +380,6 @@
   "admin.esgReports.lifetimeCO2": "Livstids-CO₂",
   "admin.esgReports.biodiversity": "Biodiversitet",
   "admin.esgReports.sustainability": "Bæredygtighed",
-  "admin.esgReports.rating": "Vurdering"
+  "admin.esgReports.rating": "Vurdering",
+  "admin.branches.logo.alt": "{name}-logo"
 }

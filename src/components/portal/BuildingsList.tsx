@@ -3,7 +3,11 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useIntl } from '../../hooks/useIntl';
 import { logger } from '../../utils/logger';
-import { getBuildingsByCustomer, createBuilding, uploadBuildingThumbnail } from '../../services/buildingService';
+import {
+  getBuildingsByCustomer,
+  createBuilding,
+  uploadBuildingThumbnail,
+} from '../../services/buildingService';
 import { Building } from '../../types';
 import { Building as BuildingIcon, Plus, MapPin, AlertCircle } from 'lucide-react';
 import LoadingSpinner from '../common/LoadingSpinner';
@@ -108,7 +112,7 @@ const BuildingsList: React.FC = () => {
       setLoading(false);
       return;
     }
-    
+
     setLoading(true);
     setError(null);
     try {
@@ -127,26 +131,29 @@ const BuildingsList: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validation
     const errors: Record<string, string> = {};
-    
+
     if (!formData.name.trim()) {
       errors.name = 'Building name is required';
     } else if (formData.name.length < 2) {
       errors.name = 'Building name must be at least 2 characters';
     }
-    
+
     if (!formData.address.trim()) {
       errors.address = 'Address is required';
     } else if (formData.address.length < 5) {
       errors.address = 'Address must be at least 5 characters';
     }
-    
-    if (formData.roofSize && (isNaN(parseFloat(formData.roofSize)) || parseFloat(formData.roofSize) <= 0)) {
+
+    if (
+      formData.roofSize &&
+      (isNaN(parseFloat(formData.roofSize)) || parseFloat(formData.roofSize) <= 0)
+    ) {
       errors.roofSize = 'Roof size must be a positive number';
     }
-    
+
     if (Object.keys(errors).length > 0) {
       setValidationErrors(errors);
       setError('Please correct the errors below');
@@ -160,7 +167,7 @@ const BuildingsList: React.FC = () => {
         return;
       }
     }
-    
+
     if (!currentUser) {
       setError('User not authenticated');
       return;
@@ -172,13 +179,18 @@ const BuildingsList: React.FC = () => {
 
     try {
       const customerId = currentUser.companyId || currentUser.uid;
-      
+
       // Build ESG metrics object
       const esgMetrics: any = {};
-      
-      if (formData.hasSolarPanels || formData.hasWhiteRoof || formData.hasNoxTreatment || formData.hasGreenRoof) {
+
+      if (
+        formData.hasSolarPanels ||
+        formData.hasWhiteRoof ||
+        formData.hasNoxTreatment ||
+        formData.hasGreenRoof
+      ) {
         esgMetrics.features = {};
-        
+
         if (formData.hasSolarPanels) {
           esgMetrics.features.solarPanels = {
             installed: true,
@@ -187,7 +199,7 @@ const BuildingsList: React.FC = () => {
             installationDate: formData.solarInstallationDate || undefined,
           };
         }
-        
+
         if (formData.hasWhiteRoof && formData.whiteRoofArea) {
           esgMetrics.features.whiteRoof = {
             installed: true,
@@ -196,7 +208,7 @@ const BuildingsList: React.FC = () => {
             installationDate: formData.whiteRoofInstallationDate || undefined,
           };
         }
-        
+
         if (formData.hasNoxTreatment) {
           esgMetrics.features.noxTreatment = {
             installed: true,
@@ -204,7 +216,7 @@ const BuildingsList: React.FC = () => {
             installationDate: formData.noxInstallationDate || undefined,
           };
         }
-        
+
         if (formData.hasGreenRoof && formData.greenRoofArea) {
           esgMetrics.features.greenRoof = {
             installed: true,
@@ -214,18 +226,17 @@ const BuildingsList: React.FC = () => {
           };
         }
       }
-      
+
       // Calculate CO2 metrics based on features
-      const solarCapacity = formData.hasSolarPanels && formData.solarCapacity 
-        ? parseFloat(formData.solarCapacity) 
-        : 0;
+      const solarCapacity =
+        formData.hasSolarPanels && formData.solarCapacity ? parseFloat(formData.solarCapacity) : 0;
       const annualCO2Offset = Math.round(solarCapacity * 1200); // 1.2 tons CO2/kW/year
-      
+
       // Estimate building's carbon footprint based on roof size and usage patterns
       // Typical building: ~0.5 kg CO2/m²/year
       const roofSize = formData.roofSize ? parseFloat(formData.roofSize) : 0;
       const estimatedCarbonFootprint = Math.round(roofSize * 0.5);
-      
+
       const buildingId = await createBuilding({
         name: formData.name.trim(),
         customerId: customerId,
@@ -233,22 +244,28 @@ const BuildingsList: React.FC = () => {
         buildingType: formData.buildingType,
         roofType: formData.roofType,
         roofSize: formData.roofSize ? parseFloat(formData.roofSize) : undefined,
-        esgMetrics: Object.keys(esgMetrics).length > 0 ? {
-          ...esgMetrics,
-          carbonFootprint: estimatedCarbonFootprint,
-          annualCO2Offset: annualCO2Offset,
-          sustainabilityScore: annualCO2Offset > 0 ? Math.min(100, Math.round((annualCO2Offset / estimatedCarbonFootprint) * 100)) : 0,
-        } : {
-          carbonFootprint: estimatedCarbonFootprint,
-          annualCO2Offset: 0,
-          sustainabilityScore: 0,
-        },
+        esgMetrics:
+          Object.keys(esgMetrics).length > 0
+            ? {
+                ...esgMetrics,
+                carbonFootprint: estimatedCarbonFootprint,
+                annualCO2Offset: annualCO2Offset,
+                sustainabilityScore:
+                  annualCO2Offset > 0
+                    ? Math.min(100, Math.round((annualCO2Offset / estimatedCarbonFootprint) * 100))
+                    : 0,
+              }
+            : {
+                carbonFootprint: estimatedCarbonFootprint,
+                annualCO2Offset: 0,
+                sustainabilityScore: 0,
+              },
       });
 
       if (thumbnailFile) {
         await uploadBuildingThumbnail(buildingId, thumbnailFile);
       }
-      
+
       setShowForm(false);
       setFormData({
         name: '',
@@ -279,14 +296,14 @@ const BuildingsList: React.FC = () => {
       await loadBuildings();
     } catch (error: any) {
       logger.error('Error creating building:', error);
-      
+
       // Handle tier limit exceeded error specially
       if (error.code === 'TIER_LIMIT_EXCEEDED') {
         const { currentCount, limit } = error.details || {};
         setError(
           `Building limit reached. Your current plan allows ${limit} building(s). ` +
-          `You currently have ${currentCount} building(s). ` +
-          `Please upgrade your subscription to add more buildings.`
+            `You currently have ${currentCount} building(s). ` +
+            `Please upgrade your subscription to add more buildings.`
         );
       } else {
         setError(error?.message || 'Failed to create building. Please try again.');
@@ -344,13 +361,13 @@ const BuildingsList: React.FC = () => {
       {showForm && (
         <div className='bg-white rounded-lg shadow p-6'>
           <h2 className='text-xl font-semibold mb-4'>{t('buildings.addBuilding')}</h2>
-          
+
           {error && (
             <div className='mb-4 p-4 bg-[#DA5062]/10 border border-[#DA5062]/30 rounded-lg'>
               <p className='text-sm text-[#c23d4f] font-medium'>{error}</p>
             </div>
           )}
-          
+
           <form onSubmit={handleSubmit} className='space-y-4'>
             <div>
               <label className='block text-sm font-medium text-gray-700 mb-2'>
@@ -382,7 +399,9 @@ const BuildingsList: React.FC = () => {
                 disabled={isSubmitting}
                 required
                 className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#A1BA53] ${
-                  validationErrors.address ? 'border-[#DA5062]/40 bg-[#DA5062]/10' : 'border-gray-300'
+                  validationErrors.address
+                    ? 'border-[#DA5062]/40 bg-[#DA5062]/10'
+                    : 'border-gray-300'
                 } disabled:opacity-50 disabled:cursor-not-allowed`}
               />
               {validationErrors.address && (
@@ -450,7 +469,9 @@ const BuildingsList: React.FC = () => {
                 step='0.01'
                 min='0'
                 className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#A1BA53] ${
-                  validationErrors.roofSize ? 'border-[#DA5062]/40 bg-[#DA5062]/10' : 'border-gray-300'
+                  validationErrors.roofSize
+                    ? 'border-[#DA5062]/40 bg-[#DA5062]/10'
+                    : 'border-gray-300'
                 } disabled:opacity-50 disabled:cursor-not-allowed`}
               />
               {validationErrors.roofSize && (
@@ -473,9 +494,7 @@ const BuildingsList: React.FC = () => {
                       className='h-full w-full object-cover'
                     />
                   ) : (
-                    <span className='text-xs text-slate-500'>
-                      {t('buildings.thumbnail.empty')}
-                    </span>
+                    <span className='text-xs text-slate-500'>{t('buildings.thumbnail.empty')}</span>
                   )}
                 </div>
                 <input
@@ -486,16 +505,16 @@ const BuildingsList: React.FC = () => {
                   className='text-sm text-slate-700'
                 />
               </div>
-              {thumbnailError && (
-                <p className='mt-1 text-sm text-[#DA5062]'>{thumbnailError}</p>
-              )}
+              {thumbnailError && <p className='mt-1 text-sm text-[#DA5062]'>{thumbnailError}</p>}
               <p className='mt-1 text-xs text-gray-500'>{t('buildings.thumbnail.help')}</p>
             </div>
-            
+
             {/* ESG Features Section */}
             <div className='border-t border-gray-200 pt-4 mt-4'>
-              <h3 className='text-lg font-semibold text-gray-900 mb-4'>{t('buildings.esgFeatures') || 'ESG Features (Optional)'}</h3>
-              
+              <h3 className='text-lg font-semibold text-gray-900 mb-4'>
+                {t('buildings.esgFeatures') || 'ESG Features (Optional)'}
+              </h3>
+
               {/* Solar Panels */}
               <div className='bg-[#DA5062]/10 rounded-lg p-4 mb-4'>
                 <div className='flex items-center mb-3'>
@@ -507,11 +526,14 @@ const BuildingsList: React.FC = () => {
                     disabled={isSubmitting}
                     className='w-4 h-4 text-[#A1BA53] border-gray-300 rounded focus:ring-[#A1BA53]'
                   />
-                  <label htmlFor='hasSolarPanels' className='ml-2 text-sm font-medium text-gray-900'>
+                  <label
+                    htmlFor='hasSolarPanels'
+                    className='ml-2 text-sm font-medium text-gray-900'
+                  >
                     {t('buildings.hasSolarPanels') || 'Has Solar Panels (Solpaneler)'}
                   </label>
                 </div>
-                
+
                 {formData.hasSolarPanels && (
                   <div className='grid grid-cols-3 gap-3 mt-3'>
                     <div>
@@ -521,7 +543,9 @@ const BuildingsList: React.FC = () => {
                       <input
                         type='number'
                         value={formData.solarPanelCount}
-                        onChange={e => setFormData({ ...formData, solarPanelCount: e.target.value })}
+                        onChange={e =>
+                          setFormData({ ...formData, solarPanelCount: e.target.value })
+                        }
                         placeholder='0'
                         disabled={isSubmitting}
                         step='1'
@@ -551,7 +575,9 @@ const BuildingsList: React.FC = () => {
                       <input
                         type='date'
                         value={formData.solarInstallationDate}
-                        onChange={e => setFormData({ ...formData, solarInstallationDate: e.target.value })}
+                        onChange={e =>
+                          setFormData({ ...formData, solarInstallationDate: e.target.value })
+                        }
                         disabled={isSubmitting}
                         className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53] text-sm'
                       />
@@ -559,7 +585,7 @@ const BuildingsList: React.FC = () => {
                   </div>
                 )}
               </div>
-              
+
               {/* White Roof */}
               <div className='bg-gray-50 rounded-lg p-4 mb-4'>
                 <div className='flex items-center mb-3'>
@@ -575,7 +601,7 @@ const BuildingsList: React.FC = () => {
                     {t('buildings.hasWhiteRoof') || 'Has White Roof (Hvidt Tag)'}
                   </label>
                 </div>
-                
+
                 {formData.hasWhiteRoof && (
                   <div className='grid grid-cols-3 gap-3 mt-3'>
                     <div>
@@ -600,7 +626,9 @@ const BuildingsList: React.FC = () => {
                       <input
                         type='number'
                         value={formData.whiteRoofReflectance}
-                        onChange={e => setFormData({ ...formData, whiteRoofReflectance: e.target.value })}
+                        onChange={e =>
+                          setFormData({ ...formData, whiteRoofReflectance: e.target.value })
+                        }
                         placeholder='85'
                         disabled={isSubmitting}
                         step='1'
@@ -616,7 +644,9 @@ const BuildingsList: React.FC = () => {
                       <input
                         type='date'
                         value={formData.whiteRoofInstallationDate}
-                        onChange={e => setFormData({ ...formData, whiteRoofInstallationDate: e.target.value })}
+                        onChange={e =>
+                          setFormData({ ...formData, whiteRoofInstallationDate: e.target.value })
+                        }
                         disabled={isSubmitting}
                         className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53] text-sm'
                       />
@@ -624,7 +654,7 @@ const BuildingsList: React.FC = () => {
                   </div>
                 )}
               </div>
-              
+
               {/* NOx Treatment */}
               <div className='bg-[#7DA8CC]/10 rounded-lg p-4 mb-4'>
                 <div className='flex items-center mb-3'>
@@ -636,11 +666,14 @@ const BuildingsList: React.FC = () => {
                     disabled={isSubmitting}
                     className='w-4 h-4 text-[#A1BA53] border-gray-300 rounded focus:ring-[#A1BA53]'
                   />
-                  <label htmlFor='hasNoxTreatment' className='ml-2 text-sm font-medium text-gray-900'>
+                  <label
+                    htmlFor='hasNoxTreatment'
+                    className='ml-2 text-sm font-medium text-gray-900'
+                  >
                     {t('buildings.hasNoxTreatment') || 'Has NOx Treatment System'}
                   </label>
                 </div>
-                
+
                 {formData.hasNoxTreatment && (
                   <div className='grid grid-cols-2 gap-3 mt-3'>
                     <div>
@@ -649,13 +682,24 @@ const BuildingsList: React.FC = () => {
                       </label>
                       <select
                         value={formData.noxType}
-                        onChange={e => setFormData({ ...formData, noxType: e.target.value as typeof formData.noxType })}
+                        onChange={e =>
+                          setFormData({
+                            ...formData,
+                            noxType: e.target.value as typeof formData.noxType,
+                          })
+                        }
                         disabled={isSubmitting}
                         className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53] text-sm'
                       >
-                        <option value='SCR'>{t('buildings.noxTypeSCR') || 'SCR (Selective Catalytic Reduction)'}</option>
-                        <option value='EGR'>{t('buildings.noxTypeEGR') || 'EGR (Exhaust Gas Recirculation)'}</option>
-                        <option value='DPF'>{t('buildings.noxTypeDPF') || 'DPF (Diesel Particulate Filter)'}</option>
+                        <option value='SCR'>
+                          {t('buildings.noxTypeSCR') || 'SCR (Selective Catalytic Reduction)'}
+                        </option>
+                        <option value='EGR'>
+                          {t('buildings.noxTypeEGR') || 'EGR (Exhaust Gas Recirculation)'}
+                        </option>
+                        <option value='DPF'>
+                          {t('buildings.noxTypeDPF') || 'DPF (Diesel Particulate Filter)'}
+                        </option>
                       </select>
                     </div>
                     <div>
@@ -665,7 +709,9 @@ const BuildingsList: React.FC = () => {
                       <input
                         type='date'
                         value={formData.noxInstallationDate}
-                        onChange={e => setFormData({ ...formData, noxInstallationDate: e.target.value })}
+                        onChange={e =>
+                          setFormData({ ...formData, noxInstallationDate: e.target.value })
+                        }
                         disabled={isSubmitting}
                         className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53] text-sm'
                       />
@@ -673,7 +719,7 @@ const BuildingsList: React.FC = () => {
                   </div>
                 )}
               </div>
-              
+
               {/* Green Roof */}
               <div className='bg-[#A1BA53]/10 rounded-lg p-4'>
                 <div className='flex items-center mb-3'>
@@ -689,7 +735,7 @@ const BuildingsList: React.FC = () => {
                     {t('buildings.hasGreenRoof') || 'Has Green Roof'}
                   </label>
                 </div>
-                
+
                 {formData.hasGreenRoof && (
                   <div className='grid grid-cols-3 gap-3 mt-3'>
                     <div>
@@ -713,13 +759,24 @@ const BuildingsList: React.FC = () => {
                       </label>
                       <select
                         value={formData.greenRoofType}
-                        onChange={e => setFormData({ ...formData, greenRoofType: e.target.value as typeof formData.greenRoofType })}
+                        onChange={e =>
+                          setFormData({
+                            ...formData,
+                            greenRoofType: e.target.value as typeof formData.greenRoofType,
+                          })
+                        }
                         disabled={isSubmitting}
                         className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53] text-sm'
                       >
-                        <option value='extensive'>{t('buildings.greenRoofExtensive') || 'Extensive'}</option>
-                        <option value='intensive'>{t('buildings.greenRoofIntensive') || 'Intensive'}</option>
-                        <option value='semi-intensive'>{t('buildings.greenRoofSemiIntensive') || 'Semi-intensive'}</option>
+                        <option value='extensive'>
+                          {t('buildings.greenRoofExtensive') || 'Extensive'}
+                        </option>
+                        <option value='intensive'>
+                          {t('buildings.greenRoofIntensive') || 'Intensive'}
+                        </option>
+                        <option value='semi-intensive'>
+                          {t('buildings.greenRoofSemiIntensive') || 'Semi-intensive'}
+                        </option>
                       </select>
                     </div>
                     <div>
@@ -729,7 +786,9 @@ const BuildingsList: React.FC = () => {
                       <input
                         type='date'
                         value={formData.greenRoofInstallationDate}
-                        onChange={e => setFormData({ ...formData, greenRoofInstallationDate: e.target.value })}
+                        onChange={e =>
+                          setFormData({ ...formData, greenRoofInstallationDate: e.target.value })
+                        }
                         disabled={isSubmitting}
                         className='w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53] text-sm'
                       />
@@ -738,7 +797,7 @@ const BuildingsList: React.FC = () => {
                 )}
               </div>
             </div>
-            
+
             <div className='flex space-x-4 pt-4'>
               <button
                 type='submit'
@@ -791,6 +850,8 @@ const BuildingsList: React.FC = () => {
                         name: building.name || t('buildings.thumbnail.unnamed'),
                       })}
                       className='h-32 w-full object-cover'
+                      loading='lazy'
+                      decoding='async'
                     />
                   </div>
                 )}

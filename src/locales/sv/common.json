@@ -1,7 +1,6 @@
 {
   "app.title": "Agritectum Platform - Takinspektioner",
   "app.subtitle": "Professionella takinspektioner och offerter",
-
   "common.buttons.save": "Spara",
   "common.buttons.cancel": "Avbryt",
   "common.buttons.delete": "Ta bort",
@@ -40,9 +39,7 @@
   "common.buttons.processing": "Bearbetar...",
   "common.processing": "Bearbetar...",
   "common.saving": "Sparar...",
-
   "common.signOut": "Logga ut",
-
   "common.status.active": "Aktiv",
   "common.status.inactive": "Inaktiv",
   "common.status.pending": "Väntande",
@@ -52,7 +49,6 @@
   "common.status.archived": "Arkiverad",
   "common.status.published": "Publicerad",
   "common.status.unpublished": "Opubliserad",
-
   "common.labels.name": "Namn",
   "common.labels.email": "E-post",
   "common.labels.phone": "Telefon",
@@ -70,7 +66,6 @@
   "common.labels.modified": "Ändrad",
   "common.labels.optional": "valfritt",
   "common.labels.required": "obligatoriskt",
-
   "common.messages.loading": "Laddar...",
   "common.messages.saving": "Sparar...",
   "common.messages.deleting": "Tar bort...",
@@ -81,29 +76,24 @@
   "common.messages.info": "Information",
   "common.messages.confirm": "Bekräfta",
   "common.messages.cancel": "Avbryt",
-
   "common.validation.required": "Detta fält är obligatoriskt",
   "common.validation.email": "Ange en giltig e-postadress",
   "common.validation.phone": "Ange ett giltigt telefonnummer",
   "common.validation.minLength": "Minst {min} tecken krävs",
   "common.validation.maxLength": "Max {max} tecken tillåtet",
   "common.validation.pattern": "Ogiltigt format",
-
   "common.pagination.previous": "Föregående",
   "common.pagination.next": "Nästa",
   "common.pagination.page": "Sida",
   "common.pagination.of": "av",
   "common.pagination.showing": "Visar {start}-{end} av {total}",
   "common.pagination.itemsPerPage": "Objekt per sida",
-
   "common.emptyState.title": "Inga objekt",
   "common.emptyState.description": "Det finns inga objekt att visa för tillfället.",
   "common.emptyState.action": "Skapa första objektet",
-
   "common.errorState.title": "Ett fel uppstod",
   "common.errorState.description": "Vi kunde inte ladda data. Försök igen senare.",
   "common.errorState.retry": "Försök igen",
-
   "roofTypes.tile": "Tegel",
   "roofTypes.metal": "Metall",
   "roofTypes.shingle": "Tegelsten",
@@ -117,31 +107,25 @@
   "roofTypes.flat_tpo": "Platt - TPO",
   "roofTypes.flat_epdm": "Platt - EPDM",
   "roofTypes.other": "Annat",
-
   "severity.low": "Låg",
   "severity.medium": "Medel",
   "severity.high": "Hög",
   "severity.critical": "Kritisk",
-
   "urgency.immediate": "Omedelbar",
   "urgency.short_term": "Kort sikt",
   "urgency.long_term": "Lång sikt",
-
   "common.confirm.title": "Bekräfta åtgärd",
   "common.confirm.message": "Är du säker på att du vill fortsätta?",
   "common.confirm.description": "Denna åtgärd kan inte ångras.",
   "common.confirm.yes": "Ja",
   "common.confirm.no": "Nej",
   "common.continue": "Fortsätt",
-
   "common.delete": "Ta bort",
   "common.cancel": "Avbryt",
   "common.deleteReportConfirmation": "Är du säker på att du vill ta bort rapporten för {customerName}? Denna åtgärd kan inte ångras.",
   "common.deleteSelectedReportsConfirmation": "Är du säker på att du vill ta bort {count} rapporter? Denna åtgärd kan inte ångras.",
   "common.deleteCustomerConfirmation": "Är du säker på att du vill ta bort kunden {name}? Alla relaterade rapporter och uppgifter kommer också att raderas.",
-  "common.cancel": "Avbryt",
   "common.deleteBranchConfirmation": "Är du säker på att du vill radera denna filial? Alla användare, rapporter och data kommer att tas bort permanent.",
-
   "common.accessibility.close": "Stäng",
   "common.accessibility.menu": "Meny",
   "common.accessibility.navigation": "Navigation",
@@ -150,7 +134,6 @@
   "common.accessibility.loading": "Laddar innehåll",
   "common.accessibility.error": "Felmeddelande",
   "common.accessibility.success": "Framgångsmeddelande",
-
   "common.lastUpdated": "Senast uppdaterad",
   "common.offlineMode": "Du är offline. Ändringar kommer att synkroniseras när anslutningen återställs.",
   "common.somethingWentWrong": "Något gick fel",
@@ -161,19 +144,15 @@
   "common.roles.customer": "Kund",
   "common.roles.inspector": "Inspektör",
   "common.roles.superadmin": "Superadministratör",
-
   "common.install.title": "Installera Agritectum-app",
   "common.back": "Tillbaka",
   "common.goBackToDashboard": "Gå tillbaka till översikten",
   "common.install.description": "Installera för offline-åtkomst och snabbare prestanda",
   "common.install.button": "Installera nu",
-
   "actions.edit": "Redigera",
   "actions.export": "Exportera",
-
   "reportView.copyLink": "Kopiera länk",
   "reportView.qrCode": "QR-kod",
-
   "issueTemplates.title": "Välj mall för problem",
   "issueTemplates.searchPlaceholder": "Sök mallar...",
   "issueTemplates.allTypes": "Alla typer",
@@ -181,7 +160,6 @@
   "issueTemplates.templatesFound": "{count} mall{plural} hittades",
   "issueTemplates.templatesFound.one": "{count} mall hittades",
   "issueTemplates.templatesFound.other": "{count} mallar hittades",
-
   "issueTypes.leak": "Läckage",
   "issueTypes.damage": "Skada",
   "issueTypes.wear": "Slitage",
@@ -190,47 +168,36 @@
   "issueTypes.gutters": "Takrännor",
   "issueTypes.flashing": "Taklist",
   "issueTypes.other": "Annat",
-
   "issueTemplates.roofEdgeLeak.title": "Läckage vid takkant",
   "issueTemplates.roofEdgeLeak.description": "Vatteninträngning vid takkanten, vanligtvis orsakat av skadad taklist eller dålig tätning.",
   "issueTemplates.roofEdgeLeak.location": "Takkant",
-
   "issueTemplates.chimneyLeak.title": "Läckage vid skorsten",
   "issueTemplates.chimneyLeak.description": "Vatteninträngning runt skorstenens taklist, ofta på grund av försämrad tätning eller skadad taklist.",
   "issueTemplates.chimneyLeak.location": "Skorstensområde",
-
   "issueTemplates.missingTiles.title": "Saknade takpannor",
   "issueTemplates.missingTiles.description": "Enskilda takpannor har fallit av eller saknas, vilket exponerar takstrukturen.",
   "issueTemplates.missingTiles.location": "Olika platser",
-
   "issueTemplates.crackedTiles.title": "Spruckna takpannor",
   "issueTemplates.crackedTiles.description": "Takpannor med synliga sprickor, vilket kan leda till vatteninträngning.",
   "issueTemplates.crackedTiles.location": "Olika platser",
-
   "issueTemplates.generalWear.title": "Allmänt slitage",
   "issueTemplates.generalWear.description": "Normal åldring och slitage på takytan.",
   "issueTemplates.generalWear.location": "Allmänt takområde",
-
   "issueTemplates.roofSagging.title": "Tak som sjunker",
   "issueTemplates.roofSagging.description": "Synlig nedböjning eller avböjning i takstrukturen, vilket indikerar potentiella strukturella problem.",
   "issueTemplates.roofSagging.location": "Takstruktur",
-
   "issueTemplates.blockedVentilation.title": "Blockerad ventilation",
   "issueTemplates.blockedVentilation.description": "Ventilationsöppningar är blockerade eller hindrade, vilket minskar luftcirkulationen.",
   "issueTemplates.blockedVentilation.location": "Ventilationsområden",
-
   "issueTemplates.cloggedGutters.title": "Täppta takrännor",
   "issueTemplates.cloggedGutters.description": "Takrännor är fyllda med skräp, vilket förhindrar ordentlig vattenavledning.",
   "issueTemplates.cloggedGutters.location": "Rännsystem",
-
   "issueTemplates.damagedFlashing.title": "Skadad taklist",
   "issueTemplates.damagedFlashing.description": "Metalltaklist runt genomslag är skadad eller saknas, vilket skapar potentiella läckpunkter.",
   "issueTemplates.damagedFlashing.location": "Genomslag",
-
   "issueTemplates.mossGrowth.title": "Mossa",
   "issueTemplates.mossGrowth.description": "Mossa eller algväxt på takytan, vilket kan behålla fukt och orsaka skador.",
   "issueTemplates.mossGrowth.location": "Skuggade områden",
-
   "inspection.checklist": "Inspektionschecklista",
   "inspection.selectStatus": "Välj status...",
   "inspection.status": "Status",
@@ -257,9 +224,7 @@
   "inspection.technicalInstallationsHint": "Inspektera HVAC, ventilation och övriga installationer",
   "inspection.insulationAssessment": "Bedömning av isoleringstyp",
   "inspection.insulationAssessmentHint": "Bedöm isoleringstyp och -tillstånd",
-
   "roofImage.pinInstruction": "💡 Klicka på bilden för att lägga till markörer som markerar problemplatser. Markörer kan länkas till specifika problem.",
-
   "gdpr.title": "Integritet och dataskydd",
   "gdpr.subtitle": "GDPR-efterlevnad",
   "gdpr.intro": "Vi tar din integritet på allvar och följer GDPR. Välj dina inställningar nedan.",
@@ -272,5 +237,13 @@
   "gdpr.links.dpa": "Personuppgiftsbiträdesavtal",
   "gdpr.actions.rejectAll": "Avvisa alla",
   "gdpr.actions.acceptAll": "Acceptera alla",
-  "gdpr.actions.savePreferences": "Spara val"
+  "gdpr.actions.savePreferences": "Spara val",
+  "common.filtering": "Filtrerar...",
+  "common.noItemsFound": "Inga objekt hittades",
+  "common.adjustSearch": "Prova att justera din sökning",
+  "common.offlineWorkingLocally": "Offline - Arbetar lokalt",
+  "common.syncFailedWithCount": "{count, plural, one {# ändring kunde inte synkroniseras} other {# ändringar kunde inte synkroniseras}}",
+  "common.syncFailed": "Synkronisering misslyckades",
+  "common.syncErrorFallback": "Kontrollera din anslutning och försök igen.",
+  "common.dismissSyncFailure": "Stäng meddelande om synkroniseringsfel"
 }

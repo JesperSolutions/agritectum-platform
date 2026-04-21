@@ -350,6 +350,21 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
     type: 'success' | 'error' | 'warning';
   } | null>(null);
   const lastNotificationTimeRef = useRef<number>(0);
+  // Auto-save concurrency control (fix #1: ReportForm auto-save race).
+  //   - isSavingRef: true while a save is in flight. Prevents a second save
+  //     from being dispatched concurrently with the first.
+  //   - pendingSaveRef: true if a save request arrived while one was in flight;
+  //     triggers exactly one follow-up save after the current one completes.
+  //   - isMountedRef: guards setState after unmount.
+  const isSavingRef = useRef(false);
+  const pendingSaveRef = useRef(false);
+  const isMountedRef = useRef(true);
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   // Defect flow state for camera capture and description
   const [defectFlowStep, setDefectFlowStep] = useState<'idle' | 'camera' | 'describe'>('idle');
@@ -443,9 +458,17 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
       return;
     }
 
-    const timeoutId = setTimeout(async () => {
+    // Run a single save pass. If another save is already in flight, mark that
+    // a follow-up is needed; the in-flight save will re-trigger this function
+    // with the latest formData from the effect re-run.
+    const runSave = async () => {
+      if (isSavingRef.current) {
+        pendingSaveRef.current = true;
+        return;
+      }
+      isSavingRef.current = true;
       try {
-        setAutoSaving(true);
+        if (isMountedRef.current) setAutoSaving(true);
 
         if (mode === 'edit' && reportId && !reportId.startsWith('temp_')) {
           // Update existing report (skip temp reports)
@@ -472,12 +495,17 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
           // Show auto-save notification only once per minute to avoid spam
           const now = Date.now();
           const timeSinceLastNotification = now - lastNotificationTimeRef.current;
-          if (timeSinceLastNotification >= FORM_CONSTANTS.NOTIFICATION_THROTTLE_MS) {
+          if (
+            isMountedRef.current &&
+            timeSinceLastNotification >= FORM_CONSTANTS.NOTIFICATION_THROTTLE_MS
+          ) {
             setNotification({
               message: t('form.messages.draftSaved'),
               type: 'success',
             });
-            setTimeout(() => setNotification(null), FORM_CONSTANTS.NOTIFICATION_DISPLAY_MS);
+            setTimeout(() => {
+              if (isMountedRef.current) setNotification(null);
+            }, FORM_CONSTANTS.NOTIFICATION_DISPLAY_MS);
             lastNotificationTimeRef.current = now;
           }
         }
@@ -489,18 +517,34 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
           // Only show for critical errors that user should know about
           const now = Date.now();
           const timeSinceLastNotification = now - lastNotificationTimeRef.current;
-          if (timeSinceLastNotification >= FORM_CONSTANTS.NOTIFICATION_THROTTLE_MS) {
+          if (
+            isMountedRef.current &&
+            timeSinceLastNotification >= FORM_CONSTANTS.NOTIFICATION_THROTTLE_MS
+          ) {
             setNotification({
               message: t('form.messages.autoSaveFailed'),
               type: 'error',
             });
-            setTimeout(() => setNotification(null), FORM_CONSTANTS.NOTIFICATION_DISPLAY_MS * 2);
+            setTimeout(() => {
+              if (isMountedRef.current) setNotification(null);
+            }, FORM_CONSTANTS.NOTIFICATION_DISPLAY_MS * 2);
             lastNotificationTimeRef.current = now;
           }
         }
       } finally {
-        setAutoSaving(false);
+        isSavingRef.current = false;
+        if (isMountedRef.current) setAutoSaving(false);
+        // If another save was requested while this one ran, fire one follow-up
+        // save with the freshest formData captured by the re-running effect.
+        if (pendingSaveRef.current && isMountedRef.current) {
+          pendingSaveRef.current = false;
+          void runSave();
+        }
       }
+    };
+
+    const timeoutId = setTimeout(() => {
+      void runSave();
     }, FORM_CONSTANTS.AUTO_SAVE_DEBOUNCE_MS);
 
     return () => clearTimeout(timeoutId);
@@ -594,11 +638,11 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                 let geocoded = false;
                 for (const variant of addressVariants) {
                   if (geocoded) break;
-                  
+
                   logger.debug('[ReportForm] Trying geocoding with variant:', variant);
                   const query = encodeURIComponent(variant);
                   const url = `https://nominatim.openstreetmap.org/search?format=json&q=${query}&addressdetails=1&limit=1`;
-                  
+
                   try {
                     const response = await fetch(url);
                     if (response.ok) {
@@ -608,7 +652,10 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                           lat: parseFloat(data[0].lat),
                           lon: parseFloat(data[0].lon),
                         };
-                        logger.debug('[ReportForm] Auto-geocoding successful with variant:', variant);
+                        logger.debug(
+                          '[ReportForm] Auto-geocoding successful with variant:',
+                          variant
+                        );
                         logger.debug('[ReportForm] Setting coordinates:', coords);
                         setAddressCoordinates(coords);
                         geocoded = true;
@@ -645,7 +692,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
       logger.debug('[ReportForm] Building selected:', buildingId);
       const building = customerBuildings.find(b => b.id === buildingId);
       logger.debug('[ReportForm] Building found:', building);
-      
+
       if (building) {
         setSelectedBuildingId(buildingId);
         setFormData(prev => ({
@@ -671,19 +718,19 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
             let geocoded = false;
             for (const variant of addressVariants) {
               if (geocoded) break;
-              
+
               logger.debug('[ReportForm] Trying geocoding with variant:', variant);
               const query = encodeURIComponent(variant);
               const url = `https://nominatim.openstreetmap.org/search?format=json&q=${query}&addressdetails=1&limit=1`;
-              
+
               try {
                 const response = await fetch(url);
                 logger.debug('[ReportForm] Geocoding response status:', response.status);
-                
+
                 if (response.ok) {
                   const data = await response.json();
                   logger.debug('[ReportForm] Geocoding response data:', data);
-                  
+
                   if (data && data.length > 0) {
                     const coords = {
                       lat: parseFloat(data[0].lat),
@@ -2520,7 +2567,9 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                           id='roofSize'
                           value={formData.roofSize || ''}
                           onChange={e => {
-                            const value = e.target.value ? Math.round(parseFloat(e.target.value) * 100) / 100 : undefined;
+                            const value = e.target.value
+                              ? Math.round(parseFloat(e.target.value) * 100) / 100
+                              : undefined;
                             setFormData(prev => ({ ...prev, roofSize: value }));
                             clearFieldError('roofSize');
                           }}
@@ -2534,10 +2583,19 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                       type='button'
                       onClick={() => {
                         logger.debug('[ReportForm] Measure button clicked');
-                        logger.debug('[ReportForm] addressCoordinates current state:', addressCoordinates);
-                        logger.debug('[ReportForm] formData.buildingAddress:', formData.buildingAddress);
-                        logger.debug('[ReportForm] formData.customerAddress:', formData.customerAddress);
-                        
+                        logger.debug(
+                          '[ReportForm] addressCoordinates current state:',
+                          addressCoordinates
+                        );
+                        logger.debug(
+                          '[ReportForm] formData.buildingAddress:',
+                          formData.buildingAddress
+                        );
+                        logger.debug(
+                          '[ReportForm] formData.customerAddress:',
+                          formData.customerAddress
+                        );
+
                         if (!addressCoordinates) {
                           logger.warn('[ReportForm] No addressCoordinates available');
                           // Focus address input and wait for coordinates

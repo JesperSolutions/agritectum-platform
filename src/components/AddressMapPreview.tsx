@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { MapPin, Eye, EyeOff, ExternalLink } from 'lucide-react';
+import { useIntl } from '../hooks/useIntl';
 
 interface AddressMapPreviewProps {
   address: string;
@@ -7,6 +8,7 @@ interface AddressMapPreviewProps {
 }
 
 const AddressMapPreview: React.FC<AddressMapPreviewProps> = ({ address, className = '' }) => {
+  const { t } = useIntl();
   const [showMap, setShowMap] = useState(false);
   const [mapError, setMapError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -110,8 +112,10 @@ const AddressMapPreview: React.FC<AddressMapPreviewProps> = ({ address, classNam
             <div className='relative'>
               <img
                 src={generateMapUrl(address)}
-                alt={`Satellitvy av ${address}`}
+                alt={t('address.map.satelliteAlt', { address })}
                 className='w-full h-[300px] object-cover rounded-lg border border-gray-200 shadow-sm'
+                loading='lazy'
+                decoding='async'
                 onLoad={() => setIsLoading(false)}
                 onError={() => {
                   setIsLoading(false);

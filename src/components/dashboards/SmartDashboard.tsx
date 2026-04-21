@@ -529,28 +529,32 @@ const SmartDashboard: React.FC = () => {
       case 'superadmin':
         return {
           color: 'from-[#7DA8CC] to-[#476279]',
-          title: `${greeting}, ${name}`,
+          greeting: `${greeting}, ${name}`,
+          title: name,
           subtitle: `${t('dashboard.comprehensiveOverview')} - ${branchStats.length} ${t('dashboard.branches')}`,
           icon: Globe,
         };
       case 'branchAdmin':
         return {
           color: 'from-[#A1BA53] to-[#5c6a2f]',
-          title: `${greeting}, ${name}`,
-          subtitle: `${t('dashboard.branchOverview')} - ${currentUser?.branchId || 'Din filial'}`,
+          greeting: `${greeting}, ${name}`,
+          title: name,
+          subtitle: `${t('dashboard.branchOverview')}: ${currentUser?.branchId || 'Din filial'}`,
           icon: Building,
         };
       case 'inspector':
         return {
           color: 'from-[#956098] to-[#553657]',
-          title: `${greeting}, ${name}`,
+          greeting: `${greeting}, ${name}`,
+          title: name,
           subtitle: `${t('dashboard.personalWorkspace')} - ${currentUser?.displayName || t('dashboard.roles.inspector')}`,
           icon: Target,
         };
       default:
         return {
           color: 'from-[#7DA8CC] to-[#476279]',
-          title: `${greeting}`,
+          greeting: greeting,
+          title: '',
           subtitle: '',
           icon: Activity,
         };
@@ -587,6 +591,9 @@ const SmartDashboard: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Greeting below header */}
+      <p className='text-base text-slate-600 -mt-3'>{headerConfig.greeting}</p>
 
       {/* Universal KPI Cards */}
       <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6'>

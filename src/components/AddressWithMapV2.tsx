@@ -57,6 +57,45 @@ const AddressWithMapV2: React.FC<AddressWithMapV2Props> = ({
   const tileLayerRef = useRef<L.TileLayer | null>(null);
   const debounceRef = useRef<NodeJS.Timeout>();
 
+  // Fix #5: guard against setState-after-unmount when async fetches,
+  // setTimeouts, and setIntervals resolve after the component is gone.
+  const isMountedRef = useRef(true);
+  const timersRef = useRef<Set<ReturnType<typeof setTimeout>>>(new Set());
+  const intervalsRef = useRef<Set<ReturnType<typeof setInterval>>>(new Set());
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+      timersRef.current.forEach(id => clearTimeout(id));
+      timersRef.current.clear();
+      intervalsRef.current.forEach(id => clearInterval(id));
+      intervalsRef.current.clear();
+    };
+  }, []);
+
+  const scheduleTimeout = useCallback((fn: () => void, ms: number) => {
+    const id = setTimeout(() => {
+      timersRef.current.delete(id);
+      if (isMountedRef.current) fn();
+    }, ms);
+    timersRef.current.add(id);
+    return id;
+  }, []);
+
+  const scheduleInterval = useCallback((fn: () => void, ms: number) => {
+    const id = setInterval(() => {
+      if (isMountedRef.current) fn();
+    }, ms);
+    intervalsRef.current.add(id);
+    return id;
+  }, []);
+
+  const clearTrackedInterval = useCallback((id: ReturnType<typeof setInterval>) => {
+    clearInterval(id);
+    intervalsRef.current.delete(id);
+  }, []);
+
   // Nominatim geocoding function
   const searchAddress = useCallback(
     async (query: string) => {
@@ -77,13 +116,15 @@ const AddressWithMapV2: React.FC<AddressWithMapV2Props> = ({
         }
 
         const data = await response.json();
+        if (!isMountedRef.current) return;
         setPredictions(data || []);
       } catch (err) {
         console.error('Error fetching address predictions:', err);
+        if (!isMountedRef.current) return;
         setPredictions([]);
         setErrorMessage(t('address.errors.network'));
       } finally {
-        setIsLoading(false);
+        if (isMountedRef.current) setIsLoading(false);
       }
     },
     [t]
@@ -171,14 +212,16 @@ const AddressWithMapV2: React.FC<AddressWithMapV2Props> = ({
               backgroundColor: null,
             });
             const dataUrl = canvas.toDataURL('image/png');
+            if (!isMountedRef.current) return;
             onSatelliteImageConfirm(dataUrl);
           }
         } catch (err) {
           console.error('Error capturing map image:', err);
-          setErrorMessage(t('address.map.captureError'));
+          if (isMountedRef.current) setErrorMessage(t('address.map.captureError'));
         } finally {
+          if (!isMountedRef.current) return;
           setCapturingImage(false);
-          setTimeout(() => setErrorMessage(null), 3000);
+          scheduleTimeout(() => setErrorMessage(null), 3000);
         }
       };
       capture();
@@ -197,18 +240,20 @@ const AddressWithMapV2: React.FC<AddressWithMapV2Props> = ({
           backgroundColor: null,
         });
         const dataUrl = canvas.toDataURL('image/png');
+        if (!isMountedRef.current) return;
         onSatelliteImageConfirm(dataUrl);
         // Success - error state will show briefly, then clear
       } catch (err) {
         console.error('Error capturing map image:', err);
-        setErrorMessage(t('address.map.captureError'));
+        if (isMountedRef.current) setErrorMessage(t('address.map.captureError'));
       } finally {
+        if (!isMountedRef.current) return;
         setCapturingImage(false);
         // Clear success message after 3 seconds
-        setTimeout(() => setErrorMessage(null), 3000);
+        scheduleTimeout(() => setErrorMessage(null), 3000);
       }
     }
-  }, [onSatelliteImageConfirm, t]);
+  }, [onSatelliteImageConfirm, t, scheduleTimeout]);
 
   // Handle input change with debouncing
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -281,7 +326,7 @@ const AddressWithMapV2: React.FC<AddressWithMapV2Props> = ({
             setMarker(newMarker);
 
             // After initial tiles load, smoothly zoom to level 20 for detail
-            setTimeout(() => {
+            scheduleTimeout(() => {
               if (mapInstanceRef.current) {
                 mapInstanceRef.current.setView([lat, lon], 20, {
                   animate: true,
@@ -289,7 +334,7 @@ const AddressWithMapV2: React.FC<AddressWithMapV2Props> = ({
                   easeLinearity: 0.25,
                 });
                 // Give zoom animation time to complete before hiding loader
-                setTimeout(() => {
+                scheduleTimeout(() => {
                   setTilesLoading(false);
                 }, 1500);
               }
@@ -307,16 +352,16 @@ const AddressWithMapV2: React.FC<AddressWithMapV2Props> = ({
         setupMap();
       } else {
         // Otherwise wait for it to be initialized
-        const checkInterval = setInterval(() => {
+        const checkInterval = scheduleInterval(() => {
           if (mapInstanceRef.current) {
-            clearInterval(checkInterval);
+            clearTrackedInterval(checkInterval);
             setupMap();
           }
         }, 100);
 
         // Timeout after 5 seconds
-        setTimeout(() => {
-          clearInterval(checkInterval);
+        scheduleTimeout(() => {
+          clearTrackedInterval(checkInterval);
           if (!mapInstanceRef.current) {
             setErrorMessage(t('address.errors.mapInit'));
           }
@@ -327,7 +372,16 @@ const AddressWithMapV2: React.FC<AddressWithMapV2Props> = ({
         inputRef.current.focus();
       }
     },
-    [predictions, captureMapImage, onChange, initializeMap, t]
+    [
+      predictions,
+      captureMapImage,
+      onChange,
+      initializeMap,
+      t,
+      scheduleTimeout,
+      scheduleInterval,
+      clearTrackedInterval,
+    ]
   );
 
   // Handle Enter key

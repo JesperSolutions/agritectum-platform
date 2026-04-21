@@ -28,13 +28,11 @@ interface BreadcrumbItem {
 interface BreadcrumbProps {
   className?: string;
   showHome?: boolean;
-  customItems?: BreadcrumbItem[];
 }
 
 const Breadcrumb: React.FC<BreadcrumbProps> = ({
   className = '',
   showHome = true,
-  customItems,
 }) => {
   const location = useLocation();
   const params = useParams();
@@ -45,20 +43,20 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({
   const routeMap: Record<string, BreadcrumbItem> = {
     '/': { label: t('navigation.home'), icon: <Home className='w-4 h-4' /> },
     '/dashboard': { label: t('navigation.dashboard'), icon: <Home className='w-4 h-4' /> },
-    '/profile': { label: t('navigation.profile') || 'Profile', icon: <User className='w-4 h-4' /> },
+    '/profile': { label: t('navigation.profile'), icon: <User className='w-4 h-4' /> },
     '/admin/branches': { label: t('navigation.branches'), icon: <Building className='w-4 h-4' /> },
     '/admin/users': { label: t('navigation.users'), icon: <Users className='w-4 h-4' /> },
     '/admin/reports': { label: t('navigation.reports'), icon: <FileText className='w-4 h-4' /> },
     '/reports': { label: t('navigation.reports'), icon: <FileText className='w-4 h-4' /> },
     '/offers': { label: t('navigation.offers'), icon: <DollarSign className='w-4 h-4' /> },
     '/schedule': {
-      label: t('navigation.schedule') || 'Schedule',
+      label: t('navigation.schedule'),
       icon: <Calendar className='w-4 h-4' />,
     },
     '/admin/customers': { label: t('navigation.customers'), icon: <Users className='w-4 h-4' /> },
     '/customers': { label: t('navigation.customers'), icon: <Users className='w-4 h-4' /> },
     '/admin/service-agreements': {
-      label: t('navigation.serviceAgreements') || 'Service Agreements',
+      label: t('navigation.serviceAgreements'),
       icon: <FileCheck className='w-4 h-4' />,
     },
     '/admin/analytics': {
@@ -67,20 +65,24 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({
     },
     '/analytics': { label: t('navigation.analytics'), icon: <BarChart3 className='w-4 h-4' /> },
     '/admin/building-esg-improvements': {
-      label: t('navigation.esgImprovements') || 'ESG Improvements',
+      label: t('navigation.esgImprovements'),
       icon: <Leaf className='w-4 h-4' />,
     },
     '/admin/esg-service': {
-      label: t('navigation.newESGReport') || 'New ESG Report',
+      label: t('navigation.esgService'),
       icon: <Leaf className='w-4 h-4' />,
     },
     '/admin/esg-reports': {
-      label: t('navigation.allESGReports') || 'All ESG Reports',
+      label: t('navigation.allESGReports'),
       icon: <Leaf className='w-4 h-4' />,
     },
     '/admin/email-templates': {
-      label: t('navigation.emailTemplates') || 'Email Templates',
+      label: t('navigation.emailTemplates'),
       icon: <Mail className='w-4 h-4' />,
+    },
+    '/admin/qa': {
+      label: t('navigation.qa'),
+      icon: <Settings className='w-4 h-4' />,
     },
     '/settings': { label: t('navigation.settings'), icon: <Settings className='w-4 h-4' /> },
     '/report/new': { label: t('navigation.newTagReport'), icon: <FileText className='w-4 h-4' /> },
@@ -90,27 +92,26 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({
     // Portal routes
     '/portal': { label: t('navigation.home'), icon: <Home className='w-4 h-4' /> },
     '/portal/dashboard': { label: t('navigation.dashboard'), icon: <Home className='w-4 h-4' /> },
-    '/portal/esg-overview': { label: 'ESG Overview', icon: <Leaf className='w-4 h-4' /> },
+    '/portal/esg-overview': { label: t('navigation.esgOverview'), icon: <Leaf className='w-4 h-4' /> },
     '/portal/buildings': { label: t('navigation.buildings'), icon: <Building className='w-4 h-4' /> },
     '/portal/service-agreements': {
-      label: t('navigation.serviceAgreements') || 'Service Agreements',
+      label: t('navigation.serviceAgreements'),
       icon: <FileCheck className='w-4 h-4' />,
     },
     '/portal/scheduled-visits': {
-      label: t('navigation.scheduledVisits') || 'Scheduled Visits',
+      label: t('navigation.scheduledVisits'),
       icon: <Calendar className='w-4 h-4' />,
     },
-    '/portal/billing': { label: 'Billing', icon: <DollarSign className='w-4 h-4' /> },
-    '/portal/profile': { label: t('navigation.profile') || 'Profile', icon: <User className='w-4 h-4' /> },
+    '/portal/billing': { label: t('navigation.billing'), icon: <DollarSign className='w-4 h-4' /> },
+    '/portal/profile': { label: t('navigation.profile'), icon: <User className='w-4 h-4' /> },
     '/portal/reports': { label: t('navigation.reports'), icon: <FileText className='w-4 h-4' /> },
+    '/portal/pricing': { label: t('navigation.pricing'), icon: <DollarSign className='w-4 h-4' /> },
+    '/portal/portfolio': { label: t('navigation.portfolio'), icon: <BarChart3 className='w-4 h-4' /> },
+    '/portal/compare': { label: t('navigation.compare'), icon: <BarChart3 className='w-4 h-4' /> },
   };
 
   // Generate breadcrumb items from current path
   const generateBreadcrumbs = (): BreadcrumbItem[] => {
-    if (customItems) {
-      return customItems;
-    }
-
     const pathSegments = location.pathname.split('/').filter(Boolean);
     const breadcrumbs: BreadcrumbItem[] = [];
 
@@ -194,10 +195,16 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({
       return t('navigation.offerDetails');
     }
     if (params.buildingId === id) {
-      return t('navigation.buildingDetails') || 'Building Details';
+      return t('navigation.buildingDetails');
     }
     if (params.agreementId === id) {
-      return 'Agreement Details';
+      return t('navigation.agreementDetails');
+    }
+    if (params.customerId === id) {
+      return t('navigation.customerDetails');
+    }
+    if (params.visitId === id) {
+      return t('navigation.visitDetails');
     }
 
     return null;

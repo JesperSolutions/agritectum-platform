@@ -145,5 +145,8 @@
   "errors.app.updateRequired": "Anwendungsupdate erforderlich",
   "errors.app.updateRequiredMessage": "Eine neue Version ist verfügbar. Bitte laden Sie die Seite neu, um fortzufahren.",
   "errors.app.updateApplication": "Anwendung aktualisieren",
-  "errors.technicalDetails": "Technische Details (nur in der Entwicklung)"
+  "errors.technicalDetails": "Technische Details (nur in der Entwicklung)",
+  "errors.routing.notFoundTitle": "Seite nicht gefunden",
+  "errors.routing.notFoundMessage": "Die gesuchte Seite existiert nicht oder wurde verschoben.",
+  "errors.routing.goHome": "Zum Dashboard"
 }

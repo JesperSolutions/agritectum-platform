@@ -1,0 +1,23 @@
+# Code owners for agritectum-platform.
+# When a PR touches one of these paths, the listed owner(s) are auto-requested for review.
+# See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-security/customizing-your-repository/about-code-owners
+
+# Default — anything not matched below
+*                                    @JesperSolutions
+
+# Routing, auth, RBAC
+/src/routing/                        @JesperSolutions
+/src/contexts/AuthContext.tsx        @JesperSolutions
+/firestore.rules                     @JesperSolutions
+/storage.rules                       @JesperSolutions
+
+# Firebase Functions & extensions (email, Stripe)
+/functions/                          @JesperSolutions
+/extensions/                         @JesperSolutions
+
+# CI / GitHub config — require owner review
+/.github/                            @JesperSolutions
+/.github/workflows/                  @JesperSolutions
+
+# i18n — all five locales must stay in sync
+/src/locales/                        @JesperSolutions

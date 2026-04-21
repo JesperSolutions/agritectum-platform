@@ -1,0 +1,38 @@
+name: Deploy preview to test environment
+
+# Triggered when a PR is merged to main (or on push to develop if that branch exists).
+# Deploys to agritectum-platform-test so QA can exercise the next release before prod.
+# Requires secret: FIREBASE_SERVICE_ACCOUNT_AGRITECTUM_PLATFORM_TEST
+
+on:
+  push:
+    branches: [develop]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy_test:
+    if: ${{ github.event.repository.fork == false }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Deploy to agritectum-platform-test (hosting live channel)
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_AGRITECTUM_PLATFORM_TEST }}
+          channelId: live
+          projectId: agritectum-platform-test

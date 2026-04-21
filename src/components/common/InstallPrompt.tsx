@@ -1,26 +1,48 @@
 import React, { useState, useEffect } from 'react';
 import { useIntl } from '../../hooks/useIntl';
-import { X, Download } from 'lucide-react';
+import { X, Download, Share } from 'lucide-react';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 }
 
+const isIOS = (): boolean => {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+};
+
+const isInStandaloneMode = (): boolean => {
+  return window.matchMedia('(display-mode: standalone)').matches ||
+    (window.navigator as any).standalone === true;
+};
+
 /**
  * InstallPrompt component shows a custom install prompt for PWA
  * Allows users to install the Taklaget app on their device
+ * Supports iOS (manual instructions) and Android/Desktop (beforeinstallprompt)
  */
 const InstallPrompt: React.FC = () => {
   const { t } = useIntl();
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showInstall, setShowInstall] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
+  const [showIOSInstructions, setShowIOSInstructions] = useState(false);
 
   useEffect(() => {
     // Check if app is already installed
-    if (window.matchMedia('(display-mode: standalone)').matches) {
+    if (isInStandaloneMode()) {
       setIsInstalled(true);
+      return;
+    }
+
+    // iOS: show custom instructions (no beforeinstallprompt support)
+    if (isIOS()) {
+      const iosDismissed = sessionStorage.getItem('installPromptDismissed');
+      if (!iosDismissed) {
+        setShowIOSInstructions(true);
+        setShowInstall(true);
+      }
       return;
     }
 
@@ -98,23 +120,53 @@ const InstallPrompt: React.FC = () => {
       </div>
 
       <p id='install-prompt-description' className='text-sm text-gray-600 mb-4'>
-        {t('common.install.description') || 'Install for offline access and faster performance'}
+        {showIOSInstructions
+          ? (t('common.install.iosDescription') || 'Add this app to your home screen for the best experience')
+          : (t('common.install.description') || 'Install for offline access and faster performance')}
       </p>
 
-      <div className='flex gap-2'>
-        <button
-          onClick={handleInstall}
-          className='flex-1 px-4 py-2 bg-slate-700 text-white text-sm font-medium rounded-lg hover:bg-slate-800 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2'
-        >
-          {t('common.install.button') || 'Install Now'}
-        </button>
-        <button
-          onClick={handleDismiss}
-          className='px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors'
-        >
-          {t('common.buttons.cancel')}
-        </button>
-      </div>
+      {showIOSInstructions ? (
+        <div className='space-y-3'>
+          <div className='bg-slate-50 rounded-lg p-3 space-y-2 text-sm text-gray-700'>
+            <div className='flex items-center gap-2'>
+              <span className='flex items-center justify-center w-5 h-5 rounded-full bg-slate-200 text-xs font-bold'>1</span>
+              <span className='flex items-center gap-1'>
+                {t('common.install.iosStep1') || 'Tap the share button'}
+                <Share className='w-4 h-4 text-[#7DA8CC] inline' />
+              </span>
+            </div>
+            <div className='flex items-center gap-2'>
+              <span className='flex items-center justify-center w-5 h-5 rounded-full bg-slate-200 text-xs font-bold'>2</span>
+              <span>{t('common.install.iosStep2') || 'Scroll down and tap "Add to Home Screen"'}</span>
+            </div>
+            <div className='flex items-center gap-2'>
+              <span className='flex items-center justify-center w-5 h-5 rounded-full bg-slate-200 text-xs font-bold'>3</span>
+              <span>{t('common.install.iosStep3') || 'Tap "Add" to confirm'}</span>
+            </div>
+          </div>
+          <button
+            onClick={handleDismiss}
+            className='w-full px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors'
+          >
+            {t('common.install.gotIt') || 'Got it!'}
+          </button>
+        </div>
+      ) : (
+        <div className='flex gap-2'>
+          <button
+            onClick={handleInstall}
+            className='flex-1 px-4 py-2 bg-slate-700 text-white text-sm font-medium rounded-lg hover:bg-slate-800 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2'
+          >
+            {t('common.install.button') || 'Install Now'}
+          </button>
+          <button
+            onClick={handleDismiss}
+            className='px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors'
+          >
+            {t('common.buttons.cancel')}
+          </button>
+        </div>
+      )}
     </div>
   );
 };

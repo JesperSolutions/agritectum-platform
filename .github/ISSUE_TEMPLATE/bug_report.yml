@@ -1,0 +1,95 @@
+name: Bug report
+description: Something is broken or behaves unexpectedly in the Agritectum platform.
+title: '[bug]: '
+labels: ['type:bug', 'status:triage']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug report. Please fill in as much of the form below as possible.
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Environment
+      options:
+        - agritectum-platform-test (test)
+        - agritectum-platform (production)
+        - local (emulators)
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Auth / Onboarding
+        - Inspector / Reports
+        - Customer Portal
+        - Branch Admin
+        - Offers / Stripe
+        - Notifications / Email (MailerSend)
+        - Offline / PWA
+        - i18n
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: role
+    attributes:
+      label: User role
+      options:
+        - platform_admin
+        - org_admin
+        - branch_user
+        - customer
+        - unauthenticated
+        - n/a
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Go to ...
+        2. Click on ...
+        3. See error
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser / OS / device
+      placeholder: e.g. Chrome 124 on Windows 11 / Safari on iPhone 15
+  - type: textarea
+    id: logs
+    attributes:
+      label: Console or Functions logs (scrub secrets)
+      render: text
+  - type: checkboxes
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - label: Blocker — data loss, auth broken, no workaround
+        - label: Major — feature broken, workaround exists
+        - label: Minor — cosmetic / edge case
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-submit checklist
+      options:
+        - label: I searched existing issues for duplicates
+          required: true
+        - label: I removed any secrets, tokens, or PII from logs
+          required: true

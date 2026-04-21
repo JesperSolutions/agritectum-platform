@@ -91,5 +91,6 @@
   "address.accessibility.searchResults": "Address suggestions",
   "address.accessibility.mapView": "Map view of address",
   "address.accessibility.selectAddress": "Select address from suggestions",
-  "address.accessibility.clearAddress": "Clear address"
+  "address.accessibility.clearAddress": "Clear address",
+  "address.map.satelliteAlt": "Satellite view of {address}"
 }
