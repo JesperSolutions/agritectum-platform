@@ -145,11 +145,13 @@
   "errors.app.updateRequired": "Applikation opdatering påkrævet",
   "errors.app.updateRequiredMessage": "Der er en ny version tilgængelig. Genindlæs siden for at fortsætte.",
   "errors.app.updateApplication": "Opdater applikation",
-  "errors.technicalDetails": "Tekniske detaljer (kun i udvikling)"
-  ,
+  "errors.technicalDetails": "Tekniske detaljer (kun i udvikling)",
   "errors.routing.accessDenied": "Adgang nægtet",
   "errors.routing.accessDeniedMessage": "Du har ikke tilladelse til at få adgang til denne ressource.",
   "errors.routing.noBranchAssigned": "Ingen afdeling tildelt",
   "errors.routing.noBranchMessage": "Din konto er ikke tildelt en afdeling. Kontakt en administrator for at få tildelt en afdeling.",
-  "errors.routing.backToLogin": "Tilbage til login"
+  "errors.routing.backToLogin": "Tilbage til login",
+  "errors.routing.notFoundTitle": "Siden blev ikke fundet",
+  "errors.routing.notFoundMessage": "Siden du leder efter findes ikke eller er blevet flyttet.",
+  "errors.routing.goHome": "Gå til dashboard"
 }
