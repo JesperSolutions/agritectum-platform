@@ -139,11 +139,11 @@ export const getSeverityColor = (severity: IssueSeverity): string => {
     case 'critical':
       return 'text-[#872a38] bg-[#DA5062]/15';
     case 'high':
-      return 'text-[#DA5062] bg-[#DA5062]/10';
+      return 'text-orange-800 bg-orange-100';
     case 'medium':
-      return 'text-[#DA5062] bg-[#DA5062]/10';
+      return 'text-amber-800 bg-amber-100';
     case 'low':
-      return 'text-[#A1BA53] bg-[#A1BA53]/10';
+      return 'text-[#5c6a2f] bg-[#A1BA53]/15';
     default:
       return 'text-gray-600 bg-gray-50';
   }

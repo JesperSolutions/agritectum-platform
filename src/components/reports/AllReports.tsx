@@ -438,7 +438,9 @@ const AllReports: React.FC<AllReportsProps> = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'draft':
-        return 'bg-[#DA5062]/15 text-[#872a38]';
+        // "Kræver handling" — inspector still needs to finish the report.
+        // Yellow/amber to distinguish from terminal-failure red states below.
+        return 'bg-amber-100 text-amber-800';
       case 'completed':
         return 'bg-[#A1BA53]/15 text-[#5c6a2f]';
       case 'sent':

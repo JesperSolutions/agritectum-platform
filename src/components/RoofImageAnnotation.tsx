@@ -70,9 +70,9 @@ const RoofImageAnnotation: React.FC<RoofImageAnnotationProps> = ({
       case 'critical':
         return 'bg-[#DA5062]';
       case 'high':
-        return 'bg-[#DA5062]';
+        return 'bg-orange-500';
       case 'medium':
-        return 'bg-[#DA5062]/100';
+        return 'bg-amber-400';
       case 'low':
         return 'bg-[#A1BA53]';
       default:
