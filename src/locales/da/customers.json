@@ -92,7 +92,7 @@
   "customer.filters.clearFilters": "Ryd filtre",
   "customer.filters.advancedFilters": "Avancerede filtre",
   "customer.filters.statusFilter": "Statusfilter",
-  "customer.filters.minRevenue": "Min omsætning (SEK)",
+  "customer.filters.minRevenue": "Min. omsætning (kr.)",
   "customer.filters.enterAmount": "Indtast beløb...",
 
   "customer.emptyState.title": "Ingen kunder",
