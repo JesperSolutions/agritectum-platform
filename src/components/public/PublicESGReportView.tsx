@@ -6,7 +6,7 @@
  * Features: Beautiful animations, interactive charts, professional layout
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useIntl } from '../../hooks/useIntl';
 import { ESGServiceReport, ESGMetrics, Building } from '../../types';
@@ -101,6 +101,8 @@ const PublicESGReportView: React.FC = () => {
   const [building, setBuilding] = useState<Building | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
+  const [exportingPdf, setExportingPdf] = useState(false);
+  const reportRef = useRef<HTMLDivElement>(null);
   const visibleElements = useScrollAnimation();
 
   useEffect(() => {
@@ -155,8 +157,55 @@ const PublicESGReportView: React.FC = () => {
     fetchReport();
   }, [reportId]);
 
-  const handleExportPDF = () => {
-    window.print();
+  const handleExportPDF = async () => {
+    if (!reportRef.current || exportingPdf) return;
+    setExportingPdf(true);
+    try {
+      const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
+        import('html2canvas'),
+        import('jspdf'),
+      ]);
+
+      const target = reportRef.current;
+      const canvas = await html2canvas(target, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+        // Skip any element marked with the Tailwind print:hidden utility (download buttons etc.)
+        ignoreElements: (el: Element) => el.classList?.contains('print:hidden'),
+      });
+
+      // A4 portrait at 72dpi-ish: jsPDF default unit 'mm' -> 210 x 297 mm
+      const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+      const pageWidthMm = pdf.internal.pageSize.getWidth();
+      const pageHeightMm = pdf.internal.pageSize.getHeight();
+      const imgWidthMm = pageWidthMm;
+      const imgHeightMm = (canvas.height * imgWidthMm) / canvas.width;
+
+      const imgData = canvas.toDataURL('image/jpeg', 0.92);
+
+      let heightLeft = imgHeightMm;
+      let position = 0;
+      pdf.addImage(imgData, 'JPEG', 0, position, imgWidthMm, imgHeightMm);
+      heightLeft -= pageHeightMm;
+
+      while (heightLeft > 0) {
+        position = heightLeft - imgHeightMm; // negative offset to shift the image up
+        pdf.addPage();
+        pdf.addImage(imgData, 'JPEG', 0, position, imgWidthMm, imgHeightMm);
+        heightLeft -= pageHeightMm;
+      }
+
+      const filename = `esg-report-${reportId || 'export'}.pdf`;
+      pdf.save(filename);
+    } catch (err) {
+      console.error('ESG PDF export failed:', err);
+      // Fallback to native print so the user is never stuck.
+      window.print();
+    } finally {
+      setExportingPdf(false);
+    }
   };
 
   if (loading) {
@@ -230,7 +279,7 @@ const PublicESGReportView: React.FC = () => {
   ].filter((s) => s.percentage > 0);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50">
+    <div ref={reportRef} className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50">
       {/* Premium Header with Hero Section */}
       <div className="relative overflow-hidden">
         {/* Subtle animated background */}
@@ -257,10 +306,11 @@ const PublicESGReportView: React.FC = () => {
               </div>
               <button
                 onClick={handleExportPDF}
-                className="print:hidden h-12 px-6 bg-white text-slate-900 rounded-lg hover:bg-slate-50 transition-all font-semibold flex items-center space-x-2 shadow-lg hover:shadow-xl"
+                disabled={exportingPdf}
+                className="print:hidden h-12 px-6 bg-white text-slate-900 rounded-lg hover:bg-slate-50 transition-all font-semibold flex items-center space-x-2 shadow-lg hover:shadow-xl disabled:opacity-60 disabled:cursor-wait"
               >
                 <Download className="w-4 h-4" />
-                <span>Download Report</span>
+                <span>{exportingPdf ? 'Generating PDF…' : 'Download Report'}</span>
               </button>
             </div>
           </div>
@@ -732,10 +782,11 @@ const PublicESGReportView: React.FC = () => {
               </p>
               <button
                 onClick={handleExportPDF}
-                className="print:hidden inline-flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-6 rounded-lg transition-all"
+                disabled={exportingPdf}
+                className="print:hidden inline-flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-6 rounded-lg transition-all disabled:opacity-60 disabled:cursor-wait"
               >
                 <Download className="w-4 h-4" />
-                <span>Download Full Report</span>
+                <span>{exportingPdf ? 'Generating PDF…' : 'Download Full Report'}</span>
               </button>
             </div>
           </ScaledElement>

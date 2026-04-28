@@ -254,8 +254,40 @@ const ESGService: React.FC = () => {
   };
 
   const handleDivisionChange = (area: keyof RoofDivisionAreas, value: number) => {
-    const newDivisions = { ...divisions };
-    newDivisions[area] = Math.max(0, Math.min(100, value));
+    // Clamp the changed slider to 0..100
+    const newValue = Math.max(0, Math.min(100, Number.isFinite(value) ? value : 0));
+    const remaining = 100 - newValue;
+
+    const otherKeys = (Object.keys(divisions) as Array<keyof RoofDivisionAreas>).filter(
+      k => k !== area
+    );
+    const othersSum = otherKeys.reduce((sum, k) => sum + divisions[k], 0);
+
+    const newDivisions: RoofDivisionAreas = { ...divisions, [area]: newValue };
+
+    if (othersSum > 0) {
+      // Distribute the remaining percentage proportionally to the other sliders'
+      // current ratios so total always sums to 100.
+      otherKeys.forEach(k => {
+        newDivisions[k] = (divisions[k] / othersSum) * remaining;
+      });
+    } else {
+      // All other sliders are at 0 — split the remainder equally.
+      const share = remaining / otherKeys.length;
+      otherKeys.forEach(k => {
+        newDivisions[k] = share;
+      });
+    }
+
+    // Round to 1 decimal and absorb any rounding drift into the changed slider so
+    // the displayed total stays exactly 100%.
+    const round1 = (n: number) => Math.round(n * 10) / 10;
+    otherKeys.forEach(k => {
+      newDivisions[k] = round1(newDivisions[k]);
+    });
+    const otherRoundedSum = otherKeys.reduce((sum, k) => sum + newDivisions[k], 0);
+    newDivisions[area] = round1(100 - otherRoundedSum);
+
     setDivisions(newDivisions);
     setCalculatedMetrics(null); // Clear previous calculations
     setInlineError(null);
