@@ -6,7 +6,9 @@
   "description": "Agritectum Platform - Professional roof inspection management system with customer portal and real-time notifications",
   "scripts": {
     "dev": "vite",
+    "prebuild": "node scripts/stamp-sw-version.cjs",
     "build": "vite build",
+    "postbuild": "node scripts/stamp-sw-version.cjs",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
