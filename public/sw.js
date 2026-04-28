@@ -1,6 +1,8 @@
-// Version will be derived from package.json version + deploy timestamp to ensure fresh cache per deploy
-// During build/deploy a script can replace the BUILD_VERSION token with the current version/timestamp.
-const BUILD_VERSION = 'v1.0.4-20260206-1200'; // e.g. v1.0.3-20260112
+// Version is stamped at build time by scripts/stamp-sw-version.cjs (npm prebuild).
+// The literal "__BUILD_VERSION__" placeholder below is replaced with package.json
+// version + UTC timestamp so every deploy produces a byte-different sw.js, which
+// forces the browser to install + activate the new SW and purge old caches.
+const BUILD_VERSION = 'v1.0.4-20260428-074405';
 const CACHE_NAME = `agritectum-${BUILD_VERSION}`;
 const OFFLINE_URL = '/offline.html';
 
@@ -44,8 +46,15 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     fetch(event.request)
       .then((response) => {
-        // If request is HTML and we got a response, clone it for cache
-        if (event.request.mode === 'navigate' && response) {
+        // Only cache successful navigation responses. Caching a 404/5xx index.html
+        // would cause a blank page on the next load (the cached HTML would point at
+        // hashed asset filenames that no longer exist after a deploy).
+        if (
+          event.request.mode === 'navigate' &&
+          response &&
+          response.ok &&
+          response.type === 'basic'
+        ) {
           const responseClone = response.clone();
           caches.open(CACHE_NAME).then((cache) => {
             cache.put(event.request, responseClone);

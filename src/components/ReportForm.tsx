@@ -3563,7 +3563,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                         const value = e.target.value ? parseFloat(e.target.value) : undefined;
                         setFormData(prev => ({ ...prev, laborCost: value }));
                       }}
-                      className='block w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-[#7DA8CC] focus:border-[#7DA8CC]'
+                      className='block w-full h-11 px-3 py-2 text-base border-gray-300 rounded-md shadow-sm focus:ring-[#7DA8CC] focus:border-[#7DA8CC]'
                       placeholder='0'
                       min='0'
                       step='100'
@@ -3581,7 +3581,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                         const value = e.target.value ? parseFloat(e.target.value) : undefined;
                         setFormData(prev => ({ ...prev, materialCost: value }));
                       }}
-                      className='block w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-[#7DA8CC] focus:border-[#7DA8CC]'
+                      className='block w-full h-11 px-3 py-2 text-base border-gray-300 rounded-md shadow-sm focus:ring-[#7DA8CC] focus:border-[#7DA8CC]'
                       placeholder='0'
                       min='0'
                       step='100'
@@ -3599,7 +3599,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                         const value = e.target.value ? parseFloat(e.target.value) : undefined;
                         setFormData(prev => ({ ...prev, travelCost: value }));
                       }}
-                      className='block w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-[#7DA8CC] focus:border-[#7DA8CC]'
+                      className='block w-full h-11 px-3 py-2 text-base border-gray-300 rounded-md shadow-sm focus:ring-[#7DA8CC] focus:border-[#7DA8CC]'
                       placeholder='0'
                       min='0'
                       step='100'
@@ -3617,7 +3617,7 @@ const ReportForm: React.FC<ReportFormProps> = ({ mode }) => {
                         const value = e.target.value ? parseFloat(e.target.value) : undefined;
                         setFormData(prev => ({ ...prev, overheadCost: value }));
                       }}
-                      className='block w-full text-sm border-gray-300 rounded-md shadow-sm focus:ring-[#7DA8CC] focus:border-[#7DA8CC]'
+                      className='block w-full h-11 px-3 py-2 text-base border-gray-300 rounded-md shadow-sm focus:ring-[#7DA8CC] focus:border-[#7DA8CC]'
                       placeholder='0'
                       min='0'
                       step='100'
