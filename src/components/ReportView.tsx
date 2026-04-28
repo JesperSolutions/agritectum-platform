@@ -406,9 +406,9 @@ const ReportView: React.FC = () => {
       case 'low':
         return 'bg-[#A1BA53]/15 text-[#5c6a2f]';
       case 'medium':
-        return 'bg-[#DA5062]/15 text-[#872a38]';
+        return 'bg-amber-100 text-amber-800';
       case 'high':
-        return 'bg-[#DA5062]/15 text-[#872a38]';
+        return 'bg-orange-100 text-orange-800';
       case 'critical':
         return 'bg-[#DA5062]/15 text-[#872a38]';
       default:
@@ -1106,9 +1106,9 @@ const ReportView: React.FC = () => {
                       case 'critical':
                         return 'bg-[#DA5062] border-[#c23d4f]';
                       case 'high':
-                        return 'bg-[#DA5062] border-[#DA5062]';
+                        return 'bg-orange-500 border-orange-600';
                       case 'medium':
-                        return 'bg-[#DA5062]/100 border-[#DA5062]';
+                        return 'bg-amber-400 border-amber-500';
                       case 'low':
                         return 'bg-[#A1BA53] border-[#8a9f47]';
                       default:
