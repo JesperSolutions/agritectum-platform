@@ -2,7 +2,7 @@
 // The literal "__BUILD_VERSION__" placeholder below is replaced with package.json
 // version + UTC timestamp so every deploy produces a byte-different sw.js, which
 // forces the browser to install + activate the new SW and purge old caches.
-const BUILD_VERSION = 'v1.0.4-20260428-075753';
+const BUILD_VERSION = 'v1.0.4-20260428-080215';
 const CACHE_NAME = `agritectum-${BUILD_VERSION}`;
 const OFFLINE_URL = '/offline.html';
 

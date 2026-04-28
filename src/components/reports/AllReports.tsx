@@ -934,248 +934,166 @@ const AllReports: React.FC<AllReportsProps> = () => {
             )}
 
             {(viewMode === 'traditional' || filteredAndSortedReports.length === 0) && (
-              <div className='bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden'>
+              <>
                 {filteredAndSortedReports.length === 0 ? (
-                  <EmptyState
-                    icon={FileText}
-                    title={
-                      searchTerm || statusFilter !== 'all' || branchFilter !== 'all'
-                        ? t('reports.noReportsFound')
-                        : t('reports.noReports')
-                    }
-                    description={
-                      searchTerm || statusFilter !== 'all' || branchFilter !== 'all'
-                        ? t('reports.tryAdjustingFilters')
-                        : t('reports.noReportsMessage')
-                    }
-                    actionLabel={
-                      searchTerm || statusFilter !== 'all' || branchFilter !== 'all'
-                        ? undefined
-                        : t('reports.newReport')
-                    }
-                    onAction={
-                      searchTerm || statusFilter !== 'all' || branchFilter !== 'all'
-                        ? undefined
-                        : () => navigate('/report/new')
-                    }
-                  />
+                  <div className='bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden'>
+                    <EmptyState
+                      icon={FileText}
+                      title={
+                        searchTerm || statusFilter !== 'all' || branchFilter !== 'all'
+                          ? t('reports.noReportsFound')
+                          : t('reports.noReports')
+                      }
+                      description={
+                        searchTerm || statusFilter !== 'all' || branchFilter !== 'all'
+                          ? t('reports.tryAdjustingFilters')
+                          : t('reports.noReportsMessage')
+                      }
+                      actionLabel={
+                        searchTerm || statusFilter !== 'all' || branchFilter !== 'all'
+                          ? undefined
+                          : t('reports.newReport')
+                      }
+                      onAction={
+                        searchTerm || statusFilter !== 'all' || branchFilter !== 'all'
+                          ? undefined
+                          : () => navigate('/report/new')
+                      }
+                    />
+                  </div>
                 ) : (
                   <>
-                    {/* Desktop Table View */}
-                    <div className='hidden lg:block overflow-x-auto'>
-                      <table className='min-w-full divide-y divide-slate-200'>
-                        <thead className='bg-slate-50'>
-                          <tr>
-                            <th className='px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider w-12'>
-                              <button
-                                onClick={handleSelectAll}
-                                className='flex items-center justify-center'
-                              >
-                                {selectedReports.size === filteredAndSortedReports.length &&
-                                filteredAndSortedReports.length > 0 ? (
-                                  <CheckSquare className='h-4 w-4 text-[#7DA8CC]' />
-                                ) : (
-                                  <Square className='h-4 w-4 text-slate-400' />
-                                )}
-                              </button>
-                            </th>
-                            <th className='px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider min-w-[200px]'>
-                              {t('customer.name')}
-                            </th>
-                            <th className='px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider min-w-[150px]'>
-                              {t('navigation.branches')}
-                            </th>
-                            <th className='px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider min-w-[100px]'>
-                              {t('dashboard.status')}
-                            </th>
-                            <th className='px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider min-w-[120px]'>
-                              {t('dashboard.revenue')}
-                            </th>
-                            <th className='px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider min-w-[120px]'>
-                              {t('customer.created')}
-                            </th>
-                            <th className='px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider min-w-[200px]'>
-                              {t('reports.actions')}
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody className='bg-white divide-y divide-gray-200'>
-                          {filteredAndSortedReports.map(report => (
-                            <tr key={report.id} className='hover:bg-slate-50'>
-                              <td className='px-4 py-4 whitespace-nowrap'>
-                                <button
-                                  onClick={() => handleSelectReport(report.id)}
-                                  className='flex items-center justify-center'
-                                >
-                                  {selectedReports.has(report.id) ? (
-                                    <CheckSquare className='h-4 w-4 text-[#7DA8CC]' />
-                                  ) : (
-                                    <Square className='h-4 w-4 text-slate-400' />
-                                  )}
-                                </button>
-                              </td>
-                              <td className='px-4 py-4 whitespace-nowrap'>
-                                <div>
-                                  <div className='text-sm font-medium text-slate-900'>
-                                    <div className='flex items-center gap-2'>
-                                      <span>{report.customerName || 'Unknown Customer'}</span>
+                    {/* Select-all bar */}
+                    <div className='flex items-center justify-between mb-3 px-1'>
+                      <button
+                        onClick={handleSelectAll}
+                        className='inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors'
+                      >
+                        {selectedReports.size === filteredAndSortedReports.length &&
+                        filteredAndSortedReports.length > 0 ? (
+                          <CheckSquare className='h-4 w-4 text-[#7DA8CC]' />
+                        ) : (
+                          <Square className='h-4 w-4 text-slate-400' />
+                        )}
+                        <span>{t('reports.selectAll') || 'Select all'}</span>
+                      </button>
+                      <span className='text-sm text-slate-500'>
+                        {filteredAndSortedReports.length} {t('reports.title') || 'reports'}
+                      </span>
+                    </div>
+
+                    {/* Card list (matches ESG Reports look & feel) */}
+                    <div className='space-y-4'>
+                      {filteredAndSortedReports.map(report => {
+                        const revenue =
+                          report.recommendedActions?.reduce(
+                            (sum, action) => sum + (action.estimatedCost || 0),
+                            0
+                          ) || 0;
+                        const isSelected = selectedReports.has(report.id);
+                        return (
+                          <div
+                            key={report.id}
+                            className={`bg-white rounded-xl shadow-sm border p-4 hover:shadow-md transition-all ${
+                              isSelected
+                                ? 'border-[#7DA8CC] ring-1 ring-[#7DA8CC]/40'
+                                : 'border-slate-200'
+                            }`}
+                          >
+                            <div className='flex flex-col md:flex-row md:items-center justify-between gap-4'>
+                              {/* Report Info */}
+                              <div className='flex-1 min-w-0'>
+                                <div className='flex items-center gap-3 mb-2'>
+                                  <button
+                                    onClick={() => handleSelectReport(report.id)}
+                                    className='shrink-0 p-1 -m-1 rounded hover:bg-slate-100 transition-colors'
+                                    aria-label={
+                                      isSelected
+                                        ? t('common.deselect') || 'Deselect'
+                                        : t('common.select') || 'Select'
+                                    }
+                                  >
+                                    {isSelected ? (
+                                      <CheckSquare className='h-5 w-5 text-[#7DA8CC]' />
+                                    ) : (
+                                      <Square className='h-5 w-5 text-slate-400' />
+                                    )}
+                                  </button>
+                                  <div className='p-2 bg-[#7DA8CC]/15 rounded-lg shrink-0'>
+                                    <FileText className='w-5 h-5 text-[#7DA8CC]' />
+                                  </div>
+                                  <div className='min-w-0 flex-1'>
+                                    <div className='flex items-center gap-2 flex-wrap'>
+                                      <h3 className='font-semibold text-slate-900 truncate'>
+                                        {report.customerName || 'Unknown Customer'}
+                                      </h3>
                                       {report.customerType === 'company' && (
                                         <span className='px-2 py-0.5 text-xs bg-[#7DA8CC]/15 text-[#476279] rounded-full'>
                                           {t('form.fields.customerTypeCompany') || 'Company'}
                                         </span>
                                       )}
+                                      <span
+                                        className={`inline-flex px-2 py-0.5 text-xs font-semibold rounded-full capitalize ${getStatusColor(report.status || 'draft')}`}
+                                      >
+                                        {report.status || 'draft'}
+                                      </span>
                                     </div>
+                                    <p className='text-sm text-slate-500 truncate'>
+                                      {report.customerEmail || 'No email'}
+                                    </p>
                                   </div>
-                                  <div className='text-sm text-slate-500'>
-                                    {report.customerEmail || 'No email'}
-                                  </div>
                                 </div>
-                              </td>
-                              <td className='px-4 py-4 whitespace-nowrap'>
-                                <div className='flex items-center'>
-                                  <Building className='h-4 w-4 text-slate-400 mr-2 flex-shrink-0' />
-                                  <span className='text-sm text-slate-900 truncate'>
-                                    {getBranchName(report.branchId || '')}
-                                  </span>
-                                </div>
-                              </td>
-                              <td className='px-4 py-4 whitespace-nowrap'>
-                                <span
-                                  className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(report.status || 'draft')}`}
-                                >
-                                  {report.status || 'draft'}
-                                </span>
-                              </td>
-                              <td className='px-4 py-4 whitespace-nowrap'>
-                                <div className='flex items-center'>
-                                  <DollarSign className='h-4 w-4 text-slate-400 mr-1 flex-shrink-0' />
-                                  <span className='text-sm font-medium text-slate-900'>
-                                    {formatCurrencySafe(
-                                      report.recommendedActions?.reduce(
-                                        (sum, action) => sum + (action.estimatedCost || 0),
-                                        0
-                                      ) || 0
-                                    )}
-                                  </span>
-                                </div>
-                              </td>
-                              <td className='px-4 py-4 whitespace-nowrap'>
-                                <div className='flex items-center'>
-                                  <Calendar className='h-4 w-4 text-slate-400 mr-2 flex-shrink-0' />
-                                  <span className='text-sm text-slate-900'>
-                                    {formatDate(report.createdAt)}
-                                  </span>
-                                </div>
-                              </td>
-                              <td className='px-4 py-4 whitespace-nowrap text-sm font-medium'>
-                                <div className='flex space-x-1'>
-                                  <Tooltip content='View Report Details'>
-                                    <button
-                                      onClick={() => handleViewReport(report)}
-                                      className='text-[#7DA8CC] hover:text-[#3b5060] p-2 rounded hover:bg-[#7DA8CC]/10 min-w-[40px] min-h-[40px] flex items-center justify-center'
-                                    >
-                                      <Eye className='h-4 w-4' />
-                                    </button>
-                                  </Tooltip>
-                                  <Tooltip content='Delete Report'>
-                                    <button
-                                      onClick={() => handleDeleteReport(report)}
-                                      className='text-[#DA5062] hover:text-[#6e2530] p-2 rounded hover:bg-[#DA5062]/10 min-w-[40px] min-h-[40px] flex items-center justify-center'
-                                    >
-                                      <Trash2 className='h-4 w-4' />
-                                    </button>
-                                  </Tooltip>
-                                </div>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
 
-                    {/* Mobile Card View */}
-                    <div className='lg:hidden'>
-                      {filteredAndSortedReports.map(report => (
-                        <div
-                          key={report.id}
-                          className='border-b border-slate-200 p-4 hover:bg-slate-50'
-                        >
-                          <div className='flex items-start justify-between mb-3'>
-                            <div className='flex items-center'>
-                              <button
-                                onClick={() => handleSelectReport(report.id)}
-                                className='mr-3'
-                              >
-                                {selectedReports.has(report.id) ? (
-                                  <CheckSquare className='h-5 w-5 text-[#7DA8CC]' />
-                                ) : (
-                                  <Square className='h-5 w-5 text-gray-400' />
-                                )}
-                              </button>
-                              <div>
-                                <h3 className='text-sm font-medium text-gray-900'>
-                                  {report.customerName || 'Unknown Customer'}
-                                </h3>
-                                <p className='text-sm text-gray-500'>
-                                  {report.customerEmail || 'No email'}
-                                </p>
+                                {/* Details Row */}
+                                <div className='flex flex-wrap gap-4 text-sm text-slate-600 md:pl-12'>
+                                  <div className='flex items-center gap-1.5'>
+                                    <Building className='w-4 h-4 text-slate-400' />
+                                    <span className='truncate max-w-[200px]'>
+                                      {getBranchName(report.branchId || '')}
+                                    </span>
+                                  </div>
+                                  <div className='flex items-center gap-1.5'>
+                                    <DollarSign className='w-4 h-4 text-slate-400' />
+                                    <span className='font-medium text-slate-900'>
+                                      {formatCurrencySafe(revenue)}
+                                    </span>
+                                  </div>
+                                  <div className='flex items-center gap-1.5'>
+                                    <Calendar className='w-4 h-4 text-slate-400' />
+                                    {formatDate(report.createdAt)}
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Actions */}
+                              <div className='flex items-center gap-2 shrink-0 self-end md:self-center'>
+                                <Tooltip content={t('reports.viewDetails') || 'View Report Details'}>
+                                  <button
+                                    onClick={() => handleViewReport(report)}
+                                    className='p-2 text-slate-500 hover:text-[#7DA8CC] hover:bg-[#7DA8CC]/10 rounded-lg transition-colors'
+                                    aria-label={t('reports.viewDetails') || 'View Report Details'}
+                                  >
+                                    <Eye className='w-5 h-5' />
+                                  </button>
+                                </Tooltip>
+                                <Tooltip content={t('common.delete') || 'Delete Report'}>
+                                  <button
+                                    onClick={() => handleDeleteReport(report)}
+                                    className='p-2 text-slate-500 hover:text-[#DA5062] hover:bg-[#DA5062]/10 rounded-lg transition-colors'
+                                    aria-label={t('common.delete') || 'Delete Report'}
+                                  >
+                                    <Trash2 className='w-5 h-5' />
+                                  </button>
+                                </Tooltip>
                               </div>
                             </div>
-                            <span
-                              className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(report.status || 'draft')}`}
-                            >
-                              {report.status || 'draft'}
-                            </span>
                           </div>
-
-                          <div className='grid grid-cols-2 gap-4 mb-3 text-sm'>
-                            <div className='flex items-center'>
-                              <Building className='h-4 w-4 text-gray-400 mr-2' />
-                              <span className='text-gray-900 truncate'>
-                                {getBranchName(report.branchId || '')}
-                              </span>
-                            </div>
-                            <div className='flex items-center'>
-                              <DollarSign className='h-4 w-4 text-gray-400 mr-2' />
-                              <span className='text-gray-900'>
-                                {formatCurrencySafe(
-                                  report.recommendedActions?.reduce(
-                                    (sum, action) => sum + (action.estimatedCost || 0),
-                                    0
-                                  ) || 0
-                                )}
-                              </span>
-                            </div>
-                            <div className='flex items-center'>
-                              <Calendar className='h-4 w-4 text-gray-400 mr-2' />
-                              <span className='text-gray-900'>{formatDate(report.createdAt)}</span>
-                            </div>
-                          </div>
-
-                          <div className='flex space-x-2'>
-                            <Tooltip content='View Report Details'>
-                              <button
-                                onClick={() => handleViewReport(report)}
-                                className='text-[#7DA8CC] hover:text-[#3b5060] p-2 rounded hover:bg-[#7DA8CC]/10'
-                              >
-                                <Eye className='h-4 w-4' />
-                              </button>
-                            </Tooltip>
-                            <Tooltip content='Delete Report'>
-                              <button
-                                onClick={() => handleDeleteReport(report)}
-                                className='text-[#DA5062] hover:text-[#6e2530] p-2 rounded hover:bg-[#DA5062]/10'
-                              >
-                                <Trash2 className='h-4 w-4' />
-                              </button>
-                            </Tooltip>
-                          </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </>
                 )}
-              </div>
+              </>
             )}
           </>
         )}
