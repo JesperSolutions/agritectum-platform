@@ -24,10 +24,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # NOTE: GitHub Pages must be enabled manually in repo Settings → Pages
+      # (Source: GitHub Actions). The workflow's GITHUB_TOKEN cannot create the
+      # Pages site itself ("Resource not accessible by integration"), so we set
+      # enablement: false and assume Pages has been enabled out-of-band.
       - name: Setup Pages
         uses: actions/configure-pages@v4
         with:
-          enablement: true
+          enablement: false
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
