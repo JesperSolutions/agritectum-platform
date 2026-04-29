@@ -29,7 +29,7 @@ jobs:
       # Pages site itself ("Resource not accessible by integration"), so we set
       # enablement: false and assume Pages has been enabled out-of-band.
       - name: Setup Pages
-        uses: actions/configure-pages@v4
+        uses: actions/configure-pages@v6
         with:
           enablement: false
 
