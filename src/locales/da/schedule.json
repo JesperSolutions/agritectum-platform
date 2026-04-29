@@ -117,7 +117,6 @@
   "schedule.filters.completed": "Færdige",
   "schedule.filters.cancelled": "Annullerede",
 
-  "SCHEDULE.ADDAPPOINTMENT": "Ny booking",
   "schedule.addAppointment": "Ny booking",
   "schedule.form.conflictWarning": "Konflikt: {inspector} har allerede en inspektion på dette tidspunkt.",
   "schedule.noAppointmentsMessage": "Du har ingen planlagte inspektioner for øjeblikket.",

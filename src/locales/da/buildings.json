@@ -186,5 +186,18 @@
   "buildings.detail.whiteRoof": "Hvidt tag",
   "buildings.detail.reflectance": "Reflektans",
   "buildings.detail.blueRoof": "Blåt tag",
-  "buildings.detail.capacity": "L kapacitet"
+  "buildings.detail.capacity": "L kapacitet",
+
+  "buildings.companyBuildings.title": "Bygninger",
+  "buildings.companyBuildings.addButton": "Tilføj bygning",
+  "buildings.companyBuildings.addressLabel": "Bygningsadresse",
+  "buildings.companyBuildings.addressPlaceholder": "Indtast bygningsadresse",
+  "buildings.companyBuildings.descriptionLabel": "Beskrivelse (valgfri)",
+  "buildings.companyBuildings.descriptionPlaceholder": "F.eks. Hovedbygning, Lager, osv.",
+  "buildings.companyBuildings.update": "Opdater",
+  "buildings.companyBuildings.add": "Tilføj",
+  "buildings.companyBuildings.cancel": "Annuller",
+  "buildings.companyBuildings.empty": "Ingen bygninger tilføjet endnu. Klik på \"Tilføj bygning\" for at komme i gang.",
+  "buildings.companyBuildings.edit": "Rediger",
+  "buildings.companyBuildings.delete": "Slet"
 }

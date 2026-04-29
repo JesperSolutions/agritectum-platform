@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { searchCustomers } from '../services/customerService';
 import { Customer } from '../types';
 import { useAuth } from '../contexts/AuthContext';
+import { useIntl } from '../hooks/useIntl';
 import { Search, Loader2, Building2, Phone, Mail } from 'lucide-react';
 
 interface CustomerSearchInlineProps {
@@ -11,8 +12,9 @@ interface CustomerSearchInlineProps {
 
 const CustomerSearchInline: React.FC<CustomerSearchInlineProps> = ({
   onCustomerSelect,
-  placeholder = 'Søg kunder...',
+  placeholder,
 }) => {
+  const { t } = useIntl();
   const { currentUser } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [results, setResults] = useState<Customer[]>([]);
@@ -107,12 +109,12 @@ const CustomerSearchInline: React.FC<CustomerSearchInlineProps> = ({
           ref={inputRef}
           type='text'
           className='w-full border border-slate-300 rounded-lg pl-10 pr-10 py-2.5 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all bg-white'
-          placeholder={placeholder}
+          placeholder={placeholder ?? t('customer.searchPlaceholder')}
           value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
           onKeyDown={handleKeyDown}
           onFocus={() => results.length > 0 && setShowDropdown(true)}
-          aria-label='Søg efter kunde'
+          aria-label={t('customer.searchLabel')}
           aria-expanded={showDropdown}
           aria-autocomplete='list'
         />

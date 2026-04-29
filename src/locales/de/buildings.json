@@ -186,5 +186,18 @@
   "buildings.detail.whiteRoof": "Weißes Dach",
   "buildings.detail.reflectance": "Reflektanz",
   "buildings.detail.blueRoof": "Blaues Dach",
-  "buildings.detail.capacity": "L Kapazität"
+  "buildings.detail.capacity": "L Kapazität",
+
+  "buildings.companyBuildings.title": "Gebäude",
+  "buildings.companyBuildings.addButton": "Gebäude hinzufügen",
+  "buildings.companyBuildings.addressLabel": "Gebäudeadresse",
+  "buildings.companyBuildings.addressPlaceholder": "Gebäudeadresse eingeben",
+  "buildings.companyBuildings.descriptionLabel": "Beschreibung (optional)",
+  "buildings.companyBuildings.descriptionPlaceholder": "Z.B. Hauptgebäude, Lager usw.",
+  "buildings.companyBuildings.update": "Aktualisieren",
+  "buildings.companyBuildings.add": "Hinzufügen",
+  "buildings.companyBuildings.cancel": "Abbrechen",
+  "buildings.companyBuildings.empty": "Noch keine Gebäude hinzugefügt. Klicken Sie auf \"Gebäude hinzufügen\", um zu beginnen.",
+  "buildings.companyBuildings.edit": "Bearbeiten",
+  "buildings.companyBuildings.delete": "Löschen"
 }

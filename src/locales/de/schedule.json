@@ -106,7 +106,6 @@
   "schedule.filters.completed": "Abgeschlossen",
   "schedule.filters.cancelled": "Abgebrochen",
 
-  "SCHEDULE.ADDAPPOINTMENT": "Neuer Termin",
   "schedule.addAppointment": "Neuer Termin",
   "schedule.form.conflictWarning": "Konflikt: {inspector} hat bereits eine Inspektion zu dieser Zeit.",
   "schedule.noAppointmentsMessage": "Sie haben derzeit keine geplanten Inspektionen.",

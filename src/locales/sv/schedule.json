@@ -106,7 +106,6 @@
   "schedule.filters.completed": "Slutförda",
   "schedule.filters.cancelled": "Inställda",
 
-  "SCHEDULE.ADDAPPOINTMENT": "Ny bokning",
   "schedule.addAppointment": "Ny bokning",
   "schedule.form.conflictWarning": "Konflikt: {inspector} har redan en inspektion denna tid.",
   "schedule.noAppointmentsMessage": "Du har inga schemalagda inspektioner för tillfället.",

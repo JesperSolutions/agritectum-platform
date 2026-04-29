@@ -183,5 +183,18 @@
   "buildings.detail.whiteRoof": "White Roof",
   "buildings.detail.reflectance": "Reflectance",
   "buildings.detail.blueRoof": "Blue Roof",
-  "buildings.detail.capacity": "L capacity"
+  "buildings.detail.capacity": "L capacity",
+
+  "buildings.companyBuildings.title": "Buildings",
+  "buildings.companyBuildings.addButton": "Add building",
+  "buildings.companyBuildings.addressLabel": "Building address",
+  "buildings.companyBuildings.addressPlaceholder": "Enter building address",
+  "buildings.companyBuildings.descriptionLabel": "Description (optional)",
+  "buildings.companyBuildings.descriptionPlaceholder": "E.g. Main building, Warehouse, etc.",
+  "buildings.companyBuildings.update": "Update",
+  "buildings.companyBuildings.add": "Add",
+  "buildings.companyBuildings.cancel": "Cancel",
+  "buildings.companyBuildings.empty": "No buildings added yet. Click \"Add building\" to get started.",
+  "buildings.companyBuildings.edit": "Edit",
+  "buildings.companyBuildings.delete": "Delete"
 }

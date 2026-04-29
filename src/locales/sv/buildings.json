@@ -183,5 +183,18 @@
   "buildings.detail.whiteRoof": "Vit tak",
   "buildings.detail.reflectance": "Reflektans",
   "buildings.detail.blueRoof": "Blå tak",
-  "buildings.detail.capacity": "L kapacitet"
+  "buildings.detail.capacity": "L kapacitet",
+
+  "buildings.companyBuildings.title": "Byggnader",
+  "buildings.companyBuildings.addButton": "Lägg till byggnad",
+  "buildings.companyBuildings.addressLabel": "Byggnadsadress",
+  "buildings.companyBuildings.addressPlaceholder": "Ange byggnadsadress",
+  "buildings.companyBuildings.descriptionLabel": "Beskrivning (valfritt)",
+  "buildings.companyBuildings.descriptionPlaceholder": "T.ex. Huvudbyggnad, Lager, etc.",
+  "buildings.companyBuildings.update": "Uppdatera",
+  "buildings.companyBuildings.add": "Lägg till",
+  "buildings.companyBuildings.cancel": "Avbryt",
+  "buildings.companyBuildings.empty": "Inga byggnader tillagda ännu. Klicka på \"Lägg till byggnad\" för att börja.",
+  "buildings.companyBuildings.edit": "Redigera",
+  "buildings.companyBuildings.delete": "Ta bort"
 }
