@@ -7,7 +7,6 @@ const OnboardingTour: React.FC = () => {
   const { t } = useIntl();
   const {
     showTour,
-    setShowTour,
     currentStep,
     steps,
     isOnLastStep,
@@ -138,7 +137,7 @@ const OnboardingTour: React.FC = () => {
               {currentStepIndex + 1} of {steps.length}
             </span>
             <button
-              onClick={() => setShowTour(false)}
+              onClick={skipTour}
               className='p-1 hover:bg-gray-100 rounded-md transition-colors'
               aria-label='Close tour'
             >
@@ -193,7 +192,7 @@ const OnboardingTour: React.FC = () => {
           )}
 
           <button
-            onClick={isOnLastStep ? () => setShowTour(false) : nextStep}
+            onClick={isOnLastStep ? skipTour : nextStep}
             className='p-2 hover:bg-[#7DA8CC]/15 rounded-md transition-colors bg-[#7DA8CC]/10'
             aria-label={isOnLastStep ? 'Close tour' : 'Next step'}
           >

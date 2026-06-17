@@ -186,13 +186,22 @@ const BuildingMap: React.FC<BuildingMapProps> = ({
             logger.warn('Error removing map:', e);
           }
         }
+        // Clear refs so the map can be re-initialized on the next run.
+        // Without this, a re-run would early-return on the stale ref and the
+        // map would stay torn down (blank).
+        mapInstanceRef.current = null;
+        tileLayerRef.current = null;
+        markerRef.current = null;
       };
     } catch (err) {
       logger.error('Error initializing map:', err);
       setError(t('buildings.map.initError') || 'Failed to initialize map');
       setIsLoading(false);
     }
-  }, [coords, address, t]);
+    // Only re-initialize when the coordinates change. address/t are used for
+    // labels and must not retrigger a teardown of the map instance.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [coords]);
 
   if (error && !coords) {
     return (
