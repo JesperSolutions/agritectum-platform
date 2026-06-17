@@ -160,7 +160,11 @@ service cloud.firestore {
         (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
         (isInspector() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
       );
-      
+
+      // Allow customers to list reports (for building-scoped queries).
+      // Document-level read rules above still gate the contents returned.
+      allow list: if isAuthenticated() && isCustomer();
+
       // Create requires branch match and creator match; allow main branch users across branches
       allow create: if isAuthenticated() &&
         request.resource.data.createdBy == request.auth.uid &&
@@ -639,7 +643,11 @@ service cloud.firestore {
         (isBranchAdmin() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main")) ||
         (isInspector() && (resource.data.branchId == getUserBranchId() || getUserBranchId() == "main"))
       );
-      
+
+      // Allow customers to list scheduled visits (for building-scoped queries).
+      // Document-level read rules above still gate the contents returned.
+      allow list: if isAuthenticated() && isCustomer();
+
       // Only internal users can create scheduled visits
       allow create: if isAuthenticated() && 
         !isCustomer() && (
