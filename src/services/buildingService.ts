@@ -464,17 +464,20 @@ export const updateBuilding = async (
       if (hasChanges) {
         // Save snapshot to buildingHistory subcollection
         const historyRef = collection(db, 'buildings', buildingId, 'history');
-        await addDoc(historyRef, {
-          address: currentData.address,
-          buildingType: currentData.buildingType,
-          roofType: currentData.roofType,
-          roofSize: currentData.roofSize,
-          latitude: currentData.latitude,
-          longitude: currentData.longitude,
-          changedBy: user.uid,
-          changedAt: new Date().toISOString(),
-          buildingId: buildingId,
-        });
+        await addDoc(
+          historyRef,
+          removeUndefinedFields({
+            address: currentData.address,
+            buildingType: currentData.buildingType,
+            roofType: currentData.roofType,
+            roofSize: currentData.roofSize,
+            latitude: currentData.latitude,
+            longitude: currentData.longitude,
+            changedBy: user.uid,
+            changedAt: new Date().toISOString(),
+            buildingId: buildingId,
+          })
+        );
       }
     }
 
@@ -499,6 +502,7 @@ export const updateBuilding = async (
 
     await updateDoc(buildingRef, sanitizedUpdates);
   } catch (error) {
+    logger.error('[buildingService] updateBuilding failed', error);
     throw new Error('Failed to update building');
   }
 };

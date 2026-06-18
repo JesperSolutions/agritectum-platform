@@ -120,21 +120,15 @@ const BuildingMap: React.FC<BuildingMapProps> = ({
       tileLayerRef.current = tileLayer;
       mapInstanceRef.current = map;
 
-      // Track tile loading
-      let tilesLoading = 0;
-      const checkReady = () => {
-        tilesLoading++;
-      };
-      const checkLoaded = () => {
-        tilesLoading--;
-        if (tilesLoading === 0) {
-          setIsLoading(false);
-        }
-      };
-
-      tileLayer.on('tileloadstart', checkReady);
-      tileLayer.on('tileload', checkLoaded);
-      tileLayer.on('tileerror', checkLoaded);
+      // Clear the loading overlay once the visible tiles have loaded.
+      // 'load' fires when the grid layer has loaded all visible tiles; we also
+      // clear on the first tile event and via a safety timeout so the overlay
+      // can never get stuck (e.g. when the container was not yet sized and no
+      // tiles were requested).
+      tileLayer.on('load', () => setIsLoading(false));
+      tileLayer.on('tileload', () => setIsLoading(false));
+      tileLayer.on('tileerror', () => setIsLoading(false));
+      const loadingTimeout = setTimeout(() => setIsLoading(false), 5000);
 
       // Add marker for building location
       const markerIcon = L.divIcon({
@@ -173,8 +167,9 @@ const BuildingMap: React.FC<BuildingMapProps> = ({
       marker.bindPopup(popupContent);
       markerRef.current = marker;
 
-      // Invalidate size after a short delay to ensure proper rendering
-      setTimeout(() => {
+      // Invalidate size once the container is laid out so Leaflet requests the
+      // correct set of tiles (otherwise it may request none and render blank).
+      const invalidateTimeout = setTimeout(() => {
         if (map && map.invalidateSize) {
           map.invalidateSize();
         }
@@ -182,6 +177,8 @@ const BuildingMap: React.FC<BuildingMapProps> = ({
 
       // Cleanup function
       return () => {
+        clearTimeout(loadingTimeout);
+        clearTimeout(invalidateTimeout);
         if (map) {
           try {
             map.remove();
@@ -189,13 +186,22 @@ const BuildingMap: React.FC<BuildingMapProps> = ({
             logger.warn('Error removing map:', e);
           }
         }
+        // Clear refs so the map can be re-initialized on the next run.
+        // Without this, a re-run would early-return on the stale ref and the
+        // map would stay torn down (blank).
+        mapInstanceRef.current = null;
+        tileLayerRef.current = null;
+        markerRef.current = null;
       };
     } catch (err) {
       logger.error('Error initializing map:', err);
       setError(t('buildings.map.initError') || 'Failed to initialize map');
       setIsLoading(false);
     }
-  }, [coords, address, t]);
+    // Only re-initialize when the coordinates change. address/t are used for
+    // labels and must not retrigger a teardown of the map instance.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [coords]);
 
   if (error && !coords) {
     return (
