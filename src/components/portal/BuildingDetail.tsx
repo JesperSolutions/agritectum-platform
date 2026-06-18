@@ -10,6 +10,7 @@ import {
   BuildingActivity,
   deleteBuilding,
   uploadBuildingThumbnail,
+  geocodeBuildingAddress,
 } from '../../services/buildingService';
 import { getReportsByBuildingId } from '../../services/reportService';
 import { getServiceAgreementsByBuilding } from '../../services/serviceAgreementService';
@@ -35,9 +36,11 @@ import {
   AlertCircle,
   Leaf,
   Trash2,
+  Loader2,
 } from 'lucide-react';
 import LoadingSpinner from '../common/LoadingSpinner';
 import BuildingMap from './BuildingMap';
+import RoofSizeMeasurer from '../RoofSizeMeasurer';
 import PageHeader from '../shared/layouts/PageHeader';
 import ListCard from '../shared/cards/ListCard';
 import IconLabel from '../shared/layouts/IconLabel';
@@ -62,6 +65,10 @@ const BuildingDetail: React.FC = () => {
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
   const [thumbnailError, setThumbnailError] = useState<string | null>(null);
+  const [showRoofMeasurer, setShowRoofMeasurer] = useState(false);
+  const [measureCoords, setMeasureCoords] = useState<{ lat: number; lon: number } | null>(null);
+  const [geocoding, setGeocoding] = useState(false);
+  const [measureError, setMeasureError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     address: '',
     buildingType: 'residential' as Building['buildingType'],
@@ -261,6 +268,35 @@ const BuildingDetail: React.FC = () => {
       logger.error('[BuildingDetail] Unexpected error loading related data:', error);
     } finally {
       setLoadingRelated(false);
+    }
+  };
+
+  const handleOpenMeasurer = async () => {
+    setMeasureError(null);
+    if (building?.latitude && building?.longitude) {
+      setMeasureCoords({ lat: building.latitude, lon: building.longitude });
+      setShowRoofMeasurer(true);
+      return;
+    }
+    const address = formData.address || building?.address;
+    if (!address || address.trim().length < 5) {
+      setMeasureError(t('buildings.measure.addressRequired') || 'Enter the building address first');
+      return;
+    }
+    setGeocoding(true);
+    try {
+      const coords = await geocodeBuildingAddress(address);
+      if (!coords) {
+        setMeasureError(t('buildings.measure.notFound') || 'Could not locate this address on the map');
+        return;
+      }
+      setMeasureCoords(coords);
+      setShowRoofMeasurer(true);
+    } catch (err) {
+      logger.error('[BuildingDetail] Geocoding failed', err);
+      setMeasureError(t('buildings.measure.notFound') || 'Could not locate this address on the map');
+    } finally {
+      setGeocoding(false);
     }
   };
 
@@ -670,12 +706,28 @@ const BuildingDetail: React.FC = () => {
               <label className='block text-sm font-medium text-gray-700 mb-2'>
                 {t('buildings.roofSize')}
               </label>
-              <input
-                type='number'
-                value={formData.roofSize}
-                onChange={e => setFormData({ ...formData, roofSize: e.target.value })}
-                className='w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53]'
-              />
+              <div className='flex gap-2'>
+                <input
+                  type='number'
+                  value={formData.roofSize}
+                  onChange={e => setFormData({ ...formData, roofSize: e.target.value })}
+                  className='flex-1 px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#A1BA53]'
+                />
+                <button
+                  type='button'
+                  onClick={handleOpenMeasurer}
+                  disabled={geocoding}
+                  className='flex items-center gap-2 px-4 py-2 bg-[#A1BA53] text-white rounded-md hover:bg-[#8da546] disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap'
+                >
+                  {geocoding ? (
+                    <Loader2 className='w-4 h-4 animate-spin' />
+                  ) : (
+                    <Ruler className='w-4 h-4' />
+                  )}
+                  {t('buildings.measure.button') || 'Measure on map'}
+                </button>
+              </div>
+              {measureError && <p className='mt-1 text-sm text-[#DA5062]'>{measureError}</p>}
             </div>
             
             {/* ESG Features Section */}
@@ -1361,6 +1413,21 @@ const BuildingDetail: React.FC = () => {
             </div>
           )}
         </div>
+      )}
+
+      {showRoofMeasurer && measureCoords && (
+        <RoofSizeMeasurer
+          lat={measureCoords.lat}
+          lon={measureCoords.lon}
+          address={formData.address || building?.address}
+          initialArea={formData.roofSize ? parseFloat(formData.roofSize) : undefined}
+          onAreaCalculated={area => {
+            setFormData(prev => ({ ...prev, roofSize: area.toFixed(2) }));
+            setMeasureError(null);
+            setShowRoofMeasurer(false);
+          }}
+          onClose={() => setShowRoofMeasurer(false)}
+        />
       )}
 
       {/* Delete Confirmation Dialog */}
